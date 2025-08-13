@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#ffd338" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="KB스타뱅킹">
+    <meta
+      name="description"
+      content="KB스타뱅킹 클론 앱 - 원본과 100% 동일한 UI/UX"
+    />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <title>KB스타뱅킹</title>
+    
+    <!-- PWA 및 모바일 최적화 -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    
+    <!-- Safe area CSS variables for older browsers -->
+    <style>
+      :root {
+        --safe-area-inset-top: env(safe-area-inset-top, 0px);
+        --safe-area-inset-right: env(safe-area-inset-right, 0px);
+        --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+        --safe-area-inset-left: env(safe-area-inset-left, 0px);
+      }
+      
+      /* iOS Safari 100vh fix */
+      html, body {
+        height: 100%;
+        height: 100vh;
+        height: -webkit-fill-available;
+        overflow-x: hidden;
+      }
+      
+      #root {
+        height: 100%;
+        height: 100vh;
+        height: -webkit-fill-available;
+        position: relative;
+        overflow-x: hidden;
+      }
+      
+      @supports (-webkit-touch-callout: none) {
+        html {
+          height: -webkit-fill-available;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <noscript>JavaScript를 활성화해야 이 앱을 사용할 수 있습니다.</noscript>
+    <div id="root"></div>
+    <!--
+      This HTML file is a template.
+      If you open it directly in the browser, you will see an empty page.
+
+      You can add webfonts, meta tags, or analytics to this file.
+      The build step will place the bundled scripts into the <body> tag.
+
+      To begin the development, run `npm start` or `yarn start`.
+      To create a production bundle, use `npm run build` or `yarn build`.
+    -->
+  </body>
+</html>

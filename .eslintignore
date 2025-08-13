@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+build/
+dist/
+coverage/
+
+# Environment files
+.env*
+
+# Config files
+craco.config.js
+config-overrides.js
+
+# Public static files
+public/
+
+# Android/iOS
+android/
+ios/
+
+# Documentation
+*.md
+
+# Generated files
+src/react-app-env.d.ts
+
+# Test files that may have different rules
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.ts
+**/*.spec.tsx
+
+# Third-party scripts
+scripts/
+
+# Log files
+*.log
+
+# Temporary files
+*.tmp
+*.temp
