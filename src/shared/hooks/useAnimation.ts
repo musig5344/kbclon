@@ -19,30 +19,32 @@ export const easings = {
   linear: (t: number) => t,
   easeIn: (t: number) => t * t,
   easeOut: (t: number) => t * (2 - t),
-  easeInOut: (t: number) => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t,
+  easeInOut: (t: number) => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t),
   easeInCubic: (t: number) => t * t * t,
-  easeOutCubic: (t: number) => (--t) * t * t + 1,
-  easeInOutCubic: (t: number) => t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1,
+  easeOutCubic: (t: number) => --t * t * t + 1,
+  easeInOutCubic: (t: number) =>
+    t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1,
   easeInQuart: (t: number) => t * t * t * t,
-  easeOutQuart: (t: number) => 1 - (--t) * t * t * t,
-  easeInOutQuart: (t: number) => t < 0.5 ? 8 * t * t * t * t : 1 - 8 * (--t) * t * t * t,
+  easeOutQuart: (t: number) => 1 - --t * t * t * t,
+  easeInOutQuart: (t: number) => (t < 0.5 ? 8 * t * t * t * t : 1 - 8 * --t * t * t * t),
   easeInQuint: (t: number) => t * t * t * t * t,
-  easeOutQuint: (t: number) => 1 + (--t) * t * t * t * t,
-  easeInOutQuint: (t: number) => t < 0.5 ? 16 * t * t * t * t * t : 1 + 16 * (--t) * t * t * t * t,
-  easeInSine: (t: number) => 1 - Math.cos(t * Math.PI / 2),
-  easeOutSine: (t: number) => Math.sin(t * Math.PI / 2),
+  easeOutQuint: (t: number) => 1 + --t * t * t * t * t,
+  easeInOutQuint: (t: number) => (t < 0.5 ? 16 * t * t * t * t * t : 1 + 16 * --t * t * t * t * t),
+  easeInSine: (t: number) => 1 - Math.cos((t * Math.PI) / 2),
+  easeOutSine: (t: number) => Math.sin((t * Math.PI) / 2),
   easeInOutSine: (t: number) => -(Math.cos(Math.PI * t) - 1) / 2,
-  easeInExpo: (t: number) => t === 0 ? 0 : Math.pow(2, 10 * t - 10),
-  easeOutExpo: (t: number) => t === 1 ? 1 : 1 - Math.pow(2, -10 * t),
+  easeInExpo: (t: number) => (t === 0 ? 0 : Math.pow(2, 10 * t - 10)),
+  easeOutExpo: (t: number) => (t === 1 ? 1 : 1 - Math.pow(2, -10 * t)),
   easeInOutExpo: (t: number) => {
     if (t === 0 || t === 1) return t;
     return t < 0.5 ? Math.pow(2, 20 * t - 10) / 2 : (2 - Math.pow(2, -20 * t + 10)) / 2;
   },
   easeInCirc: (t: number) => 1 - Math.sqrt(1 - t * t),
-  easeOutCirc: (t: number) => Math.sqrt(1 - (--t) * t),
-  easeInOutCirc: (t: number) => t < 0.5 
-    ? (1 - Math.sqrt(1 - 4 * t * t)) / 2 
-    : (Math.sqrt(1 - (-2 * t + 2) * (-2 * t + 2)) + 1) / 2,
+  easeOutCirc: (t: number) => Math.sqrt(1 - --t * t),
+  easeInOutCirc: (t: number) =>
+    t < 0.5
+      ? (1 - Math.sqrt(1 - 4 * t * t)) / 2
+      : (Math.sqrt(1 - (-2 * t + 2) * (-2 * t + 2)) + 1) / 2,
   easeInBack: (t: number) => 2.70158 * t * t * t - 1.70158 * t * t,
   easeOutBack: (t: number) => 1 + 2.70158 * Math.pow(t - 1, 3) + 1.70158 * Math.pow(t - 1, 2),
   easeInOutBack: (t: number) => {
@@ -54,7 +56,7 @@ export const easings = {
   },
   elasticOut: (t: number) => {
     if (t === 0 || t === 1) return t;
-    return Math.pow(2, -10 * t) * Math.sin((t - 0.075) * (2 * Math.PI) / 0.3) + 1;
+    return Math.pow(2, -10 * t) * Math.sin(((t - 0.075) * (2 * Math.PI)) / 0.3) + 1;
   },
   bounceOut: (t: number) => {
     const n1 = 7.5625;
@@ -107,41 +109,44 @@ export const useAnimation = (
 
   const easingFn = typeof easing === 'function' ? easing : easings[easing];
 
-  const animate = useCallback((timestamp: number) => {
-    if (!startTimeRef.current) {
-      startTimeRef.current = timestamp + delay;
-    }
-
-    const elapsed = timestamp - startTimeRef.current;
-    
-    if (elapsed < 0) {
-      rafRef.current = requestAnimationFrame(animate);
-      return;
-    }
-
-    const progress = Math.min(elapsed / duration, 1);
-    const easedProgress = easingFn(progress);
-    const value = from + (to - from) * easedProgress;
-
-    setState({
-      isAnimating: progress < 1,
-      progress,
-      value,
-    });
-
-    onUpdate?.(value);
-
-    if (progress < 1) {
-      rafRef.current = requestAnimationFrame(animate);
-    } else {
-      // Animation complete
-      const metrics = animationMonitor.endAnimation(animationIdRef.current);
-      if (metrics && metrics.averageFps < 55) {
-        console.warn('Animation performance below 60fps:', metrics);
+  const animate = useCallback(
+    (timestamp: number) => {
+      if (!startTimeRef.current) {
+        startTimeRef.current = timestamp + delay;
       }
-      onComplete?.();
-    }
-  }, [from, to, duration, delay, easingFn, onUpdate, onComplete]);
+
+      const elapsed = timestamp - startTimeRef.current;
+
+      if (elapsed < 0) {
+        rafRef.current = requestAnimationFrame(animate);
+        return;
+      }
+
+      const progress = Math.min(elapsed / duration, 1);
+      const easedProgress = easingFn(progress);
+      const value = from + (to - from) * easedProgress;
+
+      setState({
+        isAnimating: progress < 1,
+        progress,
+        value,
+      });
+
+      onUpdate?.(value);
+
+      if (progress < 1) {
+        rafRef.current = requestAnimationFrame(animate);
+      } else {
+        // Animation complete
+        const metrics = animationMonitor.endAnimation(animationIdRef.current);
+        if (metrics && metrics.averageFps < 55) {
+          console.warn('Animation performance below 60fps:', metrics);
+        }
+        onComplete?.();
+      }
+    },
+    [from, to, duration, delay, easingFn, onUpdate, onComplete]
+  );
 
   const start = useCallback(() => {
     if (disabled || performanceHelpers.prefersReducedMotion()) {
@@ -214,12 +219,7 @@ export const useScrollAnimation = (
   ref: React.RefObject<HTMLElement>,
   options: UseScrollAnimationOptions = {}
 ) => {
-  const {
-    threshold = 0.1,
-    rootMargin = '0px',
-    triggerOnce = true,
-    ...animationOptions
-  } = options;
+  const { threshold = 0.1, rootMargin = '0px', triggerOnce = true, ...animationOptions } = options;
 
   const [isVisible, setIsVisible] = useState(false);
   const hasTriggeredRef = useRef(false);
@@ -231,7 +231,7 @@ export const useScrollAnimation = (
     const observer = new IntersectionObserver(
       ([entry]) => {
         const shouldTrigger = entry.isIntersecting && (!triggerOnce || !hasTriggeredRef.current);
-        
+
         if (shouldTrigger) {
           setIsVisible(true);
           hasTriggeredRef.current = true;
@@ -271,11 +271,7 @@ export const useParallax = (
   ref: React.RefObject<HTMLElement>,
   options: UseParallaxOptions = {}
 ) => {
-  const {
-    speed = 0.5,
-    offset = 0,
-    disabled = false,
-  } = options;
+  const { speed = 0.5, offset = 0, disabled = false } = options;
 
   const [translateY, setTranslateY] = useState(0);
   const rafRef = useRef<number>();
@@ -287,18 +283,18 @@ export const useParallax = (
     const rect = ref.current.getBoundingClientRect();
     const scrollY = window.scrollY;
     const windowHeight = window.innerHeight;
-    
+
     // Calculate if element is in viewport
     const elementTop = rect.top + scrollY;
     const elementBottom = elementTop + rect.height;
     const viewportTop = scrollY;
     const viewportBottom = scrollY + windowHeight;
-    
+
     if (elementBottom > viewportTop && elementTop < viewportBottom) {
       // Element is in viewport
       const relativeScroll = scrollY - elementTop + windowHeight;
       const parallaxOffset = relativeScroll * speed + offset;
-      
+
       setTranslateY(parallaxOffset);
     }
   }, [ref, speed, offset, disabled]);
@@ -320,7 +316,7 @@ export const useParallax = (
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('resize', updateParallax);
-    
+
     // Initial calculation
     updateParallax();
 
@@ -348,46 +344,44 @@ interface UseStaggerOptions extends UseAnimationOptions {
   staggerFrom?: 'start' | 'end' | 'center' | 'random';
 }
 
-export const useStagger = (
-  count: number,
-  options: UseStaggerOptions = {}
-) => {
-  const {
-    staggerDelay = 50,
-    staggerFrom = 'start',
-    ...animationOptions
-  } = options;
+export const useStagger = (count: number, options: UseStaggerOptions = {}) => {
+  const { staggerDelay = 50, staggerFrom = 'start', ...animationOptions } = options;
 
   const [animations, setAnimations] = useState<AnimationState[]>(
-    Array(count).fill(null).map(() => ({
-      isAnimating: false,
-      progress: 0,
-      value: 0,
-    }))
+    Array(count)
+      .fill(null)
+      .map(() => ({
+        isAnimating: false,
+        progress: 0,
+        value: 0,
+      }))
   );
 
-  const getStaggerIndex = useCallback((index: number): number => {
-    switch (staggerFrom) {
-      case 'end':
-        return count - 1 - index;
-      case 'center':
-        return Math.abs(index - Math.floor(count / 2));
-      case 'random':
-        return Math.floor(Math.random() * count);
-      default:
-        return index;
-    }
-  }, [count, staggerFrom]);
+  const getStaggerIndex = useCallback(
+    (index: number): number => {
+      switch (staggerFrom) {
+        case 'end':
+          return count - 1 - index;
+        case 'center':
+          return Math.abs(index - Math.floor(count / 2));
+        case 'random':
+          return Math.floor(Math.random() * count);
+        default:
+          return index;
+      }
+    },
+    [count, staggerFrom]
+  );
 
   const start = useCallback(() => {
     animations.forEach((_, index) => {
       const staggerIndex = getStaggerIndex(index);
       const delay = staggerIndex * staggerDelay;
-      
+
       setTimeout(() => {
         const animation = useAnimation(0, 1, {
           ...animationOptions,
-          onUpdate: (value) => {
+          onUpdate: value => {
             setAnimations(prev => {
               const newAnimations = [...prev];
               newAnimations[index] = {
@@ -399,7 +393,7 @@ export const useStagger = (
             });
           },
         });
-        
+
         animation.start();
       }, delay);
     });
@@ -419,18 +413,8 @@ interface UseCountOptions extends Omit<UseAnimationOptions, 'onUpdate'> {
   suffix?: string;
 }
 
-export const useCount = (
-  from: number,
-  to: number,
-  options: UseCountOptions = {}
-) => {
-  const {
-    decimals = 0,
-    separator = ',',
-    prefix = '',
-    suffix = '',
-    ...animationOptions
-  } = options;
+export const useCount = (from: number, to: number, options: UseCountOptions = {}) => {
+  const { decimals = 0, separator = ',', prefix = '', suffix = '', ...animationOptions } = options;
 
   const [displayValue, setDisplayValue] = useState(
     formatNumber(from, decimals, separator, prefix, suffix)
@@ -438,7 +422,7 @@ export const useCount = (
 
   const animation = useAnimation(from, to, {
     ...animationOptions,
-    onUpdate: (value) => {
+    onUpdate: value => {
       setDisplayValue(formatNumber(value, decimals, separator, prefix, suffix));
     },
   });
@@ -473,10 +457,7 @@ interface UseTypewriterOptions {
   onComplete?: () => void;
 }
 
-export const useTypewriter = (
-  text: string,
-  options: UseTypewriterOptions = {}
-) => {
+export const useTypewriter = (text: string, options: UseTypewriterOptions = {}) => {
   const {
     speed = 50,
     delay = 0,
@@ -496,12 +477,12 @@ export const useTypewriter = (
     if (indexRef.current < text.length) {
       setDisplayText(text.slice(0, indexRef.current + 1));
       indexRef.current++;
-      
+
       timeoutRef.current = setTimeout(type, speed);
     } else {
       setIsTyping(false);
       onComplete?.();
-      
+
       if (loop) {
         timeoutRef.current = setTimeout(() => {
           indexRef.current = 0;

@@ -11,7 +11,7 @@ import {
   NavigationKeyMap,
   KeyboardNavigationState,
   RovingTabIndexManager,
-  NavigationHistory
+  NavigationHistory,
 } from '../types';
 
 export class KeyboardNavigationManager {
@@ -31,7 +31,7 @@ export class KeyboardNavigationManager {
       customKeys: {},
       onNavigate: () => {},
       onActivate: () => {},
-      ...options
+      ...options,
     };
 
     this.keyMap = this.initializeKeyMap();
@@ -51,7 +51,7 @@ export class KeyboardNavigationManager {
       first: ['Home', 'g g'],
       last: ['End', 'G'],
       activate: ['Enter', 'Space'],
-      escape: ['Escape']
+      escape: ['Escape'],
     };
 
     // Vim 모드 추가 키 매핑
@@ -75,7 +75,7 @@ export class KeyboardNavigationManager {
       focusableElements: [],
       currentIndex: -1,
       mode: this.options.mode,
-      trapActive: false
+      trapActive: false,
     };
   }
 
@@ -108,7 +108,7 @@ export class KeyboardNavigationManager {
       childList: true,
       subtree: true,
       attributes: true,
-      attributeFilter: ['tabindex', 'disabled', 'aria-hidden']
+      attributeFilter: ['tabindex', 'disabled', 'aria-hidden'],
     });
   }
 
@@ -141,7 +141,7 @@ export class KeyboardNavigationManager {
 
   private getNavigationDirection(event: KeyboardEvent): NavigationDirection | null {
     const key = event.key;
-    
+
     for (const [direction, keys] of Object.entries(this.keyMap)) {
       if (keys.includes(key)) {
         return direction as NavigationDirection;
@@ -240,14 +240,16 @@ export class KeyboardNavigationManager {
       '[contenteditable]:not([contenteditable="false"])',
       'audio[controls]',
       'video[controls]',
-      'details>summary:first-of-type'
+      'details>summary:first-of-type',
     ].join(',');
 
     const elements = Array.from(document.querySelectorAll(selector)) as HTMLElement[];
-    
+
     this.state.focusableElements = elements.filter(element => {
-      return this.isFocusableElement(element) && 
-             (!this.options.skipDisabled || !this.isDisabled(element));
+      return (
+        this.isFocusableElement(element) &&
+        (!this.options.skipDisabled || !this.isDisabled(element))
+      );
     });
 
     // 현재 포커스된 요소의 인덱스 업데이트
@@ -259,10 +261,10 @@ export class KeyboardNavigationManager {
   private isFocusableElement(element: HTMLElement): boolean {
     // 숨겨진 요소 제외
     if (!this.isVisible(element)) return false;
-    
+
     // aria-hidden 요소 제외
     if (element.getAttribute('aria-hidden') === 'true') return false;
-    
+
     // 비활성화된 요소 제외 (옵션에 따라)
     if (this.options.skipDisabled && this.isDisabled(element)) return false;
 
@@ -272,7 +274,7 @@ export class KeyboardNavigationManager {
   private isVisible(element: HTMLElement): boolean {
     const rect = element.getBoundingClientRect();
     const style = window.getComputedStyle(element);
-    
+
     return (
       rect.width > 0 &&
       rect.height > 0 &&
@@ -294,7 +296,7 @@ export class KeyboardNavigationManager {
     const label = this.getElementLabel(element);
     const role = element.getAttribute('role') || element.tagName.toLowerCase();
     const message = `${label} ${role}${direction ? ` (${direction}으로 이동)` : ''}`;
-    
+
     announceFocusChange(element, message);
   }
 
@@ -320,30 +322,30 @@ export class KeyboardNavigationManager {
         if (existingIndex !== -1) {
           history.splice(existingIndex, 1);
         }
-        
+
         history.push(element);
-        
+
         // 최대 크기 제한
         if (history.length > maxHistorySize) {
           history.shift();
         }
       },
-      
+
       pop: (): HTMLElement | null => {
         return history.pop() || null;
       },
-      
+
       clear: () => {
         history.length = 0;
       },
-      
+
       canGoBack: (): boolean => {
         return history.length > 1;
       },
-      
+
       getCurrentPath: (): HTMLElement[] => {
         return [...history];
-      }
+      },
     };
   }
 
@@ -356,81 +358,81 @@ export class KeyboardNavigationManager {
         managedElements.add(element);
         element.tabIndex = activeElement === element ? 0 : -1;
       },
-      
+
       unregister: (element: HTMLElement) => {
         managedElements.delete(element);
         if (activeElement === element) {
           activeElement = null;
         }
       },
-      
+
       setActive: (element: HTMLElement) => {
         if (!managedElements.has(element)) return;
-        
+
         // 이전 활성 요소의 tabIndex를 -1로 설정
         if (activeElement && managedElements.has(activeElement)) {
           activeElement.tabIndex = -1;
         }
-        
+
         // 새 활성 요소의 tabIndex를 0으로 설정
         element.tabIndex = 0;
         activeElement = element;
       },
-      
+
       getActive: () => activeElement,
-      
+
       next: (): HTMLElement | null => {
         const elements = Array.from(managedElements);
         const currentIndex = activeElement ? elements.indexOf(activeElement) : -1;
         const nextIndex = (currentIndex + 1) % elements.length;
         const nextElement = elements[nextIndex] || null;
-        
+
         if (nextElement) {
           this.setActive(nextElement);
         }
-        
+
         return nextElement;
       },
-      
+
       previous: (): HTMLElement | null => {
         const elements = Array.from(managedElements);
         const currentIndex = activeElement ? elements.indexOf(activeElement) : -1;
         const prevIndex = currentIndex <= 0 ? elements.length - 1 : currentIndex - 1;
         const prevElement = elements[prevIndex] || null;
-        
+
         if (prevElement) {
           this.setActive(prevElement);
         }
-        
+
         return prevElement;
       },
-      
+
       first: (): HTMLElement | null => {
         const elements = Array.from(managedElements);
         const firstElement = elements[0] || null;
-        
+
         if (firstElement) {
           this.setActive(firstElement);
         }
-        
+
         return firstElement;
       },
-      
+
       last: (): HTMLElement | null => {
         const elements = Array.from(managedElements);
         const lastElement = elements[elements.length - 1] || null;
-        
+
         if (lastElement) {
           this.setActive(lastElement);
         }
-        
+
         return lastElement;
-      }
+      },
     };
   }
 
   // 공개 메서드들
-  
+
   enable(): void {
     this.state.enabled = true;
   }
@@ -470,7 +472,7 @@ export class KeyboardNavigationManager {
     for (const [event, listener] of this.listeners) {
       document.removeEventListener(event, listener);
     }
-    
+
     this.listeners.clear();
     this.history.clear();
     this.state.focusableElements.length = 0;

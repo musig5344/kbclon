@@ -5,36 +5,33 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 
-import { 
-  FocusManagementOptions, 
+import {
+  FocusManagementOptions,
   KeyboardNavigationOptions,
   ScreenReaderAnnouncement,
-  AccessibilitySettings
+  AccessibilitySettings,
 } from '../types';
 import { setAriaLive, setAriaLoading } from '../utils/aria';
 import { validateColorContrast, getHighContrastColor } from '../utils/colorContrast';
-import { 
-  FocusTrap, 
-  KeyboardNavigator, 
+import {
+  FocusTrap,
+  KeyboardNavigator,
   manageFocusRing,
   getFocusableElements,
-  setFocus
+  setFocus,
 } from '../utils/focusManagement';
-import { 
-  announce, 
-  announceUrgent, 
+import {
+  announce,
+  announceUrgent,
   formatAmountForScreenReader,
   formatDateForScreenReader,
-  formatAccountNumberForScreenReader
+  formatAccountNumberForScreenReader,
 } from '../utils/screenReader';
 
 /**
  * 포커스 트랩 훅
  */
-export function useFocusTrap(
-  isActive: boolean,
-  options?: FocusManagementOptions
-) {
+export function useFocusTrap(isActive: boolean, options?: FocusManagementOptions) {
   const containerRef = useRef<HTMLDivElement>(null);
   const focusTrapRef = useRef<FocusTrap | null>(null);
 
@@ -57,9 +54,7 @@ export function useFocusTrap(
 /**
  * 키보드 네비게이션 훅
  */
-export function useKeyboardNavigation(
-  options?: KeyboardNavigationOptions
-) {
+export function useKeyboardNavigation(options?: KeyboardNavigationOptions) {
   const containerRef = useRef<HTMLDivElement>(null);
   const navigatorRef = useRef<KeyboardNavigator | null>(null);
 
@@ -84,19 +79,19 @@ export function useKeyboardNavigation(
  * 스크린 리더 공지 훅
  */
 export function useAnnouncement() {
-  const makeAnnouncement = useCallback((
-    message: string,
-    options?: Partial<ScreenReaderAnnouncement>
-  ) => {
-    announce(message, options);
-  }, []);
+  const makeAnnouncement = useCallback(
+    (message: string, options?: Partial<ScreenReaderAnnouncement>) => {
+      announce(message, options);
+    },
+    []
+  );
 
-  const makeUrgentAnnouncement = useCallback((
-    message: string,
-    options?: Partial<ScreenReaderAnnouncement>
-  ) => {
-    announceUrgent(message, options);
-  }, []);
+  const makeUrgentAnnouncement = useCallback(
+    (message: string, options?: Partial<ScreenReaderAnnouncement>) => {
+      announceUrgent(message, options);
+    },
+    []
+  );
 
   return { announce: makeAnnouncement, announceUrgent: makeUrgentAnnouncement };
 }
@@ -104,9 +99,7 @@ export function useAnnouncement() {
 /**
  * ARIA 라이브 리전 훅
  */
-export function useAriaLive(
-  level: 'off' | 'polite' | 'assertive' = 'polite'
-) {
+export function useAriaLive(level: 'off' | 'polite' | 'assertive' = 'polite') {
   const regionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -150,20 +143,18 @@ export function useAccessibleLoading(isLoading: boolean) {
 export function useColorContrast() {
   const [contrastErrors, setContrastErrors] = useState<string[]>([]);
 
-  const checkContrast = useCallback((
-    foreground: string,
-    background: string,
-    fontSize?: number,
-    isBold?: boolean
-  ) => {
-    const result = validateColorContrast(foreground, background, fontSize, isBold);
-    
-    if (!result.passes.aa) {
-      setContrastErrors(prev => [...prev, result.recommendation || '']);
-    }
-    
-    return result;
-  }, []);
+  const checkContrast = useCallback(
+    (foreground: string, background: string, fontSize?: number, isBold?: boolean) => {
+      const result = validateColorContrast(foreground, background, fontSize, isBold);
+
+      if (!result.passes.aa) {
+        setContrastErrors(prev => [...prev, result.recommendation || '']);
+      }
+
+      return result;
+    },
+    []
+  );
 
   const clearErrors = useCallback(() => {
     setContrastErrors([]);
@@ -188,16 +179,14 @@ export function useFocusManagement() {
     }
   }, []);
 
-  const moveFocus = useCallback((
-    element: HTMLElement | string,
-    options?: { preventScroll?: boolean }
-  ) => {
-    return setFocus(element, options);
-  }, []);
+  const moveFocus = useCallback(
+    (element: HTMLElement | string, options?: { preventScroll?: boolean }) => {
+      return setFocus(element, options);
+    },
+    []
+  );
 
-  const getFocusable = useCallback((
-    container?: HTMLElement
-  ) => {
+  const getFocusable = useCallback((container?: HTMLElement) => {
     return getFocusableElements(container);
   }, []);
 
@@ -205,7 +194,7 @@ export function useFocusManagement() {
     saveFocus,
     restoreFocus,
     moveFocus,
-    getFocusable
+    getFocusable,
   };
 }
 
@@ -273,7 +262,7 @@ export function useAccessibilitySettings() {
     reduceMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
     fontSize: 'medium',
     keyboardNavigation: true,
-    screenReaderOptimized: false
+    screenReaderOptimized: false,
   });
 
   useEffect(() => {
@@ -296,7 +285,7 @@ export function useAccessibilitySettings() {
     setSettings(prev => ({
       ...prev,
       reduceMotion: motionQuery.matches,
-      highContrast: contrastQuery.matches
+      highContrast: contrastQuery.matches,
     }));
 
     return () => {
@@ -309,12 +298,15 @@ export function useAccessibilitySettings() {
     setSettings(prev => ({ ...prev, ...newSettings }));
   }, []);
 
-  const getHighContrastColorValue = useCallback((color: string) => {
-    if (settings.highContrast) {
-      return getHighContrastColor(color);
-    }
-    return color;
-  }, [settings.highContrast]);
+  const getHighContrastColorValue = useCallback(
+    (color: string) => {
+      if (settings.highContrast) {
+        return getHighContrastColor(color);
+      }
+      return color;
+    },
+    [settings.highContrast]
+  );
 
   return { settings, updateSettings, getHighContrastColor: getHighContrastColorValue };
 }
@@ -361,7 +353,9 @@ export function useTimeoutWarning(
     // 경고 타이머
     warningRef.current = setTimeout(() => {
       setIsWarning(true);
-      announceUrgent(`세션이 ${warningTime / 1000}초 후에 만료됩니다. 연장하시려면 활동을 계속하세요.`);
+      announceUrgent(
+        `세션이 ${warningTime / 1000}초 후에 만료됩니다. 연장하시려면 활동을 계속하세요.`
+      );
     }, timeoutDuration - warningTime);
 
     // 만료 타이머
@@ -401,10 +395,13 @@ export function useAccessibleError() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const { announceUrgent } = useAnnouncement();
 
-  const setError = useCallback((fieldId: string, message: string) => {
-    setErrors(prev => ({ ...prev, [fieldId]: message }));
-    announceUrgent(`오류: ${message}`);
-  }, [announceUrgent]);
+  const setError = useCallback(
+    (fieldId: string, message: string) => {
+      setErrors(prev => ({ ...prev, [fieldId]: message }));
+      announceUrgent(`오류: ${message}`);
+    },
+    [announceUrgent]
+  );
 
   const clearError = useCallback((fieldId: string) => {
     setErrors(prev => {
@@ -418,13 +415,16 @@ export function useAccessibleError() {
     setErrors({});
   }, []);
 
-  const getErrorProps = useCallback((fieldId: string) => {
-    const error = errors[fieldId];
-    return {
-      'aria-invalid': !!error,
-      'aria-errormessage': error ? `${fieldId}-error` : undefined
-    };
-  }, [errors]);
+  const getErrorProps = useCallback(
+    (fieldId: string) => {
+      const error = errors[fieldId];
+      return {
+        'aria-invalid': !!error,
+        'aria-errormessage': error ? `${fieldId}-error` : undefined,
+      };
+    },
+    [errors]
+  );
 
   return { errors, setError, clearError, clearAllErrors, getErrorProps };
 }

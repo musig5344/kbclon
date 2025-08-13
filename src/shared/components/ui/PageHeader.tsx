@@ -115,7 +115,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   backTo,
   leftActions = [],
   rightActions = [],
-  showBackButton = true
+  showBackButton = true,
 }) => {
   return (
     <Header>

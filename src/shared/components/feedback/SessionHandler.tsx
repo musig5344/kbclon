@@ -145,7 +145,7 @@ export const SessionHandler: React.FC<SessionHandlerProps> = ({
   warningTime = 60 * 1000, // 1 minute warning
   onSessionExpired,
   onExtendSession,
-  children
+  children,
 }) => {
   const [lastActivity, setLastActivity] = useState(Date.now());
   const [showWarning, setShowWarning] = useState(false);
@@ -223,20 +223,20 @@ export const SessionHandler: React.FC<SessionHandlerProps> = ({
   return (
     <>
       <ActivityTracker onActivity={handleActivity} />
-      
+
       {children}
 
       {showWarning && !isExpired && (
         <SessionWarningOverlay>
           <SessionWarningContainer>
             <WarningIcon>
-              <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+              <svg width='48' height='48' viewBox='0 0 24 24' fill='currentColor'>
+                <path d='M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z' />
               </svg>
             </WarningIcon>
 
             <WarningTitle>세션 만료 경고</WarningTitle>
-            
+
             <WarningMessage>
               보안을 위해 곧 자동으로 로그아웃됩니다.
               <br />
@@ -250,28 +250,23 @@ export const SessionHandler: React.FC<SessionHandlerProps> = ({
 
             <ButtonContainer>
               <Button
-                variant="primary"
-                size="medium"
+                variant='primary'
+                size='medium'
                 onClick={handleExtendSession}
                 disabled={isExtending}
                 fullWidth
               >
                 {isExtending ? (
                   <>
-                    <CircularProgress size="small" />
+                    <CircularProgress size='small' />
                     연장 중...
                   </>
                 ) : (
                   '연장하기'
                 )}
               </Button>
-              
-              <Button
-                variant="secondary"
-                size="medium"
-                onClick={handleLogout}
-                fullWidth
-              >
+
+              <Button variant='secondary' size='medium' onClick={handleLogout} fullWidth>
                 로그아웃
               </Button>
             </ButtonContainer>
@@ -283,13 +278,13 @@ export const SessionHandler: React.FC<SessionHandlerProps> = ({
         <SessionWarningOverlay>
           <SessionExpiredContainer>
             <ExpiredIcon>
-              <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+              <svg width='48' height='48' viewBox='0 0 24 24' fill='currentColor'>
+                <path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z' />
               </svg>
             </ExpiredIcon>
 
             <WarningTitle>세션이 만료되었습니다</WarningTitle>
-            
+
             <WarningMessage>
               보안을 위해 자동으로 로그아웃되었습니다.
               <br />
@@ -297,9 +292,9 @@ export const SessionHandler: React.FC<SessionHandlerProps> = ({
             </WarningMessage>
 
             <Button
-              variant="primary"
-              size="medium"
-              onClick={() => window.location.href = '/login'}
+              variant='primary'
+              size='medium'
+              onClick={() => (window.location.href = '/login')}
               fullWidth
             >
               로그인 페이지로
@@ -326,7 +321,7 @@ export const useSession = (timeout: number = 10 * 60 * 1000) => {
     const interval = setInterval(() => {
       const elapsed = Date.now() - lastActivity;
       const remaining = timeout - elapsed;
-      
+
       setTimeRemaining(Math.max(0, remaining));
       setIsActive(remaining > 0);
     }, 1000);
@@ -338,6 +333,6 @@ export const useSession = (timeout: number = 10 * 60 * 1000) => {
     isActive,
     timeRemaining,
     updateActivity,
-    percentRemaining: (timeRemaining / timeout) * 100
+    percentRemaining: (timeRemaining / timeout) * 100,
   };
 };

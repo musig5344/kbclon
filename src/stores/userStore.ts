@@ -32,7 +32,7 @@ export const useUserStore = (selector?: any): any => {
       checkUserSession: async () => {},
       signInWithPassword: auth.login,
       signUp: auth.signup,
-      signOut: auth.logout
+      signOut: auth.logout,
     };
   }
   // Handle selector-based access
@@ -47,7 +47,7 @@ export const useUserStore = (selector?: any): any => {
     checkUserSession: async () => {},
     signInWithPassword: auth.login,
     signUp: auth.signup,
-    signOut: auth.logout
+    signOut: auth.logout,
   };
   return selector(state);
 };

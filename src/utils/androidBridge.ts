@@ -1,18 +1,19 @@
 /**
  * 안드로이드 WebView 브릿지
- * 
+ *
  * 간단한 APK 배포를 위한 최소한의 안드로이드 연동
  */
 // 안드로이드 환경 감지
 export const isAndroidApp = () => {
-  return /Android/i.test(navigator.userAgent) && 
-         window.location.protocol === 'file:' ||
-         window.location.hostname === 'localhost';
+  return (
+    (/Android/i.test(navigator.userAgent) && window.location.protocol === 'file:') ||
+    window.location.hostname === 'localhost'
+  );
 };
 // 하드웨어 뒤로가기 버튼 처리
 export const setupAndroidBackButton = () => {
   if (!isAndroidApp()) return;
-  document.addEventListener('backbutton', (e) => {
+  document.addEventListener('backbutton', e => {
     e.preventDefault();
     // 모달이나 팝업이 열려있으면 닫기
     const modals = document.querySelectorAll('[data-modal="true"]');
@@ -21,8 +22,7 @@ export const setupAndroidBackButton = () => {
       return;
     }
     // 홈에서는 앱 종료 확인
-    if (window.location.pathname === '/dashboard' || 
-        window.location.pathname === '/') {
+    if (window.location.pathname === '/dashboard' || window.location.pathname === '/') {
       if (window.confirm('앱을 종료하시겠습니까?')) {
         (navigator as any).app?.exitApp();
       }
@@ -68,6 +68,6 @@ export const getAppInfo = () => {
     version: '1.0.0',
     buildDate: new Date().toISOString(),
     platform: isAndroidApp() ? 'android' : 'web',
-    userAgent: navigator.userAgent
+    userAgent: navigator.userAgent,
   };
 };

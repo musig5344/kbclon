@@ -3,14 +3,7 @@
  * 보안이 중요한 뱅킹 정보 입력을 위한 가상 키보드
  */
 
-import React, { 
-  useState, 
-  useRef, 
-  useEffect, 
-  useCallback,
-  KeyboardEvent,
-  useMemo
-} from 'react';
+import React, { useState, useRef, useEffect, useCallback, KeyboardEvent, useMemo } from 'react';
 
 import styled from 'styled-components';
 
@@ -31,11 +24,11 @@ const Overlay = styled.div<{ isOpen: boolean }>`
   bottom: 0;
   background: rgba(0, 0, 0, 0.5);
   z-index: 9999;
-  display: ${props => props.isOpen ? 'flex' : 'none'};
+  display: ${props => (props.isOpen ? 'flex' : 'none')};
   align-items: flex-end;
   justify-content: center;
   padding: 20px;
-  
+
   @media (max-width: 768px) {
     padding: 0;
     align-items: flex-end;
@@ -48,10 +41,10 @@ const KeyboardContainer = styled.div<{ type: string }>`
   box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.2);
   padding: 20px;
   width: 100%;
-  max-width: ${props => props.type === 'numeric' ? '400px' : '800px'};
+  max-width: ${props => (props.type === 'numeric' ? '400px' : '800px')};
   max-height: 80vh;
   overflow-y: auto;
-  
+
   @media (max-width: 768px) {
     border-radius: 16px 16px 0 0;
     max-width: 100%;
@@ -86,12 +79,12 @@ const CloseButton = styled.button`
   align-items: center;
   justify-content: center;
   color: #666;
-  
+
   &:hover {
     background: #e9ecef;
     color: #333;
   }
-  
+
   &:focus {
     outline: 2px solid #007bff;
     outline-offset: 2px;
@@ -113,14 +106,14 @@ const Display = styled.div<{ secured?: boolean }>`
   align-items: center;
   justify-content: center;
   font-family: 'Courier New', monospace;
-  letter-spacing: ${props => props.secured ? '4px' : '2px'};
+  letter-spacing: ${props => (props.secured ? '4px' : '2px')};
   color: #333;
 `;
 
 const KeyboardGrid = styled.div<{ layout: string }>`
   display: grid;
   gap: 8px;
-  
+
   ${props => {
     switch (props.layout) {
       case 'numeric':
@@ -142,7 +135,7 @@ const KeyboardGrid = styled.div<{ layout: string }>`
   }}
 `;
 
-const Key = styled.button<{ 
+const Key = styled.button<{
   variant?: 'primary' | 'secondary' | 'danger' | 'success';
   size?: 'small' | 'medium' | 'large';
   gridArea?: string;
@@ -150,15 +143,18 @@ const Key = styled.button<{
 }>`
   height: ${props => {
     switch (props.size) {
-      case 'small': return '40px';
-      case 'large': return '60px';
-      default: return '50px';
+      case 'small':
+        return '40px';
+      case 'large':
+        return '60px';
+      default:
+        return '50px';
     }
   }};
   border: 2px solid #ddd;
   border-radius: 8px;
   background: white;
-  font-size: ${props => props.size === 'small' ? '14px' : '16px'};
+  font-size: ${props => (props.size === 'small' ? '14px' : '16px')};
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s ease;
@@ -167,10 +163,12 @@ const Key = styled.button<{
   justify-content: center;
   position: relative;
   user-select: none;
-  
+
   ${props => props.gridArea && `grid-area: ${props.gridArea};`}
-  
-  ${props => props.isActive && `
+
+  ${props =>
+    props.isActive &&
+    `
     background: #e3f2fd;
     border-color: #1976d2;
     transform: scale(0.95);
@@ -181,24 +179,24 @@ const Key = styled.button<{
     border-color: #007bff;
     transform: translateY(-2px);
   }
-  
+
   &:active:not(:disabled) {
     transform: translateY(0) scale(0.95);
   }
-  
+
   &:focus {
     outline: 3px solid #007bff;
     outline-offset: 2px;
     border-color: #007bff;
   }
-  
+
   &:disabled {
     background: #f5f5f5;
     color: #ccc;
     cursor: not-allowed;
     border-color: #eee;
   }
-  
+
   ${props => {
     switch (props.variant) {
       case 'primary':
@@ -264,16 +262,16 @@ const ActionButton = styled.button<{ variant?: 'primary' | 'secondary' | 'danger
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s ease;
-  
+
   &:hover:not(:disabled) {
     transform: translateY(-2px);
   }
-  
+
   &:focus {
     outline: 2px solid #007bff;
     outline-offset: 2px;
   }
-  
+
   ${props => {
     switch (props.variant) {
       case 'primary':
@@ -332,13 +330,13 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
   onComplete,
   isOpen,
   onClose,
-  className
+  className,
 }) => {
   const [inputValue, setInputValue] = useState('');
   const [activeKey, setActiveKey] = useState<string | null>(null);
   const [capsLock, setCapsLock] = useState(false);
   const [shift, setShift] = useState(false);
-  
+
   const keyboardRef = useRef<HTMLDivElement>(null);
   const displayRef = useRef<HTMLDivElement>(null);
 
@@ -347,7 +345,7 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
     switch (type) {
       case 'numeric': {
         const numbers = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
-        
+
         if (scramble) {
           // 숫자 스크램블
           const shuffled = [...numbers];
@@ -359,121 +357,144 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
             ...shuffled.slice(0, 9),
             { key: 'clear', label: '지우기', variant: 'danger' as const },
             shuffled[9],
-            { key: 'backspace', label: '⌫', variant: 'secondary' as const }
+            { key: 'backspace', label: '⌫', variant: 'secondary' as const },
           ];
         }
-        
+
         return [
-          '1', '2', '3',
-          '4', '5', '6', 
-          '7', '8', '9',
+          '1',
+          '2',
+          '3',
+          '4',
+          '5',
+          '6',
+          '7',
+          '8',
+          '9',
           { key: 'clear', label: '지우기', variant: 'danger' as const },
           '0',
-          { key: 'backspace', label: '⌫', variant: 'secondary' as const }
+          { key: 'backspace', label: '⌫', variant: 'secondary' as const },
         ];
       }
-      
+
       case 'password': {
         const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
-        const shuffled = scramble ? chars.split('').sort(() => Math.random() - 0.5) : chars.split('');
-        
+        const shuffled = scramble
+          ? chars.split('').sort(() => Math.random() - 0.5)
+          : chars.split('');
+
         return [
           ...shuffled.slice(0, 36),
           { key: 'shift', label: '⇧', variant: 'secondary' as const },
           { key: 'caps', label: '⇪', variant: 'secondary' as const },
           { key: 'backspace', label: '⌫', variant: 'secondary' as const },
-          { key: 'clear', label: '지우기', variant: 'danger' as const }
+          { key: 'clear', label: '지우기', variant: 'danger' as const },
         ];
       }
-      
+
       case 'custom':
       case 'text':
       default: {
         const qwerty = [
           ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
           ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
-          ['z', 'x', 'c', 'v', 'b', 'n', 'm']
+          ['z', 'x', 'c', 'v', 'b', 'n', 'm'],
         ];
-        
+
         if (layout === 'banking') {
           // 뱅킹 특화 레이아웃
           return [
-            '1', '2', '3', { key: 'backspace', label: '⌫', variant: 'secondary' as const },
-            '4', '5', '6', { key: 'clear', label: '지우기', variant: 'danger' as const },
-            '7', '8', '9', { key: 'space', label: '공백', variant: 'secondary' as const },
-            '*', '0', '#', { key: 'enter', label: '확인', variant: 'primary' as const }
+            '1',
+            '2',
+            '3',
+            { key: 'backspace', label: '⌫', variant: 'secondary' as const },
+            '4',
+            '5',
+            '6',
+            { key: 'clear', label: '지우기', variant: 'danger' as const },
+            '7',
+            '8',
+            '9',
+            { key: 'space', label: '공백', variant: 'secondary' as const },
+            '*',
+            '0',
+            '#',
+            { key: 'enter', label: '확인', variant: 'primary' as const },
           ];
         }
-        
+
         return qwerty.flat();
       }
     }
   }, [type, layout, scramble]);
 
   // 키 입력 처리
-  const handleKeyPress = useCallback((key: string | { key: string; label: string; variant?: string }) => {
-    const keyValue = typeof key === 'string' ? key : key.key;
-    
-    setActiveKey(keyValue);
-    setTimeout(() => setActiveKey(null), 150);
-    
-    switch (keyValue) {
-      case 'backspace':
-        if (inputValue.length > 0) {
-          const newValue = inputValue.slice(0, -1);
-          setInputValue(newValue);
-          onInput?.(newValue);
-        }
-        break;
-        
-      case 'clear':
-        setInputValue('');
-        onInput?.('');
-        break;
-        
-      case 'enter':
-        if (inputValue && onComplete) {
-          onComplete(inputValue);
-        }
-        break;
-        
-      case 'space':
-        if (!maxLength || inputValue.length < maxLength) {
-          const newValue = inputValue + ' ';
-          setInputValue(newValue);
-          onInput?.(newValue);
-        }
-        break;
-        
-      case 'shift':
-        setShift(!shift);
-        break;
-        
-      case 'caps':
-        setCapsLock(!capsLock);
-        setShift(false);
-        break;
-        
-      default:
-        if (!maxLength || inputValue.length < maxLength) {
-          let char = typeof key === 'string' ? key : keyValue;
-          
-          if (shift || capsLock) {
-            char = char.toUpperCase();
+  const handleKeyPress = useCallback(
+    (key: string | { key: string; label: string; variant?: string }) => {
+      const keyValue = typeof key === 'string' ? key : key.key;
+
+      setActiveKey(keyValue);
+      setTimeout(() => setActiveKey(null), 150);
+
+      switch (keyValue) {
+        case 'backspace':
+          if (inputValue.length > 0) {
+            const newValue = inputValue.slice(0, -1);
+            setInputValue(newValue);
+            onInput?.(newValue);
           }
-          
-          const newValue = inputValue + char;
-          setInputValue(newValue);
-          onInput?.(newValue);
-          
-          // Shift는 한 번 누르면 해제
-          if (shift && !capsLock) {
-            setShift(false);
+          break;
+
+        case 'clear':
+          setInputValue('');
+          onInput?.('');
+          break;
+
+        case 'enter':
+          if (inputValue && onComplete) {
+            onComplete(inputValue);
           }
-        }
-        break;
-    }
-  }, [inputValue, maxLength, onInput, onComplete, shift, capsLock]);
+          break;
+
+        case 'space':
+          if (!maxLength || inputValue.length < maxLength) {
+            const newValue = inputValue + ' ';
+            setInputValue(newValue);
+            onInput?.(newValue);
+          }
+          break;
+
+        case 'shift':
+          setShift(!shift);
+          break;
+
+        case 'caps':
+          setCapsLock(!capsLock);
+          setShift(false);
+          break;
+
+        default:
+          if (!maxLength || inputValue.length < maxLength) {
+            let char = typeof key === 'string' ? key : keyValue;
+
+            if (shift || capsLock) {
+              char = char.toUpperCase();
+            }
+
+            const newValue = inputValue + char;
+            setInputValue(newValue);
+            onInput?.(newValue);
+
+            // Shift는 한 번 누르면 해제
+            if (shift && !capsLock) {
+              setShift(false);
+            }
+          }
+          break;
+      }
+    },
+    [inputValue, maxLength, onInput, onComplete, shift, capsLock]
+  );
 
   // 실제 키보드 입력 비활성화
   const handleKeyDown = useCallback((event: KeyboardEvent) => {
@@ -486,9 +507,9 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
       globalKeyboardTrapManager.addTrap(keyboardRef.current, {
         autoFocus: true,
         escapeDeactivates: true,
-        returnFocusOnDeactivate: true
+        returnFocusOnDeactivate: true,
       });
-      
+
       return () => {
         if (keyboardRef.current) {
           globalKeyboardTrapManager.removeTrap(keyboardRef.current);
@@ -537,20 +558,22 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
             {type === 'text' && '텍스트 입력'}
             {type === 'custom' && '보안 입력'}
           </Title>
-          <CloseButton onClick={onClose} aria-label="키보드 닫기">
+          <CloseButton onClick={onClose} aria-label='키보드 닫기'>
             ✕
           </CloseButton>
         </Header>
 
-        <Display ref={displayRef} secured={type === 'password'} aria-live="polite">
+        <Display ref={displayRef} secured={type === 'password'} aria-live='polite'>
           {displayValue}
         </Display>
 
         <KeyboardGrid layout={layout}>
           {keyLayout.map((key, index) => {
             const keyData = typeof key === 'string' ? { key, label: key } : key;
-            const isSpecialKey = ['backspace', 'clear', 'enter', 'shift', 'caps', 'space'].includes(keyData.key);
-            
+            const isSpecialKey = ['backspace', 'clear', 'enter', 'shift', 'caps', 'space'].includes(
+              keyData.key
+            );
+
             return (
               <Key
                 key={`${keyData.key}-${index}`}
@@ -558,36 +581,38 @@ export const VirtualKeyboard: React.FC<VirtualKeyboardProps> = ({
                 size={isSpecialKey ? 'medium' : 'medium'}
                 isActive={activeKey === keyData.key}
                 onClick={() => handleKeyPress(key)}
-                aria-label={keyData.key === 'backspace' ? '지우기' : 
-                           keyData.key === 'clear' ? '전체 지우기' :
-                           keyData.key === 'enter' ? '입력 완료' :
-                           keyData.key === 'space' ? '공백' :
-                           keyData.label}
+                aria-label={
+                  keyData.key === 'backspace'
+                    ? '지우기'
+                    : keyData.key === 'clear'
+                      ? '전체 지우기'
+                      : keyData.key === 'enter'
+                        ? '입력 완료'
+                        : keyData.key === 'space'
+                          ? '공백'
+                          : keyData.label
+                }
               >
-                {keyData.key === 'shift' && shift ? '⇧' : 
-                 keyData.key === 'caps' && capsLock ? '⇪' : 
-                 keyData.label}
+                {keyData.key === 'shift' && shift
+                  ? '⇧'
+                  : keyData.key === 'caps' && capsLock
+                    ? '⇪'
+                    : keyData.label}
               </Key>
             );
           })}
         </KeyboardGrid>
 
         <Actions>
-          <ActionButton variant="secondary" onClick={handleCancel}>
+          <ActionButton variant='secondary' onClick={handleCancel}>
             취소
           </ActionButton>
-          <ActionButton 
-            variant="primary" 
-            onClick={handleComplete}
-            disabled={!inputValue}
-          >
+          <ActionButton variant='primary' onClick={handleComplete} disabled={!inputValue}>
             완료
           </ActionButton>
         </Actions>
 
-        <SecurityNotice>
-          🔒 보안을 위해 가상 키보드를 사용하여 입력하세요
-        </SecurityNotice>
+        <SecurityNotice>🔒 보안을 위해 가상 키보드를 사용하여 입력하세요</SecurityNotice>
       </KeyboardContainer>
     </Overlay>
   );

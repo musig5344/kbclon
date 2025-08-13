@@ -106,13 +106,13 @@ export class TouchTargetValidator {
   validateElement(element: HTMLElement): TouchTargetValidation {
     const rect = element.getBoundingClientRect();
     const computedStyle = window.getComputedStyle(element);
-    
+
     // Get actual clickable area including padding
     const paddingLeft = parseInt(computedStyle.paddingLeft, 10) || 0;
     const paddingRight = parseInt(computedStyle.paddingRight, 10) || 0;
     const paddingTop = parseInt(computedStyle.paddingTop, 10) || 0;
     const paddingBottom = parseInt(computedStyle.paddingBottom, 10) || 0;
-    
+
     const actualSize = {
       width: rect.width + paddingLeft + paddingRight,
       height: rect.height + paddingTop + paddingBottom,
@@ -124,9 +124,7 @@ export class TouchTargetValidator {
       height: Math.max(minTargetSize, actualSize.height),
     };
 
-    const needsExpansion = 
-      actualSize.width < minTargetSize || 
-      actualSize.height < minTargetSize;
+    const needsExpansion = actualSize.width < minTargetSize || actualSize.height < minTargetSize;
 
     const expansionAmount = {
       horizontal: Math.max(0, minTargetSize - actualSize.width) / 2,
@@ -153,7 +151,9 @@ export class TouchTargetValidator {
     // Validate spacing
     if (!hasAdequateSpacing) {
       violations.push('Insufficient spacing between interactive elements');
-      recommendations.push(`Ensure at least ${this.spacingCalculator.calculateMinSpacing()}px spacing`);
+      recommendations.push(
+        `Ensure at least ${this.spacingCalculator.calculateMinSpacing()}px spacing`
+      );
     }
 
     // Add contextual recommendations
@@ -180,7 +180,7 @@ export class TouchTargetValidator {
   private findNearbyInteractiveElements(element: HTMLElement): HTMLElement[] {
     const rect = element.getBoundingClientRect();
     const searchRadius = WCAG_TOUCH_CONSTANTS.MIN_TARGET_SIZE + WCAG_TOUCH_CONSTANTS.MIN_SPACING;
-    
+
     const interactiveSelectors = [
       'button',
       'input[type="button"]',
@@ -240,9 +240,7 @@ export class TouchTargetValidator {
     const centerX2 = rect2.left + rect2.width / 2;
     const centerY2 = rect2.top + rect2.height / 2;
 
-    return Math.sqrt(
-      Math.pow(centerX2 - centerX1, 2) + Math.pow(centerY2 - centerY1, 2)
-    );
+    return Math.sqrt(Math.pow(centerX2 - centerX1, 2) + Math.pow(centerY2 - centerY1, 2));
   }
 
   private calculateEdgeDistance(rect1: DOMRect, rect2: DOMRect): number {
@@ -266,7 +264,7 @@ export class TouchTargetValidator {
     const importantTypes = ['submit', 'button'];
     const importantClasses = ['primary', 'cta', 'submit', 'confirm', 'buy'];
     const importantRoles = ['button'];
-    
+
     const tagName = element.tagName.toLowerCase();
     const type = element.getAttribute('type')?.toLowerCase();
     const className = element.className.toLowerCase();
@@ -290,12 +288,15 @@ export class TouchAreaExpander {
     this.spacingCalculator = new TouchTargetSpacingCalculator(density);
   }
 
-  expandElement(element: HTMLElement, options: {
-    minSize?: number;
-    respectBounds?: boolean;
-    useOverlay?: boolean;
-    preserveVisual?: boolean;
-  } = {}): boolean {
+  expandElement(
+    element: HTMLElement,
+    options: {
+      minSize?: number;
+      respectBounds?: boolean;
+      useOverlay?: boolean;
+      preserveVisual?: boolean;
+    } = {}
+  ): boolean {
     if (this.expandedElements.has(element)) {
       return false; // Already expanded
     }
@@ -321,7 +322,7 @@ export class TouchAreaExpander {
   }
 
   private createTouchOverlay(
-    element: HTMLElement, 
+    element: HTMLElement,
     expansion: { horizontal: number; vertical: number },
     minSize: number
   ): void {
@@ -347,25 +348,29 @@ export class TouchAreaExpander {
     }
 
     // Forward events to original element
-    overlay.addEventListener('touchstart', (e) => {
-      element.dispatchEvent(new TouchEvent('touchstart', {
-        bubbles: true,
-        cancelable: true,
-        touches: e.touches,
-        changedTouches: e.changedTouches,
-      }));
+    overlay.addEventListener('touchstart', e => {
+      element.dispatchEvent(
+        new TouchEvent('touchstart', {
+          bubbles: true,
+          cancelable: true,
+          touches: e.touches,
+          changedTouches: e.changedTouches,
+        })
+      );
     });
 
-    overlay.addEventListener('touchend', (e) => {
-      element.dispatchEvent(new TouchEvent('touchend', {
-        bubbles: true,
-        cancelable: true,
-        touches: e.touches,
-        changedTouches: e.changedTouches,
-      }));
+    overlay.addEventListener('touchend', e => {
+      element.dispatchEvent(
+        new TouchEvent('touchend', {
+          bubbles: true,
+          cancelable: true,
+          touches: e.touches,
+          changedTouches: e.changedTouches,
+        })
+      );
     });
 
-    overlay.addEventListener('click', (e) => {
+    overlay.addEventListener('click', e => {
       e.stopPropagation();
       element.click();
     });
@@ -379,12 +384,10 @@ export class TouchAreaExpander {
     minSize: number
   ): void {
     const currentStyle = getComputedStyle(element);
-    const currentPaddingX = 
-      parseInt(currentStyle.paddingLeft, 10) + 
-      parseInt(currentStyle.paddingRight, 10);
-    const currentPaddingY = 
-      parseInt(currentStyle.paddingTop, 10) + 
-      parseInt(currentStyle.paddingBottom, 10);
+    const currentPaddingX =
+      parseInt(currentStyle.paddingLeft, 10) + parseInt(currentStyle.paddingRight, 10);
+    const currentPaddingY =
+      parseInt(currentStyle.paddingTop, 10) + parseInt(currentStyle.paddingBottom, 10);
 
     element.style.minWidth = `${minSize}px`;
     element.style.minHeight = `${minSize}px`;
@@ -395,17 +398,19 @@ export class TouchAreaExpander {
   }
 
   expandAllInContainer(container: HTMLElement): number {
-    const interactiveElements = container.querySelectorAll([
-      'button',
-      'input[type="button"]',
-      'input[type="submit"]',
-      'input[type="reset"]',
-      'input[type="checkbox"]',
-      'input[type="radio"]',
-      'a[href]',
-      '[role="button"]',
-      '[onclick]',
-    ].join(',')) as NodeListOf<HTMLElement>;
+    const interactiveElements = container.querySelectorAll(
+      [
+        'button',
+        'input[type="button"]',
+        'input[type="submit"]',
+        'input[type="reset"]',
+        'input[type="checkbox"]',
+        'input[type="radio"]',
+        'a[href]',
+        '[role="button"]',
+        '[onclick]',
+      ].join(',')
+    ) as NodeListOf<HTMLElement>;
 
     let expandedCount = 0;
     for (const element of interactiveElements) {
@@ -461,12 +466,12 @@ export class InteractiveElementAuditor {
 
     for (const element of elements) {
       const validation = this.validator.validateElement(element);
-      
+
       if (validation.isValid) {
         validElements++;
       } else {
         let priority: 'critical' | 'high' | 'medium' | 'low' = 'medium';
-        
+
         // Determine priority based on element type and violations
         if (this.isCriticalElement(element)) {
           priority = 'critical';
@@ -485,8 +490,10 @@ export class InteractiveElementAuditor {
         // Update counters
         if (validation.needsExpansion) needsExpansion++;
         if (!validation.hasAdequateSpacing) inadequateSpacing++;
-        if (validation.actualSize.width < WCAG_TOUCH_CONSTANTS.MIN_TARGET_SIZE ||
-            validation.actualSize.height < WCAG_TOUCH_CONSTANTS.MIN_TARGET_SIZE) {
+        if (
+          validation.actualSize.width < WCAG_TOUCH_CONSTANTS.MIN_TARGET_SIZE ||
+          validation.actualSize.height < WCAG_TOUCH_CONSTANTS.MIN_TARGET_SIZE
+        ) {
           tooSmall++;
         }
       }
@@ -534,7 +541,7 @@ export class InteractiveElementAuditor {
       ...document,
       querySelectorAll: (selector: string) => container.querySelectorAll(selector),
     };
-    
+
     // This is a simplified audit for container scope
     return this.auditPage();
   }
@@ -543,7 +550,7 @@ export class InteractiveElementAuditor {
     const criticalTypes = ['submit'];
     const criticalClasses = ['primary', 'cta', 'submit', 'buy', 'confirm'];
     const criticalIds = ['submit', 'login', 'checkout', 'buy-now'];
-    
+
     const tagName = element.tagName.toLowerCase();
     const type = element.getAttribute('type')?.toLowerCase();
     const className = element.className.toLowerCase();
@@ -560,40 +567,40 @@ export class InteractiveElementAuditor {
 
   generateReport(auditResult: TouchTargetAuditResult): string {
     const { totalElements, validElements, complianceRate, violations, summary } = auditResult;
-    
+
     let report = `Touch Target Accessibility Audit Report\n`;
     report += `=====================================\n\n`;
     report += `Summary:\n`;
     report += `- Total interactive elements: ${totalElements}\n`;
     report += `- Valid elements: ${validElements}\n`;
     report += `- Compliance rate: ${complianceRate.toFixed(1)}%\n\n`;
-    
+
     if (violations.length > 0) {
       report += `Violations by Priority:\n`;
       const criticalCount = violations.filter(v => v.priority === 'critical').length;
       const highCount = violations.filter(v => v.priority === 'high').length;
       const mediumCount = violations.filter(v => v.priority === 'medium').length;
       const lowCount = violations.filter(v => v.priority === 'low').length;
-      
+
       if (criticalCount > 0) report += `- Critical: ${criticalCount}\n`;
       if (highCount > 0) report += `- High: ${highCount}\n`;
       if (mediumCount > 0) report += `- Medium: ${mediumCount}\n`;
       if (lowCount > 0) report += `- Low: ${lowCount}\n`;
       report += `\n`;
     }
-    
+
     report += `Issues Found:\n`;
     report += `- Too small: ${summary.tooSmall}\n`;
     report += `- Inadequate spacing: ${summary.inadequateSpacing}\n`;
     report += `- Need expansion: ${summary.needsExpansion}\n\n`;
-    
+
     if (summary.recommendations.length > 0) {
       report += `Recommendations:\n`;
       summary.recommendations.forEach(rec => {
         report += `- ${rec}\n`;
       });
     }
-    
+
     return report;
   }
 }
@@ -606,11 +613,10 @@ export const touchTargetUtils = {
   spacingCalculator: new TouchTargetSpacingCalculator(),
 
   // Quick validation
-  validateElement: (element: HTMLElement) => 
-    touchTargetUtils.validator.validateElement(element),
+  validateElement: (element: HTMLElement) => touchTargetUtils.validator.validateElement(element),
 
   // Quick expansion
-  expandElement: (element: HTMLElement) => 
+  expandElement: (element: HTMLElement) =>
     touchTargetUtils.expander.expandElement(element, { useOverlay: true }),
 
   // Quick audit
@@ -626,7 +632,7 @@ export const touchTargetUtils = {
   // Development helper
   highlightProblematicElements: () => {
     const auditResult = touchTargetUtils.auditor.auditPage();
-    
+
     auditResult.violations.forEach(({ element, priority }) => {
       const color = {
         critical: 'red',
@@ -634,19 +640,15 @@ export const touchTargetUtils = {
         medium: 'yellow',
         low: 'lightblue',
       }[priority];
-      
+
       element.style.outline = `2px solid ${color}`;
       element.style.outlineOffset = '2px';
       element.title = `Touch target issue: ${priority} priority`;
     });
-    
+
     return auditResult;
   },
 };
 
 // Type exports
-export type {
-  TouchTargetValidation,
-  TouchTargetAuditResult,
-  TouchDensity,
-};
+export type { TouchTargetValidation, TouchTargetAuditResult, TouchDensity };

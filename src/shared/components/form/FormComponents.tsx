@@ -8,7 +8,7 @@ export const FormRow = styled.div<{ marginBottom?: string }>`
   }
 `;
 export const FormLabel = styled.label.attrs<{ required?: boolean }>({
-  ...(props => props.required && { 'aria-required': 'true' })
+  ...props => props.required && { 'aria-required': 'true' },
 })<{ required?: boolean }>`
   display: block;
   font-size: 16px;
@@ -16,7 +16,9 @@ export const FormLabel = styled.label.attrs<{ required?: boolean }>({
   color: #26282c;
   margin-bottom: 8px;
   font-family: 'KBFGText', sans-serif;
-  ${props => props.required && `
+  ${props =>
+    props.required &&
+    `
     &::after {
       content: '*';
       color: #ff4444;
@@ -37,14 +39,14 @@ export const FormLabel = styled.label.attrs<{ required?: boolean }>({
     }
   `}
 `;
-export const FormInput = styled.input.attrs<{ 
+export const FormInput = styled.input.attrs<{
   error?: boolean;
   success?: boolean;
   variant?: 'default' | 'rounded';
 }>(props => ({
   'aria-invalid': props.error ? 'true' : 'false',
-  'aria-describedby': props.error ? `${props.id}-error` : undefined
-}))<{ 
+  'aria-describedby': props.error ? `${props.id}-error` : undefined,
+}))<{
   error?: boolean;
   success?: boolean;
   variant?: 'default' | 'rounded';
@@ -52,21 +54,15 @@ export const FormInput = styled.input.attrs<{
   width: 100%;
   height: 48px;
   padding: 12px 16px;
-  border: 1px solid ${props => 
-    props.error ? '#ff4444' : 
-    props.success ? '#4CAF50' : 
-    '#ebeef0'
-  };
-  border-radius: ${props => props.variant === 'rounded' ? '24px' : '8px'};
+  border: 1px solid ${props => (props.error ? '#ff4444' : props.success ? '#4CAF50' : '#ebeef0')};
+  border-radius: ${props => (props.variant === 'rounded' ? '24px' : '8px')};
   font-size: 16px;
   font-family: 'KBFGText', sans-serif;
   background-color: ${tokens.colors.white};
   transition: border-color 0.2s ease;
   &:focus {
     outline: none;
-    border-color: ${props => 
-      props.error ? '#ff4444' : '#FFD338'
-    };
+    border-color: ${props => (props.error ? '#ff4444' : '#FFD338')};
   }
   &::placeholder {
     color: #999999;
@@ -77,7 +73,7 @@ export const FormInput = styled.input.attrs<{
     cursor: not-allowed;
   }
 `;
-export const FormTextArea = styled.textarea<{ 
+export const FormTextArea = styled.textarea<{
   error?: boolean;
   success?: boolean;
   minHeight?: string;
@@ -85,11 +81,7 @@ export const FormTextArea = styled.textarea<{
   width: 100%;
   min-height: ${props => props.minHeight || '100px'};
   padding: 12px 16px;
-  border: 1px solid ${props => 
-    props.error ? '#ff4444' : 
-    props.success ? '#4CAF50' : 
-    '#ebeef0'
-  };
+  border: 1px solid ${props => (props.error ? '#ff4444' : props.success ? '#4CAF50' : '#ebeef0')};
   border-radius: 8px;
   font-size: 16px;
   font-family: 'KBFGText', sans-serif;
@@ -98,9 +90,7 @@ export const FormTextArea = styled.textarea<{
   resize: vertical;
   &:focus {
     outline: none;
-    border-color: ${props => 
-      props.error ? '#ff4444' : '#FFD338'
-    };
+    border-color: ${props => (props.error ? '#ff4444' : '#FFD338')};
   }
   &::placeholder {
     color: #999999;
@@ -115,7 +105,7 @@ export const FormSelect = styled.select<{ error?: boolean }>`
   width: 100%;
   height: 48px;
   padding: 12px 16px;
-  border: 1px solid ${props => props.error ? '#ff4444' : '#ebeef0'};
+  border: 1px solid ${props => (props.error ? '#ff4444' : '#ebeef0')};
   border-radius: 8px;
   font-size: 16px;
   font-family: 'KBFGText', sans-serif;
@@ -128,7 +118,7 @@ export const FormSelect = styled.select<{ error?: boolean }>`
   cursor: pointer;
   &:focus {
     outline: none;
-    border-color: ${props => props.error ? '#ff4444' : '#FFD338'};
+    border-color: ${props => (props.error ? '#ff4444' : '#FFD338')};
   }
   &:disabled {
     background-color: #f5f6f8;
@@ -143,7 +133,7 @@ export const InputWithButton = styled.div`
 `;
 export const InputButton = styled.button<{ position?: 'left' | 'right' }>`
   position: absolute;
-  ${props => props.position === 'left' ? 'left: 12px;' : 'right: 12px;'}
+  ${props => (props.position === 'left' ? 'left: 12px;' : 'right: 12px;')}
   background: none;
   border: none;
   padding: 4px;
@@ -164,7 +154,7 @@ export const InputButton = styled.button<{ position?: 'left' | 'right' }>`
 `;
 export const FormError = styled.div.attrs({
   role: 'alert',
-  'aria-live': 'polite'
+  'aria-live': 'polite',
 })`
   margin-top: 4px;
   font-size: 14px;
@@ -173,15 +163,15 @@ export const FormError = styled.div.attrs({
 `;
 export const FormSuccess = styled.div.attrs({
   role: 'status',
-  'aria-live': 'polite'
+  'aria-live': 'polite',
 })`
   margin-top: 4px;
   font-size: 14px;
-  color: #4CAF50;
+  color: #4caf50;
   font-family: 'KBFGText', sans-serif;
 `;
 export const FormHelper = styled.div.attrs({
-  role: 'note'
+  role: 'note',
 })`
   margin-top: 4px;
   font-size: 14px;
@@ -210,9 +200,9 @@ export const RadioItem = styled.label`
   font-size: 16px;
   color: #26282c;
   font-family: 'KBFGText', sans-serif;
-  input[type="radio"] {
+  input[type='radio'] {
     margin: 0;
-    accent-color: #FFD338;
+    accent-color: #ffd338;
   }
 `;
 export const CheckboxGroup = styled.div<{ direction?: 'row' | 'column'; gap?: string }>`
@@ -228,9 +218,9 @@ export const CheckboxItem = styled.label`
   font-size: 16px;
   color: #26282c;
   font-family: 'KBFGText', sans-serif;
-  input[type="checkbox"] {
+  input[type='checkbox'] {
     margin: 0;
-    accent-color: #FFD338;
+    accent-color: #ffd338;
   }
 `;
 export const FieldSet = styled.fieldset`

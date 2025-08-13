@@ -21,14 +21,14 @@ export interface GestureEvent {
   data?: any;
 }
 
-export type GestureType = 
-  | 'tap' 
-  | 'double-tap' 
-  | 'long-press' 
-  | 'swipe' 
-  | 'pinch' 
-  | 'rotate' 
-  | 'pan' 
+export type GestureType =
+  | 'tap'
+  | 'double-tap'
+  | 'long-press'
+  | 'swipe'
+  | 'pinch'
+  | 'rotate'
+  | 'pan'
   | 'edge-swipe'
   | 'pull-to-refresh'
   | 'shake'
@@ -150,7 +150,7 @@ export class GestureRecognizer {
     document.addEventListener('touchmove', this.handleTouchMove.bind(this), { passive: false });
     document.addEventListener('touchend', this.handleTouchEnd.bind(this), { passive: false });
     document.addEventListener('touchcancel', this.handleTouchCancel.bind(this), { passive: false });
-    
+
     // Device motion for shake detection
     if (window.DeviceMotionEvent) {
       window.addEventListener('devicemotion', this.handleDeviceMotion.bind(this));
@@ -160,8 +160,8 @@ export class GestureRecognizer {
   private setupSecurityMeasures(): void {
     // Prevent default behaviors for sensitive areas
     if (this.config.security.preventAccidental) {
-      document.addEventListener('contextmenu', (e) => e.preventDefault());
-      document.addEventListener('selectstart', (e) => {
+      document.addEventListener('contextmenu', e => e.preventDefault());
+      document.addEventListener('selectstart', e => {
         const target = e.target as HTMLElement;
         if (target.closest('[data-sensitive]')) {
           e.preventDefault();
@@ -176,7 +176,7 @@ export class GestureRecognizer {
     const touches = this.extractTouchPoints(event);
     this.touchHistory = [...touches];
     this.gestureStartTime = Date.now();
-    
+
     // Start gesture recognition based on touch count
     if (touches.length === 1) {
       this.recognizeSingleTouchGestures(touches[0], event.target as HTMLElement);
@@ -190,13 +190,13 @@ export class GestureRecognizer {
 
     const touches = this.extractTouchPoints(event);
     const currentTime = Date.now();
-    
+
     // Update touch history
     this.touchHistory.push(...touches);
-    
+
     // Process ongoing gestures
     this.processOngoingGestures(touches, currentTime);
-    
+
     // Prevent default for specific gestures
     if (this.shouldPreventDefault(touches)) {
       event.preventDefault();
@@ -209,10 +209,10 @@ export class GestureRecognizer {
     const touches = this.extractTouchPoints(event);
     const endTime = Date.now();
     const duration = endTime - this.gestureStartTime;
-    
+
     // Finalize gesture recognition
     this.finalizeGestures(touches, endTime, duration);
-    
+
     // Clean up
     if (event.touches.length === 0) {
       this.cleanupAfterGesture();
@@ -228,13 +228,10 @@ export class GestureRecognizer {
     const acceleration = event.accelerationIncludingGravity;
     if (!acceleration) return;
 
-    const magnitude = Math.sqrt(
-      acceleration.x! ** 2 + 
-      acceleration.y! ** 2 + 
-      acceleration.z! ** 2
-    );
+    const magnitude = Math.sqrt(acceleration.x! ** 2 + acceleration.y! ** 2 + acceleration.z! ** 2);
 
-    if (magnitude > 15) { // Shake threshold
+    if (magnitude > 15) {
+      // Shake threshold
       this.emitGesture({
         type: 'shake',
         touches: [],
@@ -286,7 +283,7 @@ export class GestureRecognizer {
     if (touches.length === 1) {
       this.processPanSwipe(touches[0], currentTime);
     }
-    
+
     // Process pinch/rotate gestures
     if (touches.length === 2) {
       this.processPinchRotate(touches, currentTime);
@@ -298,7 +295,7 @@ export class GestureRecognizer {
 
     const startTouch = this.touchHistory[0];
     const endTouch = touches[0];
-    
+
     // Recognize completed gestures
     if (this.isTap(startTouch, endTouch, duration)) {
       this.recognizeTap(endTouch);
@@ -309,29 +306,28 @@ export class GestureRecognizer {
 
   private isTap(start: TouchPoint, end: TouchPoint, duration: number): boolean {
     const distance = this.calculateDistance(start, end);
-    return duration <= this.config.tap.maxDuration && 
-           distance <= this.config.tap.maxDistance;
+    return duration <= this.config.tap.maxDuration && distance <= this.config.tap.maxDistance;
   }
 
   private isSwipe(start: TouchPoint, end: TouchPoint, duration: number): boolean {
     const distance = this.calculateDistance(start, end);
     const velocity = distance / duration;
-    
-    return distance >= this.config.swipe.minDistance &&
-           duration <= this.config.swipe.maxDuration &&
-           velocity >= this.config.swipe.minVelocity;
+
+    return (
+      distance >= this.config.swipe.minDistance &&
+      duration <= this.config.swipe.maxDuration &&
+      velocity >= this.config.swipe.minVelocity
+    );
   }
 
   private isLongPress(touch: TouchPoint): boolean {
-    const currentTouches = this.touchHistory.filter(t => 
-      Date.now() - t.timestamp < 100
-    );
-    
+    const currentTouches = this.touchHistory.filter(t => Date.now() - t.timestamp < 100);
+
     if (currentTouches.length === 0) return false;
-    
+
     const lastTouch = currentTouches[currentTouches.length - 1];
     const distance = this.calculateDistance(touch, lastTouch);
-    
+
     return distance <= this.config.longPress.maxDistance;
   }
 
@@ -339,11 +335,13 @@ export class GestureRecognizer {
     const edgeZone = this.config.edgeSwipe.edgeZone;
     const screenWidth = window.innerWidth;
     const screenHeight = window.innerHeight;
-    
-    return touch.x <= edgeZone ||
-           touch.x >= screenWidth - edgeZone ||
-           touch.y <= edgeZone ||
-           touch.y >= screenHeight - edgeZone;
+
+    return (
+      touch.x <= edgeZone ||
+      touch.x >= screenWidth - edgeZone ||
+      touch.y <= edgeZone ||
+      touch.y >= screenHeight - edgeZone
+    );
   }
 
   private isPullToRefreshContext(target: HTMLElement): boolean {
@@ -355,10 +353,11 @@ export class GestureRecognizer {
     if (this.lastTap) {
       const timeDiff = touch.timestamp - this.lastTap.time;
       const distance = this.calculateDistance(touch, this.lastTap.position);
-      
-      if (timeDiff <= this.config.doubleTap.maxTimeBetween &&
-          distance <= this.config.doubleTap.maxDistance) {
-        
+
+      if (
+        timeDiff <= this.config.doubleTap.maxTimeBetween &&
+        distance <= this.config.doubleTap.maxDistance
+      ) {
         this.emitGesture({
           type: 'double-tap',
           touches: [touch],
@@ -366,12 +365,12 @@ export class GestureRecognizer {
           endTime: touch.timestamp,
           duration: timeDiff,
         });
-        
+
         this.lastTap = null;
         return;
       }
     }
-    
+
     // Single tap
     this.emitGesture({
       type: 'tap',
@@ -380,7 +379,7 @@ export class GestureRecognizer {
       endTime: touch.timestamp,
       duration: touch.timestamp - this.gestureStartTime,
     });
-    
+
     this.lastTap = { time: touch.timestamp, position: touch };
   }
 
@@ -389,15 +388,15 @@ export class GestureRecognizer {
     const deltaY = end.y - start.y;
     const distance = this.calculateDistance(start, end);
     const velocity = distance / duration;
-    
+
     let direction: 'up' | 'down' | 'left' | 'right';
-    
+
     if (Math.abs(deltaX) > Math.abs(deltaY)) {
       direction = deltaX > 0 ? 'right' : 'left';
     } else {
       direction = deltaY > 0 ? 'down' : 'up';
     }
-    
+
     // Check if direction is allowed
     if (this.config.swipe.directions.includes(direction)) {
       this.emitGesture({
@@ -416,7 +415,7 @@ export class GestureRecognizer {
     if (this.config.longPress.hapticFeedback && 'vibrate' in navigator) {
       navigator.vibrate(50);
     }
-    
+
     this.emitGesture({
       type: 'long-press',
       touches: [touch],
@@ -430,7 +429,7 @@ export class GestureRecognizer {
   private startPinchRotateRecognition(touches: TouchPoint[]): void {
     const initialDistance = this.calculateDistance(touches[0], touches[1]);
     const initialAngle = this.calculateAngle(touches[0], touches[1]);
-    
+
     this.activeGestures.set('pinch-rotate', {
       type: 'pinch',
       touches,
@@ -444,13 +443,13 @@ export class GestureRecognizer {
   private processPinchRotate(touches: TouchPoint[], currentTime: number): void {
     const activeGesture = this.activeGestures.get('pinch-rotate');
     if (!activeGesture) return;
-    
+
     const currentDistance = this.calculateDistance(touches[0], touches[1]);
     const currentAngle = this.calculateAngle(touches[0], touches[1]);
-    
+
     const scale = currentDistance / activeGesture.data.initialDistance;
     const rotation = currentAngle - activeGesture.data.initialAngle;
-    
+
     // Determine if it's primarily pinch or rotate
     if (Math.abs(scale - 1) > 0.1) {
       this.emitGesture({
@@ -462,8 +461,9 @@ export class GestureRecognizer {
         data: { scale, distance: currentDistance },
       });
     }
-    
-    if (Math.abs(rotation) > 10) { // 10 degrees threshold
+
+    if (Math.abs(rotation) > 10) {
+      // 10 degrees threshold
       this.emitGesture({
         type: 'rotate',
         touches,
@@ -477,14 +477,14 @@ export class GestureRecognizer {
 
   private processPanSwipe(touch: TouchPoint, currentTime: number): void {
     if (this.touchHistory.length < 2) return;
-    
+
     const startTouch = this.touchHistory[0];
     const distance = this.calculateDistance(startTouch, touch);
-    
+
     if (distance >= this.config.pan.minDistance) {
       const deltaX = touch.x - startTouch.x;
       const deltaY = touch.y - startTouch.y;
-      
+
       this.emitGesture({
         type: 'pan',
         touches: [startTouch, touch],
@@ -523,14 +523,16 @@ export class GestureRecognizer {
   }
 
   private calculateAngle(p1: TouchPoint, p2: TouchPoint): number {
-    return Math.atan2(p2.y - p1.y, p2.x - p1.x) * 180 / Math.PI;
+    return (Math.atan2(p2.y - p1.y, p2.x - p1.x) * 180) / Math.PI;
   }
 
   private shouldPreventDefault(touches: TouchPoint[]): boolean {
     // Prevent default for specific gestures to avoid browser interference
-    return this.activeGestures.has('pinch-rotate') ||
-           this.activeGestures.has('edge-swipe') ||
-           this.activeGestures.has('pull-refresh');
+    return (
+      this.activeGestures.has('pinch-rotate') ||
+      this.activeGestures.has('edge-swipe') ||
+      this.activeGestures.has('pull-refresh')
+    );
   }
 
   private cleanupAfterGesture(): void {
@@ -557,9 +559,9 @@ export class GestureRecognizer {
     if (!this.listeners.has(gestureType)) {
       this.listeners.set(gestureType, new Set());
     }
-    
+
     this.listeners.get(gestureType)!.add(listener);
-    
+
     // Return unsubscribe function
     return () => {
       this.listeners.get(gestureType)?.delete(listener);
@@ -579,11 +581,11 @@ export class GestureRecognizer {
     document.removeEventListener('touchmove', this.handleTouchMove);
     document.removeEventListener('touchend', this.handleTouchEnd);
     document.removeEventListener('touchcancel', this.handleTouchCancel);
-    
+
     if (window.DeviceMotionEvent) {
       window.removeEventListener('devicemotion', this.handleDeviceMotion);
     }
-    
+
     this.listeners.clear();
     this.activeGestures.clear();
   }

@@ -1,6 +1,6 @@
 /**
  * CSP Test Utilities
- * 
+ *
  * CSP 설정 검증 및 테스트를 위한 유틸리티 함수들
  * - CSP 정책 검증
  * - 보안 테스트 시뮬레이션
@@ -45,19 +45,19 @@ class CSPTestUtils {
 
     // 기본 보안 검증
     results.push(await this.testBasicSecurity(config));
-    
+
     // XSS 방어 테스트
     results.push(await this.testXSSProtection(config));
-    
+
     // 데이터 누출 방지 테스트
     results.push(await this.testDataLeakProtection(config));
-    
+
     // 클릭재킹 방어 테스트
     results.push(await this.testClickjackingProtection(config));
-    
+
     // 스크립트 주입 방어 테스트
     results.push(await this.testScriptInjectionProtection(config));
-    
+
     // 리소스 로딩 보안 테스트
     results.push(await this.testResourceLoadingSecurity(config));
 
@@ -74,11 +74,15 @@ class CSPTestUtils {
 
     // default-src 검증
     const defaultSrc = config.customDirectives?.['default-src'];
-    if (!defaultSrc || defaultSrc.includes("'unsafe-inline'") || defaultSrc.includes("'unsafe-eval'")) {
+    if (
+      !defaultSrc ||
+      defaultSrc.includes("'unsafe-inline'") ||
+      defaultSrc.includes("'unsafe-eval'")
+    ) {
       errors.push("default-src should not include 'unsafe-inline' or 'unsafe-eval'");
     }
     if (!defaultSrc || defaultSrc.includes('*')) {
-      errors.push("default-src should not use wildcard (*)");
+      errors.push('default-src should not use wildcard (*)');
     }
 
     // script-src 검증
@@ -105,7 +109,7 @@ class CSPTestUtils {
     // frame-ancestors 검증
     const frameAncestors = config.customDirectives?.['frame-ancestors'];
     if (!frameAncestors) {
-      suggestions.push("Add frame-ancestors directive to prevent clickjacking");
+      suggestions.push('Add frame-ancestors directive to prevent clickjacking');
     }
 
     return {
@@ -114,7 +118,7 @@ class CSPTestUtils {
       description: 'Validates fundamental CSP security settings',
       errors,
       warnings,
-      suggestions
+      suggestions,
     };
   }
 
@@ -133,7 +137,7 @@ class CSPTestUtils {
         testType: 'script',
         payload: '<script>alert("XSS")</script>',
         shouldBlock: true,
-        riskLevel: 'critical'
+        riskLevel: 'critical',
       },
       {
         name: 'Event Handler XSS',
@@ -141,7 +145,7 @@ class CSPTestUtils {
         testType: 'script',
         payload: '<img src=x onerror="alert(\'XSS\')">',
         shouldBlock: true,
-        riskLevel: 'high'
+        riskLevel: 'high',
       },
       {
         name: 'JavaScript URL XSS',
@@ -149,8 +153,8 @@ class CSPTestUtils {
         testType: 'script',
         payload: '<a href="javascript:alert(\'XSS\')">Click</a>',
         shouldBlock: true,
-        riskLevel: 'high'
-      }
+        riskLevel: 'high',
+      },
     ];
 
     for (const testCase of xssTestCases) {
@@ -178,7 +182,7 @@ class CSPTestUtils {
       description: 'Tests Cross-Site Scripting attack prevention',
       errors,
       warnings,
-      suggestions
+      suggestions,
     };
   }
 
@@ -214,7 +218,7 @@ class CSPTestUtils {
       description: 'Tests prevention of data exfiltration',
       errors,
       warnings,
-      suggestions
+      suggestions,
     };
   }
 
@@ -227,13 +231,17 @@ class CSPTestUtils {
     const suggestions: string[] = [];
 
     const frameAncestors = config.customDirectives?.['frame-ancestors'];
-    
+
     if (!frameAncestors || frameAncestors.includes('*')) {
       errors.push('frame-ancestors should be set to prevent clickjacking attacks');
     }
 
-    if (frameAncestors && !frameAncestors.includes("'none'") && !frameAncestors.includes("'self'")) {
-      warnings.push('Consider using frame-ancestors \'none\' or \'self\' for banking apps');
+    if (
+      frameAncestors &&
+      !frameAncestors.includes("'none'") &&
+      !frameAncestors.includes("'self'")
+    ) {
+      warnings.push("Consider using frame-ancestors 'none' or 'self' for banking apps");
     }
 
     return {
@@ -242,7 +250,7 @@ class CSPTestUtils {
       description: 'Tests prevention of clickjacking attacks',
       errors,
       warnings,
-      suggestions
+      suggestions,
     };
   }
 
@@ -255,10 +263,12 @@ class CSPTestUtils {
     const suggestions: string[] = [];
 
     const scriptSrc = config.customDirectives?.['script-src'];
-    
+
     // 'strict-dynamic' 사용 검증
-    if (config.environment === 'production' && 
-        (!scriptSrc || !scriptSrc.includes("'strict-dynamic'"))) {
+    if (
+      config.environment === 'production' &&
+      (!scriptSrc || !scriptSrc.includes("'strict-dynamic'"))
+    ) {
       suggestions.push("Consider using 'strict-dynamic' for better script security");
     }
 
@@ -268,11 +278,10 @@ class CSPTestUtils {
     }
 
     // 외부 스크립트 도메인 검증
-    const externalDomains = scriptSrc?.filter(src => 
-      src.startsWith('https://') && 
-      !src.includes('self') && 
-      !src.includes('localhost')
-    ) || [];
+    const externalDomains =
+      scriptSrc?.filter(
+        src => src.startsWith('https://') && !src.includes('self') && !src.includes('localhost')
+      ) || [];
 
     if (externalDomains.length > 10) {
       warnings.push(`High number of external script domains (${externalDomains.length})`);
@@ -284,7 +293,7 @@ class CSPTestUtils {
       description: 'Tests prevention of malicious script injection',
       errors,
       warnings,
-      suggestions
+      suggestions,
     };
   }
 
@@ -324,7 +333,7 @@ class CSPTestUtils {
       description: 'Tests secure resource loading policies',
       errors,
       warnings,
-      suggestions
+      suggestions,
     };
   }
 
@@ -334,17 +343,16 @@ class CSPTestUtils {
   private simulateCSPTest(config: CSPConfig, testCase: SecurityTestCase): boolean {
     // 간단한 시뮬레이션 로직
     const directives = config.customDirectives || {};
-    
+
     switch (testCase.testType) {
       case 'script':
         const scriptSrc = directives['script-src'] || [];
-        return !scriptSrc.includes("'unsafe-inline'") && 
-               !scriptSrc.includes("'unsafe-eval'");
-               
+        return !scriptSrc.includes("'unsafe-inline'") && !scriptSrc.includes("'unsafe-eval'");
+
       case 'style':
         const styleSrc = directives['style-src'] || [];
         return !styleSrc.includes("'unsafe-inline'");
-        
+
       default:
         return true;
     }
@@ -360,11 +368,14 @@ class CSPTestUtils {
 
     try {
       // 기본 구문 검증
-      const directives = cspHeader.split(';').map(d => d.trim()).filter(d => d);
-      
+      const directives = cspHeader
+        .split(';')
+        .map(d => d.trim())
+        .filter(d => d);
+
       for (const directive of directives) {
         const [name, ...values] = directive.split(/\s+/);
-        
+
         if (!name) {
           errors.push('Empty directive found');
           continue;
@@ -372,9 +383,21 @@ class CSPTestUtils {
 
         // 알려진 지시어 검증
         const knownDirectives = [
-          'default-src', 'script-src', 'style-src', 'img-src', 'connect-src',
-          'font-src', 'object-src', 'media-src', 'frame-src', 'child-src',
-          'worker-src', 'manifest-src', 'base-uri', 'form-action', 'frame-ancestors'
+          'default-src',
+          'script-src',
+          'style-src',
+          'img-src',
+          'connect-src',
+          'font-src',
+          'object-src',
+          'media-src',
+          'frame-src',
+          'child-src',
+          'worker-src',
+          'manifest-src',
+          'base-uri',
+          'form-action',
+          'frame-ancestors',
         ];
 
         if (!knownDirectives.includes(name)) {
@@ -393,7 +416,6 @@ class CSPTestUtils {
           }
         });
       }
-
     } catch (error) {
       errors.push(`CSP parsing error: ${error}`);
     }
@@ -404,7 +426,7 @@ class CSPTestUtils {
       description: 'Validates CSP header syntax and structure',
       errors,
       warnings,
-      suggestions
+      suggestions,
     };
   }
 
@@ -465,17 +487,17 @@ class CSPTestUtils {
         case 'img-src':
           supported.push(`${directive}: All modern browsers`);
           break;
-          
+
         case 'worker-src':
           partialSupport.push(`${directive}: Limited support in older browsers`);
           break;
-          
+
         case 'trusted-types':
           if (config.enableTrustedTypes) {
             partialSupport.push(`${directive}: Chrome 83+, experimental in other browsers`);
           }
           break;
-          
+
         default:
           supported.push(`${directive}: Most modern browsers`);
       }

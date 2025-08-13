@@ -4,7 +4,7 @@ import {
   androidAppContainer,
   androidOptimizedButton,
   androidOptimizedAnimation,
-  androidOptimizedScroll
+  androidOptimizedScroll,
 } from '../../../styles/android-webview-optimizations';
 import { KBDesignSystem } from '../../../styles/tokens/kb-design-system';
 
@@ -58,20 +58,24 @@ export const slideDown = keyframes`
 
 // 1. CoordinatorLayout - 크로스 플랫폼 호환
 export const CoordinatorLayout = styled.div`
-  background: linear-gradient(180deg, ${KBDesignSystem.colors.background.gray100} 0%, ${KBDesignSystem.colors.background.white} 10%);
+  background: linear-gradient(
+    180deg,
+    ${KBDesignSystem.colors.background.gray100} 0%,
+    ${KBDesignSystem.colors.background.white} 10%
+  );
   display: flex;
   flex-direction: column;
   width: 100%;
   min-height: 100vh;
   min-height: -webkit-fill-available;
   position: relative;
-  
+
   /* PC 브라우저에서 기본 스타일 */
   @media (min-width: 769px) {
     height: 100vh;
     overflow: hidden; /* 모달 열렸을 때 배경 스크롤 방지 */
   }
-  
+
   /* Android APK에서만 WebView 최적화 적용 */
   @media (max-width: 768px) {
     ${androidAppContainer}
@@ -79,13 +83,13 @@ export const CoordinatorLayout = styled.div`
     touch-action: pan-y;
     overscroll-behavior: none;
   }
-  
+
   /* 고대비 모드 지원 */
   @media (prefers-contrast: high) {
     background-color: ${KBDesignSystem.colors.background.white};
     border: 2px solid ${KBDesignSystem.colors.text.primary};
   }
-  
+
   /* Android WebView 성능 최적화 */
   @media (prefers-reduced-motion: reduce) {
     * {
@@ -94,10 +98,10 @@ export const CoordinatorLayout = styled.div`
       transition-duration: 0.01ms !important;
     }
   }
-  
+
   /* 색상 약자 지원 */
   @media (prefers-color-scheme: dark) {
-    background-color: #1A1A1A;
+    background-color: #1a1a1a;
     color: ${KBDesignSystem.colors.text.inverse};
   }
 `;
@@ -110,21 +114,26 @@ export const BackSurfaceView = styled.div<{ $isOpen: boolean }>`
   right: 0;
   bottom: 0;
   background-color: ${KBDesignSystem.colors.overlay.black50};
-  opacity: ${props => props.$isOpen ? 1 : 0};
-  transition: opacity ${KBDesignSystem.animation.duration.normal} ${KBDesignSystem.animation.easing.easeOut};
+  opacity: ${props => (props.$isOpen ? 1 : 0)};
+  transition: opacity ${KBDesignSystem.animation.duration.normal}
+    ${KBDesignSystem.animation.easing.easeOut};
   z-index: ${KBDesignSystem.zIndex.modalBackdrop};
-  pointer-events: ${props => props.$isOpen ? 'auto' : 'none'};
+  pointer-events: ${props => (props.$isOpen ? 'auto' : 'none')};
 `;
 
 // 3. ContentLayout - Android WebView 최적화
 export const ContentLayout = styled.div`
   ${androidOptimizedScroll}
   flex: 1;
-  background: linear-gradient(180deg, ${KBDesignSystem.colors.background.gray100} 0%, ${KBDesignSystem.colors.background.white} 15%);
+  background: linear-gradient(
+    180deg,
+    ${KBDesignSystem.colors.background.gray100} 0%,
+    ${KBDesignSystem.colors.background.white} 15%
+  );
   display: flex;
   flex-direction: column;
   position: relative;
-  
+
   /* Android WebView 성능 최적화 */
   transform: translateZ(0);
   will-change: scroll-position;
@@ -137,15 +146,16 @@ export const NewLoginMainContainer = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: ${KBDesignSystem.spacing.xxxl} ${KBDesignSystem.spacing.lg} ${KBDesignSystem.spacing.xxl} ${KBDesignSystem.spacing.lg};
-  background-color: ${KBDesignSystem.colors.background.white}; 
-  min-height: 0;        
+  padding: ${KBDesignSystem.spacing.xxxl} ${KBDesignSystem.spacing.lg} ${KBDesignSystem.spacing.xxl}
+    ${KBDesignSystem.spacing.lg};
+  background-color: ${KBDesignSystem.colors.background.white};
+  min-height: 0;
   position: relative;
-  
+
   /* Android WebView 터치 최적화 */
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
-  
+
   /* Android WebView 성능 */
   transform: translateZ(0);
   will-change: transform;
@@ -164,7 +174,7 @@ export const LoginOptionText = styled.span`
 // 6. TitleSection
 export const TitleSection = styled.div`
   text-align: center;
-  margin-bottom: ${KBDesignSystem.spacing.xxxxl};
+  margin-bottom: 60px;
   padding: 0 ${KBDesignSystem.spacing.xxl};
   position: relative;
   z-index: 1;
@@ -173,10 +183,10 @@ export const TitleSection = styled.div`
 // 7. MainTitle
 export const MainTitle = styled.h1`
   font-family: ${KBDesignSystem.typography.fontFamily.primary};
-  font-size: ${KBDesignSystem.typography.fontSize.xxxxl};
+  font-size: 32px;
   font-weight: ${KBDesignSystem.typography.fontWeight.bold};
   color: ${KBDesignSystem.colors.text.primary};
-  margin-bottom: ${KBDesignSystem.spacing.base};
+  margin-bottom: 16px;
   letter-spacing: ${KBDesignSystem.typography.letterSpacing.tight};
   line-height: ${KBDesignSystem.typography.lineHeight.tight};
   text-rendering: optimizeLegibility;
@@ -187,9 +197,9 @@ export const MainTitle = styled.h1`
 // 8. SubTitle
 export const SubTitle = styled.p`
   font-family: ${KBDesignSystem.typography.fontFamily.primary};
-  font-size: ${KBDesignSystem.typography.fontSize.lg};
+  font-size: 18px;
   color: ${KBDesignSystem.colors.text.secondary};
-  line-height: ${KBDesignSystem.typography.lineHeight.normal};
+  line-height: 1.5;
   margin: 0;
   text-align: center;
   font-weight: ${KBDesignSystem.typography.fontWeight.medium};
@@ -203,11 +213,11 @@ export const LoginOptionsContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 40px;            /* 아이콘 컨테이너 증가에 맞춘 간격 조정 */
-  margin: 40px 0 56px 0; /* 마진 최적화 */
-  padding: 0 24px;      /* 패딩 조정 */
+  gap: 60px;
+  margin: 48px 0 64px 0;
+  padding: 0 24px;
   position: relative;
-  z-index: 2;           /* 주요 액션 영역 강조 */
+  z-index: 2;
 `;
 
 // 10. LoginOptionButton - Android WebView 최적화
@@ -219,20 +229,20 @@ export const LoginOptionButton = styled.button`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;            
-  padding: 20px;        /* 더 넓은 터치 영역 */
-  border-radius: 20px;  /* 더 세련된 모서리 */
-  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1); /* 전문가 easing */
-  min-width: 120px;     
-  min-height: 120px;    
+  gap: 12px;
+  padding: 16px;
+  border-radius: 20px;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 100px;
+  min-height: 120px;
   position: relative;
   overflow: hidden;
-  
+
   /* Android WebView 터치 최적화 */
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
   /* 미묘한 배경 그라데이션 */
-  background: radial-gradient(circle at center, rgba(255,255,255,0.05) 0%, transparent 70%);
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
   /* 실시간 리플 효과 */
   &::before {
     content: '';
@@ -241,16 +251,20 @@ export const LoginOptionButton = styled.button`
     left: 50%;
     width: 0;
     height: 0;
-    background: radial-gradient(circle, rgba(255,211,56,0.3) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(255, 211, 56, 0.3) 0%, transparent 70%);
     border-radius: 50%;
     transform: translate(-50%, -50%);
     transition: all 0.6s ease;
     z-index: 0;
   }
   &:hover {
-    background: radial-gradient(circle at center, rgba(255,211,56,0.12) 0%, rgba(255,211,56,0.04) 70%);
+    background: radial-gradient(
+      circle at center,
+      rgba(255, 211, 56, 0.12) 0%,
+      rgba(255, 211, 56, 0.04) 70%
+    );
     transform: translateY(-4px) scale(1.03);
-    box-shadow: 
+    box-shadow:
       0 8px 32px rgba(255, 211, 56, 0.25),
       0 4px 16px rgba(0, 0, 0, 0.1);
   }
@@ -261,7 +275,11 @@ export const LoginOptionButton = styled.button`
   }
   &:active {
     transform: translateY(-2px) scale(1.01);
-    background: radial-gradient(circle at center, rgba(255,211,56,0.18) 0%, rgba(255,211,56,0.06) 70%);
+    background: radial-gradient(
+      circle at center,
+      rgba(255, 211, 56, 0.18) 0%,
+      rgba(255, 211, 56, 0.06) 70%
+    );
   }
   &:active::before {
     width: 120px;
@@ -272,7 +290,7 @@ export const LoginOptionButton = styled.button`
   &:focus {
     outline: 4px solid rgba(255, 211, 56, 0.7);
     outline-offset: 4px;
-    box-shadow: 
+    box-shadow:
       0 0 0 2px rgba(255, 255, 255, 1),
       0 0 20px rgba(255, 211, 56, 0.3);
   }
@@ -280,30 +298,30 @@ export const LoginOptionButton = styled.button`
 
 // 11. IconImage
 export const IconImage = styled.img`
-  width: 48px;          /* 실제 앱처럼 약간 크게 */
-  height: 48px;
+  width: 44px;
+  height: 44px;
   object-fit: contain;
-  filter: brightness(0.6) contrast(1.3) saturate(1.1); /* 최고 명확성을 위한 필터 */
+  filter: brightness(0.8) contrast(1.1) saturate(1);
   transition: all 0.2s ease;
 `;
 
 // 12. IconContainer
 export const IconContainer = styled.div`
-  width: 76px;          
-  height: 76px;
+  width: 72px;
+  height: 72px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;   
-  background: 
+  border-radius: 50%;
+  background:
     radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 1) 0%, rgba(248, 248, 248, 0.95) 100%),
     linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(240, 240, 240, 0.1) 100%);
-  box-shadow: 
-    0 6px 20px rgba(0, 0, 0, 0.12),
-    0 2px 8px rgba(0, 0, 0, 0.08),
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.1),
+    0 2px 8px rgba(0, 0, 0, 0.06),
     inset 0 1px 2px rgba(255, 255, 255, 0.8),
-    inset 0 -1px 1px rgba(0, 0, 0, 0.05); /* 고급 입체감 */
-  border: 2px solid rgba(255, 255, 255, 0.9);
+    inset 0 -1px 1px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.9);
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   z-index: 2;
@@ -315,16 +333,16 @@ export const IconContainer = styled.div`
     left: 15%;
     width: 25%;
     height: 25%;
-    background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, transparent 70%);
     border-radius: 50%;
     opacity: 0.6;
     transition: all 0.3s ease;
   }
   ${LoginOptionButton}:hover & {
-    background: 
+    background:
       radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 1) 0%, rgba(255, 250, 235, 0.98) 100%),
       linear-gradient(135deg, rgba(255, 211, 56, 0.1) 0%, rgba(255, 200, 0, 0.05) 100%);
-    box-shadow: 
+    box-shadow:
       0 12px 32px rgba(255, 211, 56, 0.25),
       0 6px 16px rgba(0, 0, 0, 0.15),
       inset 0 2px 4px rgba(255, 255, 255, 0.9),
@@ -342,7 +360,7 @@ export const IconContainer = styled.div`
   }
   ${LoginOptionButton}:active & {
     transform: scale(1.05) translateY(-1px);
-    box-shadow: 
+    box-shadow:
       0 8px 24px rgba(255, 211, 56, 0.3),
       0 4px 12px rgba(0, 0, 0, 0.12);
   }
@@ -350,9 +368,10 @@ export const IconContainer = styled.div`
 
 // 13. Divider
 export const Divider = styled.div`
-  width: 2px;           
-  height: 64px;         /* 컨테이너 크기에 맞춘 증가 */
-  background: linear-gradient(to bottom, 
+  width: 2px;
+  height: 64px; /* 컨테이너 크기에 맞춘 증가 */
+  background: linear-gradient(
+    to bottom,
     rgba(200, 200, 200, 0.2) 0%,
     rgba(180, 180, 180, 0.8) 20%,
     rgba(160, 160, 160, 1) 50%,
@@ -360,7 +379,7 @@ export const Divider = styled.div`
     rgba(200, 200, 200, 0.2) 100%
   ); /* 정교한 그라데이션 */
   border-radius: 1px;
-  margin: 0 12px;       /* 좌우 여백 증가 */
+  margin: 0 12px; /* 좌우 여백 증가 */
   position: relative;
   /* 미묘한 반짝이 효과 */
   &::before {
@@ -370,7 +389,8 @@ export const Divider = styled.div`
     left: 50%;
     width: 1px;
     height: 100%;
-    background: linear-gradient(to bottom, 
+    background: linear-gradient(
+      to bottom,
       transparent 0%,
       rgba(255, 255, 255, 0.6) 30%,
       rgba(255, 255, 255, 0.8) 50%,
@@ -387,17 +407,18 @@ export const Divider = styled.div`
     left: 50%;
     width: 4px;
     height: 4px;
-    background: radial-gradient(circle, rgba(255,211,56,0.6) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(255, 211, 56, 0.6) 0%, transparent 70%);
     border-radius: 50%;
     transform: translateX(-50%);
     animation: dividerPulse 3s ease-in-out infinite;
   }
   @keyframes dividerPulse {
-    0%, 100% { 
+    0%,
+    100% {
       opacity: 0;
       transform: translateX(-50%) translateY(0px);
     }
-    50% { 
+    50% {
       opacity: 1;
       transform: translateX(-50%) translateY(10px);
     }
@@ -408,9 +429,13 @@ export const Divider = styled.div`
 export const YellowButton = styled.button`
   ${androidOptimizedButton}
   width: 100%;
-  max-width: 320px;     
+  max-width: 320px;
   height: ${KBDesignSystem.touchTarget.large};
-  background: linear-gradient(135deg, ${KBDesignSystem.colors.primary.yellow} 0%, ${KBDesignSystem.colors.primary.yellowDark} 100%);
+  background: linear-gradient(
+    135deg,
+    ${KBDesignSystem.colors.primary.yellow} 0%,
+    ${KBDesignSystem.colors.primary.yellowDark} 100%
+  );
   border: none;
   border-radius: ${KBDesignSystem.borderRadius.button};
   font-family: ${KBDesignSystem.typography.fontFamily.primary};
@@ -418,9 +443,9 @@ export const YellowButton = styled.button`
   font-weight: ${KBDesignSystem.typography.fontWeight.bold};
   color: ${KBDesignSystem.colors.text.primary};
   box-shadow: ${KBDesignSystem.shadows.button};
-  margin-bottom: ${KBDesignSystem.spacing.xxl};  
+  margin-bottom: ${KBDesignSystem.spacing.xxl};
   letter-spacing: ${KBDesignSystem.typography.letterSpacing.tight};
-  
+
   &::before {
     content: '';
     position: absolute;
@@ -428,14 +453,18 @@ export const YellowButton = styled.button`
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
     transition: left ${KBDesignSystem.animation.duration.verySlow};
   }
   &:hover::before {
     left: 100%;
   }
   &:hover {
-    background: linear-gradient(135deg, ${KBDesignSystem.colors.primary.yellowDark} 0%, #FFB800 100%);
+    background: linear-gradient(
+      135deg,
+      ${KBDesignSystem.colors.primary.yellowDark} 0%,
+      #ffb800 100%
+    );
     transform: translateY(-2px) scale(1.01);
     box-shadow: ${KBDesignSystem.shadows.lg};
   }
@@ -450,11 +479,11 @@ export const BottomLinkContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 8px;             /* 링크와 구분선 간 최소 간격 */
-  margin-top: 20px;     /* 상단 여백 */
-  padding: 0 32px;      /* 좌우 여백 증가 */
+  gap: 8px; /* 링크와 구분선 간 최소 간격 */
+  margin-top: 20px; /* 상단 여백 */
+  padding: 0 32px; /* 좌우 여백 증가 */
   position: relative;
-  z-index: 1;           /* 보조 액션 영역 */
+  z-index: 1; /* 보조 액션 영역 */
 `;
 
 // 16. BottomLink - Android WebView 최적화
@@ -466,31 +495,32 @@ export const BottomLink = styled.button`
   font-size: ${KBDesignSystem.typography.fontSize.base};
   color: ${KBDesignSystem.colors.text.secondary};
   cursor: pointer;
-  padding: ${KBDesignSystem.spacing.base} ${KBDesignSystem.spacing.lg};   
+  padding: ${KBDesignSystem.spacing.base} ${KBDesignSystem.spacing.lg};
   border-radius: ${KBDesignSystem.borderRadius.lg};
-  transition: all ${KBDesignSystem.animation.duration.normal} ${KBDesignSystem.animation.easing.easeOut};
-  min-height: ${KBDesignSystem.touchTarget.minimum};     
+  transition: all ${KBDesignSystem.animation.duration.normal}
+    ${KBDesignSystem.animation.easing.easeOut};
+  min-height: ${KBDesignSystem.touchTarget.minimum};
   font-weight: ${KBDesignSystem.typography.fontWeight.medium};
   position: relative;
   overflow: hidden;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   user-select: none;
-  
+
   /* Android WebView 터치 최적화 */
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
-  
+
   &:hover {
     color: ${KBDesignSystem.colors.text.primary};
     background-color: ${KBDesignSystem.colors.primary.yellowAlpha10};
   }
-  
+
   &:active {
     opacity: 0.7;
     transform: scale(0.98);
   }
-  
+
   &:focus {
     outline: 3px solid ${KBDesignSystem.colors.primary.yellowAlpha20};
     outline-offset: 2px;
@@ -512,8 +542,13 @@ export const Footer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: ${KBDesignSystem.spacing.xxl} ${KBDesignSystem.spacing.xl} ${KBDesignSystem.spacing.xxxxl} ${KBDesignSystem.spacing.xl};
-  background: linear-gradient(180deg, ${KBDesignSystem.colors.background.white} 0%, ${KBDesignSystem.colors.background.gray100} 100%);   
+  padding: ${KBDesignSystem.spacing.xxl} ${KBDesignSystem.spacing.xl}
+    ${KBDesignSystem.spacing.xxxxl} ${KBDesignSystem.spacing.xl};
+  background: linear-gradient(
+    180deg,
+    ${KBDesignSystem.colors.background.white} 0%,
+    ${KBDesignSystem.colors.background.gray100} 100%
+  );
   margin-top: auto;
   gap: ${KBDesignSystem.spacing.base};
   border-top: 1px solid ${KBDesignSystem.colors.border.light};
@@ -526,27 +561,31 @@ export const OtherLoginButton = styled.button`
   border: none;
   display: flex;
   align-items: center;
-  gap: 10px;            
-  padding: 18px 24px;   
-  margin-bottom: 0;     
-  font-family: 'KBFGText', -apple-system, BlinkMacSystemFont, sans-serif;
-  font-weight: 600;     
-  font-size: 17px;      
-  color: #2A2A2A;       
+  gap: 10px;
+  padding: 18px 24px;
+  margin-bottom: 0;
+  font-family:
+    'KBFGText',
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-weight: 600;
+  font-size: 17px;
+  color: #2a2a2a;
   cursor: pointer;
-  border-radius: 16px;  
+  border-radius: 16px;
   transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); /* 탄성 easing */
-  min-height: 48px;     
+  min-height: 48px;
   position: relative;
   overflow: hidden;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
-  
+
   /* Android WebView 터치 최적화 */
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
   /* 미묘한 배경 그라데이션 */
-  background: linear-gradient(135deg, rgba(0,0,0,0.015) 0%, rgba(0,0,0,0.005) 100%);
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.015) 0%, rgba(0, 0, 0, 0.005) 100%);
   /* 애니메이션 오버레이 */
   &::before {
     content: '';
@@ -556,8 +595,8 @@ export const OtherLoginButton = styled.button`
     width: 0;
     height: 0;
     background: radial-gradient(
-      circle, 
-      rgba(255, 211, 56, 0.2) 0%, 
+      circle,
+      rgba(255, 211, 56, 0.2) 0%,
       rgba(255, 200, 0, 0.1) 50%,
       transparent 70%
     );
@@ -572,9 +611,9 @@ export const OtherLoginButton = styled.button`
     z-index: 1;
   }
   &:hover {
-    color: #0A0A0A;       
+    color: #0a0a0a;
     transform: translateY(-2px) scale(1.03);
-    box-shadow: 
+    box-shadow:
       0 6px 20px rgba(255, 211, 56, 0.15),
       0 3px 10px rgba(0, 0, 0, 0.08);
   }
@@ -601,30 +640,34 @@ export const SimplePayButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;            
-  width: 260px;         
-  height: 54px;         
-  background: 
-    linear-gradient(135deg, #FFFFFF 0%, #FAFAFA 100%),
-    radial-gradient(circle at top left, rgba(255,211,56,0.03) 0%, transparent 50%);
-  border: 2px solid #E0E0E0;
-  border-radius: 27px;  
-  font-family: 'KBFGText', -apple-system, BlinkMacSystemFont, sans-serif;
-  font-size: 16px;      
-  font-weight: 700;     /* Bold로 선명도 강화 */
-  color: #1A1A1A;       /* 극대 대비 */
-  box-shadow: 
-    0 4px 16px rgba(0,0,0,0.08),
-    0 2px 8px rgba(0,0,0,0.05),
-    inset 0 1px 0 rgba(255,255,255,0.8); /* 내부 하이라이트 */
+  gap: 12px;
+  width: 260px;
+  height: 54px;
+  background:
+    linear-gradient(135deg, #ffffff 0%, #fafafa 100%),
+    radial-gradient(circle at top left, rgba(255, 211, 56, 0.03) 0%, transparent 50%);
+  border: 2px solid #e0e0e0;
+  border-radius: 27px;
+  font-family:
+    'KBFGText',
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-size: 16px;
+  font-weight: 700; /* Bold로 선명도 강화 */
+  color: #1a1a1a; /* 극대 대비 */
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.08),
+    0 2px 8px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8); /* 내부 하이라이트 */
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  min-height: 48px;     
+  min-height: 48px;
   position: relative;
   overflow: hidden;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
-  
+
   /* Android WebView 터치 최적화 */
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
@@ -636,7 +679,7 @@ export const SimplePayButton = styled.button`
     left: 0;
     right: 0;
     height: 50%;
-    background: linear-gradient(180deg, rgba(255,255,255,0.4) 0%, transparent 100%);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, transparent 100%);
     border-radius: 27px 27px 0 0;
   }
   /* 호버 시 색상 오버레이 */
@@ -647,31 +690,33 @@ export const SimplePayButton = styled.button`
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, 
-      rgba(255, 211, 56, 0.1) 0%, 
+    background: linear-gradient(
+      135deg,
+      rgba(255, 211, 56, 0.1) 0%,
       rgba(255, 200, 0, 0.05) 50%,
-      rgba(255, 230, 120, 0.08) 100%);
+      rgba(255, 230, 120, 0.08) 100%
+    );
     opacity: 0;
     transition: opacity 0.3s ease;
     border-radius: 27px;
   }
   &:hover {
     transform: translateY(-3px) scale(1.02);
-    box-shadow: 
+    box-shadow:
       0 8px 24px rgba(255, 211, 56, 0.2),
-      0 4px 16px rgba(0,0,0,0.12),
-      inset 0 1px 0 rgba(255,255,255,0.9);
+      0 4px 16px rgba(0, 0, 0, 0.12),
+      inset 0 1px 0 rgba(255, 255, 255, 0.9);
     border-color: rgba(255, 211, 56, 0.8);
-    color: #0A0A0A;       
+    color: #0a0a0a;
   }
   &:hover::after {
     opacity: 1;
   }
   &:active {
     transform: translateY(-2px) scale(1.01);
-    box-shadow: 
+    box-shadow:
       0 4px 16px rgba(255, 211, 56, 0.25),
-      0 2px 8px rgba(0,0,0,0.1);
+      0 2px 8px rgba(0, 0, 0, 0.1);
   }
   &:focus {
     outline: 3px solid rgba(255, 211, 56, 0.6);
@@ -681,7 +726,7 @@ export const SimplePayButton = styled.button`
 
 // 21. SimplePayIconImg
 export const SimplePayIconImg = styled.img`
-  width: 24px;          /* 실제 앱 크기 */
+  width: 24px; /* 실제 앱 크기 */
   height: 24px;
   object-fit: contain;
 `;
@@ -710,9 +755,19 @@ export const BottomSheetLayout = styled.div<{ $isOpen: boolean; $isClosing: bool
   max-height: 80vh;
   overflow: hidden;
   ${({ $isOpen, $isClosing }) => {
-    if ($isOpen && !$isClosing) return css`animation: ${slideUp} ${KBDesignSystem.animation.duration.normal} ${KBDesignSystem.animation.easing.decelerate} forwards;`;
-    if ($isClosing) return css`animation: ${slideDown} ${KBDesignSystem.animation.duration.normal} ${KBDesignSystem.animation.easing.accelerate} forwards;`;
-    return css`transform: translateY(100%);`;
+    if ($isOpen && !$isClosing)
+      return css`
+        animation: ${slideUp} ${KBDesignSystem.animation.duration.normal}
+          ${KBDesignSystem.animation.easing.decelerate} forwards;
+      `;
+    if ($isClosing)
+      return css`
+        animation: ${slideDown} ${KBDesignSystem.animation.duration.normal}
+          ${KBDesignSystem.animation.easing.accelerate} forwards;
+      `;
+    return css`
+      transform: translateY(100%);
+    `;
   }}
 `;
 
@@ -748,11 +803,13 @@ export const TabButton = styled.button<{ $active: boolean }>`
   font-family: ${KBDesignSystem.typography.fontFamily.primary};
   font-weight: ${KBDesignSystem.typography.fontWeight.medium};
   font-size: ${KBDesignSystem.typography.fontSize.xs};
-  color: ${props => props.$active ? KBDesignSystem.colors.text.primary : KBDesignSystem.colors.text.secondary};
+  color: ${props =>
+    props.$active ? KBDesignSystem.colors.text.primary : KBDesignSystem.colors.text.secondary};
   cursor: pointer;
   z-index: 2;
-  transition: color ${KBDesignSystem.animation.duration.fast} ${KBDesignSystem.animation.easing.easeOut};
-  
+  transition: color ${KBDesignSystem.animation.duration.fast}
+    ${KBDesignSystem.animation.easing.easeOut};
+
   /* Android WebView 터치 최적화 */
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
@@ -765,9 +822,9 @@ export const ActiveTabIndicator = styled.div<{ $activeIndex: number; $tabCount: 
   left: ${props => `calc(${props.$activeIndex * (100 / props.$tabCount)}% + 3px)`};
   width: ${props => `calc(${100 / props.$tabCount}% - 6px)`};
   height: 32px;
-  background-color: #FFFFFF; /* 흰색 탭 인디케이터 */
+  background-color: #ffffff; /* 흰색 탭 인디케이터 */
   border-radius: 16px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   transition: left 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   z-index: 1;
 `;

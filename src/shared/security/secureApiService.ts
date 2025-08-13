@@ -1,6 +1,6 @@
 /**
  * Secure API Service for KB StarBanking Clone
- * 
+ *
  * Provides a secure wrapper around API calls with built-in:
  * - CSRF protection
  * - Input sanitization
@@ -69,10 +69,10 @@ class RateLimiter {
     if (recentRequests.length >= config.maxRequests) {
       // Block the identifier
       this.blockedIPs.set(identifier, now + config.blockDurationMs);
-      safeLog('warn', 'Rate limit exceeded, IP blocked', { 
+      safeLog('warn', 'Rate limit exceeded, IP blocked', {
         identifier,
         requestCount: recentRequests.length,
-        maxRequests: config.maxRequests
+        maxRequests: config.maxRequests,
       });
       return false;
     }
@@ -132,7 +132,7 @@ export class SecureApiService {
           url,
           method: options.method || 'GET',
           duration: Date.now() - requestStart,
-          status: response.status
+          status: response.status,
         });
       }
       return data;
@@ -150,7 +150,7 @@ export class SecureApiService {
     metadata?: Partial<RequestMetadata>
   ): Promise<RequestInit> {
     const { method = 'GET', headers = {}, body } = options;
-    const secureHeaders: Record<string, string> = { ...headers as Record<string, string> };
+    const secureHeaders: Record<string, string> = { ...(headers as Record<string, string>) };
     // Get request identifier for rate limiting
     const identifier = this.getRequestIdentifier(metadata);
     // Rate limiting check
@@ -189,7 +189,7 @@ export class SecureApiService {
       body: sanitizedBody,
       credentials: 'same-origin', // Important for CSRF protection
       mode: 'cors',
-      cache: 'no-cache'
+      cache: 'no-cache',
     };
   }
   /**
@@ -246,13 +246,17 @@ export class SecureApiService {
       safeLog('error', 'API request failed', {
         url,
         status: response.status,
-        statusText: response.statusText
+        statusText: response.statusText,
       });
       throw error;
     }
     // Validate content type for JSON responses
     const contentType = response.headers.get('content-type');
-    if (contentType && !contentType.includes('application/json') && !contentType.includes('text/')) {
+    if (
+      contentType &&
+      !contentType.includes('application/json') &&
+      !contentType.includes('text/')
+    ) {
       safeLog('warn', 'Unexpected content type', { url, contentType });
     }
     // Check for security headers
@@ -271,7 +275,8 @@ export class SecureApiService {
     if (contentType?.includes('application/json')) {
       const text = await response.text();
       // Validate JSON before parsing
-      if (text.length > 10 * 1024 * 1024) { // 10MB limit
+      if (text.length > 10 * 1024 * 1024) {
+        // 10MB limit
         throw new Error('Response too large');
       }
       try {
@@ -307,7 +312,7 @@ export class SecureApiService {
       error: error.message,
       url,
       method: options.method || 'GET',
-      securityEventCount: this.securityEventCount
+      securityEventCount: this.securityEventCount,
     });
   }
   /**
@@ -319,7 +324,7 @@ export class SecureApiService {
       sanitizationStats: inputSanitizer.getStats(),
       rateLimitStats: {
         // Add rate limit statistics if needed
-      }
+      },
     };
   }
   /**
@@ -341,7 +346,7 @@ export const DEFAULT_SECURITY_CONFIG: SecurityConfig = {
   rateLimitConfig: {
     maxRequests: 100, // 100 requests per window
     windowMs: 15 * 60 * 1000, // 15 minutes
-    blockDurationMs: 5 * 60 * 1000 // 5 minute block
+    blockDurationMs: 5 * 60 * 1000, // 5 minute block
   },
   allowedOrigins: [], // Will be configured based on environment
   sanitizationOptions: {
@@ -350,17 +355,15 @@ export const DEFAULT_SECURITY_CONFIG: SecurityConfig = {
     stripWhitespace: true,
     strictMode: true,
     maxLength: 10000,
-    logViolations: true
+    logViolations: true,
   },
   validateResponses: true,
-  logSecurityEvents: true
+  logSecurityEvents: true,
 };
 /**
  * Create a configured secure API service instance
  */
-export function createSecureApiService(
-  config: Partial<SecurityConfig> = {}
-): SecureApiService {
+export function createSecureApiService(config: Partial<SecurityConfig> = {}): SecureApiService {
   const mergedConfig = { ...DEFAULT_SECURITY_CONFIG, ...config };
   return new SecureApiService(mergedConfig);
 }

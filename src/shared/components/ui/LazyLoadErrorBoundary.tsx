@@ -21,7 +21,7 @@ const ErrorIcon = styled.div`
   align-items: center;
   justify-content: center;
   margin-bottom: 24px;
-  
+
   &::after {
     content: '!';
     color: white;
@@ -46,7 +46,7 @@ const ErrorMessage = styled.p`
 `;
 
 const RetryButton = styled.button`
-  background-color: #FFB831;
+  background-color: #ffb831;
   color: white;
   border: none;
   padding: 12px 24px;
@@ -55,11 +55,11 @@ const RetryButton = styled.button`
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.2s;
-  
+
   &:hover {
     background-color: #e5a52b;
   }
-  
+
   &:active {
     transform: scale(0.98);
   }
@@ -100,8 +100,9 @@ export class LazyLoadErrorBoundary extends Component<Props, State> {
 
   render() {
     if (this.state.hasError) {
-      const isChunkError = this.state.error?.message?.includes('Loading chunk') || 
-                           this.state.error?.message?.includes('Failed to fetch');
+      const isChunkError =
+        this.state.error?.message?.includes('Loading chunk') ||
+        this.state.error?.message?.includes('Failed to fetch');
 
       return (
         <ErrorContainer>
@@ -110,13 +111,11 @@ export class LazyLoadErrorBoundary extends Component<Props, State> {
             {isChunkError ? '페이지 로딩 중 문제가 발생했습니다' : '오류가 발생했습니다'}
           </ErrorTitle>
           <ErrorMessage>
-            {isChunkError 
+            {isChunkError
               ? '네트워크 연결을 확인하고 다시 시도해주세요.'
               : '일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요.'}
           </ErrorMessage>
-          <RetryButton onClick={this.handleRetry}>
-            다시 시도
-          </RetryButton>
+          <RetryButton onClick={this.handleRetry}>다시 시도</RetryButton>
         </ErrorContainer>
       );
     }

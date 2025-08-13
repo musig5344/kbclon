@@ -64,7 +64,7 @@ export const MyAssetsSection: React.FC<MyAssetsSectionProps> = ({ className }) =
       <AssetsContent>
         <AssetsMessage>지금까지 모은 자산은 얼마일까요?</AssetsMessage>
         <AssetsSubMessage>
-          우리 아이 금융상품 
+          우리 아이 금융상품
           <ArrowIcon>〉</ArrowIcon>
         </AssetsSubMessage>
       </AssetsContent>

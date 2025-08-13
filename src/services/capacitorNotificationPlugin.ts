@@ -1,6 +1,6 @@
 /**
  * Capacitor Push Notification Plugin Integration
- * 
+ *
  * Capacitor를 통한 네이티브 플랫폼 푸시 알림 지원
  * - iOS/Android 호환성
  * - 네이티브 기능 통합
@@ -9,20 +9,21 @@
  */
 
 import { Capacitor } from '@capacitor/core';
-import { 
-  PushNotifications, 
+import { Device } from '@capacitor/device';
+import { LocalNotifications } from '@capacitor/local-notifications';
+import {
+  PushNotifications,
   PushNotificationSchema,
   ActionPerformed,
   Token,
-  PermissionStatus
+  PermissionStatus,
 } from '@capacitor/push-notifications';
-import { Device } from '@capacitor/device';
-import { LocalNotifications } from '@capacitor/local-notifications';
-import { 
-  PushNotificationData, 
+
+import {
+  PushNotificationData,
   NotificationPreferences,
   NotificationType,
-  NotificationPriority
+  NotificationPriority,
 } from './pushNotificationService';
 
 interface CapacitorNotificationOptions {
@@ -45,7 +46,7 @@ class CapacitorNotificationPlugin {
       enableSound: true,
       enableVibration: true,
       enableAnalytics: true,
-      ...options
+      ...options,
     };
   }
 
@@ -114,9 +115,12 @@ class CapacitorNotificationPlugin {
     });
 
     // 알림 수신 (앱이 포귰그라운드에 있을 때)
-    PushNotifications.addListener('pushNotificationReceived', (notification: PushNotificationSchema) => {
-      this.handleNotificationReceived(notification);
-    });
+    PushNotifications.addListener(
+      'pushNotificationReceived',
+      (notification: PushNotificationSchema) => {
+        this.handleNotificationReceived(notification);
+      }
+    );
 
     // 알림 액션 수행
     PushNotifications.addListener('pushNotificationActionPerformed', (action: ActionPerformed) => {
@@ -158,21 +162,22 @@ class CapacitorNotificationPlugin {
             actionTypeId: notification.type,
             extra: {
               ...notification.data,
-              originalNotification: notification
+              originalNotification: notification,
             },
-            attachments: notification.image ? [
-              {
-                id: 'image',
-                url: notification.image,
-                options: {
-                  iosUNNotificationAttachmentOptionsTypeHintKey: 'public.jpeg'
-                }
-              }
-            ] : undefined
-          }
-        ]
+            attachments: notification.image
+              ? [
+                  {
+                    id: 'image',
+                    url: notification.image,
+                    options: {
+                      iosUNNotificationAttachmentOptionsTypeHintKey: 'public.jpeg',
+                    },
+                  },
+                ]
+              : undefined,
+          },
+        ],
       });
-      
     } catch (error) {
       console.error('[CapacitorPlugin] Failed to schedule local notification:', error);
     }
@@ -187,9 +192,8 @@ class CapacitorNotificationPlugin {
     try {
       const id = parseInt(notificationId.replace(/\D/g, '')) || 0;
       await LocalNotifications.cancel({
-        notifications: [{ id }]
+        notifications: [{ id }],
       });
-      
     } catch (error) {
       console.error('[CapacitorPlugin] Failed to cancel local notification:', error);
     }
@@ -212,12 +216,11 @@ class CapacitorNotificationPlugin {
               body: '',
               schedule: { at: new Date(Date.now() + 100) }, // 직후 실행
               extra: { badgeOnly: true },
-              sound: undefined
-            }
-          ]
+              sound: undefined,
+            },
+          ],
         });
       }
-      
     } catch (error) {
       console.error('[CapacitorPlugin] Failed to update badge count:', error);
     }
@@ -236,9 +239,10 @@ class CapacitorNotificationPlugin {
     try {
       // Android 알림 채널 생성
       // 실제 구현에서는 네이티브 코드에서 처리해야 함
+      console.log('[CapacitorPlugin] Creating notification channel:', {
         channelId,
         channelName,
-        importance
+        importance,
       });
     } catch (error) {
       console.error('[CapacitorPlugin] Failed to create notification channel:', error);
@@ -250,22 +254,26 @@ class CapacitorNotificationPlugin {
    */
   private handleRegistrationSuccess(token: string): void {
     // 글로벌 이벤트 발송
-    window.dispatchEvent(new CustomEvent('pushRegistrationSuccess', {
-      detail: {
-        token,
-        platform: this.deviceInfo?.platform,
-        deviceId: this.deviceInfo?.identifier
-      }
-    }));
+    window.dispatchEvent(
+      new CustomEvent('pushRegistrationSuccess', {
+        detail: {
+          token,
+          platform: this.deviceInfo?.platform,
+          deviceId: this.deviceInfo?.identifier,
+        },
+      })
+    );
   }
 
   /**
    * 등록 실패 처리
    */
   private handleRegistrationError(error: any): void {
-    window.dispatchEvent(new CustomEvent('pushRegistrationError', {
-      detail: { error }
-    }));
+    window.dispatchEvent(
+      new CustomEvent('pushRegistrationError', {
+        detail: { error },
+      })
+    );
   }
 
   /**
@@ -276,17 +284,20 @@ class CapacitorNotificationPlugin {
     const bankingNotification: PushNotificationData = {
       id: notification.id || `received_${Date.now()}`,
       type: (notification.data?.type as NotificationType) || NotificationType.TRANSACTION,
-      priority: (notification.data?.priority as NotificationPriority) || NotificationPriority.NORMAL,
+      priority:
+        (notification.data?.priority as NotificationPriority) || NotificationPriority.NORMAL,
       title: notification.title || '새로운 알림',
       body: notification.body || '',
       data: notification.data || {},
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
 
     // 글로벌 이벤트 발송
-    window.dispatchEvent(new CustomEvent('pushNotificationReceived', {
-      detail: bankingNotification
-    }));
+    window.dispatchEvent(
+      new CustomEvent('pushNotificationReceived', {
+        detail: bankingNotification,
+      })
+    );
 
     // 분석 데이터 기록
     if (this.options.enableAnalytics) {
@@ -299,15 +310,17 @@ class CapacitorNotificationPlugin {
    */
   private handleNotificationAction(action: ActionPerformed): void {
     const { actionId, notification } = action;
-    
+
     // 글로벌 이벤트 발송
-    window.dispatchEvent(new CustomEvent('pushNotificationAction', {
-      detail: {
-        actionId,
-        notification: notification.data,
-        inputValue: action.inputValue // 텍스트 입력이 있는 경우
-      }
-    }));
+    window.dispatchEvent(
+      new CustomEvent('pushNotificationAction', {
+        detail: {
+          actionId,
+          notification: notification.data,
+          inputValue: action.inputValue, // 텍스트 입력이 있는 경우
+        },
+      })
+    );
 
     // 분석 데이터 기록
     if (this.options.enableAnalytics) {
@@ -327,16 +340,13 @@ class CapacitorNotificationPlugin {
       platform: this.deviceInfo?.platform || 'unknown',
       deviceModel: this.deviceInfo?.model,
       osVersion: this.deviceInfo?.osVersion,
-      appVersion: this.deviceInfo?.appVersion
+      appVersion: this.deviceInfo?.appVersion,
     };
 
     // 로컬 저장
-    const existingAnalytics = JSON.parse(
-      localStorage.getItem('notification_analytics') || '[]'
-    );
+    const existingAnalytics = JSON.parse(localStorage.getItem('notification_analytics') || '[]');
     existingAnalytics.push(analytics);
     localStorage.setItem('notification_analytics', JSON.stringify(existingAnalytics));
-
   }
 
   /**
@@ -347,16 +357,13 @@ class CapacitorNotificationPlugin {
       notificationId,
       actionId,
       actionTakenAt: Date.now(),
-      platform: this.deviceInfo?.platform || 'unknown'
+      platform: this.deviceInfo?.platform || 'unknown',
     };
 
     // 로컬 저장
-    const existingActions = JSON.parse(
-      localStorage.getItem('notification_actions') || '[]'
-    );
+    const existingActions = JSON.parse(localStorage.getItem('notification_actions') || '[]');
     existingActions.push(analytics);
     localStorage.setItem('notification_actions', JSON.stringify(existingActions));
-
   }
 
   /**
@@ -367,12 +374,8 @@ class CapacitorNotificationPlugin {
     actions: any[];
   } {
     return {
-      notifications: JSON.parse(
-        localStorage.getItem('notification_analytics') || '[]'
-      ),
-      actions: JSON.parse(
-        localStorage.getItem('notification_actions') || '[]'
-      )
+      notifications: JSON.parse(localStorage.getItem('notification_analytics') || '[]'),
+      actions: JSON.parse(localStorage.getItem('notification_actions') || '[]'),
     };
   }
 
@@ -394,10 +397,9 @@ class CapacitorNotificationPlugin {
       // 모든 리스너 제거
       await PushNotifications.removeAllListeners();
       await LocalNotifications.removeAllListeners();
-      
+
       this.isInitialized = false;
       this.registrationToken = null;
-      
     } catch (error) {
       console.error('[CapacitorPlugin] Cleanup failed:', error);
     }
@@ -416,7 +418,7 @@ class CapacitorNotificationPlugin {
       isInitialized: this.isInitialized,
       registrationToken: this.registrationToken,
       deviceInfo: this.deviceInfo,
-      platform: this.deviceInfo?.platform || 'unknown'
+      platform: this.deviceInfo?.platform || 'unknown',
     };
   }
 
@@ -432,9 +434,9 @@ class CapacitorNotificationPlugin {
       body: 'Capacitor 푸시 알림이 올바르게 작동하고 있습니다!',
       data: {
         testMode: true,
-        platform: this.deviceInfo?.platform
+        platform: this.deviceInfo?.platform,
       },
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
 
     // 로컬 알림으로 테스트

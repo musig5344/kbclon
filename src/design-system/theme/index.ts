@@ -60,10 +60,10 @@ const legacyColors = {
   dark: {
     background: colors.background.widget,
     text: colors.text.white,
-    border: colors.border.tertiary
+    border: colors.border.tertiary,
   },
 };
 export const theme = {
   ...tokens,
   colors: legacyColors,
-}; 
+};

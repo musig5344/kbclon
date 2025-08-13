@@ -56,34 +56,34 @@ const scaleIn = keyframes`
   }
 `;
 
-const TransitionContainer = styled.div<{ 
-  $isLoading: boolean; 
+const TransitionContainer = styled.div<{
+  $isLoading: boolean;
   $phase: 'loading' | 'loaded' | 'transitioning';
 }>`
   position: relative;
   width: 100%;
   height: 100%;
-  
+
   /* GPU 가속 활성화 */
   transform: translateZ(0);
   will-change: opacity, transform;
 `;
 
-const ContentWrapper = styled.div<{ 
-  $visible: boolean; 
+const ContentWrapper = styled.div<{
+  $visible: boolean;
   $animating: boolean;
 }>`
   width: 100%;
   height: 100%;
-  position: ${({ $animating }) => $animating ? 'absolute' : 'relative'};
+  position: ${({ $animating }) => ($animating ? 'absolute' : 'relative')};
   top: 0;
   left: 0;
-  opacity: ${({ $visible }) => $visible ? 1 : 0};
-  
+  opacity: ${({ $visible }) => ($visible ? 1 : 0)};
+
   ${({ $visible, $animating }) => {
     if (!$animating) return '';
-    
-    return $visible 
+
+    return $visible
       ? `
         animation: ${scaleIn} ${kbTimings.normal} ${kbTimings.easeOut} forwards;
       `
@@ -91,25 +91,25 @@ const ContentWrapper = styled.div<{
         animation: ${fadeOut} ${kbTimings.fast} ${kbTimings.easeIn} forwards;
       `;
   }}
-  
+
   transition: opacity ${kbTimings.fast} ${kbTimings.easeOut};
 `;
 
-const LoadingWrapper = styled.div<{ 
-  $visible: boolean; 
+const LoadingWrapper = styled.div<{
+  $visible: boolean;
   $animating: boolean;
 }>`
   width: 100%;
   height: 100%;
-  position: ${({ $animating }) => $animating ? 'absolute' : 'relative'};
+  position: ${({ $animating }) => ($animating ? 'absolute' : 'relative')};
   top: 0;
   left: 0;
-  opacity: ${({ $visible }) => $visible ? 1 : 0};
-  
+  opacity: ${({ $visible }) => ($visible ? 1 : 0)};
+
   ${({ $visible, $animating }) => {
     if (!$animating) return '';
-    
-    return $visible 
+
+    return $visible
       ? `
         animation: ${fadeIn} ${kbTimings.fast} ${kbTimings.easeOut} forwards;
       `
@@ -117,7 +117,7 @@ const LoadingWrapper = styled.div<{
         animation: ${fadeOut} ${kbTimings.fast} ${kbTimings.easeIn} forwards;
       `;
   }}
-  
+
   transition: opacity ${kbTimings.fast} ${kbTimings.easeOut};
 `;
 
@@ -134,19 +134,18 @@ const DefaultLoadingComponent = styled.div`
 const SkeletonBlock = styled.div<{ $width?: string; $height?: string }>`
   width: ${({ $width }) => $width || '100%'};
   height: ${({ $height }) => $height || '20px'};
-  background: linear-gradient(
-    90deg,
-    #f0f0f0 25%,
-    #e0e0e0 50%,
-    #f0f0f0 75%
-  );
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
   background-size: 200% 100%;
   border-radius: ${tokens.borderRadius.small};
   animation: pulse 1.5s ease-in-out infinite;
-  
+
   @keyframes pulse {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
   }
 `;
 
@@ -172,10 +171,10 @@ export const SmoothLoadingTransition: React.FC<SmoothLoadingTransitionProps> = (
       const now = Date.now();
       const elapsed = loadingStartTime ? now - loadingStartTime : 0;
       const remainingTime = Math.max(0, minLoadingTime - elapsed);
-      
+
       setTimeout(() => {
         setIsTransitioning(true);
-        
+
         // 전환 애니메이션 완료 후 상태 업데이트
         setTimeout(() => {
           setInternalLoading(false);
@@ -188,38 +187,28 @@ export const SmoothLoadingTransition: React.FC<SmoothLoadingTransitionProps> = (
 
   const defaultLoading = (
     <DefaultLoadingComponent>
-      <SkeletonBlock $height="24px" $width="60%" />
-      <SkeletonBlock $height="16px" $width="100%" />
-      <SkeletonBlock $height="16px" $width="80%" />
-      <SkeletonBlock $height="200px" />
-      <SkeletonBlock $height="16px" $width="70%" />
-      <SkeletonBlock $height="16px" $width="90%" />
+      <SkeletonBlock $height='24px' $width='60%' />
+      <SkeletonBlock $height='16px' $width='100%' />
+      <SkeletonBlock $height='16px' $width='80%' />
+      <SkeletonBlock $height='200px' />
+      <SkeletonBlock $height='16px' $width='70%' />
+      <SkeletonBlock $height='16px' $width='90%' />
     </DefaultLoadingComponent>
   );
 
   return (
     <TransitionContainer
       $isLoading={internalLoading}
-      $phase={
-        internalLoading 
-          ? (isTransitioning ? 'transitioning' : 'loading')
-          : 'loaded'
-      }
+      $phase={internalLoading ? (isTransitioning ? 'transitioning' : 'loading') : 'loaded'}
       className={className}
     >
       {/* 로딩 상태 */}
-      <LoadingWrapper
-        $visible={internalLoading}
-        $animating={isTransitioning}
-      >
+      <LoadingWrapper $visible={internalLoading} $animating={isTransitioning}>
         {loadingComponent || defaultLoading}
       </LoadingWrapper>
-      
+
       {/* 실제 콘텐츠 */}
-      <ContentWrapper
-        $visible={!internalLoading}
-        $animating={isTransitioning}
-      >
+      <ContentWrapper $visible={!internalLoading} $animating={isTransitioning}>
         {children}
       </ContentWrapper>
     </TransitionContainer>

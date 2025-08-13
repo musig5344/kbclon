@@ -84,9 +84,7 @@ export type ResponseInterceptor<T = unknown> = (
   response: ApiBaseResponse<T>
 ) => ApiBaseResponse<T> | Promise<ApiBaseResponse<T>>;
 // 에러 인터셉터 타입
-export type ErrorInterceptor = (
-  error: ErrorResponse
-) => ErrorResponse | Promise<ErrorResponse>;
+export type ErrorInterceptor = (error: ErrorResponse) => ErrorResponse | Promise<ErrorResponse>;
 // 재시도 설정
 export interface RetryConfig {
   maxRetries: number;

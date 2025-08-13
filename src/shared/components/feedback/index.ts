@@ -23,7 +23,10 @@ export type { AlertSeverity, AlertVariant } from './Alert';
 export type { ProgressType, ProgressSize } from './ProgressIndicator';
 export type { default as SuccessAnimationProps } from './SuccessAnimation';
 export type { default as NetworkErrorHandlerProps } from './NetworkErrorHandler';
-export type { default as ValidationFeedbackProps, FieldValidationProps } from './ValidationFeedback';
+export type {
+  default as ValidationFeedbackProps,
+  FieldValidationProps,
+} from './ValidationFeedback';
 export type { default as FinancialAlertProps } from './FinancialAlerts';
 export type { default as SessionHandlerProps } from './SessionHandler';
 export type { ErrorCode } from './ErrorMessageMapper';

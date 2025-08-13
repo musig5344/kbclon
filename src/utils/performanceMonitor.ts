@@ -1,6 +1,6 @@
 /**
  * KB 스타뱅킹 성능 모니터링 시스템
- * 
+ *
  * 특징:
  * - 실시간 성능 메트릭 수집
  * - Web Vitals 측정 및 분석
@@ -56,7 +56,7 @@ class PerformanceMonitor {
   private webVitalsMetrics: WebVitalMetric[] = [];
   private observers: PerformanceObserver[] = [];
   private startTime = performance.now();
-  
+
   constructor() {
     if (typeof window !== 'undefined') {
       this.initializeWebVitals();
@@ -70,9 +70,9 @@ class PerformanceMonitor {
    */
   private initializeWebVitals() {
     // Cumulative Layout Shift (CLS) 측정
-    this.observePerformanceEntry('layout-shift', (entries) => {
+    this.observePerformanceEntry('layout-shift', entries => {
       let cumulativeScore = 0;
-      
+
       entries.forEach((entry: any) => {
         if (!entry.hadRecentInput) {
           cumulativeScore += entry.value;
@@ -85,12 +85,12 @@ class PerformanceMonitor {
         rating: this.getCLSRating(cumulativeScore),
         delta: cumulativeScore,
         id: 'cls-' + Date.now(),
-        entries
+        entries,
       });
     });
 
     // First Input Delay (FID) 측정
-    this.observePerformanceEntry('first-input', (entries) => {
+    this.observePerformanceEntry('first-input', entries => {
       const entry = entries[0] as any;
       const fid = entry.processingStart - entry.startTime;
 
@@ -100,12 +100,12 @@ class PerformanceMonitor {
         rating: this.getFIDRating(fid),
         delta: fid,
         id: 'fid-' + Date.now(),
-        entries
+        entries,
       });
     });
 
     // Largest Contentful Paint (LCP) 측정
-    this.observePerformanceEntry('largest-contentful-paint', (entries) => {
+    this.observePerformanceEntry('largest-contentful-paint', entries => {
       const entry = entries[entries.length - 1] as any;
       const lcp = entry.startTime;
 
@@ -115,12 +115,12 @@ class PerformanceMonitor {
         rating: this.getLCPRating(lcp),
         delta: lcp,
         id: 'lcp-' + Date.now(),
-        entries
+        entries,
       });
     });
 
     // First Contentful Paint (FCP) 측정
-    this.observePerformanceEntry('paint', (entries) => {
+    this.observePerformanceEntry('paint', entries => {
       const fcpEntry = entries.find((entry: any) => entry.name === 'first-contentful-paint');
       if (fcpEntry) {
         const fcp = fcpEntry.startTime;
@@ -131,7 +131,7 @@ class PerformanceMonitor {
           rating: this.getFCPRating(fcp),
           delta: fcp,
           id: 'fcp-' + Date.now(),
-          entries: [fcpEntry]
+          entries: [fcpEntry],
         });
       }
     });
@@ -145,7 +145,7 @@ class PerformanceMonitor {
    */
   private initializeCustomObservers() {
     // 리소스 로딩 시간 측정
-    this.observePerformanceEntry('resource', (entries) => {
+    this.observePerformanceEntry('resource', entries => {
       entries.forEach((entry: any) => {
         if (entry.name.includes('.js') || entry.name.includes('.css')) {
           this.addCustomMetric({
@@ -153,7 +153,7 @@ class PerformanceMonitor {
             value: entry.responseEnd - entry.startTime,
             timestamp: Date.now(),
             category: 'loading',
-            unit: 'ms'
+            unit: 'ms',
           });
         }
       });
@@ -173,18 +173,18 @@ class PerformanceMonitor {
   private trackPageLoad() {
     window.addEventListener('load', () => {
       const loadTime = performance.now() - this.startTime;
-      
+
       this.addCustomMetric({
         name: 'page_load_time',
         value: loadTime,
         timestamp: Date.now(),
         category: 'loading',
-        unit: 'ms'
+        unit: 'ms',
       });
 
       // DOM 크기 측정
       this.measureDOMSize();
-      
+
       // 번들 크기 측정
       this.measureBundleSize();
     });
@@ -193,15 +193,12 @@ class PerformanceMonitor {
   /**
    * Performance Observer 설정
    */
-  private observePerformanceEntry(
-    type: string, 
-    callback: (entries: PerformanceEntry[]) => void
-  ) {
+  private observePerformanceEntry(type: string, callback: (entries: PerformanceEntry[]) => void) {
     try {
-      const observer = new PerformanceObserver((list) => {
+      const observer = new PerformanceObserver(list => {
         callback(list.getEntries());
       });
-      
+
       observer.observe({ entryTypes: [type] });
       this.observers.push(observer);
     } catch (error) {
@@ -216,14 +213,14 @@ class PerformanceMonitor {
     const navigation = performance.getEntriesByType('navigation')[0] as any;
     if (navigation) {
       const ttfb = navigation.responseStart - navigation.requestStart;
-      
+
       this.addWebVitalMetric({
         name: 'TTFB',
         value: ttfb,
         rating: this.getTTFBRating(ttfb),
         delta: ttfb,
         id: 'ttfb-' + Date.now(),
-        entries: [navigation]
+        entries: [navigation],
       });
     }
   }
@@ -234,13 +231,13 @@ class PerformanceMonitor {
   private measureMemoryUsage() {
     if ('memory' in performance) {
       const memory = (performance as any).memory;
-      
+
       this.addCustomMetric({
         name: 'js_memory_used',
         value: Math.round(memory.usedJSMemory / 1048576), // MB 변환
         timestamp: Date.now(),
         category: 'memory',
-        unit: 'mb'
+        unit: 'mb',
       });
 
       this.addCustomMetric({
@@ -248,7 +245,7 @@ class PerformanceMonitor {
         value: Math.round(memory.totalJSMemory / 1048576),
         timestamp: Date.now(),
         category: 'memory',
-        unit: 'mb'
+        unit: 'mb',
       });
     }
   }
@@ -258,13 +255,13 @@ class PerformanceMonitor {
    */
   private measureDOMSize() {
     const domSize = document.querySelectorAll('*').length;
-    
+
     this.addCustomMetric({
       name: 'dom_size',
       value: domSize,
       timestamp: Date.now(),
       category: 'visual',
-      unit: 'count'
+      unit: 'count',
     });
   }
 
@@ -279,7 +276,7 @@ class PerformanceMonitor {
     resources.forEach((resource: any) => {
       if (resource.name.includes('.js') && resource.transferSize) {
         totalSize += resource.transferSize;
-        
+
         const chunkName = this.extractChunkName(resource.name);
         chunkSizes[chunkName] = resource.transferSize;
       }
@@ -290,7 +287,7 @@ class PerformanceMonitor {
       value: Math.round(totalSize / 1024), // KB 변환
       timestamp: Date.now(),
       category: 'loading',
-      unit: 'kb'
+      unit: 'kb',
     });
   }
 
@@ -301,7 +298,7 @@ class PerformanceMonitor {
     const metrics = this.metrics.get(metric.name) || [];
     metrics.push(metric);
     this.metrics.set(metric.name, metrics);
-    
+
     // 개발 모드에서 콘솔 로그
     if (process.env.NODE_ENV === 'development') {
       console.log(`📊 Performance Metric: ${metric.name} = ${metric.value}${metric.unit || ''}`);
@@ -313,9 +310,10 @@ class PerformanceMonitor {
    */
   private addWebVitalMetric(metric: WebVitalMetric) {
     this.webVitalsMetrics.push(metric);
-    
+
     if (process.env.NODE_ENV === 'development') {
-      const emoji = metric.rating === 'good' ? '✅' : metric.rating === 'needs-improvement' ? '⚠️' : '❌';
+      const emoji =
+        metric.rating === 'good' ? '✅' : metric.rating === 'needs-improvement' ? '⚠️' : '❌';
       console.log(`${emoji} ${metric.name}: ${metric.value.toFixed(2)}ms (${metric.rating})`);
     }
   }
@@ -333,7 +331,7 @@ class PerformanceMonitor {
         webVitals: [],
         customMetrics: [],
         bundleStats: { totalSize: 0, chunkSizes: {}, loadTime: 0 },
-        memoryUsage: null
+        memoryUsage: null,
       };
     }
 
@@ -344,19 +342,23 @@ class PerformanceMonitor {
       timestamp: Date.now(),
       url: window.location.href,
       userAgent: navigator.userAgent,
-      connection: connection ? {
-        effectiveType: connection.effectiveType,
-        downlink: connection.downlink,
-        rtt: connection.rtt
-      } : null,
+      connection: connection
+        ? {
+            effectiveType: connection.effectiveType,
+            downlink: connection.downlink,
+            rtt: connection.rtt,
+          }
+        : null,
       webVitals: this.webVitalsMetrics,
       customMetrics: Array.from(this.metrics.values()).flat(),
       bundleStats: this.calculateBundleStats(),
-      memoryUsage: memory ? {
-        usedJSMemory: memory.usedJSMemory,
-        totalJSMemory: memory.totalJSMemory,
-        jsMemoryLimit: memory.jsMemoryLimit
-      } : null
+      memoryUsage: memory
+        ? {
+            usedJSMemory: memory.usedJSMemory,
+            totalJSMemory: memory.totalJSMemory,
+            jsMemoryLimit: memory.jsMemoryLimit,
+          }
+        : null,
     };
   }
 
@@ -370,7 +372,7 @@ class PerformanceMonitor {
     return {
       totalSize: bundleSizeMetric?.value || 0,
       chunkSizes: {},
-      loadTime: loadTimeMetric?.value || 0
+      loadTime: loadTimeMetric?.value || 0,
     };
   }
 
@@ -379,7 +381,7 @@ class PerformanceMonitor {
    */
   calculatePerformanceScore(): number {
     let score = 100;
-    
+
     this.webVitalsMetrics.forEach(metric => {
       switch (metric.rating) {
         case 'poor':
@@ -462,13 +464,17 @@ export const performanceMonitor = new PerformanceMonitor();
  * React Hook for performance monitoring
  */
 export const usePerformanceMonitoring = () => {
-  const addMetric = (name: string, value: number, category: CustomMetric['category'] = 'interactivity') => {
+  const addMetric = (
+    name: string,
+    value: number,
+    category: CustomMetric['category'] = 'interactivity'
+  ) => {
     performanceMonitor.addCustomMetric({
       name,
       value,
       timestamp: Date.now(),
       category,
-      unit: 'ms'
+      unit: 'ms',
     });
   };
 
@@ -478,7 +484,7 @@ export const usePerformanceMonitoring = () => {
   return {
     addMetric,
     generateReport,
-    getScore
+    getScore,
   };
 };
 
@@ -487,13 +493,13 @@ export const usePerformanceMonitoring = () => {
  */
 export const getOptimizationSummary = () => {
   const report = performanceMonitor.generateReport();
-  
+
   return {
     webVitalsScore: performanceMonitor.calculatePerformanceScore(),
     bundleSize: report.bundleStats.totalSize,
     loadTime: report.bundleStats.loadTime,
     memoryUsage: report.memoryUsage?.usedJSMemory || 0,
-    optimizationTips: getPerformanceOptimizationTips(report)
+    optimizationTips: getPerformanceOptimizationTips(report),
   };
 };
 
@@ -514,7 +520,9 @@ export const getPerformanceOptimizationTips = (report: PerformanceReport): strin
           tips.push('FID 개선: JavaScript 실행 시간을 줄이고, 코드 스플리팅을 적용하세요.');
           break;
         case 'CLS':
-          tips.push('CLS 개선: 이미지와 광고에 명시적 크기를 지정하고, 동적 콘텐츠 삽입을 최소화하세요.');
+          tips.push(
+            'CLS 개선: 이미지와 광고에 명시적 크기를 지정하고, 동적 콘텐츠 삽입을 최소화하세요.'
+          );
           break;
       }
     }

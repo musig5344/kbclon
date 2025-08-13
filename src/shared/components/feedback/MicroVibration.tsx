@@ -72,11 +72,11 @@ const vibrationStyles: VibrationStyles = {
   `,
   pulse: css`
     animation: ${pulseVibration} 0.2s ease-in-out;
-  `
+  `,
 };
 
-const VibrationWrapper = styled.div<{ 
-  $isVibrating: boolean; 
+const VibrationWrapper = styled.div<{
+  $isVibrating: boolean;
   $intensity: VibrationIntensity;
 }>`
   display: inline-block;
@@ -96,19 +96,29 @@ export const MicroVibration: React.FC<MicroVibrationProps> = ({
   trigger = false,
   intensity = 'medium',
   duration,
-  onVibrationEnd
+  onVibrationEnd,
 }) => {
   const [isVibrating, setIsVibrating] = useState(false);
 
   useEffect(() => {
     if (trigger) {
       setIsVibrating(true);
-      
-      const timeout = setTimeout(() => {
-        setIsVibrating(false);
-        onVibrationEnd?.();
-      }, duration || (intensity === 'error' ? 500 : intensity === 'strong' ? 400 : intensity === 'medium' ? 300 : 150));
-      
+
+      const timeout = setTimeout(
+        () => {
+          setIsVibrating(false);
+          onVibrationEnd?.();
+        },
+        duration ||
+          (intensity === 'error'
+            ? 500
+            : intensity === 'strong'
+              ? 400
+              : intensity === 'medium'
+                ? 300
+                : 150)
+      );
+
       return () => clearTimeout(timeout);
     }
   }, [trigger, intensity, duration, onVibrationEnd]);
@@ -123,11 +133,11 @@ export const MicroVibration: React.FC<MicroVibrationProps> = ({
 // Hook for triggering vibrations
 export const useVibration = () => {
   const [vibrationTrigger, setVibrationTrigger] = useState(false);
-  
+
   const vibrate = (intensity: VibrationIntensity = 'medium') => {
     setVibrationTrigger(true);
     setTimeout(() => setVibrationTrigger(false), 10);
-    
+
     // 실제 진동 API 호출 (지원하는 경우)
     if ('vibrate' in navigator) {
       switch (intensity) {
@@ -149,7 +159,7 @@ export const useVibration = () => {
       }
     }
   };
-  
+
   return { vibrate, vibrationTrigger };
 };
 
@@ -166,7 +176,7 @@ export const withVibration = <P extends object>(
     const { vibrate } = useVibration();
     const [shouldVibrate, setShouldVibrate] = useState(false);
     const [vibrationIntensity, setVibrationIntensity] = useState<VibrationIntensity>('medium');
-    
+
     const handlePress = () => {
       if (options.onPress) {
         vibrate(options.onPress);
@@ -175,7 +185,7 @@ export const withVibration = <P extends object>(
         setTimeout(() => setShouldVibrate(false), 100);
       }
     };
-    
+
     const enhancedProps = {
       ...props,
       onClick: (e: React.MouseEvent) => {
@@ -189,9 +199,9 @@ export const withVibration = <P extends object>(
         if ((props as any).onTouchStart) {
           (props as any).onTouchStart(e);
         }
-      }
+      },
     };
-    
+
     return (
       <MicroVibration trigger={shouldVibrate} intensity={vibrationIntensity}>
         <Component {...enhancedProps} ref={ref} />
@@ -221,12 +231,12 @@ export const VibrationPatterns = {
     if ('vibrate' in navigator) {
       navigator.vibrate([25, 25, 25]);
     }
-  }
+  },
 };
 
 // 터치 피드백 컴포넌트
 const TouchFeedbackWrapper = styled.div<{ $pressed: boolean }>`
-  transform: ${props => props.$pressed ? 'scale(0.97)' : 'scale(1)'};
+  transform: ${props => (props.$pressed ? 'scale(0.97)' : 'scale(1)')};
   transition: transform 0.1s ease-out;
 `;
 
@@ -239,21 +249,21 @@ interface TouchFeedbackProps {
 export const TouchFeedback: React.FC<TouchFeedbackProps> = ({
   children,
   vibrationIntensity = 'soft',
-  onPress
+  onPress,
 }) => {
   const [pressed, setPressed] = useState(false);
   const { vibrate } = useVibration();
-  
+
   const handleTouchStart = () => {
     setPressed(true);
     vibrate(vibrationIntensity);
   };
-  
+
   const handleTouchEnd = () => {
     setPressed(false);
     onPress?.();
   };
-  
+
   return (
     <TouchFeedbackWrapper
       $pressed={pressed}

@@ -20,7 +20,7 @@ const PATTERNS = {
   PASSWORD: /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,20}$/,
   NUMERIC: /^\d+$/,
   AMOUNT: /^\d{1,12}$/,
-  SAFE_TEXT: /^[a-zA-Z0-9가-힣\s\-_.()]{1,100}$/
+  SAFE_TEXT: /^[a-zA-Z0-9가-힣\s\-_.()]{1,100}$/,
 };
 // 위험한 문자/패턴 (XSS 방지)
 const DANGEROUS_PATTERNS = [
@@ -33,13 +33,13 @@ const DANGEROUS_PATTERNS = [
   /<object/i,
   /<embed/i,
   /data:text\/html/i,
-  /vbscript:/i
+  /vbscript:/i,
 ];
 // SQL 인젝션 패턴
 const SQL_INJECTION_PATTERNS = [
   /['";]|--|\/\*|\*\/|#/i,
   /\b(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|EXEC|UNION)\b/i,
-  /\b(OR|AND|WHERE|TABLE|FROM)\b/i
+  /\b(OR|AND|WHERE|TABLE|FROM)\b/i,
 ];
 class ValidationService {
   private static instance: ValidationService;
@@ -69,7 +69,7 @@ class ValidationService {
     }
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
     };
   }
   /**
@@ -101,7 +101,7 @@ class ValidationService {
     }
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
     };
   }
   /**
@@ -121,7 +121,7 @@ class ValidationService {
     }
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
     };
   }
   /**
@@ -142,7 +142,7 @@ class ValidationService {
     }
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
     };
   }
   /**
@@ -163,7 +163,7 @@ class ValidationService {
     }
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
     };
   }
   /**
@@ -183,7 +183,8 @@ class ValidationService {
       if (numericAmount <= 0) {
         errors.push('금액은 0보다 커야 합니다.');
       }
-      if (numericAmount > 999999999999) { // 1조원 한도
+      if (numericAmount > 999999999999) {
+        // 1조원 한도
         errors.push('입력 가능한 금액을 초과했습니다.');
       }
       if (this.hasDangerousContent(amountStr)) {
@@ -192,7 +193,7 @@ class ValidationService {
     }
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
     };
   }
   /**
@@ -214,7 +215,7 @@ class ValidationService {
     }
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
     };
   }
   /**
@@ -233,7 +234,7 @@ class ValidationService {
     }
     return {
       isValid: errors.length === 0,
-      errors
+      errors,
     };
   }
   /**
@@ -270,7 +271,7 @@ class ValidationService {
       /asdfghjk/i,
       /zxcvbnm/i,
       // 생년월일 패턴 (예: 19901234, 20001234)
-      /(19|20)\d{6}/
+      /(19|20)\d{6}/,
     ];
     return weakPatterns.some(pattern => pattern.test(password));
   }
@@ -295,9 +296,8 @@ class ValidationService {
    * 금액 포맷팅 (콤마 추가)
    */
   formatAmount(amount: string | number): string {
-    const numericAmount = typeof amount === 'string' 
-      ? parseInt(this.extractNumbers(amount), 10)
-      : amount;
+    const numericAmount =
+      typeof amount === 'string' ? parseInt(this.extractNumbers(amount), 10) : amount;
     if (isNaN(numericAmount)) return '0';
     return numericAmount.toLocaleString('ko-KR');
   }
@@ -328,7 +328,7 @@ class ValidationService {
     return {
       isValid: Object.keys(errors).length === 0,
       errors,
-      firstError
+      firstError,
     };
   }
 }
@@ -339,10 +339,13 @@ export const validateEmail = (email: string) => validationService.validateEmail(
 export const validatePassword = (password: string) => validationService.validatePassword(password);
 export const validateName = (name: string) => validationService.validateName(name);
 export const validatePhone = (phone: string) => validationService.validatePhone(phone);
-export const validateAccountNumber = (accountNumber: string) => validationService.validateAccountNumber(accountNumber);
+export const validateAccountNumber = (accountNumber: string) =>
+  validationService.validateAccountNumber(accountNumber);
 export const validateAmount = (amount: string | number) => validationService.validateAmount(amount);
-export const validateTransactionDescription = (description: string) => validationService.validateTransactionDescription(description);
-export const validateSafeText = (text: string, maxLength?: number) => validationService.validateSafeText(text, maxLength);
+export const validateTransactionDescription = (description: string) =>
+  validationService.validateTransactionDescription(description);
+export const validateSafeText = (text: string, maxLength?: number) =>
+  validationService.validateSafeText(text, maxLength);
 export const sanitizeInput = (input: string) => validationService.sanitizeInput(input);
 export const extractNumbers = (input: string) => validationService.extractNumbers(input);
 export const formatAmount = (amount: string | number) => validationService.formatAmount(amount);
@@ -350,26 +353,28 @@ export const formatAmount = (amount: string | number) => validationService.forma
 export const commonValidationRules = {
   required: (message: string = '필수 입력 항목입니다.'): ValidationRule => ({
     message,
-    validator: (value: string) => value.trim().length > 0
+    validator: (value: string) => value.trim().length > 0,
   }),
   minLength: (length: number, message?: string): ValidationRule => ({
     message: message || `최소 ${length}자 이상 입력해주세요.`,
-    validator: (value: string) => value.length >= length
+    validator: (value: string) => value.length >= length,
   }),
   maxLength: (length: number, message?: string): ValidationRule => ({
     message: message || `최대 ${length}자까지 입력 가능합니다.`,
-    validator: (value: string) => value.length <= length
+    validator: (value: string) => value.length <= length,
   }),
   pattern: (pattern: RegExp, message: string): ValidationRule => ({
     message,
-    validator: (value: string) => pattern.test(value)
+    validator: (value: string) => pattern.test(value),
   }),
   noXSS: (message: string = '허용되지 않는 문자가 포함되어 있습니다.'): ValidationRule => ({
     message,
-    validator: (value: string) => !validationService['hasDangerousContent'](value)
+    validator: (value: string) => !validationService['hasDangerousContent'](value),
   }),
-  noSQLInjection: (message: string = '허용되지 않는 내용이 포함되어 있습니다.'): ValidationRule => ({
+  noSQLInjection: (
+    message: string = '허용되지 않는 내용이 포함되어 있습니다.'
+  ): ValidationRule => ({
     message,
-    validator: (value: string) => !validationService['hasSqlInjection'](value)
-  })
+    validator: (value: string) => !validationService['hasSqlInjection'](value),
+  }),
 };

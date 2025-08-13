@@ -7,13 +7,13 @@
 const isKorean = (char: string): boolean => {
   const code = char.charCodeAt(0);
   // 한글 유니코드 범위: AC00-D7AF (가-힣)
-  return code >= 0xAC00 && code <= 0xD7AF;
+  return code >= 0xac00 && code <= 0xd7af;
 };
 // 한글 자음/모음 체크
 const isKoreanJamo = (char: string): boolean => {
   const code = char.charCodeAt(0);
   // 한글 자음: 3131-314E, 한글 모음: 314F-3163
-  return (code >= 0x3131 && code <= 0x314E) || (code >= 0x314F && code <= 0x3163);
+  return (code >= 0x3131 && code <= 0x314e) || (code >= 0x314f && code <= 0x3163);
 };
 // 공백 문자 체크
 const isWhitespace = (char: string): boolean => {
@@ -42,7 +42,12 @@ export const formatTransactionText = (text: string): string => {
     const isNextKorean = nextChar && (isKorean(nextChar) || isKoreanJamo(nextChar));
     if (isCurrentKorean) {
       // 이전 문자가 영문/숫자였으면 공백 추가
-      if (i > 0 && !prevWasKorean && result.length > 0 && !isWhitespace(result[result.length - 1])) {
+      if (
+        i > 0 &&
+        !prevWasKorean &&
+        result.length > 0 &&
+        !isWhitespace(result[result.length - 1])
+      ) {
         result += ' ';
       }
       // 한글은 그대로 붙여서 표기

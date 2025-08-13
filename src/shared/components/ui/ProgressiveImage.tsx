@@ -4,7 +4,9 @@ import styled from 'styled-components';
 const ImageContainer = styled.div<{ aspectRatio?: number }>`
   position: relative;
   width: 100%;
-  ${props => props.aspectRatio && `
+  ${props =>
+    props.aspectRatio &&
+    `
     padding-bottom: ${(1 / props.aspectRatio) * 100}%;
   `}
   overflow: hidden;
@@ -17,7 +19,7 @@ const StyledImage = styled.img<{ loaded: boolean }>`
   width: 100%;
   height: 100%;
   object-fit: cover;
-  opacity: ${props => props.loaded ? 1 : 0};
+  opacity: ${props => (props.loaded ? 1 : 0)};
   transition: opacity 0.3s ease-in-out;
 `;
 const Placeholder = styled.div`
@@ -26,12 +28,7 @@ const Placeholder = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(
-    90deg,
-    #f0f0f0 0%,
-    #f8f8f8 50%,
-    #f0f0f0 100%
-  );
+  background: linear-gradient(90deg, #f0f0f0 0%, #f8f8f8 50%, #f0f0f0 100%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   @keyframes shimmer {
@@ -57,7 +54,7 @@ export const ProgressiveImage: React.FC<ProgressiveImageProps> = ({
   aspectRatio,
   className,
   onLoad,
-  onError
+  onError,
 }) => {
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
@@ -80,13 +77,7 @@ export const ProgressiveImage: React.FC<ProgressiveImageProps> = ({
   return (
     <ImageContainer aspectRatio={aspectRatio} className={className}>
       {!loaded && !error && <Placeholder />}
-      {!error && (
-        <StyledImage
-          src={src}
-          alt={alt}
-          loaded={loaded}
-        />
-      )}
+      {!error && <StyledImage src={src} alt={alt} loaded={loaded} />}
     </ImageContainer>
   );
 };

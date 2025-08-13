@@ -10,10 +10,7 @@ import styled, { css } from 'styled-components';
 
 import { useTouchOptimized } from '../../shared/hooks/useTouchOptimized';
 import { hapticFeedback } from '../../shared/utils/touchOptimization';
-import { 
-  WCAG_TOUCH_CONSTANTS,
-  TouchDensity,
-} from '../../shared/utils/touchTargetOptimizer';
+import { WCAG_TOUCH_CONSTANTS, TouchDensity } from '../../shared/utils/touchTargetOptimizer';
 import { tokens } from '../../styles/tokens';
 
 import { TouchTab } from './TouchOptimizedComponents';
@@ -63,14 +60,14 @@ const BottomNavContainer = styled.nav<{
   border-top: 1px solid ${tokens.colors.gray200};
   padding-bottom: ${props => props.$safeAreaInset}px;
   z-index: 1000;
-  
+
   /* Ensure within thumb reach */
   max-width: ${THUMB_ZONES.extended.oneHandedWidth}px;
   margin: 0 auto;
-  
+
   /* Safe area for iOS */
   padding-bottom: max(${props => props.$safeAreaInset}px, env(safe-area-inset-bottom));
-  
+
   /* Backdrop blur for modern look */
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -105,12 +102,15 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
   haptic = true,
   safeAreaInset = 20,
 }) => {
-  const handleItemPress = useCallback((id: string) => {
-    const item = items.find(item => item.id === id);
-    if (item?.disabled) return;
-    
-    onItemPress?.(id);
-  }, [items, onItemPress]);
+  const handleItemPress = useCallback(
+    (id: string) => {
+      const item = items.find(item => item.id === id);
+      if (item?.disabled) return;
+
+      onItemPress?.(id);
+    },
+    [items, onItemPress]
+  );
 
   return (
     <BottomNavContainer $density={density} $safeAreaInset={safeAreaInset}>
@@ -158,16 +158,18 @@ const FABContainer = styled.button<{
   cursor: pointer;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
   transition: all 200ms ease-out;
-  
+
   /* Size based on touch target requirements */
-  width: ${props => props.$size === 'large' ? '64px' : WCAG_TOUCH_CONSTANTS.RECOMMENDED_TARGET_SIZE + 'px'};
-  height: ${props => props.$size === 'large' ? '64px' : WCAG_TOUCH_CONSTANTS.RECOMMENDED_TARGET_SIZE + 'px'};
-  
+  width: ${props =>
+    props.$size === 'large' ? '64px' : WCAG_TOUCH_CONSTANTS.RECOMMENDED_TARGET_SIZE + 'px'};
+  height: ${props =>
+    props.$size === 'large' ? '64px' : WCAG_TOUCH_CONSTANTS.RECOMMENDED_TARGET_SIZE + 'px'};
+
   /* Position within thumb reach */
   ${props => {
     const offset = 16;
     const safeOffset = props.$safeAreaInset + offset;
-    
+
     switch (props.$position) {
       case 'bottom-right':
         return css`
@@ -188,25 +190,30 @@ const FABContainer = styled.button<{
         `;
     }
   }}
-  
+
   &:hover:not(:disabled) {
-    transform: ${props => props.$position === 'center-bottom' ? 'translateX(-50%) translateY(-2px)' : 'translateY(-2px)'};
+    transform: ${props =>
+      props.$position === 'center-bottom'
+        ? 'translateX(-50%) translateY(-2px)'
+        : 'translateY(-2px)'};
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
     background-color: ${tokens.colors.primaryDark};
   }
-  
+
   &:active {
-    transform: ${props => props.$position === 'center-bottom' ? 'translateX(-50%) scale(0.96)' : 'scale(0.96)'};
+    transform: ${props =>
+      props.$position === 'center-bottom' ? 'translateX(-50%) scale(0.96)' : 'scale(0.96)'};
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
   }
-  
+
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-    transform: ${props => props.$position === 'center-bottom' ? 'translateX(-50%)' : 'none'} !important;
+    transform: ${props =>
+      props.$position === 'center-bottom' ? 'translateX(-50%)' : 'none'} !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
   }
-  
+
   &:focus-visible {
     outline: 2px solid ${tokens.colors.primary};
     outline-offset: 4px;
@@ -283,10 +290,10 @@ const HeaderContainer = styled.header<{
   background-color: white;
   border-bottom: 1px solid ${tokens.colors.gray200};
   z-index: 999;
-  
+
   /* Safe area for iOS */
   padding-top: max(${props => props.$safeAreaInset}px, env(safe-area-inset-top));
-  
+
   /* Backdrop blur */
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -313,7 +320,7 @@ const HeaderTitle = styled.h1`
   color: ${tokens.colors.text.primary};
   text-align: center;
   padding: 0 16px;
-  
+
   /* Prevent text from interfering with touch targets */
   pointer-events: none;
   overflow: hidden;
@@ -342,21 +349,21 @@ const HeaderAction = styled.button<{ $density: TouchDensity }>`
   color: ${tokens.colors.text.primary};
   cursor: pointer;
   transition: all 200ms ease-out;
-  
+
   &:hover:not(:disabled) {
     background-color: rgba(0, 0, 0, 0.04);
   }
-  
+
   &:active {
     background-color: rgba(0, 0, 0, 0.08);
     transform: scale(0.96);
   }
-  
+
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
   }
-  
+
   &:focus-visible {
     outline: 2px solid ${tokens.colors.primary};
     outline-offset: 2px;
@@ -377,10 +384,13 @@ export const ThumbHeader: React.FC<ThumbHeaderProps> = ({
   haptic = true,
   safeAreaInset = 20,
 }) => {
-  const handleActionPress = useCallback((action: () => void) => {
-    if (haptic) hapticFeedback.light();
-    action();
-  }, [haptic]);
+  const handleActionPress = useCallback(
+    (action: () => void) => {
+      if (haptic) hapticFeedback.light();
+      action();
+    },
+    [haptic]
+  );
 
   return (
     <HeaderContainer $density={density} $safeAreaInset={safeAreaInset}>
@@ -397,10 +407,10 @@ export const ThumbHeader: React.FC<ThumbHeaderProps> = ({
             </HeaderAction>
           )}
         </div>
-        
+
         {/* Title */}
         {title && <HeaderTitle>{title}</HeaderTitle>}
-        
+
         {/* Right actions - positioned for easy thumb access */}
         <HeaderActionsGroup>
           {rightActions.map(action => (
@@ -462,14 +472,15 @@ const SwipeIndicators = styled.div`
 const SwipeIndicator = styled.button<{ $active: boolean }>`
   width: ${WCAG_TOUCH_CONSTANTS.MIN_TARGET_SIZE}px;
   height: 8px;
-  background-color: ${props => props.$active ? tokens.colors.primary : tokens.colors.gray200};
+  background-color: ${props => (props.$active ? tokens.colors.primary : tokens.colors.gray200)};
   border: none;
   border-radius: 4px;
   cursor: pointer;
   transition: all 200ms ease-out;
-  
+
   &:hover {
-    background-color: ${props => props.$active ? tokens.colors.primaryDark : tokens.colors.gray300};
+    background-color: ${props =>
+      props.$active ? tokens.colors.primaryDark : tokens.colors.gray300};
   }
 `;
 
@@ -507,12 +518,15 @@ export function SwipeNavigation<T>({
     },
   });
 
-  const handleIndicatorPress = useCallback((index: number) => {
-    setCurrentIndex(index);
-    setTranslateX(-index * itemWidth);
-    if (haptic) hapticFeedback.light();
-    onItemChange?.(items[index], index);
-  }, [items, itemWidth, haptic, onItemChange]);
+  const handleIndicatorPress = useCallback(
+    (index: number) => {
+      setCurrentIndex(index);
+      setTranslateX(-index * itemWidth);
+      if (haptic) hapticFeedback.light();
+      onItemChange?.(items[index], index);
+    },
+    [items, itemWidth, haptic, onItemChange]
+  );
 
   return (
     <>
@@ -525,7 +539,7 @@ export function SwipeNavigation<T>({
           ))}
         </SwipeTrack>
       </SwipeContainer>
-      
+
       {showIndicators && items.length > 1 && (
         <SwipeIndicators>
           {items.map((_, index) => (
@@ -543,9 +557,4 @@ export function SwipeNavigation<T>({
 }
 
 // Export all navigation components
-export {
-  BottomNavigation,
-  FloatingActionButton,
-  ThumbHeader,
-  SwipeNavigation,
-};
+export { BottomNavigation, FloatingActionButton, ThumbHeader, SwipeNavigation };

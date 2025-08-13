@@ -38,13 +38,13 @@ export function useErrorHandler(options: ErrorHandlerOptions = {}) {
     autoHideDelay = 5000,
     onError,
     onRetry,
-    onMaxRetriesReached
+    onMaxRetriesReached,
   } = options;
   const [errorState, setErrorState] = useState<ErrorState>({
     error: null,
     errorType: null,
     isVisible: false,
-    retryCount: 0
+    retryCount: 0,
   });
   const [hideTimeoutId, setHideTimeoutId] = useState<NodeJS.Timeout | null>(null);
   // Auto-hide error after delay
@@ -61,31 +61,34 @@ export function useErrorHandler(options: ErrorHandlerOptions = {}) {
     return undefined;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [errorState.isVisible, autoHide, autoHideDelay]);
-  const showError = useCallback((error: Error, incrementRetry = false) => {
-    const errorType = getErrorCategory(error);
-    // Log error using centralized error handler
-    safeLog('error', 'Error handled by useErrorHandler', {
-      error: error.message,
-      type: errorType,
-      retryCount: errorState.retryCount + (incrementRetry ? 1 : 0)
-    });
-    setErrorState(prev => ({
-      error,
-      errorType,
-      isVisible: true,
-      retryCount: incrementRetry ? prev.retryCount + 1 : prev.retryCount
-    }));
-    // Clear any existing hide timeout
-    if (hideTimeoutId) {
-      clearTimeout(hideTimeoutId);
-      setHideTimeoutId(null);
-    }
-    onError?.(error, errorType);
-  }, [errorState.retryCount, hideTimeoutId, onError]);
+  const showError = useCallback(
+    (error: Error, incrementRetry = false) => {
+      const errorType = getErrorCategory(error);
+      // Log error using centralized error handler
+      safeLog('error', 'Error handled by useErrorHandler', {
+        error: error.message,
+        type: errorType,
+        retryCount: errorState.retryCount + (incrementRetry ? 1 : 0),
+      });
+      setErrorState(prev => ({
+        error,
+        errorType,
+        isVisible: true,
+        retryCount: incrementRetry ? prev.retryCount + 1 : prev.retryCount,
+      }));
+      // Clear any existing hide timeout
+      if (hideTimeoutId) {
+        clearTimeout(hideTimeoutId);
+        setHideTimeoutId(null);
+      }
+      onError?.(error, errorType);
+    },
+    [errorState.retryCount, hideTimeoutId, onError]
+  );
   const hideError = useCallback(() => {
     setErrorState(prev => ({
       ...prev,
-      isVisible: false
+      isVisible: false,
     }));
     if (hideTimeoutId) {
       clearTimeout(hideTimeoutId);
@@ -97,7 +100,7 @@ export function useErrorHandler(options: ErrorHandlerOptions = {}) {
       error: null,
       errorType: null,
       isVisible: false,
-      retryCount: 0
+      retryCount: 0,
     });
     if (hideTimeoutId) {
       clearTimeout(hideTimeoutId);
@@ -112,7 +115,7 @@ export function useErrorHandler(options: ErrorHandlerOptions = {}) {
     setErrorState(prev => ({
       ...prev,
       retryCount: prev.retryCount + 1,
-      isVisible: false
+      isVisible: false,
     }));
     onRetry?.();
     return true;
@@ -125,7 +128,7 @@ export function useErrorHandler(options: ErrorHandlerOptions = {}) {
     clearError,
     retry,
     canRetry,
-    hasMaxRetries: errorState.retryCount >= maxRetries
+    hasMaxRetries: errorState.retryCount >= maxRetries,
   };
 }
 // Specialized error handlers for common scenarios
@@ -133,7 +136,7 @@ export function useApiErrorHandler(options?: Omit<ErrorHandlerOptions, 'maxRetri
   return useErrorHandler({
     maxRetries: 3,
     autoHide: false,
-    ...options
+    ...options,
   });
 }
 export function useFormErrorHandler(options?: Omit<ErrorHandlerOptions, 'autoHide'>) {
@@ -141,14 +144,14 @@ export function useFormErrorHandler(options?: Omit<ErrorHandlerOptions, 'autoHid
     autoHide: true,
     autoHideDelay: 3000,
     maxRetries: 0,
-    ...options
+    ...options,
   });
 }
 export function useNetworkErrorHandler(options?: ErrorHandlerOptions) {
   return useErrorHandler({
     maxRetries: 5,
     autoHide: false,
-    ...options
+    ...options,
   });
 }
 export default useErrorHandler;

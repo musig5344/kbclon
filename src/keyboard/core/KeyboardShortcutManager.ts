@@ -7,7 +7,7 @@ import {
   KeyboardShortcut,
   KeyboardShortcutManagerOptions,
   BankingKeyboardShortcuts,
-  NavigationMode
+  NavigationMode,
 } from '../types';
 
 export class KeyboardShortcutManager {
@@ -24,7 +24,7 @@ export class KeyboardShortcutManager {
       enabledByDefault: true,
       allowInInputs: false,
       caseSensitive: false,
-      ...options
+      ...options,
     };
 
     this.init();
@@ -34,10 +34,10 @@ export class KeyboardShortcutManager {
     document.addEventListener('keydown', this.handleKeyDown, { capture: true });
     document.addEventListener('keyup', this.handleKeyUp, { capture: true });
     document.addEventListener('blur', this.handleBlur, { capture: true });
-    
+
     // 페이지 가시성 변경 시 키 상태 초기화
     document.addEventListener('visibilitychange', this.handleVisibilityChange);
-    
+
     // 기본 뱅킹 단축키 등록
     this.registerDefaultBankingShortcuts();
   }
@@ -99,12 +99,12 @@ export class KeyboardShortcutManager {
   private normalizeKey(key: string): string {
     const keyMap: Record<string, string> = {
       ' ': 'Space',
-      'Control': 'Ctrl',
-      'Meta': 'Cmd',
-      'ArrowUp': 'Up',
-      'ArrowDown': 'Down',
-      'ArrowLeft': 'Left',
-      'ArrowRight': 'Right'
+      Control: 'Ctrl',
+      Meta: 'Cmd',
+      ArrowUp: 'Up',
+      ArrowDown: 'Down',
+      ArrowLeft: 'Left',
+      ArrowRight: 'Right',
     };
 
     const normalized = keyMap[key] || key;
@@ -113,7 +113,7 @@ export class KeyboardShortcutManager {
 
   private getModifiers(event: KeyboardEvent): string[] {
     const modifiers: string[] = [];
-    
+
     if (event.ctrlKey) modifiers.push('ctrl');
     if (event.altKey) modifiers.push('alt');
     if (event.shiftKey) modifiers.push('shift');
@@ -125,7 +125,7 @@ export class KeyboardShortcutManager {
   private isInputElement(element: HTMLElement): boolean {
     const inputTypes = ['input', 'textarea', 'select'];
     const tagName = element.tagName.toLowerCase();
-    
+
     return (
       inputTypes.includes(tagName) ||
       element.contentEditable === 'true' ||
@@ -134,14 +134,29 @@ export class KeyboardShortcutManager {
   }
 
   private isAllowedInInput(key: string): boolean {
-    const allowedKeys = ['escape', 'tab', 'f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'f10', 'f11', 'f12'];
+    const allowedKeys = [
+      'escape',
+      'tab',
+      'f1',
+      'f2',
+      'f3',
+      'f4',
+      'f5',
+      'f6',
+      'f7',
+      'f8',
+      'f9',
+      'f10',
+      'f11',
+      'f12',
+    ];
     return allowedKeys.includes(key.toLowerCase());
   }
 
   private findMatchingShortcut(keyCombo: string): KeyboardShortcut | null {
     for (const shortcut of this.shortcuts.values()) {
       if (!shortcut.enabled) continue;
-      
+
       // 컨텍스트 확인
       if (shortcut.context && !this.isContextMatched(shortcut.context)) {
         continue;
@@ -165,7 +180,7 @@ export class KeyboardShortcutManager {
   private matchesKeyCombo(pressed: string, pattern: string): boolean {
     const normalizedPressed = pressed.toLowerCase();
     const normalizedPattern = pattern.toLowerCase();
-    
+
     return normalizedPressed === normalizedPattern;
   }
 
@@ -185,7 +200,7 @@ export class KeyboardShortcutManager {
     this.shortcuts.set(shortcut.id, {
       enabled: this.options.enabledByDefault,
       preventDefault: this.options.preventDefault,
-      ...shortcut
+      ...shortcut,
     });
 
     if (this.debugMode) {
@@ -194,10 +209,10 @@ export class KeyboardShortcutManager {
 
   unregister(id: string): boolean {
     const removed = this.shortcuts.delete(id);
-    
+
     if (this.debugMode && removed) {
     }
-    
+
     return removed;
   }
 
@@ -225,20 +240,18 @@ export class KeyboardShortcutManager {
 
   setContext(context: string[]): void {
     this.currentContext = context;
-    
+
     if (this.debugMode) {
     }
   }
 
   getShortcuts(context?: string): KeyboardShortcut[] {
     const shortcuts = Array.from(this.shortcuts.values());
-    
+
     if (context) {
-      return shortcuts.filter(s => 
-        !s.context || s.context.includes(context)
-      );
+      return shortcuts.filter(s => !s.context || s.context.includes(context));
     }
-    
+
     return shortcuts;
   }
 
@@ -251,7 +264,7 @@ export class KeyboardShortcutManager {
     document.removeEventListener('keyup', this.handleKeyUp, { capture: true });
     document.removeEventListener('blur', this.handleBlur, { capture: true });
     document.removeEventListener('visibilitychange', this.handleVisibilityChange);
-    
+
     this.shortcuts.clear();
     this.pressedKeys.clear();
   }
@@ -267,68 +280,68 @@ export class KeyboardShortcutManager {
         id: 'home',
         keys: ['alt+h', 'alt+home'],
         description: '홈으로 이동',
-        action: () => this.navigateToPage('/')
+        action: () => this.navigateToPage('/'),
       },
       {
         id: 'menu',
         keys: ['alt+m', 'ctrl+m'],
         description: '메뉴 열기',
-        action: () => this.toggleMenu()
+        action: () => this.toggleMenu(),
       },
       {
         id: 'back',
         keys: ['alt+left', 'backspace'],
         description: '뒤로가기',
-        action: () => this.goBack()
+        action: () => this.goBack(),
       },
       {
         id: 'search',
         keys: ['ctrl+k', 'ctrl+/'],
         description: '검색 또는 명령 팔레트 열기',
-        action: () => this.openCommandPalette()
+        action: () => this.openCommandPalette(),
       },
       {
         id: 'accountInquiry',
         keys: ['ctrl+shift+a'],
         description: '계좌 조회',
-        action: () => this.navigateToPage('/accounts')
+        action: () => this.navigateToPage('/accounts'),
       },
       {
         id: 'transfer',
         keys: ['ctrl+t'],
         description: '이체하기',
-        action: () => this.navigateToPage('/transfer')
+        action: () => this.navigateToPage('/transfer'),
       },
       {
         id: 'balanceInquiry',
         keys: ['ctrl+b'],
         description: '잔액 조회',
-        action: () => this.navigateToPage('/balance')
+        action: () => this.navigateToPage('/balance'),
       },
       {
         id: 'closeModal',
         keys: ['escape'],
         description: '모달 닫기',
-        action: () => this.closeCurrentModal()
+        action: () => this.closeCurrentModal(),
       },
       {
         id: 'confirmAction',
         keys: ['enter', 'ctrl+enter'],
         description: '확인/실행',
-        action: () => this.confirmCurrentAction()
+        action: () => this.confirmCurrentAction(),
       },
       {
         id: 'toggleHighContrast',
         keys: ['ctrl+shift+h'],
         description: '고대비 모드 토글',
-        action: () => this.toggleHighContrast()
-      }
+        action: () => this.toggleHighContrast(),
+      },
     ];
 
     bankingShortcuts.forEach(shortcut => {
       this.register({
         ...shortcut,
-        context: ['global']
+        context: ['global'],
       });
     });
   }
@@ -339,9 +352,11 @@ export class KeyboardShortcutManager {
     if (window.history) {
       window.history.pushState({}, '', path);
       // 커스텀 네비게이션 이벤트 발생
-      window.dispatchEvent(new CustomEvent('keyboard-navigation', { 
-        detail: { path, source: 'keyboard' }
-      }));
+      window.dispatchEvent(
+        new CustomEvent('keyboard-navigation', {
+          detail: { path, source: 'keyboard' },
+        })
+      );
     }
   }
 
@@ -381,7 +396,7 @@ export class KeyboardShortcutManager {
 export const globalKeyboardShortcutManager = new KeyboardShortcutManager({
   preventDefault: true,
   enabledByDefault: true,
-  allowInInputs: false
+  allowInInputs: false,
 });
 
 // 개발 모드에서 디버깅을 위한 전역 접근

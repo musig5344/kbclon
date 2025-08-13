@@ -42,20 +42,21 @@ const CardContainer = styled.div<{
   background-color: ${KBDesignSystem.colors.background.white};
   border-radius: ${KBDesignSystem.borderRadius.card};
   overflow: hidden;
-  transition: all ${KBDesignSystem.animation.duration.fast} ${KBDesignSystem.animation.easing.easeOut};
-  
+  transition: all ${KBDesignSystem.animation.duration.fast}
+    ${KBDesignSystem.animation.easing.easeOut};
+
   /* 그림자 */
-  box-shadow: ${({ $variant }) => 
-    $variant === 'menu' ? 'none' : KBDesignSystem.shadows.card
-  };
-  
+  box-shadow: ${({ $variant }) => ($variant === 'menu' ? 'none' : KBDesignSystem.shadows.card)};
+
   /* 테두리 */
-  border: 1px solid ${({ $selected, $variant }) => 
-    $selected ? KBDesignSystem.colors.primary.yellow :
-    $variant === 'menu' ? KBDesignSystem.colors.border.light :
-    'transparent'
-  };
-  
+  border: 1px solid
+    ${({ $selected, $variant }) =>
+      $selected
+        ? KBDesignSystem.colors.primary.yellow
+        : $variant === 'menu'
+          ? KBDesignSystem.colors.border.light
+          : 'transparent'};
+
   /* 사이즈별 스타일 */
   ${({ $size }) => {
     const sizeStyles = {
@@ -74,36 +75,45 @@ const CardContainer = styled.div<{
     };
     return sizeStyles[$size];
   }}
-  
+
   /* 클릭 가능 스타일 */
-  ${({ $clickable, $disabled }) => $clickable && !$disabled && css`
-    cursor: pointer;
-    user-select: none;
-    -webkit-tap-highlight-color: transparent;
-    
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: ${KBDesignSystem.shadows.lg};
-    }
-    
-    &:active {
-      transform: translateY(0);
-      box-shadow: ${KBDesignSystem.shadows.sm};
-    }
-  `}
+  ${({ $clickable, $disabled }) =>
+    $clickable &&
+    !$disabled &&
+    css`
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: ${KBDesignSystem.shadows.lg};
+      }
+
+      &:active {
+        transform: translateY(0);
+        box-shadow: ${KBDesignSystem.shadows.sm};
+      }
+    `}
   
   /* 비활성화 상태 */
-  ${({ $disabled }) => $disabled && css`
-    opacity: 0.5;
-    cursor: not-allowed;
-  `}
+  ${({ $disabled }) =>
+    $disabled &&
+    css`
+      opacity: 0.5;
+      cursor: not-allowed;
+    `}
   
   /* 변형별 특수 스타일 */
   ${({ $variant }) => {
     const variantStyles = {
       default: css``,
       account: css`
-        background: linear-gradient(135deg, ${KBDesignSystem.colors.background.white} 0%, ${KBDesignSystem.colors.primary.yellowLight} 100%);
+        background: linear-gradient(
+          135deg,
+          ${KBDesignSystem.colors.background.white} 0%,
+          ${KBDesignSystem.colors.primary.yellowLight} 100%
+        );
       `,
       menu: css`
         padding: ${KBDesignSystem.spacing.base};
@@ -133,16 +143,16 @@ const IconWrapper = styled.div<{ $variant: CardVariant }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: ${({ $variant }) => $variant === 'menu' ? '32px' : '40px'};
-  height: ${({ $variant }) => $variant === 'menu' ? '32px' : '40px'};
-  background-color: ${({ $variant }) => 
-    $variant === 'menu' ? 'transparent' : KBDesignSystem.colors.primary.yellowLight
-  };
+  width: ${({ $variant }) => ($variant === 'menu' ? '32px' : '40px')};
+  height: ${({ $variant }) => ($variant === 'menu' ? '32px' : '40px')};
+  background-color: ${({ $variant }) =>
+    $variant === 'menu' ? 'transparent' : KBDesignSystem.colors.primary.yellowLight};
   border-radius: ${KBDesignSystem.borderRadius.full};
-  color: ${({ $variant }) => 
-    $variant === 'menu' ? KBDesignSystem.colors.text.secondary : KBDesignSystem.colors.primary.yellow
-  };
-  font-size: ${({ $variant }) => $variant === 'menu' ? '20px' : '24px'};
+  color: ${({ $variant }) =>
+    $variant === 'menu'
+      ? KBDesignSystem.colors.text.secondary
+      : KBDesignSystem.colors.primary.yellow};
+  font-size: ${({ $variant }) => ($variant === 'menu' ? '20px' : '24px')};
 `;
 
 // 타이틀 섹션
@@ -153,9 +163,10 @@ const TitleSection = styled.div`
 // 타이틀
 const Title = styled.h3<{ $variant: CardVariant }>`
   margin: 0;
-  font-size: ${({ $variant }) => 
-    $variant === 'menu' ? KBDesignSystem.typography.fontSize.base : KBDesignSystem.typography.fontSize.md
-  };
+  font-size: ${({ $variant }) =>
+    $variant === 'menu'
+      ? KBDesignSystem.typography.fontSize.base
+      : KBDesignSystem.typography.fontSize.md};
   font-weight: ${KBDesignSystem.typography.fontWeight.semibold};
   color: ${KBDesignSystem.colors.text.primary};
   line-height: ${KBDesignSystem.typography.lineHeight.tight};
@@ -214,9 +225,8 @@ const AmountLabel = styled.span`
 const Amount = styled.span<{ $negative?: boolean }>`
   font-size: ${KBDesignSystem.typography.fontSize.xl};
   font-weight: ${KBDesignSystem.typography.fontWeight.bold};
-  color: ${({ $negative }) => 
-    $negative ? KBDesignSystem.colors.status.error : KBDesignSystem.colors.text.primary
-  };
+  color: ${({ $negative }) =>
+    $negative ? KBDesignSystem.colors.status.error : KBDesignSystem.colors.text.primary};
 `;
 
 // 카드 풋터 (액션 버튼)
@@ -235,7 +245,7 @@ const ArrowIcon = styled.div`
   top: 50%;
   transform: translateY(-50%);
   color: ${KBDesignSystem.colors.text.tertiary};
-  
+
   &::after {
     content: '>';
     font-size: ${KBDesignSystem.typography.fontSize.lg};
@@ -260,7 +270,7 @@ export const KBCard: React.FC<KBCardProps> = ({
 }) => {
   const isClickable = Boolean(onClick);
   const isNegativeAmount = amount && amount.startsWith('-');
-  
+
   return (
     <CardContainer
       $variant={variant}
@@ -275,42 +285,38 @@ export const KBCard: React.FC<KBCardProps> = ({
       {/* 헤더 영역 */}
       {(icon || title || subtitle || badge) && (
         <CardHeader>
-          {icon && (
-            <IconWrapper $variant={variant}>
-              {icon}
-            </IconWrapper>
-          )}
-          
+          {icon && <IconWrapper $variant={variant}>{icon}</IconWrapper>}
+
           {(title || subtitle) && (
             <TitleSection>
               {title && <Title $variant={variant}>{title}</Title>}
               {subtitle && <Subtitle>{subtitle}</Subtitle>}
             </TitleSection>
           )}
-          
+
           {badge && <Badge>{badge}</Badge>}
         </CardHeader>
       )}
-      
+
       {/* 바디 영역 */}
       {(description || amount || children) && (
         <CardBody>
           {description && <Description>{description}</Description>}
-          
+
           {amount && (
             <AmountSection>
               {amountLabel && <AmountLabel>{amountLabel}</AmountLabel>}
               <Amount $negative={isNegativeAmount}>{amount}</Amount>
             </AmountSection>
           )}
-          
+
           {children}
         </CardBody>
       )}
-      
+
       {/* 풋터 영역 */}
       {actions && <CardFooter>{actions}</CardFooter>}
-      
+
       {/* 화살표 (메뉴 카드) */}
       {variant === 'menu' && isClickable && <ArrowIcon />}
     </CardContainer>
@@ -336,7 +342,7 @@ export const KBAccountCard = styled(KBCard).attrs({ variant: 'account' })`
   /* 계좌 카드 특별 스타일 */
   position: relative;
   overflow: visible;
-  
+
   &::before {
     content: '';
     position: absolute;
@@ -344,13 +350,18 @@ export const KBAccountCard = styled(KBCard).attrs({ variant: 'account' })`
     left: -2px;
     right: -2px;
     bottom: -2px;
-    background: linear-gradient(45deg, ${KBDesignSystem.colors.primary.yellow}, ${KBDesignSystem.colors.secondary.blue});
+    background: linear-gradient(
+      45deg,
+      ${KBDesignSystem.colors.primary.yellow},
+      ${KBDesignSystem.colors.secondary.blue}
+    );
     border-radius: ${KBDesignSystem.borderRadius.card};
     opacity: 0;
     z-index: -1;
-    transition: opacity ${KBDesignSystem.animation.duration.normal} ${KBDesignSystem.animation.easing.easeOut};
+    transition: opacity ${KBDesignSystem.animation.duration.normal}
+      ${KBDesignSystem.animation.easing.easeOut};
   }
-  
+
   &:hover::before {
     opacity: 0.3;
   }

@@ -44,8 +44,8 @@ const shake = keyframes`
 
 // Styled Components
 const FeedbackContainer = styled.div<{ $inline?: boolean }>`
-  margin-top: ${props => props.$inline ? '0' : '4px'};
-  display: ${props => props.$inline ? 'inline-flex' : 'block'};
+  margin-top: ${props => (props.$inline ? '0' : '4px')};
+  display: ${props => (props.$inline ? 'inline-flex' : 'block')};
   align-items: center;
   gap: 4px;
 `;
@@ -55,7 +55,7 @@ const FeedbackMessage = styled.div<{ $type: 'error' | 'success' | 'helper' }>`
   font-size: 12px;
   line-height: 1.4;
   animation: ${slideIn} 0.2s ease-out;
-  
+
   ${props => {
     switch (props.$type) {
       case 'error':
@@ -79,7 +79,7 @@ const FeedbackIcon = styled.span<{ $type: 'error' | 'success' }>`
   width: 16px;
   height: 16px;
   flex-shrink: 0;
-  
+
   svg {
     width: 100%;
     height: 100%;
@@ -97,7 +97,7 @@ const ErrorItem = styled.li`
   align-items: flex-start;
   gap: 6px;
   margin-bottom: 4px;
-  
+
   &:last-child {
     margin-bottom: 0;
   }
@@ -115,10 +115,12 @@ const FieldLabel = styled.label<{ $hasError?: boolean }>`
   font-weight: 500;
   color: ${tokens.colors.text.primary};
   margin-bottom: 8px;
-  
-  ${props => props.$hasError && css`
-    color: #dc2626;
-  `}
+
+  ${props =>
+    props.$hasError &&
+    css`
+      color: #dc2626;
+    `}
 `;
 
 const RequiredMark = styled.span`
@@ -128,30 +130,38 @@ const RequiredMark = styled.span`
 
 const InputWrapper = styled.div<{ $hasError?: boolean; $success?: boolean }>`
   position: relative;
-  
-  ${props => props.$hasError && css`
-    animation: ${shake} 0.3s ease-out;
-    
-    input, textarea, select {
-      border-color: #dc2626;
-      
-      &:focus {
+
+  ${props =>
+    props.$hasError &&
+    css`
+      animation: ${shake} 0.3s ease-out;
+
+      input,
+      textarea,
+      select {
         border-color: #dc2626;
-        box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+
+        &:focus {
+          border-color: #dc2626;
+          box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+        }
       }
-    }
-  `}
-  
-  ${props => props.$success && css`
-    input, textarea, select {
-      border-color: #16a34a;
-      
-      &:focus {
+    `}
+
+  ${props =>
+    props.$success &&
+    css`
+      input,
+      textarea,
+      select {
         border-color: #16a34a;
-        box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
+
+        &:focus {
+          border-color: #16a34a;
+          box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
+        }
       }
-    }
-  `}
+    `}
 `;
 
 const ValidationIcon = styled.div<{ $type: 'error' | 'success' }>`
@@ -160,26 +170,38 @@ const ValidationIcon = styled.div<{ $type: 'error' | 'success' }>`
   top: 50%;
   transform: translateY(-50%);
   pointer-events: none;
-  
-  ${props => props.$type === 'error' && css`
-    color: #dc2626;
-  `}
-  
-  ${props => props.$type === 'success' && css`
-    color: #16a34a;
-  `}
+
+  ${props =>
+    props.$type === 'error' &&
+    css`
+      color: #dc2626;
+    `}
+
+  ${props =>
+    props.$type === 'success' &&
+    css`
+      color: #16a34a;
+    `}
 `;
 
 // Icons
 const ErrorIcon = () => (
-  <svg viewBox="0 0 16 16" fill="currentColor">
-    <path fillRule="evenodd" d="M8 15A7 7 0 108 1a7 7 0 000 14zm0-1A6 6 0 118 2a6 6 0 010 12zm-.707-9.293a1 1 0 011.414 0L10 6l-1.293 1.293a1 1 0 01-1.414-1.414L8.586 5 7.293 3.707a1 1 0 010-1.414zM6 9a1 1 0 011-1h2a1 1 0 110 2H7a1 1 0 01-1-1z" clipRule="evenodd"/>
+  <svg viewBox='0 0 16 16' fill='currentColor'>
+    <path
+      fillRule='evenodd'
+      d='M8 15A7 7 0 108 1a7 7 0 000 14zm0-1A6 6 0 118 2a6 6 0 010 12zm-.707-9.293a1 1 0 011.414 0L10 6l-1.293 1.293a1 1 0 01-1.414-1.414L8.586 5 7.293 3.707a1 1 0 010-1.414zM6 9a1 1 0 011-1h2a1 1 0 110 2H7a1 1 0 01-1-1z'
+      clipRule='evenodd'
+    />
   </svg>
 );
 
 const SuccessIcon = () => (
-  <svg viewBox="0 0 16 16" fill="currentColor">
-    <path fillRule="evenodd" d="M8 15A7 7 0 108 1a7 7 0 000 14zm0-1A6 6 0 118 2a6 6 0 010 12zm3.707-8.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-2-2a1 1 0 111.414-1.414L7 9.586l3.293-3.293a1 1 0 011.414 0z" clipRule="evenodd"/>
+  <svg viewBox='0 0 16 16' fill='currentColor'>
+    <path
+      fillRule='evenodd'
+      d='M8 15A7 7 0 108 1a7 7 0 000 14zm0-1A6 6 0 118 2a6 6 0 010 12zm3.707-8.293a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0l-2-2a1 1 0 111.414-1.414L7 9.586l3.293-3.293a1 1 0 011.414 0z'
+      clipRule='evenodd'
+    />
   </svg>
 );
 
@@ -189,7 +211,7 @@ export const ValidationFeedback: React.FC<ValidationFeedbackProps> = ({
   touched,
   showSuccess = false,
   inline = false,
-  className
+  className,
 }) => {
   if (!touched || !validation) return null;
 
@@ -203,8 +225,8 @@ export const ValidationFeedback: React.FC<ValidationFeedbackProps> = ({
       {hasErrors && (
         <>
           {inline ? (
-            <FeedbackMessage $type="error">
-              <FeedbackIcon $type="error">
+            <FeedbackMessage $type='error'>
+              <FeedbackIcon $type='error'>
                 <ErrorIcon />
               </FeedbackIcon>
               {validation.errors[0]}
@@ -213,10 +235,10 @@ export const ValidationFeedback: React.FC<ValidationFeedbackProps> = ({
             <ErrorList>
               {validation.errors.map((error, index) => (
                 <ErrorItem key={index}>
-                  <FeedbackIcon $type="error">
+                  <FeedbackIcon $type='error'>
                     <ErrorIcon />
                   </FeedbackIcon>
-                  <FeedbackMessage $type="error">{error}</FeedbackMessage>
+                  <FeedbackMessage $type='error'>{error}</FeedbackMessage>
                 </ErrorItem>
               ))}
             </ErrorList>
@@ -225,8 +247,8 @@ export const ValidationFeedback: React.FC<ValidationFeedbackProps> = ({
       )}
 
       {isSuccess && (
-        <FeedbackMessage $type="success">
-          <FeedbackIcon $type="success">
+        <FeedbackMessage $type='success'>
+          <FeedbackIcon $type='success'>
             <SuccessIcon />
           </FeedbackIcon>
           올바르게 입력되었습니다
@@ -244,7 +266,7 @@ export const FieldValidation: React.FC<FieldValidationProps> = ({
   success = false,
   helper,
   children,
-  className
+  className,
 }) => {
   const hasError = !!error;
 
@@ -254,31 +276,31 @@ export const FieldValidation: React.FC<FieldValidationProps> = ({
         {label}
         {required && <RequiredMark>*</RequiredMark>}
       </FieldLabel>
-      
+
       <InputWrapper $hasError={hasError} $success={success && !hasError}>
         {children}
-        
+
         {(hasError || success) && (
           <ValidationIcon $type={hasError ? 'error' : 'success'}>
             {hasError ? <ErrorIcon /> : <SuccessIcon />}
           </ValidationIcon>
         )}
       </InputWrapper>
-      
+
       {hasError && (
         <FeedbackContainer>
-          <FeedbackMessage $type="error">
-            <FeedbackIcon $type="error">
+          <FeedbackMessage $type='error'>
+            <FeedbackIcon $type='error'>
               <ErrorIcon />
             </FeedbackIcon>
             {error}
           </FeedbackMessage>
         </FeedbackContainer>
       )}
-      
+
       {!hasError && helper && (
         <FeedbackContainer>
-          <FeedbackMessage $type="helper">{helper}</FeedbackMessage>
+          <FeedbackMessage $type='helper'>{helper}</FeedbackMessage>
         </FeedbackContainer>
       )}
     </FieldContainer>
@@ -298,9 +320,7 @@ export const InlineValidation: React.FC<{
       <FeedbackIcon $type={isValid ? 'success' : 'error'}>
         {isValid ? <SuccessIcon /> : <ErrorIcon />}
       </FeedbackIcon>
-      <FeedbackMessage $type={isValid ? 'success' : 'error'}>
-        {message}
-      </FeedbackMessage>
+      <FeedbackMessage $type={isValid ? 'success' : 'error'}>{message}</FeedbackMessage>
     </FeedbackContainer>
   );
 };
@@ -342,7 +362,7 @@ export const PasswordStrength: React.FC<{
     flex: 1;
     height: 4px;
     border-radius: 2px;
-    background-color: ${props => props.$active ? props.$color : tokens.colors.backgroundGray2};
+    background-color: ${props => (props.$active ? props.$color : tokens.colors.backgroundGray2)};
     transition: background-color 0.3s ease;
   `;
 
@@ -356,16 +376,10 @@ export const PasswordStrength: React.FC<{
     <StrengthContainer>
       <StrengthBar>
         {[1, 2, 3, 4].map(level => (
-          <StrengthSegment
-            key={level}
-            $active={level <= strength.level}
-            $color={strength.color}
-          />
+          <StrengthSegment key={level} $active={level <= strength.level} $color={strength.color} />
         ))}
       </StrengthBar>
-      <StrengthLabel $color={strength.color}>
-        비밀번호 강도: {strength.label}
-      </StrengthLabel>
+      <StrengthLabel $color={strength.color}>비밀번호 강도: {strength.label}</StrengthLabel>
     </StrengthContainer>
   );
 };

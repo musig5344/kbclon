@@ -1,12 +1,16 @@
 import styled from 'styled-components';
 
 import { FormInput } from '../../shared/components';
-import { PageContainer, PageContent, FixedBottomButtonArea } from '../../shared/components/layout/MobileContainer';
-import { 
+import {
+  PageContainer,
+  PageContent,
+  FixedBottomButtonArea,
+} from '../../shared/components/layout/MobileContainer';
+import {
   androidAppContainer,
   androidOptimizedScroll,
   androidOptimizedButton,
-  androidOptimizedInput
+  androidOptimizedInput,
 } from '../../styles/android-webview-optimizations';
 import { duration, easing } from '../../styles/animations';
 import { tokens } from '../../styles/tokens';
@@ -17,7 +21,10 @@ export const TransferContainer = styled(PageContainer)`
 `;
 
 export const MainContent = styled(PageContent)`
-  padding-bottom: calc(${tokens.sizes.button.heightLarge} * 2 + ${tokens.sizes.navigation.height} + ${tokens.spacing.large}); /* ButtonContainer 높이 + TabBar 높이 여유분 */
+  padding-bottom: calc(
+    ${tokens.sizes.button.heightLarge} * 2 + ${tokens.sizes.navigation.height} +
+      ${tokens.spacing.large}
+  ); /* ButtonContainer 높이 + TabBar 높이 여유분 */
 `;
 
 /* === 이체 폼 섹션 === */
@@ -42,15 +49,15 @@ export const CameraButton = styled.button`
   cursor: pointer;
   border-radius: ${tokens.borderRadius.medium};
   transition: background-color ${duration.fast} ${easing.easeInOut};
-  
+
   &:hover {
     background-color: ${tokens.colors.brand.light};
   }
-  
+
   &:active {
     background-color: ${tokens.colors.brand.light};
   }
-  
+
   img {
     width: ${tokens.sizes.icon.medium};
     height: ${tokens.sizes.icon.medium};
@@ -91,13 +98,13 @@ export const AccountInfo = styled.div`
 export const AccountIcon = styled.div`
   width: ${tokens.sizes.button.heightMedium};
   height: ${tokens.sizes.button.heightMedium};
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   border-radius: ${tokens.borderRadius.round};
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: ${tokens.shadows.elevation1};
-  
+
   img {
     width: ${tokens.sizes.icon.medium};
     height: ${tokens.sizes.icon.medium};
@@ -146,12 +153,12 @@ export const QuickButton = styled.button`
   font-weight: ${tokens.typography.fontWeight.medium};
   cursor: pointer;
   transition: all ${duration.fast} ${easing.easeInOut};
-  
+
   &:hover {
     border-color: ${tokens.colors.brand.primary};
     color: ${tokens.colors.text.primary};
   }
-  
+
   &:active {
     background-color: ${tokens.colors.brand.light};
   }
@@ -170,7 +177,7 @@ export const ConfirmRow = styled.div`
   align-items: center;
   padding: ${tokens.spacing.medium} 0;
   border-bottom: 1px solid ${tokens.colors.border.light};
-  
+
   &:last-child {
     border-bottom: none;
   }
@@ -213,15 +220,15 @@ export const TransferButton = styled.button`
   font-weight: ${tokens.typography.fontWeight.semibold};
   color: ${tokens.colors.text.primary};
   cursor: pointer;
-  
+
   &:hover {
     background-color: ${tokens.colors.brand.light};
   }
-  
+
   &:active {
     background-color: ${tokens.colors.brand.dark};
   }
-  
+
   &:disabled {
     background-color: ${tokens.colors.border.tertiary};
     color: ${tokens.colors.text.disabled};
@@ -282,7 +289,7 @@ export const BankModalOverlay = styled.div`
   display: flex;
   align-items: flex-end;
   animation: overlayFadeIn 0.3s ease-out;
-  
+
   @keyframes overlayFadeIn {
     from {
       opacity: 0;
@@ -298,14 +305,15 @@ export const BankModalContainer = styled.div`
   width: 100%;
   max-width: ${tokens.app.maxWidth};
   max-height: 88vh;
-  border-radius: ${tokens.sizes.bottomSheet.cornerRadius} ${tokens.sizes.bottomSheet.cornerRadius} 0 0;
+  border-radius: ${tokens.sizes.bottomSheet.cornerRadius} ${tokens.sizes.bottomSheet.cornerRadius} 0
+    0;
   padding: 0;
   display: flex;
   flex-direction: column;
   animation: modalSlideUp 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   box-shadow: ${tokens.shadows.elevation3};
   overflow: hidden;
-  
+
   @keyframes modalSlideUp {
     from {
       transform: translateY(100%);
@@ -325,7 +333,7 @@ export const BankModalHeader = styled.div`
   padding: ${tokens.spacing.large} ${tokens.spacing.large} ${tokens.spacing.medium};
   border-bottom: 1px solid ${tokens.colors.border.light};
   position: relative;
-  
+
   &::before {
     content: '';
     position: absolute;
@@ -361,12 +369,12 @@ export const BankModalCloseButton = styled.button`
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
-  
+
   &:hover {
     color: ${tokens.colors.text.primary};
     background: ${tokens.colors.background.secondary};
   }
-  
+
   &:active {
     transform: scale(0.95);
   }
@@ -387,14 +395,14 @@ export const BankSearchInput = styled.input`
   background: white;
   transition: all 0.2s ease;
   box-sizing: border-box;
-  
+
   &:focus {
     outline: none;
     border-color: ${tokens.colors.brand.primary};
     box-shadow: 0 0 0 3px ${tokens.colors.brand.light};
     background: white;
   }
-  
+
   &::placeholder {
     color: ${tokens.colors.text.disabled};
     font-weight: 400;
@@ -406,20 +414,20 @@ export const BankListContainer = styled.div`
   overflow-y: auto;
   background: white;
   padding: ${tokens.spacing.medium};
-  
+
   &::-webkit-scrollbar {
     width: calc(${tokens.spacing.small} - ${tokens.spacing.micro});
   }
-  
+
   &::-webkit-scrollbar-track {
     background: ${tokens.colors.background.secondary};
     border-radius: calc(${tokens.borderRadius.small} + 1px);
   }
-  
+
   &::-webkit-scrollbar-thumb {
     background: ${tokens.colors.border.secondary};
     border-radius: calc(${tokens.borderRadius.small} + 1px);
-    
+
     &:hover {
       background: ${tokens.colors.text.disabled};
     }
@@ -433,11 +441,11 @@ export const BankSectionTitle = styled.div`
   color: ${tokens.colors.text.primary};
   letter-spacing: ${tokens.typography.letterSpacing.titleMedium};
   margin-bottom: ${tokens.spacing.small};
-  
+
   &:first-child {
     padding-top: 0;
   }
-  
+
   &:not(:first-child) {
     margin-top: ${tokens.spacing.large};
     padding-top: ${tokens.spacing.large};
@@ -456,15 +464,15 @@ export const BankItem = styled.button`
   cursor: pointer;
   transition: background-color 0.1s ease;
   text-align: left;
-  
+
   &:hover {
     background-color: ${tokens.colors.background.secondary};
   }
-  
+
   &:active {
     background-color: ${tokens.colors.background.surfaceVariant};
   }
-  
+
   &:last-child {
     border-bottom: none;
   }
@@ -479,7 +487,7 @@ export const BankName = styled.span`
 
 export const BankSelectableInput = styled(FormInput)`
   cursor: pointer;
-  
+
   &:focus {
     outline: none;
     border-color: ${tokens.colors.brand.primary};

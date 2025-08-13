@@ -25,15 +25,15 @@ export const useSkeletonLoader = (
   options: UseSkeletonLoaderOptions = {}
 ): UseSkeletonLoaderReturn => {
   const { minLoadingTime = 500, delay = 100 } = options;
-  
+
   const [showSkeleton, setShowSkeleton] = useState(false);
   const [loadingStartTime, setLoadingStartTime] = useState<number | null>(null);
   const [error, setError] = useState<Error | null>(null);
-  
+
   useEffect(() => {
     let delayTimer: NodeJS.Timeout;
     let minLoadingTimer: NodeJS.Timeout;
-    
+
     if (isLoading) {
       // 짧은 로딩의 경우 스켈레톤을 표시하지 않음 (깜빡임 방지)
       delayTimer = setTimeout(() => {
@@ -44,7 +44,7 @@ export const useSkeletonLoader = (
       // 최소 로딩 시간 보장
       const elapsedTime = Date.now() - loadingStartTime;
       const remainingTime = Math.max(0, minLoadingTime - elapsedTime);
-      
+
       if (remainingTime > 0) {
         minLoadingTimer = setTimeout(() => {
           setShowSkeleton(false);
@@ -57,13 +57,13 @@ export const useSkeletonLoader = (
     } else {
       setShowSkeleton(false);
     }
-    
+
     return () => {
       clearTimeout(delayTimer);
       clearTimeout(minLoadingTimer);
     };
   }, [isLoading, loadingStartTime, delay, minLoadingTime]);
-  
+
   const startLoading = useCallback(() => {
     setError(null);
     // Manual loading trigger
@@ -71,15 +71,15 @@ export const useSkeletonLoader = (
       setShowSkeleton(true);
       setLoadingStartTime(Date.now());
     }, delay);
-    
+
     return () => clearTimeout(delayTimer);
   }, [delay]);
-  
+
   const stopLoading = useCallback(() => {
     if (loadingStartTime) {
       const elapsedTime = Date.now() - loadingStartTime;
       const remainingTime = Math.max(0, minLoadingTime - elapsedTime);
-      
+
       setTimeout(() => {
         setShowSkeleton(false);
         setLoadingStartTime(null);
@@ -88,13 +88,13 @@ export const useSkeletonLoader = (
       setShowSkeleton(false);
     }
   }, [loadingStartTime, minLoadingTime]);
-  
+
   return {
     showSkeleton,
     startLoading,
     stopLoading,
     error,
-    setError
+    setError,
   };
 };
 
@@ -102,20 +102,20 @@ export const useSkeletonLoader = (
 export const useDashboardSkeleton = (isLoading: boolean) => {
   return useSkeletonLoader(isLoading, {
     minLoadingTime: 800,
-    delay: 200
+    delay: 200,
   });
 };
 
 export const useTransactionSkeleton = (isLoading: boolean) => {
   return useSkeletonLoader(isLoading, {
     minLoadingTime: 600,
-    delay: 150
+    delay: 150,
   });
 };
 
 export const useAccountSkeleton = (isLoading: boolean) => {
   return useSkeletonLoader(isLoading, {
     minLoadingTime: 500,
-    delay: 100
+    delay: 100,
   });
 };

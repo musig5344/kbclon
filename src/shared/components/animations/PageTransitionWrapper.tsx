@@ -19,8 +19,8 @@ interface PageTransitionWrapperProps {
 }
 
 // 페이지 전환 애니메이션을 위한 컨테이너
-const TransitionContainer = styled.div<{ 
-  $isAnimating: boolean; 
+const TransitionContainer = styled.div<{
+  $isAnimating: boolean;
   $direction: 'forward' | 'backward' | 'none';
   $phase: 'entering' | 'exiting' | 'idle';
 }>`
@@ -37,10 +37,10 @@ const TransitionContainer = styled.div<{
   /* 페이지 전환 애니메이션 */
   ${({ $isAnimating, $direction, $phase }) => {
     if (!$isAnimating) return 'transform: translateX(0); opacity: 1;';
-    
+
     switch ($phase) {
       case 'entering':
-        return $direction === 'forward' 
+        return $direction === 'forward'
           ? `
             transform: translateX(100%);
             opacity: 0.8;
@@ -51,7 +51,7 @@ const TransitionContainer = styled.div<{
             opacity: 0.8;
             animation: slideInFromLeft ${kbTimings.normal} ${kbTimings.easeOut} forwards;
           `;
-      
+
       case 'exiting':
         return $direction === 'forward'
           ? `
@@ -64,7 +64,7 @@ const TransitionContainer = styled.div<{
             opacity: 1;
             animation: slideOutToRight ${kbTimings.normal} ${kbTimings.easeIn} forwards;
           `;
-      
+
       default:
         return 'transform: translateX(0); opacity: 1;';
     }
@@ -117,7 +117,10 @@ const TransitionContainer = styled.div<{
 `;
 
 // 페이지 전환 방향을 결정하는 로직
-const getTransitionDirection = (fromPath: string, toPath: string): 'forward' | 'backward' | 'none' => {
+const getTransitionDirection = (
+  fromPath: string,
+  toPath: string
+): 'forward' | 'backward' | 'none' => {
   // 페이지 계층 구조 정의 (깊이가 클수록 forward)
   const pageDepths: Record<string, number> = {
     '/': 0,
@@ -139,14 +142,14 @@ const getTransitionDirection = (fromPath: string, toPath: string): 'forward' | '
   const getDepth = (path: string) => {
     const exactMatch = pageDepths[path];
     if (exactMatch !== undefined) return exactMatch;
-    
+
     // 동적 라우트 패턴 매칭
     for (const [pattern, depth] of Object.entries(pageDepths)) {
       if (pattern.includes(':') && matchDynamicRoute(pattern, path)) {
         return depth;
       }
     }
-    
+
     return 1; // 기본 깊이
   };
 
@@ -162,17 +165,17 @@ const getTransitionDirection = (fromPath: string, toPath: string): 'forward' | '
 const matchDynamicRoute = (pattern: string, path: string): boolean => {
   const patternParts = pattern.split('/');
   const pathParts = path.split('/');
-  
+
   if (patternParts.length !== pathParts.length) return false;
-  
+
   return patternParts.every((part, index) => {
     return part.startsWith(':') || part === pathParts[index];
   });
 };
 
-export const PageTransitionWrapper: React.FC<PageTransitionWrapperProps> = ({ 
-  children, 
-  className 
+export const PageTransitionWrapper: React.FC<PageTransitionWrapperProps> = ({
+  children,
+  className,
 }) => {
   const location = useLocation();
   const prevLocationRef = useRef<string>(location.pathname);
@@ -190,7 +193,7 @@ export const PageTransitionWrapper: React.FC<PageTransitionWrapperProps> = ({
 
     // 전환 방향 결정
     const transitionDirection = getTransitionDirection(prevPath, currentPath);
-    
+
     if (transitionDirection !== 'none') {
       setDirection(transitionDirection);
       setIsAnimating(true);

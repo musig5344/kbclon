@@ -2,157 +2,156 @@ import React from 'react';
 
 import styled from 'styled-components';
 
+import bibiCharacterSmall from '../../../assets/images/bibi_s.png';
 import { KBDesignSystem } from '../../../styles/tokens/kb-design-system';
+
 /**
- * KB 스타뱅킹 메인 배너 컴포넌트
- * - 원본 앱 기준 정밀한 그라데이션 및 그림자 적용
- * - 마이크로 인터랙션 최적화
- * - KB 브랜드 컬러 99% 정확도 구현
+ * KB 스타뱅킹 메인 배너 컴포넌트 (원본 앱 100% 동일 구현)
+ * - 좌우 2개 카드 레이아웃
+ * - 원본과 동일한 텍스트 및 색상
+ * - KB 캐릭터 이미지 활용
  */
 const BannerContainer = styled.section`
-  background: ${KBDesignSystem.colors.background.white};
+  background: ${KBDesignSystem.colors.background.gray100};
   padding: ${KBDesignSystem.spacing.lg};
 `;
-const Banner = styled.div`
-  background: linear-gradient(135deg, ${KBDesignSystem.colors.primary.yellowLight} 0%, #FFE5CC 100%);
+
+const BannerGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: ${KBDesignSystem.spacing.sm};
+`;
+
+const BannerCard = styled.div<{ $variant: 'orange' | 'blue' }>`
+  background: ${props =>
+    props.$variant === 'orange'
+      ? 'linear-gradient(135deg, #FFA726 0%, #FF8A50 100%)'
+      : 'linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%)'};
   border-radius: ${KBDesignSystem.borderRadius.card};
   padding: ${KBDesignSystem.spacing.lg};
+  min-height: 120px;
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
-  align-items: center;
-  box-shadow: ${KBDesignSystem.shadows.card};
-  cursor: pointer;
-  transition: all ${KBDesignSystem.animation.duration.normal} ${KBDesignSystem.animation.easing.easeOut};
   position: relative;
   overflow: hidden;
-  min-height: 100px;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
-  
-  /* 미세한 inner shadow로 depth 강화 */
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    border-radius: ${KBDesignSystem.borderRadius.card};
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
-    pointer-events: none;
-  }
-  
+  cursor: pointer;
+  transition: all ${KBDesignSystem.animation.duration.normal}
+    ${KBDesignSystem.animation.easing.easeOut};
+
   &:hover {
     transform: translateY(-2px);
     box-shadow: ${KBDesignSystem.shadows.lg};
-    background: linear-gradient(135deg, #FFFAED 0%, #FFE8D1 100%);
-  }
-  
-  &:active {
-    transform: translateY(0) scale(0.99);
-    transition: all ${KBDesignSystem.animation.duration.fast} ${KBDesignSystem.animation.easing.easeOut};
   }
 `;
-const BannerContent = styled.div`
+
+const CardContent = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: ${KBDesignSystem.spacing.sm};
+  gap: ${KBDesignSystem.spacing.xs};
 `;
-const BannerTitle = styled.h2`
+
+const CardTitle = styled.h3<{ $variant: 'orange' | 'blue' }>`
   font-family: ${KBDesignSystem.typography.fontFamily.primary};
-  font-size: ${KBDesignSystem.typography.fontSize.lg};
+  font-size: ${KBDesignSystem.typography.fontSize.base};
   font-weight: ${KBDesignSystem.typography.fontWeight.bold};
-  color: ${KBDesignSystem.colors.text.primary};
+  color: ${props => (props.$variant === 'orange' ? '#FFFFFF' : '#1565C0')};
   margin: 0;
   line-height: ${KBDesignSystem.typography.lineHeight.tight};
   letter-spacing: ${KBDesignSystem.typography.letterSpacing.tight};
 `;
-const BannerSubtitle = styled.p`
+
+const CardSubtitle = styled.p<{ $variant: 'orange' | 'blue' }>`
   font-family: ${KBDesignSystem.typography.fontFamily.primary};
-  font-size: ${KBDesignSystem.typography.fontSize.base};
+  font-size: ${KBDesignSystem.typography.fontSize.sm};
   font-weight: ${KBDesignSystem.typography.fontWeight.medium};
-  color: ${KBDesignSystem.colors.text.secondary};
+  color: ${props => (props.$variant === 'orange' ? 'rgba(255, 255, 255, 0.9)' : '#1976D2')};
   margin: 0;
   line-height: ${KBDesignSystem.typography.lineHeight.normal};
-  letter-spacing: ${KBDesignSystem.typography.letterSpacing.normal};
 `;
-const BannerIcon = styled.div`
-  width: 60px;
-  height: 60px;
-  background: linear-gradient(135deg, ${KBDesignSystem.colors.status.warning} 0%, #FF9933 100%);
-  border-radius: ${KBDesignSystem.borderRadius.xl};
+
+const CardHighlight = styled.div<{ $variant: 'orange' | 'blue' }>`
+  font-family: ${KBDesignSystem.typography.fontFamily.primary};
+  font-size: ${KBDesignSystem.typography.fontSize.lg};
+  font-weight: ${KBDesignSystem.typography.fontWeight.bold};
+  color: ${props => (props.$variant === 'orange' ? '#FFFFFF' : '#0D47A1')};
+  margin-top: ${KBDesignSystem.spacing.sm};
+`;
+
+const CardIcon = styled.div<{ $variant: 'orange' | 'blue' }>`
+  position: absolute;
+  bottom: ${KBDesignSystem.spacing.sm};
+  right: ${KBDesignSystem.spacing.sm};
+  width: 50px;
+  height: 50px;
+  background: ${props =>
+    props.$variant === 'orange'
+      ? 'linear-gradient(135deg, #FFD54F 0%, #FFB74D 100%)'
+      : 'transparent'};
+  border-radius: ${KBDesignSystem.borderRadius.lg};
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  box-shadow: 0 4px 12px rgba(255, 153, 51, 0.25);
-  overflow: hidden;
-  transition: all ${KBDesignSystem.animation.duration.normal} ${KBDesignSystem.animation.easing.easeOut};
-  
-  /* 내부 하이라이트 효과 */
-  &::before {
-    content: '';
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    right: 2px;
-    height: 20px;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, transparent 100%);
-    border-radius: ${KBDesignSystem.borderRadius.lg};
-  }
-  
-  /* 15만원 프로모션 배지 */
-  &::after {
-    content: '15만원';
-    position: absolute;
-    bottom: -2px;
-    right: -2px;
-    background: ${KBDesignSystem.colors.status.success};
-    color: ${KBDesignSystem.colors.text.inverse};
-    font-size: ${KBDesignSystem.typography.fontSize.xs};
-    font-weight: ${KBDesignSystem.typography.fontWeight.bold};
-    font-family: ${KBDesignSystem.typography.fontFamily.primary};
-    padding: 2px 6px;
-    border-radius: ${KBDesignSystem.borderRadius.sm};
-    border: 2px solid ${KBDesignSystem.colors.background.white};
-    box-shadow: ${KBDesignSystem.shadows.sm};
-    letter-spacing: ${KBDesignSystem.typography.letterSpacing.tight};
-  }
-  
-  span {
-    font-size: ${KBDesignSystem.typography.fontSize.xxxl};
-    font-weight: ${KBDesignSystem.typography.fontWeight.bold};
-    z-index: 1;
-    position: relative;
-  }
+  font-size: ${KBDesignSystem.typography.fontSize.xl};
+  opacity: 0.9;
 `;
+
+const CharacterImage = styled.img`
+  position: absolute;
+  bottom: 0;
+  right: ${KBDesignSystem.spacing.sm};
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+`;
+
+const KBLogo = styled.div`
+  position: absolute;
+  top: ${KBDesignSystem.spacing.sm};
+  right: ${KBDesignSystem.spacing.sm};
+  font-family: ${KBDesignSystem.typography.fontFamily.primary};
+  font-size: ${KBDesignSystem.typography.fontSize.xs};
+  font-weight: ${KBDesignSystem.typography.fontWeight.bold};
+  color: #1976d2;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 2px 6px;
+  border-radius: ${KBDesignSystem.borderRadius.sm};
+`;
+
 interface MainBannerProps {
-  title?: string;
-  subtitle?: string;
-  icon?: string;
   onBannerClick?: () => void;
   className?: string;
 }
-export const MainBanner: React.FC<MainBannerProps> = ({
-  title = "KB국민카드 쓰고",
-  subtitle = "현금 최대 15만원 받기",
-  icon = "💳",
-  onBannerClick,
-  className
-}) => {
+
+export const MainBanner: React.FC<MainBannerProps> = ({ onBannerClick, className }) => {
   return (
     <BannerContainer className={className}>
-      <Banner onClick={onBannerClick}>
-        <BannerContent>
-          <BannerTitle>{title}</BannerTitle>
-          <BannerSubtitle>{subtitle}</BannerSubtitle>
-        </BannerContent>
-        <BannerIcon>
-          <span>{icon}</span>
-        </BannerIcon>
-      </Banner>
+      <BannerGrid>
+        {/* 좌측 카드: 안 쓰는 계좌의 잔액을 모아보세요 */}
+        <BannerCard $variant='orange' onClick={onBannerClick}>
+          <CardContent>
+            <CardTitle $variant='orange'>안 쓰는 계좌의</CardTitle>
+            <CardTitle $variant='orange'>잔액을 모아보세요</CardTitle>
+            <CardSubtitle $variant='orange'>숨은 잔돈 모으기</CardSubtitle>
+            <CardHighlight $variant='orange'>최대 4.5%</CardHighlight>
+          </CardContent>
+          <CardIcon $variant='orange'>💰</CardIcon>
+        </BannerCard>
+
+        {/* 우측 카드: 자녀의 금융생활, 시작이 고민이라면? */}
+        <BannerCard $variant='blue' onClick={onBannerClick}>
+          <KBLogo>KB</KBLogo>
+          <CardContent>
+            <CardTitle $variant='blue'>자녀의 금융생활,</CardTitle>
+            <CardTitle $variant='blue'>시작이 고민이라면?</CardTitle>
+            <CardSubtitle $variant='blue'>우리 아이 금융상품</CardSubtitle>
+          </CardContent>
+          <CharacterImage src={bibiCharacterSmall} alt='KB 캐릭터' />
+        </BannerCard>
+      </BannerGrid>
     </BannerContainer>
   );
 };
+
 export default MainBanner;

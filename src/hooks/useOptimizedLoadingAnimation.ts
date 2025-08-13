@@ -1,7 +1,7 @@
 /**
  * 최적화된 로딩 애니메이션 훅
  * requestAnimationFrame 기반으로 부드러운 60fps 애니메이션 제공
- * 
+ *
  * 성능 최적화 요소:
  * - requestAnimationFrame 사용으로 브라우저 렌더링 주기에 맞춘 애니메이션
  * - 컴포넌트 언마운트 시 자동으로 애니메이션 정리
@@ -38,13 +38,13 @@ export const useOptimizedLoadingAnimation = (options: UseOptimizedLoadingAnimati
     autoStart = true,
     totalFrames = 60,
     loop = true,
-    onComplete
+    onComplete,
   } = options;
 
   const [state, setState] = useState<AnimationState>({
     currentFrame: 0,
     isPlaying: autoStart,
-    progress: 0
+    progress: 0,
   });
 
   const rafId = useRef<number | null>(null);
@@ -56,7 +56,7 @@ export const useOptimizedLoadingAnimation = (options: UseOptimizedLoadingAnimati
   useEffect(() => {
     const handleVisibilityChange = () => {
       isVisible.current = !document.hidden;
-      
+
       if (document.hidden && state.isPlaying) {
         // 페이지가 백그라운드로 갈 때 애니메이션 일시정지
         if (rafId.current) {
@@ -79,7 +79,7 @@ export const useOptimizedLoadingAnimation = (options: UseOptimizedLoadingAnimati
     if (!isVisible.current) return;
 
     const currentTime = performance.now();
-    
+
     if (startTime.current === 0) {
       startTime.current = currentTime;
       lastFrameTime.current = currentTime;
@@ -99,7 +99,7 @@ export const useOptimizedLoadingAnimation = (options: UseOptimizedLoadingAnimati
             return {
               currentFrame: 0,
               isPlaying: true,
-              progress: 0
+              progress: 0,
             };
           } else {
             // 애니메이션 완료
@@ -107,7 +107,7 @@ export const useOptimizedLoadingAnimation = (options: UseOptimizedLoadingAnimati
             return {
               currentFrame: totalFrames - 1,
               isPlaying: false,
-              progress: 1
+              progress: 1,
             };
           }
         }
@@ -115,7 +115,7 @@ export const useOptimizedLoadingAnimation = (options: UseOptimizedLoadingAnimati
         return {
           currentFrame: nextFrame,
           isPlaying: prevState.isPlaying,
-          progress
+          progress,
         };
       });
 
@@ -148,7 +148,7 @@ export const useOptimizedLoadingAnimation = (options: UseOptimizedLoadingAnimati
     setState({
       currentFrame: 0,
       isPlaying: false,
-      progress: 0
+      progress: 0,
     });
     if (rafId.current) {
       cancelAnimationFrame(rafId.current);
@@ -159,14 +159,17 @@ export const useOptimizedLoadingAnimation = (options: UseOptimizedLoadingAnimati
   }, []);
 
   // 특정 프레임으로 점프
-  const seekTo = useCallback((frame: number) => {
-    const clampedFrame = Math.max(0, Math.min(frame, totalFrames - 1));
-    setState(prev => ({
-      ...prev,
-      currentFrame: clampedFrame,
-      progress: clampedFrame / totalFrames
-    }));
-  }, [totalFrames]);
+  const seekTo = useCallback(
+    (frame: number) => {
+      const clampedFrame = Math.max(0, Math.min(frame, totalFrames - 1));
+      setState(prev => ({
+        ...prev,
+        currentFrame: clampedFrame,
+        progress: clampedFrame / totalFrames,
+      }));
+    },
+    [totalFrames]
+  );
 
   // 애니메이션 시작 (컴포넌트 마운트 시)
   useEffect(() => {
@@ -195,23 +198,23 @@ export const useOptimizedLoadingAnimation = (options: UseOptimizedLoadingAnimati
     currentFrame: state.currentFrame,
     isPlaying: state.isPlaying,
     progress: state.progress,
-    
+
     // 컨트롤 함수들
     play,
     pause,
     reset,
     seekTo,
-    
+
     // 유틸리티
     totalFrames,
     frameRate,
-    
+
     // 시간 기반 진행률 (0-1)
     timeProgress: state.progress,
-    
+
     // 애니메이션 상태 확인
     isComplete: state.currentFrame >= totalFrames - 1 && !loop,
-    
+
     // CSS 애니메이션 진행률 (CSS 변수용)
     cssProgress: `${state.progress * 100}%`,
   };
@@ -230,7 +233,7 @@ export const useCSSLoadingAnimation = (duration: number = 2000, delay: number = 
     }
 
     setIsAnimating(true);
-    
+
     timeoutRef.current = setTimeout(() => {
       setIsAnimating(false);
     }, duration + delay);
@@ -260,9 +263,9 @@ export const useCSSLoadingAnimation = (duration: number = 2000, delay: number = 
       style: {
         animationDuration: `${duration}ms`,
         animationDelay: `${delay}ms`,
-        animationPlayState: isAnimating ? 'running' : 'paused'
-      }
-    }
+        animationPlayState: isAnimating ? 'running' : 'paused',
+      },
+    },
   };
 };
 

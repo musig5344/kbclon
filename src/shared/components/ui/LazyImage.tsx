@@ -33,13 +33,15 @@ const ImageWrapper = styled.div<ImageWrapperProps>`
   position: relative;
   display: inline-block;
   overflow: hidden;
-  
+
   /* 성능 최적화 */
   transform: translateZ(0);
   will-change: auto;
   contain: layout style;
-  
-  ${props => props.fill && `
+
+  ${props =>
+    props.fill &&
+    `
     position: absolute;
     top: 0;
     left: 0;
@@ -48,34 +50,40 @@ const ImageWrapper = styled.div<ImageWrapperProps>`
     width: 100% !important;
     height: 100% !important;
   `}
-  
-  ${props => props.width && !props.fill && `width: ${typeof props.width === 'number' ? props.width + 'px' : props.width};`}
-  ${props => props.height && !props.fill && `height: ${typeof props.height === 'number' ? props.height + 'px' : props.height};`}
+
+  ${props =>
+    props.width &&
+    !props.fill &&
+    `width: ${typeof props.width === 'number' ? props.width + 'px' : props.width};`}
+  ${props =>
+    props.height &&
+    !props.fill &&
+    `height: ${typeof props.height === 'number' ? props.height + 'px' : props.height};`}
 `;
 
 const StyledImage = styled.img<{ $isLoaded: boolean; $fill?: boolean }>`
   display: block;
   max-width: 100%;
   height: auto;
-  
+
   /* 고성능 애니메이션 최적화 */
   transform: translateZ(0);
   will-change: auto;
   backface-visibility: hidden;
-  
-  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-              transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  opacity: ${props => props.$isLoaded ? 1 : 0};
-  transform: ${props => props.$isLoaded 
-    ? 'translateZ(0) scale(1)' 
-    : 'translateZ(0) scale(1.02)'
-  };
-  
+
+  transition:
+    opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: ${props => (props.$isLoaded ? 1 : 0)};
+  transform: ${props => (props.$isLoaded ? 'translateZ(0) scale(1)' : 'translateZ(0) scale(1.02)')};
+
   &:hover {
     will-change: transform;
   }
-  
-  ${props => props.$fill && `
+
+  ${props =>
+    props.$fill &&
+    `
     position: absolute;
     top: 0;
     left: 0;
@@ -85,43 +93,48 @@ const StyledImage = styled.img<{ $isLoaded: boolean; $fill?: boolean }>`
   `}
 `;
 
-const PlaceholderDiv = styled.div<{ 
-  $width?: number | string; 
+const PlaceholderDiv = styled.div<{
+  $width?: number | string;
   $height?: number | string;
   $fill?: boolean;
   $blurDataURL?: string;
 }>`
-  ${props => props.$fill ? `
+  ${props =>
+    props.$fill
+      ? `
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-  ` : `
+  `
+      : `
     width: ${typeof props.$width === 'number' ? props.$width + 'px' : props.$width || '100%'};
     height: ${typeof props.$height === 'number' ? props.$height + 'px' : props.$height || 'auto'};
   `}
-  
+
   background-color: #f0f0f0;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
-  
+
   /* GPU 가속 및 성능 최적화 */
   transform: translateZ(0);
   will-change: auto;
   backface-visibility: hidden;
   contain: layout style paint;
-  
-  ${props => props.$blurDataURL && `
+
+  ${props =>
+    props.$blurDataURL &&
+    `
     background-image: url('${props.$blurDataURL}');
     background-size: cover;
     background-position: center;
     filter: blur(5px);
     transform: translateZ(0) scale(1.1);
   `}
-  
+
   &::after {
     content: '';
     position: absolute;
@@ -133,16 +146,20 @@ const PlaceholderDiv = styled.div<{
     border: 2px solid #ddd;
     border-top: 2px solid #666;
     border-radius: 50%;
-    
+
     /* 최적화된 로딩 스피너 애니메이션 */
     transform: translateZ(0);
     will-change: transform;
     animation: optimizedSpin 1s linear infinite;
   }
-  
+
   @keyframes optimizedSpin {
-    0% { transform: translateZ(0) rotate(0deg); }
-    100% { transform: translateZ(0) rotate(360deg); }
+    0% {
+      transform: translateZ(0) rotate(0deg);
+    }
+    100% {
+      transform: translateZ(0) rotate(360deg);
+    }
   }
 `;
 
@@ -185,8 +202,8 @@ const LazyImage: React.FC<LazyImageProps> = ({
     if (!currentImg) return () => {};
 
     observerRef.current = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
+      entries => {
+        entries.forEach(entry => {
           if (entry.isIntersecting) {
             setIsInView(true);
             if (observerRef.current) {
@@ -215,7 +232,7 @@ const LazyImage: React.FC<LazyImageProps> = ({
     // will-change 동적 관리
     if (imgRef.current) {
       imgRef.current.style.willChange = 'transform, opacity';
-      
+
       // 애니메이션 완료 후 will-change 제거
       setTimeout(() => {
         if (imgRef.current) {
@@ -223,7 +240,7 @@ const LazyImage: React.FC<LazyImageProps> = ({
         }
       }, 300);
     }
-    
+
     setIsLoaded(true);
     onLoad?.();
   };
@@ -236,12 +253,12 @@ const LazyImage: React.FC<LazyImageProps> = ({
   // 최적화된 이미지 src 결정
   const getOptimizedSrc = () => {
     if (error) return src;
-    
+
     // WebP 지원하고 webpSrc가 있으면 WebP 사용
     if (webpSupported && webpSrc) {
       return webpSrc;
     }
-    
+
     return src;
   };
 
@@ -249,32 +266,18 @@ const LazyImage: React.FC<LazyImageProps> = ({
   const shouldLoadImage = isInView && webpSupported !== null;
 
   return (
-    <ImageWrapper
-      width={width}
-      height={height}
-      fill={fill}
-      className={className}
-    >
+    <ImageWrapper width={width} height={height} fill={fill} className={className}>
       {!shouldLoadImage && (
-        <PlaceholderDiv
-          $width={width}
-          $height={height}
-          $fill={fill}
-          $blurDataURL={blurDataURL}
-        />
+        <PlaceholderDiv $width={width} $height={height} $fill={fill} $blurDataURL={blurDataURL} />
       )}
-      
+
       {shouldLoadImage && (
         <picture>
           {/* WebP 소스 */}
           {webpSupported && webpSrc && !error && (
-            <source
-              srcSet={webpSrc}
-              type="image/webp"
-              sizes={sizes}
-            />
+            <source srcSet={webpSrc} type='image/webp' sizes={sizes} />
           )}
-          
+
           {/* 대체 이미지 */}
           <StyledImage
             ref={imgRef}
@@ -320,28 +323,25 @@ export const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
 }) => {
   const generateSrcSet = () => {
     if (!sizes) return undefined;
-    
+
     const srcSetArray = [];
     if (sizes.small) srcSetArray.push(`${sizes.small} ${breakpoints.small}w`);
     if (sizes.medium) srcSetArray.push(`${sizes.medium} ${breakpoints.medium}w`);
     if (sizes.large) srcSetArray.push(`${sizes.large} ${breakpoints.large}w`);
-    
+
     return srcSetArray.join(', ');
   };
 
   const generateSizesAttr = () => {
-    return `(max-width: ${breakpoints.small}px) ${breakpoints.small}px, ` +
-           `(max-width: ${breakpoints.medium}px) ${breakpoints.medium}px, ` +
-           `${breakpoints.large}px`;
+    return (
+      `(max-width: ${breakpoints.small}px) ${breakpoints.small}px, ` +
+      `(max-width: ${breakpoints.medium}px) ${breakpoints.medium}px, ` +
+      `${breakpoints.large}px`
+    );
   };
 
   return (
-    <LazyImage
-      src={baseSrc}
-      srcSet={generateSrcSet()}
-      sizes={generateSizesAttr()}
-      {...props}
-    />
+    <LazyImage src={baseSrc} srcSet={generateSrcSet()} sizes={generateSizesAttr()} {...props} />
   );
 };
 

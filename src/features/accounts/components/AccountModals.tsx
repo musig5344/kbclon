@@ -18,10 +18,11 @@ interface Transaction {
 }
 // 한국어 문자, 숫자, 영어를 분리하여 형식화
 const formatTransactionText = (text: string): string => {
-  return text.replace(/([가-힣]+)(\d)/g, '$1 $2')
-            .replace(/(\d)([가-힣]+)/g, '$1 $2')
-            .replace(/([가-힣]+)([a-zA-Z])/g, '$1 $2')
-            .replace(/([a-zA-Z])([가-힣]+)/g, '$1 $2');
+  return text
+    .replace(/([가-힣]+)(\d)/g, '$1 $2')
+    .replace(/(\d)([가-힣]+)/g, '$1 $2')
+    .replace(/([가-힣]+)([a-zA-Z])/g, '$1 $2')
+    .replace(/([a-zA-Z])([가-힣]+)/g, '$1 $2');
 };
 // 거래내역 상세 모달 컴포넌트
 export const TransactionDetailModal: React.FC<{
@@ -32,7 +33,7 @@ export const TransactionDetailModal: React.FC<{
     <Modal
       show={true}
       onClose={onClose}
-      title="거래내역상세"
+      title='거래내역상세'
       footer={<ConfirmButton onClick={onClose}>확인</ConfirmButton>}
     >
       <TransactionName>{formatTransactionText(transaction.desc)}</TransactionName>
@@ -42,14 +43,17 @@ export const TransactionDetailModal: React.FC<{
           <span>직접작성</span>
           <span>▼</span>
         </MemoDropdown>
-        <MemoInput placeholder="메모 입력(최대 20자)" />
+        <MemoInput placeholder='메모 입력(최대 20자)' />
       </MemoSection>
       <DetailInfo>
-        <DetailDateTime>{transaction.date.replace(/\./g, '.')} {transaction.time}</DetailDateTime>
+        <DetailDateTime>
+          {transaction.date.replace(/\./g, '.')} {transaction.time}
+        </DetailDateTime>
         <DetailRow>
           <DetailLabel>거래금액</DetailLabel>
           <DetailAmount type={transaction.type}>
-            {transaction.type === 'income' ? '입금' : '출금'} {Math.abs(transaction.amount).toLocaleString()}원
+            {transaction.type === 'income' ? '입금' : '출금'}{' '}
+            {Math.abs(transaction.amount).toLocaleString()}원
           </DetailAmount>
         </DetailRow>
         <DetailRow>
@@ -93,49 +97,61 @@ export const FilterModal: React.FC<FilterModalProps> = ({
   onStartDateChange: _onStartDateChange, // 사용되지 않음
   onEndDateChange: _onEndDateChange, // 사용되지 않음
   onClose,
-  onConfirm
+  onConfirm,
 }) => {
   // 간단한 필터 모달 구현
   return (
     <div style={{ display: show ? 'block' : 'none' }}>
-      <div style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        backgroundColor: 'rgba(0,0,0,0.5)',
-        zIndex: 999
-      }} onClick={onClose}>
-        <div style={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          background: 'white',
-          padding: '20px',
-          borderRadius: '8px',
-          minWidth: '200px'
-        }} onClick={(e) => e.stopPropagation()}>
+      <div
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.5)',
+          zIndex: 999,
+        }}
+        onClick={onClose}
+      >
+        <div
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            background: 'white',
+            padding: '20px',
+            borderRadius: '8px',
+            minWidth: '200px',
+          }}
+          onClick={e => e.stopPropagation()}
+        >
           <h3>필터 설정</h3>
           <p>기간: {filterPeriod}</p>
           <p>유형: {filterType}</p>
           <p>정렬: {filterSort}</p>
-          <button onClick={onConfirm} style={{
-            backgroundColor: '#FFD338',
-            border: 'none',
-            padding: '10px 20px',
-            borderRadius: '4px',
-            marginRight: '10px'
-          }}>
+          <button
+            onClick={onConfirm}
+            style={{
+              backgroundColor: '#FFD338',
+              border: 'none',
+              padding: '10px 20px',
+              borderRadius: '4px',
+              marginRight: '10px',
+            }}
+          >
             확인
           </button>
-          <button onClick={onClose} style={{
-            backgroundColor: '#ccc',
-            border: 'none',
-            padding: '10px 20px',
-            borderRadius: '4px'
-          }}>
+          <button
+            onClick={onClose}
+            style={{
+              backgroundColor: '#ccc',
+              border: 'none',
+              padding: '10px 20px',
+              borderRadius: '4px',
+            }}
+          >
             취소
           </button>
         </div>
@@ -147,7 +163,7 @@ export const FilterModal: React.FC<FilterModalProps> = ({
 const TransactionName = styled(Typography).attrs({
   variant: 'titleLarge',
   weight: 'semibold',
-  align: 'center'
+  align: 'center',
 })`
   margin: 0 0 ${tokens.spacing[8]} 0;
 `;
@@ -156,7 +172,7 @@ const MemoSection = styled.div`
 `;
 const MemoLabel = styled(Typography).attrs({
   variant: 'bodyMedium',
-  color: 'secondary'
+  color: 'secondary',
 })`
   margin-bottom: ${tokens.spacing[2]};
 `;
@@ -186,7 +202,7 @@ const MemoInput = styled.input`
 const DetailInfo = styled.div``;
 const DetailDateTime = styled(Typography).attrs({
   variant: 'labelLarge',
-  color: 'tertiary'
+  color: 'tertiary',
 })`
   margin-bottom: ${tokens.spacing[4]};
 `;
@@ -199,16 +215,19 @@ const DetailRow = styled.div`
 `;
 const DetailLabel = styled(Typography).attrs({
   variant: 'bodyMedium',
-  color: 'secondary'
+  color: 'secondary',
 })`` as any;
 const DetailValue = styled(Typography).attrs({
   variant: 'bodyMedium',
-  weight: 'medium'
+  weight: 'medium',
 })`` as any;
-const DetailAmount = styled(Typography).attrs<{ type: 'income' | 'expense' }>((props) => ({
+const DetailAmount = styled(Typography).attrs<{ type: 'income' | 'expense' }>(props => ({
   variant: 'bodyMedium',
   weight: 'semibold',
-  style: { color: props.type === 'income' ? tokens.colors.functional.income : tokens.colors.functional.expense }
+  style: {
+    color:
+      props.type === 'income' ? tokens.colors.functional.income : tokens.colors.functional.expense,
+  },
 }))`` as any;
 const ConfirmButton = styled.button`
   width: 100%;

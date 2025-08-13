@@ -179,7 +179,7 @@ export class CSPManager {
 
   private getScriptSources(): string[] {
     const sources = ["'self'"];
-    
+
     if (this.config.enableNonce && this.nonce) {
       sources.push(`'nonce-${this.nonce}'`);
     }
@@ -198,7 +198,7 @@ export class CSPManager {
     // CDN and third-party services
     sources.push('https://cdn.jsdelivr.net');
     sources.push('https://unpkg.com');
-    
+
     // Analytics (if needed)
     if (this.config.environment === 'production') {
       // Add analytics domains if required
@@ -425,7 +425,7 @@ export class CSPManager {
   public getCSPReportHandler(): (report: any) => void {
     return (report: any) => {
       console.warn('CSP Violation Report:', report);
-      
+
       // In production, send to monitoring service
       if (this.config.environment === 'production') {
         // Send to your monitoring service
@@ -441,12 +441,10 @@ export class CSPManager {
   public validateCurrentCSP(): boolean {
     try {
       const policy = this.generateCSPHeader();
-      
+
       // Basic validation checks
       const requiredDirectives = ['default-src', 'script-src', 'style-src', 'img-src'];
-      const hasAllRequired = requiredDirectives.every(directive => 
-        policy.includes(directive)
-      );
+      const hasAllRequired = requiredDirectives.every(directive => policy.includes(directive));
 
       if (!hasAllRequired) {
         console.error('CSP validation failed: Missing required directives');
@@ -458,7 +456,9 @@ export class CSPManager {
       if (this.config.environment === 'production') {
         const hasUnsafe = unsafePatterns.some(pattern => policy.includes(pattern));
         if (hasUnsafe) {
-          console.warn('CSP validation warning: Contains potentially unsafe directives in production');
+          console.warn(
+            'CSP validation warning: Contains potentially unsafe directives in production'
+          );
         }
       }
 
@@ -472,7 +472,7 @@ export class CSPManager {
   public generateCSPForMeta(): string {
     // For meta tag usage (client-side)
     const policy = this.generateCSPHeader();
-    
+
     if (this.config.enforceMode) {
       return policy;
     } else {
@@ -503,12 +503,8 @@ export class CSPManager {
       },
       createScript: (input: string) => {
         // Only allow specific scripts
-        const allowedScripts = [
-          'analytics',
-          'performance-monitoring',
-          'error-tracking'
-        ];
-        
+        const allowedScripts = ['analytics', 'performance-monitoring', 'error-tracking'];
+
         const isAllowed = allowedScripts.some(script => input.includes(script));
         return isAllowed ? input : '';
       },
@@ -517,15 +513,13 @@ export class CSPManager {
         const trustedDomains = [
           'https://cdn.jsdelivr.net',
           'https://unpkg.com',
-          'https://*.kbstar.com'
+          'https://*.kbstar.com',
         ];
-        
-        const isTrusted = trustedDomains.some(domain => 
-          input.match(domain.replace('*', '.*'))
-        );
-        
+
+        const isTrusted = trustedDomains.some(domain => input.match(domain.replace('*', '.*')));
+
         return isTrusted ? input : '';
-      }
+      },
     });
   }
 }

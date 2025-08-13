@@ -39,13 +39,13 @@ export const CSPProvider: React.FC<CSPProviderProps> = ({ children, config }) =>
   useEffect(() => {
     // Initialize CSP
     initializeCSP();
-    
+
     // Set up CSP violation reporting
     setupViolationReporting();
-    
+
     // Create banking-specific Trusted Types policy
     cspManager.createBankingTrustedTypesPolicy();
-    
+
     return () => {
       // Cleanup
       document.removeEventListener('securitypolicyviolation', handleCSPViolation);
@@ -57,36 +57,34 @@ export const CSPProvider: React.FC<CSPProviderProps> = ({ children, config }) =>
       // Generate CSP header
       const cspHeader = cspManager.generateCSPHeader();
       const additionalHeaders = cspManager.generateAdditionalSecurityHeaders();
-      
+
       // Apply CSP via meta tag (for client-side applications)
       const existingMeta = document.querySelector('meta[http-equiv="Content-Security-Policy"]');
       if (existingMeta) {
         existingMeta.remove();
       }
-      
+
       const metaCSP = document.createElement('meta');
       metaCSP.httpEquiv = 'Content-Security-Policy';
       metaCSP.content = cspHeader;
       document.head.appendChild(metaCSP);
-      
+
       // Apply additional security headers via meta tags where possible
       Object.entries(additionalHeaders).forEach(([name, value]) => {
         if (name === 'Referrer-Policy') {
           const existing = document.querySelector('meta[name="referrer"]');
           if (existing) existing.remove();
-          
+
           const meta = document.createElement('meta');
           meta.name = 'referrer';
           meta.content = value;
           document.head.appendChild(meta);
         }
       });
-      
+
       // Update nonce
       setNonce(cspManager.getNonce());
       setIsCSPActive(cspManager.validateCurrentCSP());
-      
-      
     } catch (error) {
       console.error('Failed to initialize CSP:', error);
       setIsCSPActive(false);
@@ -133,7 +131,6 @@ export const CSPProvider: React.FC<CSPProviderProps> = ({ children, config }) =>
   const reportViolationToService = async (violation: CSPViolation) => {
     try {
       // In a real application, send to your monitoring service
-      
       // Example: send to monitoring API
       // await fetch('/api/security/csp-violations', {
       //   method: 'POST',
@@ -157,7 +154,7 @@ Please review your CSP settings and ensure all resources are properly whiteliste
     `.trim();
 
     console.warn(message);
-    
+
     // Show visual warning in development
     if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
       const warning = document.createElement('div');
@@ -176,9 +173,9 @@ Please review your CSP settings and ensure all resources are properly whiteliste
         word-wrap: break-word;
       `;
       warning.textContent = `CSP Violation: ${violation.directive} - ${violation.blockedURI}`;
-      
+
       document.body.appendChild(warning);
-      
+
       setTimeout(() => {
         document.body.removeChild(warning);
       }, 5000);
@@ -206,11 +203,7 @@ Please review your CSP settings and ensure all resources are properly whiteliste
     refreshNonce,
   };
 
-  return (
-    <CSPContext.Provider value={contextValue}>
-      {children}
-    </CSPContext.Provider>
-  );
+  return <CSPContext.Provider value={contextValue}>{children}</CSPContext.Provider>;
 };
 
 export const useCSP = (): CSPContextValue => {
@@ -276,11 +269,11 @@ export const useSecureStyle = () => {
         existing.remove();
       }
     }
-    
+
     if (nonce) {
       styleElement.nonce = nonce;
     }
-    
+
     styleElement.textContent = css;
     document.head.appendChild(styleElement);
     return styleElement;
@@ -298,55 +291,64 @@ export const CSPStatus: React.FC<{ showDetails?: boolean }> = ({ showDetails = f
 
   if (!showDetails) {
     return (
-      <div style={{ 
-        position: 'fixed', 
-        bottom: '10px', 
-        left: '10px', 
-        background: isCSPActive ? '#4CAF50' : '#FF5722',
-        color: 'white',
-        padding: '4px 8px',
-        borderRadius: '4px',
-        fontSize: '12px',
-        zIndex: 9999,
-        display: process.env.NODE_ENV === 'development' ? 'block' : 'none'
-      }}>
+      <div
+        style={{
+          position: 'fixed',
+          bottom: '10px',
+          left: '10px',
+          background: isCSPActive ? '#4CAF50' : '#FF5722',
+          color: 'white',
+          padding: '4px 8px',
+          borderRadius: '4px',
+          fontSize: '12px',
+          zIndex: 9999,
+          display: process.env.NODE_ENV === 'development' ? 'block' : 'none',
+        }}
+      >
         CSP: {isCSPActive ? 'Active' : 'Inactive'}
       </div>
     );
   }
 
   return (
-    <div style={{
-      position: 'fixed',
-      top: '10px',
-      left: '10px',
-      background: 'rgba(0,0,0,0.8)',
-      color: 'white',
-      padding: '16px',
-      borderRadius: '8px',
-      fontFamily: 'monospace',
-      fontSize: '12px',
-      maxWidth: '400px',
-      zIndex: 9999,
-      display: process.env.NODE_ENV === 'development' ? 'block' : 'none'
-    }}>
+    <div
+      style={{
+        position: 'fixed',
+        top: '10px',
+        left: '10px',
+        background: 'rgba(0,0,0,0.8)',
+        color: 'white',
+        padding: '16px',
+        borderRadius: '8px',
+        fontFamily: 'monospace',
+        fontSize: '12px',
+        maxWidth: '400px',
+        zIndex: 9999,
+        display: process.env.NODE_ENV === 'development' ? 'block' : 'none',
+      }}
+    >
       <h4>CSP Status</h4>
       <p>Status: {isCSPActive ? '✅ Active' : '❌ Inactive'}</p>
       <p>Nonce: {nonce ? '✅ Generated' : '❌ None'}</p>
       <p>Violations: {violations.length}</p>
-      
+
       {violations.length > 0 && (
         <details>
           <summary>Recent Violations ({violations.length})</summary>
           <div style={{ maxHeight: '200px', overflow: 'auto', marginTop: '8px' }}>
             {violations.slice(-5).map(violation => (
-              <div key={violation.id} style={{ 
-                borderBottom: '1px solid #333', 
-                padding: '4px 0',
-                fontSize: '10px'
-              }}>
-                <strong>{violation.directive}</strong><br />
-                {violation.blockedURI}<br />
+              <div
+                key={violation.id}
+                style={{
+                  borderBottom: '1px solid #333',
+                  padding: '4px 0',
+                  fontSize: '10px',
+                }}
+              >
+                <strong>{violation.directive}</strong>
+                <br />
+                {violation.blockedURI}
+                <br />
                 <small>{new Date(violation.timestamp).toLocaleTimeString()}</small>
               </div>
             ))}
@@ -358,20 +360,18 @@ export const CSPStatus: React.FC<{ showDetails?: boolean }> = ({ showDetails = f
 };
 
 // Higher-order component for CSP-protected components
-export const withCSPProtection = <P extends object>(
-  Component: React.ComponentType<P>
-) => {
+export const withCSPProtection = <P extends object>(Component: React.ComponentType<P>) => {
   const CSPProtectedComponent = (props: P) => {
     const { isCSPActive } = useCSP();
-    
+
     if (!isCSPActive) {
       console.warn(`Component ${Component.name} loaded without active CSP protection`);
     }
-    
+
     return <Component {...props} />;
   };
-  
+
   CSPProtectedComponent.displayName = `withCSPProtection(${Component.displayName || Component.name})`;
-  
+
   return CSPProtectedComponent;
 };

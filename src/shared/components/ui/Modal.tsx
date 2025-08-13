@@ -67,30 +67,30 @@ const ModalOverlay = styled.div<{ $isOpen: boolean; $variant: string }>`
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: ${props => 
-    props.$variant === 'kb' 
-      ? tokens.colors.dimmedBackground 
-      : 'rgba(0, 0, 0, 0.5)'
-  };
+  background-color: ${props =>
+    props.$variant === 'kb' ? tokens.colors.dimmedBackground : 'rgba(0, 0, 0, 0.5)'};
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: ${KBDesignSystem.zIndex.modalBackdrop};
-  padding: ${props => props.$variant === 'fullscreen' ? '0' : '16px'};
-  opacity: ${props => props.$isOpen ? 1 : 0};
-  visibility: ${props => props.$isOpen ? 'visible' : 'hidden'};
-  transition: opacity ${duration.normal} ${easing.easeOut},
-              visibility ${duration.normal} ${easing.easeOut};
-  
-  ${props => props.$variant === 'kb' && `
+  padding: ${props => (props.$variant === 'fullscreen' ? '0' : '16px')};
+  opacity: ${props => (props.$isOpen ? 1 : 0)};
+  visibility: ${props => (props.$isOpen ? 'visible' : 'hidden')};
+  transition:
+    opacity ${duration.normal} ${easing.easeOut},
+    visibility ${duration.normal} ${easing.easeOut};
+
+  ${props =>
+    props.$variant === 'kb' &&
+    `
     max-width: 390px;
     margin: 0 auto;
   `}
 `;
 
 // 모달 컨테이너 (카드)
-const ModalContainer = styled.div<{ 
-  $isOpen: boolean; 
+const ModalContainer = styled.div<{
+  $isOpen: boolean;
   $variant: string;
   $size: string;
   $maxWidth?: string;
@@ -100,7 +100,7 @@ const ModalContainer = styled.div<{
   flex-direction: column;
   overflow: hidden;
   position: relative;
-  
+
   ${props => {
     // KB 스타일 variant
     if (props.$variant === 'kb') {
@@ -150,7 +150,7 @@ const ModalContainer = styled.div<{
           `;
       }
     }
-    
+
     // 다이얼로그 variant
     if (props.$variant === 'dialog') {
       return `
@@ -163,7 +163,7 @@ const ModalContainer = styled.div<{
         animation: ${slideUp} 0.3s ease-out;
       `;
     }
-    
+
     // Fullscreen variant
     if (props.$variant === 'fullscreen') {
       return `
@@ -173,7 +173,7 @@ const ModalContainer = styled.div<{
         margin: 0;
       `;
     }
-    
+
     // 기본 variant
     return `
       border-radius: ${tokens.borderRadius.xl};
@@ -183,14 +183,18 @@ const ModalContainer = styled.div<{
       max-height: 90vh;
     `;
   }}
-  
-  transform: ${props => props.$isOpen ? 'scale(1) translateY(0)' : 'scale(0.95) translateY(30px)'};
-  opacity: ${props => props.$isOpen ? 1 : 0};
-  transition: transform ${duration.normal} ${easing.easeOut},
-              opacity ${duration.normal} ${easing.easeOut};
-  
+
+  transform: ${props =>
+    props.$isOpen ? 'scale(1) translateY(0)' : 'scale(0.95) translateY(30px)'};
+  opacity: ${props => (props.$isOpen ? 1 : 0)};
+  transition:
+    transform ${duration.normal} ${easing.easeOut},
+    opacity ${duration.normal} ${easing.easeOut};
+
   @media (max-width: 768px) {
-    ${props => props.$variant === 'kb' && `
+    ${props =>
+      props.$variant === 'kb' &&
+      `
       width: 100%;
       height: 100%;
       border-radius: 0;
@@ -205,7 +209,7 @@ const ModalHeader = styled.div<{ $variant: string }>`
   align-items: center;
   justify-content: space-between;
   flex-shrink: 0;
-  
+
   ${props => {
     if (props.$variant === 'kb') {
       return `
@@ -215,14 +219,14 @@ const ModalHeader = styled.div<{ $variant: string }>`
         min-height: 64px;
       `;
     }
-    
+
     if (props.$variant === 'dialog') {
       return `
         padding: 0 0 ${tokens.spacing[4]} 0;
         text-align: center;
       `;
     }
-    
+
     return `
       padding: ${tokens.spacing[6]} ${tokens.spacing[6]} ${tokens.spacing[4]};
       border-bottom: 1px solid ${tokens.colors.border.light};
@@ -248,11 +252,11 @@ const BackButton = styled.button`
   justify-content: center;
   color: ${tokens.colors.text.primary};
   transition: all 0.2s ease;
-  
+
   &:hover {
     background-color: ${tokens.colors.backgroundGray1};
   }
-  
+
   &::before {
     content: '←';
     font-size: 18px;
@@ -264,7 +268,7 @@ const BackButton = styled.button`
 const ModalTitle = styled.h2<{ $variant: string }>`
   margin: 0;
   color: ${tokens.colors.text.primary};
-  
+
   ${props => {
     if (props.$variant === 'kb') {
       return `
@@ -274,7 +278,7 @@ const ModalTitle = styled.h2<{ $variant: string }>`
         line-height: 1.4;
       `;
     }
-    
+
     if (props.$variant === 'dialog') {
       return `
         font-size: ${tokens.typography.fontSize.xl};
@@ -282,7 +286,7 @@ const ModalTitle = styled.h2<{ $variant: string }>`
         text-align: center;
       `;
     }
-    
+
     return `
       font-size: ${tokens.typography.fontSize.xl};
       font-weight: ${tokens.typography.fontWeight.semibold};
@@ -308,7 +312,7 @@ const CloseButton = styled.button<{ $variant: string }>`
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
-  
+
   ${props => {
     if (props.$variant === 'kb') {
       return `
@@ -324,7 +328,7 @@ const CloseButton = styled.button<{ $variant: string }>`
         }
       `;
     }
-    
+
     return `
       color: ${tokens.colors.text.secondary};
       &:hover {
@@ -342,7 +346,7 @@ const ModalContent = styled.div<{ $variant: string }>`
   flex: 1;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  
+
   ${props => {
     if (props.$variant === 'kb') {
       return `
@@ -363,14 +367,14 @@ const ModalContent = styled.div<{ $variant: string }>`
         }
       `;
     }
-    
+
     if (props.$variant === 'dialog') {
       return `
         padding: 0;
         text-align: center;
       `;
     }
-    
+
     return `
       padding: ${tokens.spacing[6]};
       &::-webkit-scrollbar {
@@ -391,7 +395,7 @@ const ModalContent = styled.div<{ $variant: string }>`
 // 모달 푸터 (버튼 영역)
 const ModalFooter = styled.div<{ $variant: string }>`
   flex-shrink: 0;
-  
+
   ${props => {
     if (props.$variant === 'kb') {
       return `
@@ -400,7 +404,7 @@ const ModalFooter = styled.div<{ $variant: string }>`
         background-color: ${tokens.colors.background.primary};
       `;
     }
-    
+
     if (props.$variant === 'dialog') {
       return `
         padding: ${tokens.spacing[4]} 0 0;
@@ -409,7 +413,7 @@ const ModalFooter = styled.div<{ $variant: string }>`
         justify-content: center;
       `;
     }
-    
+
     return `
       padding: ${tokens.spacing[4]} ${tokens.spacing[6]} ${tokens.spacing[6]};
       border-top: 1px solid ${tokens.colors.border.light};
@@ -421,8 +425,8 @@ const ModalFooter = styled.div<{ $variant: string }>`
 
 // X 아이콘 컴포넌트
 const CloseIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+  <svg width='24' height='24' viewBox='0 0 24 24' fill='currentColor'>
+    <path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z' />
   </svg>
 );
 
@@ -438,7 +442,7 @@ export const DialogContentLayout = styled.div`
 export const AnimatedCheckIcon = styled.svg`
   width: 40px;
   height: 40px;
-  
+
   path {
     stroke: ${tokens.colors.text.primary};
     stroke-width: 3;
@@ -457,16 +461,16 @@ export const ScrollableContent = styled.div<{ $maxHeight?: string }>`
   max-height: ${props => props.$maxHeight || '300px'};
   overflow-y: auto;
   padding-right: ${tokens.spacing[2]};
-  
+
   &::-webkit-scrollbar {
     width: 4px;
   }
-  
+
   &::-webkit-scrollbar-track {
     background: ${tokens.colors.background.secondary};
     border-radius: ${tokens.borderRadius.full};
   }
-  
+
   &::-webkit-scrollbar-thumb {
     background: ${tokens.colors.border.secondary};
     border-radius: ${tokens.borderRadius.full};
@@ -529,9 +533,7 @@ export const Modal: React.FC<ModalProps> = ({
             {variant === 'kb' ? (
               <>
                 <HeaderLeft>
-                  {showBackButton && (
-                    <BackButton onClick={handleBackClick} />
-                  )}
+                  {showBackButton && <BackButton onClick={handleBackClick} />}
                   <ModalTitle $variant={variant}>{title}</ModalTitle>
                 </HeaderLeft>
                 <HeaderActions>
@@ -551,16 +553,10 @@ export const Modal: React.FC<ModalProps> = ({
             )}
           </ModalHeader>
         )}
-        
-        <ModalContent $variant={variant}>
-          {children}
-        </ModalContent>
-        
-        {footerActions && (
-          <ModalFooter $variant={variant}>
-            {footerActions}
-          </ModalFooter>
-        )}
+
+        <ModalContent $variant={variant}>{children}</ModalContent>
+
+        {footerActions && <ModalFooter $variant={variant}>{footerActions}</ModalFooter>}
       </ModalContainer>
     </ModalOverlay>
   );
@@ -568,21 +564,22 @@ export const Modal: React.FC<ModalProps> = ({
 
 // 모달 버튼 컴포넌트
 export const ModalButton = styled.button<{ $primary?: boolean; $fullWidth?: boolean }>`
-  flex: ${props => props.$fullWidth ? '1' : '0 0 auto'};
+  flex: ${props => (props.$fullWidth ? '1' : '0 0 auto')};
   padding: ${tokens.spacing[4]} ${tokens.spacing[6]};
-  border: ${props => props.$primary ? 'none' : `1px solid ${tokens.colors.border.primary}`};
+  border: ${props => (props.$primary ? 'none' : `1px solid ${tokens.colors.border.primary}`)};
   border-radius: ${tokens.borderRadius.button};
-  background: ${props => props.$primary ? tokens.colors.brand.primary : tokens.colors.white};
-  color: ${props => props.$primary ? tokens.colors.text.primary : tokens.colors.text.secondary};
+  background: ${props => (props.$primary ? tokens.colors.brand.primary : tokens.colors.white)};
+  color: ${props => (props.$primary ? tokens.colors.text.primary : tokens.colors.text.secondary)};
   font-size: ${tokens.typography.fontSize.lg};
   font-weight: ${tokens.typography.fontWeight.medium};
   cursor: pointer;
   transition: all ${tokens.animation.duration.fast} ${tokens.animation.easing.easeOut};
-  
+
   &:hover {
-    background: ${props => props.$primary ? tokens.colors.brand.primaryDark : tokens.colors.background.secondary};
+    background: ${props =>
+      props.$primary ? tokens.colors.brand.primaryDark : tokens.colors.background.secondary};
   }
-  
+
   &:active {
     transform: scale(0.98);
   }

@@ -15,7 +15,6 @@ import { tokens } from '@styles/tokens';
 
 import { accountService, type Account } from '@lib/supabase';
 
-
 import { Button } from '../../shared/components/ui/Button/Button';
 
 /**
@@ -72,8 +71,8 @@ const BankTab = styled.button<{ active: boolean }>`
   border: none;
   font-size: 16px;
   font-weight: 600;
-  color: ${props => props.active ? '#26282c' : '#696e76'};
-  border-bottom: 2px solid ${props => props.active ? '#ffd338' : 'transparent'};
+  color: ${props => (props.active ? '#26282c' : '#696e76')};
+  border-bottom: 2px solid ${props => (props.active ? '#ffd338' : 'transparent')};
   cursor: pointer;
   transition: all 0.2s ease;
   &:hover {
@@ -145,10 +144,10 @@ const ActionButtons = styled.div`
 const AccountActionButton = styled.button<{ primary?: boolean }>`
   flex: 1;
   padding: 12px 16px;
-  border: ${props => props.primary ? 'none' : '1px solid #ebeef0'};
+  border: ${props => (props.primary ? 'none' : '1px solid #ebeef0')};
   border-radius: 8px;
-  background: ${props => props.primary ? '#ffd338' : 'white'};
-  color: ${props => props.primary ? '#26282c' : '#696e76'};
+  background: ${props => (props.primary ? '#ffd338' : 'white')};
+  color: ${props => (props.primary ? '#26282c' : '#696e76')};
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -293,7 +292,7 @@ const ComprehensiveAccountPage: React.FC = () => {
   return (
     <ComprehensiveAccountContainer>
       <Header>
-        <Button as={Link} to="/dashboard">
+        <Button as={Link} to='/dashboard'>
           <span style={{ fontSize: '18px', transform: 'rotate(180deg)' }}>→</span>
         </Button>
         <HeaderTitle>전체계좌조회</HeaderTitle>
@@ -301,20 +300,14 @@ const ComprehensiveAccountPage: React.FC = () => {
       </Header>
       {/* 은행 탭 */}
       <BankTabContainer>
-          <BankTabs>
-            <BankTab 
-              active={activeTab === 'KB국민은행'} 
-              onClick={() => setActiveTab('KB국민은행')}
-            >
-              KB국민은행
-            </BankTab>
-            <BankTab 
-              active={activeTab === '다른금융'} 
-              onClick={() => setActiveTab('다른금융')}
-            >
-              다른금융
-            </BankTab>
-          </BankTabs>
+        <BankTabs>
+          <BankTab active={activeTab === 'KB국민은행'} onClick={() => setActiveTab('KB국민은행')}>
+            KB국민은행
+          </BankTab>
+          <BankTab active={activeTab === '다른금융'} onClick={() => setActiveTab('다른금융')}>
+            다른금융
+          </BankTab>
+        </BankTabs>
       </BankTabContainer>
       <MainContent>
         {/* 알림 배너 */}
@@ -322,9 +315,7 @@ const ComprehensiveAccountPage: React.FC = () => {
           <BannerIcon>
             <span style={{ color: '#26282c', fontSize: '12px' }}>🔔</span>
           </BannerIcon>
-          <BannerText>
-            입출금 알림을 실시간으로 받아보세요!
-          </BannerText>
+          <BannerText>입출금 알림을 실시간으로 받아보세요!</BannerText>
         </NotificationBanner>
         {/* 총 잔액 */}
         <TotalBalanceSection>
@@ -351,9 +342,20 @@ const ComprehensiveAccountPage: React.FC = () => {
             </div>
           </AccountListHeader>
           <div style={{ padding: '0 24px', marginBottom: '16px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-              <span style={{ fontSize: '14px', color: '#26282c', fontWeight: '500' }}>예금 · 적금</span>
-              <span style={{ fontSize: '16px', color: '#26282c', fontWeight: '600' }}>{formatAmount(totalBalance)} ⌃</span>
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '8px',
+              }}
+            >
+              <span style={{ fontSize: '14px', color: '#26282c', fontWeight: '500' }}>
+                예금 · 적금
+              </span>
+              <span style={{ fontSize: '16px', color: '#26282c', fontWeight: '600' }}>
+                {formatAmount(totalBalance)} ⌃
+              </span>
             </div>
           </div>
           {loading ? (
@@ -361,42 +363,51 @@ const ComprehensiveAccountPage: React.FC = () => {
               계좌 정보를 불러오는 중...
             </div>
           ) : error ? (
-            <div style={{ padding: '40px', textAlign: 'center', color: '#ff5858' }}>
-              {error}
-            </div>
+            <div style={{ padding: '40px', textAlign: 'center', color: '#ff5858' }}>{error}</div>
           ) : accounts.length === 0 ? (
             <div style={{ padding: '40px', textAlign: 'center', color: '#696e76' }}>
               등록된 계좌가 없습니다.
             </div>
           ) : (
-            accounts.map((account) => (
-              <AccountItem key={account.id} as={Link} to={`/account-inquiry/${account.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                <div style={{ 
-                  background: '#f8f9fa', 
-                  border: '1px solid #e9ecef', 
-                  borderRadius: '12px', 
-                  padding: '16px',
-                  marginBottom: '12px'
-                }}>
+            accounts.map(account => (
+              <AccountItem
+                key={account.id}
+                as={Link}
+                to={`/account-inquiry/${account.id}`}
+                style={{ textDecoration: 'none', color: 'inherit' }}
+              >
+                <div
+                  style={{
+                    background: '#f8f9fa',
+                    border: '1px solid #e9ecef',
+                    borderRadius: '12px',
+                    padding: '16px',
+                    marginBottom: '12px',
+                  }}
+                >
                   <AccountHeader>
                     <AccountInfo>
                       <AccountType>{account.account_type}</AccountType>
                       <AccountNumber>
-                        {account.account_number} 
-                        <span style={{ marginLeft: '8px', fontSize: '12px', color: '#696e76' }}>📋</span>
+                        {account.account_number}
+                        <span style={{ marginLeft: '8px', fontSize: '12px', color: '#696e76' }}>
+                          📋
+                        </span>
                       </AccountNumber>
                     </AccountInfo>
                     <div style={{ textAlign: 'right' }}>
                       <AccountBalance>{formatAmount(account.balance)}</AccountBalance>
                     </div>
                   </AccountHeader>
-                  <div style={{ 
-                    background: '#e9ecef', 
-                    borderRadius: '8px', 
-                    padding: '12px', 
-                    textAlign: 'center',
-                    marginTop: '12px'
-                  }}>
+                  <div
+                    style={{
+                      background: '#e9ecef',
+                      borderRadius: '8px',
+                      padding: '12px',
+                      textAlign: 'center',
+                      marginTop: '12px',
+                    }}
+                  >
                     <span style={{ fontSize: '14px', color: '#26282c', fontWeight: '500' }}>
                       출금계좌 등록
                     </span>
@@ -425,24 +436,28 @@ const ComprehensiveAccountPage: React.FC = () => {
             </InfoSectionHeader>
           </InfoSection>
           <InfoSection style={{ borderBottom: 'none', padding: '20px 24px' }}>
-            <div style={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              padding: '16px', 
-              background: '#f8f9fa', 
-              borderRadius: '8px',
-              border: '1px solid #e9ecef'
-            }}>
-              <div style={{ 
-                width: '40px', 
-                height: '40px', 
-                background: '#0066cc', 
-                borderRadius: '20px',
+            <div
+              style={{
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center',
-                marginRight: '12px'
-              }}>
+                padding: '16px',
+                background: '#f8f9fa',
+                borderRadius: '8px',
+                border: '1px solid #e9ecef',
+              }}
+            >
+              <div
+                style={{
+                  width: '40px',
+                  height: '40px',
+                  background: '#0066cc',
+                  borderRadius: '20px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginRight: '12px',
+                }}
+              >
                 <span style={{ color: 'white', fontSize: '16px' }}>🏦</span>
               </div>
               <span style={{ fontSize: '14px', color: '#26282c' }}>

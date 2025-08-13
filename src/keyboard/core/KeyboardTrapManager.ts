@@ -4,10 +4,7 @@
  */
 
 import { getFocusableElements } from '../../accessibility/utils/focusManagement';
-import {
-  KeyboardTrapManager,
-  KeyboardTrapOptions
-} from '../types';
+import { KeyboardTrapManager, KeyboardTrapOptions } from '../types';
 
 interface TrapInstance {
   element: HTMLElement;
@@ -30,7 +27,7 @@ export class KeyboardTrapManagerImpl implements KeyboardTrapManager {
 
   deactivate(): void {
     this.isActive = false;
-    
+
     // 모든 활성 트랩 비활성화
     for (const trap of this.traps.values()) {
       if (trap.active) {
@@ -51,7 +48,7 @@ export class KeyboardTrapManagerImpl implements KeyboardTrapManager {
       allowOutsideClick: false,
       escapeDeactivates: true,
       returnFocusOnDeactivate: true,
-      ...options
+      ...options,
     };
 
     const trap: TrapInstance = {
@@ -61,7 +58,7 @@ export class KeyboardTrapManagerImpl implements KeyboardTrapManager {
       firstFocusable: null,
       lastFocusable: null,
       active: false,
-      listeners: new Map()
+      listeners: new Map(),
     };
 
     this.traps.set(element, trap);
@@ -140,7 +137,7 @@ export class KeyboardTrapManagerImpl implements KeyboardTrapManager {
 
   private updateFocusableElements(trap: TrapInstance): void {
     const focusableElements = getFocusableElements(trap.element);
-    
+
     trap.firstFocusable = focusableElements[0] || null;
     trap.lastFocusable = focusableElements[focusableElements.length - 1] || null;
   }
@@ -152,7 +149,7 @@ export class KeyboardTrapManagerImpl implements KeyboardTrapManager {
 
     document.addEventListener('keydown', keydownHandler, { capture: true });
     document.addEventListener('focusin', focusinHandler, { capture: true });
-    
+
     if (trap.options.allowOutsideClick) {
       document.addEventListener('click', clickHandler, { capture: true });
     }
@@ -174,7 +171,7 @@ export class KeyboardTrapManagerImpl implements KeyboardTrapManager {
   private createKeydownHandler(trap: TrapInstance): EventListener {
     return (event: Event) => {
       const keyEvent = event as KeyboardEvent;
-      
+
       if (!trap.active) return;
 
       // ESC 키 처리
@@ -196,7 +193,7 @@ export class KeyboardTrapManagerImpl implements KeyboardTrapManager {
       if (!trap.active) return;
 
       const target = event.target as HTMLElement;
-      
+
       // 트랩 내부 요소면 허용
       if (trap.element.contains(target)) {
         return;
@@ -205,7 +202,7 @@ export class KeyboardTrapManagerImpl implements KeyboardTrapManager {
       // 트랩 외부로 포커스가 이동했을 때
       event.preventDefault();
       event.stopImmediatePropagation();
-      
+
       // 첫 번째 포커스 가능한 요소로 이동
       if (trap.firstFocusable) {
         trap.firstFocusable.focus();
@@ -220,7 +217,7 @@ export class KeyboardTrapManagerImpl implements KeyboardTrapManager {
       if (!trap.active) return;
 
       const target = event.target as HTMLElement;
-      
+
       // 트랩 외부 클릭 시 트랩 비활성화
       if (!trap.element.contains(target)) {
         this.deactivateTrap(trap);
@@ -277,7 +274,7 @@ export class KeyboardTrapManagerImpl implements KeyboardTrapManager {
 
   private isFocusable(element: HTMLElement): boolean {
     const style = window.getComputedStyle(element);
-    
+
     return (
       !element.hasAttribute('disabled') &&
       element.getAttribute('aria-disabled') !== 'true' &&
@@ -288,10 +285,11 @@ export class KeyboardTrapManagerImpl implements KeyboardTrapManager {
   }
 
   private announceTrapActivation(trap: TrapInstance): void {
-    const message = trap.element.getAttribute('aria-label') || 
-                   trap.element.getAttribute('role') || 
-                   '다이얼로그가 열렸습니다. ESC 키를 눌러 닫을 수 있습니다.';
-    
+    const message =
+      trap.element.getAttribute('aria-label') ||
+      trap.element.getAttribute('role') ||
+      '다이얼로그가 열렸습니다. ESC 키를 눌러 닫을 수 있습니다.';
+
     this.announceToScreenReader(message);
   }
 
@@ -309,10 +307,10 @@ export class KeyboardTrapManagerImpl implements KeyboardTrapManager {
     announcement.style.width = '1px';
     announcement.style.height = '1px';
     announcement.style.overflow = 'hidden';
-    
+
     document.body.appendChild(announcement);
     announcement.textContent = message;
-    
+
     setTimeout(() => {
       if (announcement.parentNode) {
         announcement.parentNode.removeChild(announcement);

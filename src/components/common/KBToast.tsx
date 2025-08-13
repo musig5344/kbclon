@@ -54,7 +54,7 @@ const ToastContainer = styled.div<{ $position: string; $isVisible: boolean }>`
         return 'bottom: 140px;';
     }
   }}
-  animation: ${props => props.$isVisible ? slideIn : slideOut} 
+  animation: ${props => (props.$isVisible ? slideIn : slideOut)} 
              ${duration.normal} 
              ${easing.easeOut};
 `;
@@ -161,13 +161,15 @@ const KBToast: React.FC<KBToastProps> = ({
 };
 // 토스트 관리자 훅
 export const useToast = () => {
-  const [toasts, setToasts] = useState<Array<{
-    id: string;
-    message: string;
-    type: 'info' | 'success' | 'warning' | 'error';
-    duration?: number;
-    position?: 'top' | 'center' | 'bottom';
-  }>>([]);
+  const [toasts, setToasts] = useState<
+    Array<{
+      id: string;
+      message: string;
+      type: 'info' | 'success' | 'warning' | 'error';
+      duration?: number;
+      position?: 'top' | 'center' | 'bottom';
+    }>
+  >([]);
   const showToast = (
     message: string,
     type: 'info' | 'success' | 'warning' | 'error' = 'info',
@@ -189,14 +191,10 @@ export const useToast = () => {
     showToast,
     removeToast,
     // 편의 메서드들
-    showSuccess: (message: string, duration?: number) => 
-      showToast(message, 'success', duration),
-    showError: (message: string, duration?: number) => 
-      showToast(message, 'error', duration),
-    showWarning: (message: string, duration?: number) => 
-      showToast(message, 'warning', duration),
-    showInfo: (message: string, duration?: number) => 
-      showToast(message, 'info', duration),
+    showSuccess: (message: string, duration?: number) => showToast(message, 'success', duration),
+    showError: (message: string, duration?: number) => showToast(message, 'error', duration),
+    showWarning: (message: string, duration?: number) => showToast(message, 'warning', duration),
+    showInfo: (message: string, duration?: number) => showToast(message, 'info', duration),
   };
 };
 // 토스트 컨테이너 컴포넌트

@@ -1,13 +1,17 @@
 import React, { useState, useEffect, useMemo } from 'react';
+
 import styled, { keyframes, css } from 'styled-components';
+
+import { tokens } from '../../styles/tokens';
 
 // TECHNICAL_REFERENCE.md 기반 17프레임 애니메이션
 const LOADING_FRAMES = 17;
 const FRAME_DURATION = 58.8; // 17프레임 / 1초 = 58.8ms per frame
 
 // 프레임 경로 생성
-const frames = Array.from({ length: LOADING_FRAMES }, (_, i) => 
-  `/assets/images/loading/loading_1_${String(i + 1).padStart(2, '0')}.png`
+const frames = Array.from(
+  { length: LOADING_FRAMES },
+  (_, i) => `/assets/images/loading/loading_1_${String(i + 1).padStart(2, '0')}.png`
 );
 
 // 페이드인 애니메이션
@@ -38,7 +42,7 @@ const LoadingContainer = styled.div<{ $size: 'small' | 'medium' | 'large' }>`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  
+
   ${({ $size }) => {
     switch ($size) {
       case 'small':
@@ -59,9 +63,9 @@ const LoadingContainer = styled.div<{ $size: 'small' | 'medium' | 'large' }>`
         `;
     }
   }}
-  
+
   animation: ${fadeIn} 300ms ease-out;
-  
+
   @media (prefers-reduced-motion: reduce) {
     animation: none;
   }
@@ -74,18 +78,18 @@ const LoadingImage = styled.img<{ $size: 'small' | 'medium' | 'large' }>`
   object-fit: contain;
   user-select: none;
   -webkit-user-select: none;
-  
+
   /* 이미지 로드 실패 시 스타일 */
   &::before {
     content: '';
     display: block;
     width: 100%;
     height: 100%;
-    background: #FFCC00;
+    background: ${tokens.colors.brand.pressed};
     border-radius: 50%;
     animation: ${spin} 1s linear infinite;
   }
-  
+
   @media (prefers-reduced-motion: reduce) {
     &::before {
       animation: none;
@@ -96,20 +100,23 @@ const LoadingImage = styled.img<{ $size: 'small' | 'medium' | 'large' }>`
 // 로딩 메시지
 const LoadingMessage = styled.p<{ $size: 'small' | 'medium' | 'large' }>`
   margin-top: 16px;
-  color: #666666;
+  color: ${tokens.colors.text.tertiary};
   font-size: ${({ $size }) => {
     switch ($size) {
-      case 'small': return '12px';
-      case 'medium': return '14px';
-      case 'large': 
-      default: return '16px';
+      case 'small':
+        return '12px';
+      case 'medium':
+        return '14px';
+      case 'large':
+      default:
+        return '16px';
     }
   }};
   font-weight: 400;
   text-align: center;
   white-space: nowrap;
   animation: ${fadeIn} 300ms ease-out 200ms both;
-  
+
   @media (prefers-reduced-motion: reduce) {
     animation: none;
   }
@@ -131,7 +138,7 @@ interface KBLoadingSpinnerProps {
 
 /**
  * KB 스타뱅킹 로딩 스피너 컴포넌트
- * 
+ *
  * TECHNICAL_REFERENCE.md 기반 구현:
  * - loading_1 시리즈 (17프레임) 애니메이션
  * - 58.8ms 프레임 간격 (17프레임 / 1초)
@@ -146,7 +153,7 @@ export const KBLoadingSpinner: React.FC<KBLoadingSpinnerProps> = ({
   message,
   isVisible = true,
   className,
-  'aria-label': ariaLabel
+  'aria-label': ariaLabel,
 }) => {
   const [currentFrame, setCurrentFrame] = useState(0);
   const [imageError, setImageError] = useState(false);
@@ -182,21 +189,21 @@ export const KBLoadingSpinner: React.FC<KBLoadingSpinnerProps> = ({
   }
 
   return (
-    <LoadingContainer 
+    <LoadingContainer
       $size={size}
       className={className}
-      role="status"
+      role='status'
       aria-label={ariaLabel || '로딩 중'}
-      aria-live="polite"
+      aria-live='polite'
     >
       {!imageError ? (
         <LoadingImage
           $size={size}
           src={currentImagePath}
-          alt=""
+          alt=''
           onError={handleImageError}
           onLoad={handleImageLoad}
-          aria-hidden="true"
+          aria-hidden='true'
         />
       ) : (
         // Fallback: CSS 애니메이션
@@ -204,19 +211,15 @@ export const KBLoadingSpinner: React.FC<KBLoadingSpinnerProps> = ({
           style={{
             width: '100%',
             height: '100%',
-            background: 'linear-gradient(45deg, #FFCC00, #FF9900)',
+            background: `linear-gradient(45deg, ${tokens.colors.brand.pressed}, ${tokens.colors.functional.warning})`,
             borderRadius: '50%',
-            animation: 'spin 1s linear infinite'
+            animation: 'spin 1s linear infinite',
           }}
-          aria-hidden="true"
+          aria-hidden='true'
         />
       )}
-      
-      {message && (
-        <LoadingMessage $size={size}>
-          {message}
-        </LoadingMessage>
-      )}
+
+      {message && <LoadingMessage $size={size}>{message}</LoadingMessage>}
     </LoadingContainer>
   );
 };
@@ -235,11 +238,13 @@ const FullscreenOverlay = styled.div<{ $isVisible: boolean }>`
   align-items: center;
   justify-content: center;
   z-index: 9998;
-  
-  opacity: ${({ $isVisible }) => $isVisible ? 1 : 0};
-  visibility: ${({ $isVisible }) => $isVisible ? 'visible' : 'hidden'};
-  transition: opacity 300ms ease, visibility 300ms ease;
-  
+
+  opacity: ${({ $isVisible }) => ($isVisible ? 1 : 0)};
+  visibility: ${({ $isVisible }) => ($isVisible ? 'visible' : 'hidden')};
+  transition:
+    opacity 300ms ease,
+    visibility 300ms ease;
+
   @media (prefers-reduced-motion: reduce) {
     transition: none;
   }
@@ -263,7 +268,7 @@ export const KBFullscreenLoading: React.FC<KBFullscreenLoadingProps> = ({
 
   return (
     <FullscreenOverlay $isVisible={props.isVisible ?? true}>
-      <KBLoadingSpinner size="large" {...props} />
+      <KBLoadingSpinner size='large' {...props} />
     </FullscreenOverlay>
   );
 };

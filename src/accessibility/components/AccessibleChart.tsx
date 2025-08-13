@@ -23,7 +23,9 @@ const ChartContainer = styled.div`
 `;
 
 const ChartWrapper = styled.div<{ isHidden?: boolean }>`
-  ${({ isHidden }) => isHidden && `
+  ${({ isHidden }) =>
+    isHidden &&
+    `
     position: absolute;
     left: -10000px;
     width: 1px;
@@ -94,7 +96,7 @@ export const AccessibleChart: React.FC<Props> = ({
   textAlternative,
   tableView = true,
   children,
-  className
+  className,
 }) => {
   const [showTableView, setShowTableView] = useState(false);
   const chartId = `chart-${Date.now()}`;
@@ -103,12 +105,8 @@ export const AccessibleChart: React.FC<Props> = ({
   const toggleView = () => {
     const newView = !showTableView;
     setShowTableView(newView);
-    
-    announce(
-      newView 
-        ? '테이블 뷰로 전환되었습니다.' 
-        : '차트 뷰로 전환되었습니다.'
-    );
+
+    announce(newView ? '테이블 뷰로 전환되었습니다.' : '차트 뷰로 전환되었습니다.');
   };
 
   // 차트 유형 및 트렌드 분석 (실제 구현에서는 데이터 기반으로 계산)
@@ -145,9 +143,9 @@ export const AccessibleChart: React.FC<Props> = ({
         </ViewToggle>
       )}
 
-      <ChartWrapper 
+      <ChartWrapper
         isHidden={showTableView}
-        role="img"
+        role='img'
         aria-labelledby={chartId}
         aria-describedby={descriptionId}
       >
@@ -185,7 +183,6 @@ export const AccessibleBarChart: React.FC<{
 }> = ({ title, data, children }) => {
   const maxValue = Math.max(...data.map(d => d.value));
   const minValue = Math.min(...data.map(d => d.value));
-  
 
   const textAlternative = `최대값은 ${maxValue}, 최소값은 ${minValue}입니다.`;
 
@@ -214,10 +211,8 @@ export const AccessiblePieChart: React.FC<{
   children: React.ReactNode;
 }> = ({ title, data, children }) => {
   const total = data.reduce((sum, d) => sum + d.value, 0);
-  
-  const textAlternative = data
-    .map(d => `${d.label}: ${d.percentage}%`)
-    .join(', ');
+
+  const textAlternative = data.map(d => `${d.label}: ${d.percentage}%`).join(', ');
 
   return (
     <AccessibleChart
@@ -245,10 +240,10 @@ export const AccessibleLineChart: React.FC<{
   const startValue = data[0]?.value || 0;
   const endValue = data[data.length - 1]?.value || 0;
   const change = endValue - startValue;
-  const changePercent = startValue !== 0 ? (change / startValue * 100).toFixed(1) : 0;
-  
+  const changePercent = startValue !== 0 ? ((change / startValue) * 100).toFixed(1) : 0;
+
   const trend = change > 0 ? 'increasing' : change < 0 ? 'decreasing' : 'stable';
-  
+
   const textAlternative = `${data[0]?.date}부터 ${data[data.length - 1]?.date}까지 ${changePercent}% ${
     trend === 'increasing' ? '상승' : trend === 'decreasing' ? '하락' : '유지'
   }했습니다.`;
@@ -256,7 +251,7 @@ export const AccessibleLineChart: React.FC<{
   return (
     <AccessibleChart
       title={title}
-      description="시간에 따른 변화를 보여주는 선형 차트"
+      description='시간에 따른 변화를 보여주는 선형 차트'
       data={data}
       textAlternative={textAlternative}
       tableView={true}

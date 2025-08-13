@@ -1,6 +1,6 @@
 /**
  * Environment Configuration Types for KB StarBanking Clone
- * 
+ *
  * Defines all type interfaces for environment configuration management.
  * These types ensure type safety across the configuration system.
  */

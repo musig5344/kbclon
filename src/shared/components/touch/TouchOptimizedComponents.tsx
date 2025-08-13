@@ -9,20 +9,16 @@ import React, { useState, useRef, useCallback, useEffect, forwardRef } from 'rea
 import styled, { css, keyframes } from 'styled-components';
 
 import { useTouchOptimized } from '../../shared/hooks/useTouchOptimized';
-import { 
-  hapticFeedback, 
-  useFastClick,
-  useScrollLock,
-} from '../../shared/utils/touchOptimization';
-import { 
-  WCAG_TOUCH_CONSTANTS, 
+import { hapticFeedback, useFastClick, useScrollLock } from '../../shared/utils/touchOptimization';
+import {
+  WCAG_TOUCH_CONSTANTS,
   TouchDensity,
   touchTargetUtils,
 } from '../../shared/utils/touchTargetOptimizer';
 import { tokens } from '../../styles/tokens';
 
 // Common touch styles
-const touchOptimizedStyles = css<{ 
+const touchOptimizedStyles = css<{
   $size?: 'small' | 'medium' | 'large';
   $density?: TouchDensity;
 }>`
@@ -36,7 +32,7 @@ const touchOptimizedStyles = css<{
     }[props.$size || 'medium'];
     return Math.ceil(baseSize * multiplier * sizeMultiplier);
   }}px;
-  
+
   min-height: ${props => {
     const baseSize = WCAG_TOUCH_CONSTANTS.MIN_TARGET_SIZE;
     const multiplier = WCAG_TOUCH_CONSTANTS.DENSITY_ADJUSTMENTS[props.$density || 'comfortable'];
@@ -47,13 +43,13 @@ const touchOptimizedStyles = css<{
     }[props.$size || 'medium'];
     return Math.ceil(baseSize * multiplier * sizeMultiplier);
   }}px;
-  
+
   touch-action: manipulation;
   user-select: none;
   -webkit-user-select: none;
   -webkit-touch-callout: none;
   -webkit-tap-highlight-color: transparent;
-  
+
   /* Ensure adequate spacing */
   &:not(:last-child) {
     margin-right: ${WCAG_TOUCH_CONSTANTS.MIN_SPACING}px;
@@ -116,7 +112,7 @@ const ButtonBase = styled.button<{
   $loading?: boolean;
 }>`
   ${touchOptimizedStyles}
-  
+
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -132,15 +128,19 @@ const ButtonBase = styled.button<{
   cursor: pointer;
   overflow: hidden;
   transition: all 200ms ease-out;
-  
-  ${props => props.$fullWidth && css`
-    width: 100%;
-  `}
-  
-  ${props => props.$loading && css`
-    pointer-events: none;
-    opacity: 0.7;
-  `}
+
+  ${props =>
+    props.$fullWidth &&
+    css`
+      width: 100%;
+    `}
+
+  ${props =>
+    props.$loading &&
+    css`
+      pointer-events: none;
+      opacity: 0.7;
+    `}
   
   /* Variant styles */
   ${props => {
@@ -149,13 +149,13 @@ const ButtonBase = styled.button<{
         return css`
           background-color: ${tokens.colors.primary};
           color: white;
-          
+
           &:hover:not(:disabled) {
             background-color: ${tokens.colors.primaryDark};
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
           }
-          
+
           &:active {
             transform: translateY(0);
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
@@ -166,12 +166,12 @@ const ButtonBase = styled.button<{
           background-color: ${tokens.colors.background.secondary};
           color: ${tokens.colors.text.primary};
           border: 1px solid ${tokens.colors.border.secondary};
-          
+
           &:hover:not(:disabled) {
             background-color: ${tokens.colors.border.primary};
             border-color: ${tokens.colors.text.tertiary};
           }
-          
+
           &:active {
             background-color: ${tokens.colors.border.secondary};
           }
@@ -180,11 +180,11 @@ const ButtonBase = styled.button<{
         return css`
           background-color: transparent;
           color: ${tokens.colors.primary};
-          
+
           &:hover:not(:disabled) {
             background-color: rgba(0, 0, 0, 0.04);
           }
-          
+
           &:active {
             background-color: rgba(0, 0, 0, 0.08);
           }
@@ -193,11 +193,11 @@ const ButtonBase = styled.button<{
         return css`
           background-color: ${tokens.colors.error};
           color: white;
-          
+
           &:hover:not(:disabled) {
             background-color: ${tokens.colors.errorDark};
           }
-          
+
           &:active {
             background-color: ${tokens.colors.errorDark};
           }
@@ -216,7 +216,7 @@ const ButtonBase = styled.button<{
     transform: none !important;
     box-shadow: none !important;
   }
-  
+
   &:focus-visible {
     outline: 2px solid ${tokens.colors.primary};
     outline-offset: 2px;
@@ -230,107 +230,120 @@ const LoadingSpinner = styled.div`
   border-top-color: transparent;
   border-radius: 50%;
   animation: spin 1s linear infinite;
-  
+
   @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+      transform: rotate(360deg);
+    }
   }
 `;
 
-export const TouchButton = forwardRef<HTMLButtonElement, TouchButtonProps>(({
-  variant = 'primary',
-  size = 'medium',
-  density = 'comfortable',
-  haptic = true,
-  ripple = true,
-  loading = false,
-  fullWidth = false,
-  children,
-  onClick,
-  onTouchStart,
-  ...props
-}, ref) => {
-  const [ripples, setRipples] = useState<Array<{ id: number; x: number; y: number; size: number }>>([]);
-  const buttonRef = useRef<HTMLButtonElement>(null);
-  const rippleIdRef = useRef(0);
+export const TouchButton = forwardRef<HTMLButtonElement, TouchButtonProps>(
+  (
+    {
+      variant = 'primary',
+      size = 'medium',
+      density = 'comfortable',
+      haptic = true,
+      ripple = true,
+      loading = false,
+      fullWidth = false,
+      children,
+      onClick,
+      onTouchStart,
+      ...props
+    },
+    ref
+  ) => {
+    const [ripples, setRipples] = useState<
+      Array<{ id: number; x: number; y: number; size: number }>
+    >([]);
+    const buttonRef = useRef<HTMLButtonElement>(null);
+    const rippleIdRef = useRef(0);
 
-  const handleClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
-    if (loading || props.disabled) return;
-    
-    if (haptic) {
-      hapticFeedback.light();
-    }
-    
-    onClick?.(e);
-  }, [loading, props.disabled, haptic, onClick]);
+    const handleClick = useCallback(
+      (e: React.MouseEvent<HTMLButtonElement>) => {
+        if (loading || props.disabled) return;
 
-  const handleTouchStart = useCallback((e: React.TouchEvent<HTMLButtonElement>) => {
-    if (loading || props.disabled) return;
-    
-    if (ripple && buttonRef.current) {
-      const rect = buttonRef.current.getBoundingClientRect();
-      const touch = e.touches[0];
-      const x = touch.clientX - rect.left;
-      const y = touch.clientY - rect.top;
-      const size = Math.max(rect.width, rect.height) * 2;
-      
-      const newRipple = {
-        id: rippleIdRef.current++,
-        x,
-        y,
-        size,
-      };
-      
-      setRipples(prev => [...prev, newRipple]);
-      
-      // Remove ripple after animation
-      setTimeout(() => {
-        setRipples(prev => prev.filter(r => r.id !== newRipple.id));
-      }, 600);
-    }
-    
-    onTouchStart?.(e);
-  }, [loading, props.disabled, ripple, onTouchStart]);
+        if (haptic) {
+          hapticFeedback.light();
+        }
 
-  // Merge refs
-  const mergedRef = useCallback((node: HTMLButtonElement) => {
-    buttonRef.current = node;
-    if (typeof ref === 'function') {
-      ref(node);
-    } else if (ref) {
-      ref.current = node;
-    }
-  }, [ref]);
+        onClick?.(e);
+      },
+      [loading, props.disabled, haptic, onClick]
+    );
 
-  return (
-    <ButtonBase
-      ref={mergedRef}
-      $variant={variant}
-      $size={size}
-      $density={density}
-      $fullWidth={fullWidth}
-      $loading={loading}
-      onClick={handleClick}
-      onTouchStart={handleTouchStart}
-      {...props}
-    >
-      {ripple && (
-        <RippleOverlay>
-          {ripples.map(ripple => (
-            <RippleEffect
-              key={ripple.id}
-              $x={ripple.x}
-              $y={ripple.y}
-              $size={ripple.size}
-            />
-          ))}
-        </RippleOverlay>
-      )}
-      
-      {loading && <LoadingSpinner />}
-      {children}
-    </ButtonBase>
-  );
-});
+    const handleTouchStart = useCallback(
+      (e: React.TouchEvent<HTMLButtonElement>) => {
+        if (loading || props.disabled) return;
+
+        if (ripple && buttonRef.current) {
+          const rect = buttonRef.current.getBoundingClientRect();
+          const touch = e.touches[0];
+          const x = touch.clientX - rect.left;
+          const y = touch.clientY - rect.top;
+          const size = Math.max(rect.width, rect.height) * 2;
+
+          const newRipple = {
+            id: rippleIdRef.current++,
+            x,
+            y,
+            size,
+          };
+
+          setRipples(prev => [...prev, newRipple]);
+
+          // Remove ripple after animation
+          setTimeout(() => {
+            setRipples(prev => prev.filter(r => r.id !== newRipple.id));
+          }, 600);
+        }
+
+        onTouchStart?.(e);
+      },
+      [loading, props.disabled, ripple, onTouchStart]
+    );
+
+    // Merge refs
+    const mergedRef = useCallback(
+      (node: HTMLButtonElement) => {
+        buttonRef.current = node;
+        if (typeof ref === 'function') {
+          ref(node);
+        } else if (ref) {
+          ref.current = node;
+        }
+      },
+      [ref]
+    );
+
+    return (
+      <ButtonBase
+        ref={mergedRef}
+        $variant={variant}
+        $size={size}
+        $density={density}
+        $fullWidth={fullWidth}
+        $loading={loading}
+        onClick={handleClick}
+        onTouchStart={handleTouchStart}
+        {...props}
+      >
+        {ripple && (
+          <RippleOverlay>
+            {ripples.map(ripple => (
+              <RippleEffect key={ripple.id} $x={ripple.x} $y={ripple.y} $size={ripple.size} />
+            ))}
+          </RippleOverlay>
+        )}
+
+        {loading && <LoadingSpinner />}
+        {children}
+      </ButtonBase>
+    );
+  }
+);
 
 TouchButton.displayName = 'TouchButton';
 
@@ -350,7 +363,7 @@ const InputContainer = styled.div<{ $fullWidth?: boolean; $hasError?: boolean }>
   display: flex;
   flex-direction: column;
   gap: 8px;
-  width: ${props => props.$fullWidth ? '100%' : 'auto'};
+  width: ${props => (props.$fullWidth ? '100%' : 'auto')};
 `;
 
 const InputLabel = styled.label`
@@ -366,25 +379,28 @@ const InputWrapper = styled.div<{
   $focused?: boolean;
 }>`
   ${touchOptimizedStyles}
-  
+
   position: relative;
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 0 16px;
   background-color: ${tokens.colors.background.secondary};
-  border: 2px solid ${props => props.$hasError ? tokens.colors.error : tokens.colors.border.primary};
+  border: 2px solid
+    ${props => (props.$hasError ? tokens.colors.error : tokens.colors.border.primary)};
   border-radius: 8px;
   transition: all 200ms ease-out;
-  
-  ${props => props.$focused && css`
-    border-color: ${tokens.colors.primary};
-    background-color: white;
-    box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
-  `}
-  
+
+  ${props =>
+    props.$focused &&
+    css`
+      border-color: ${tokens.colors.primary};
+      background-color: white;
+      box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+    `}
+
   &:hover {
-    border-color: ${props => props.$hasError ? tokens.colors.error : tokens.colors.primary};
+    border-color: ${props => (props.$hasError ? tokens.colors.error : tokens.colors.primary)};
   }
 `;
 
@@ -395,15 +411,15 @@ const StyledInput = styled.input`
   background: transparent;
   font-size: 16px;
   color: ${tokens.colors.text.primary};
-  
+
   &::placeholder {
     color: ${tokens.colors.text.secondary};
   }
-  
+
   &:focus {
     outline: none;
   }
-  
+
   /* Prevent zoom on iOS */
   @media screen and (max-width: 768px) {
     font-size: 16px;
@@ -422,60 +438,61 @@ const IconWrapper = styled.div`
   color: ${tokens.colors.text.secondary};
 `;
 
-export const TouchInput = forwardRef<HTMLInputElement, TouchInputProps>(({
-  label,
-  error,
-  size = 'medium',
-  density = 'comfortable',
-  haptic = true,
-  fullWidth = false,
-  leftIcon,
-  rightIcon,
-  onFocus,
-  onBlur,
-  ...props
-}, ref) => {
-  const [focused, setFocused] = useState(false);
+export const TouchInput = forwardRef<HTMLInputElement, TouchInputProps>(
+  (
+    {
+      label,
+      error,
+      size = 'medium',
+      density = 'comfortable',
+      haptic = true,
+      fullWidth = false,
+      leftIcon,
+      rightIcon,
+      onFocus,
+      onBlur,
+      ...props
+    },
+    ref
+  ) => {
+    const [focused, setFocused] = useState(false);
 
-  const handleFocus = useCallback((e: React.FocusEvent<HTMLInputElement>) => {
-    setFocused(true);
-    if (haptic) {
-      hapticFeedback.light();
-    }
-    onFocus?.(e);
-  }, [haptic, onFocus]);
+    const handleFocus = useCallback(
+      (e: React.FocusEvent<HTMLInputElement>) => {
+        setFocused(true);
+        if (haptic) {
+          hapticFeedback.light();
+        }
+        onFocus?.(e);
+      },
+      [haptic, onFocus]
+    );
 
-  const handleBlur = useCallback((e: React.FocusEvent<HTMLInputElement>) => {
-    setFocused(false);
-    onBlur?.(e);
-  }, [onBlur]);
+    const handleBlur = useCallback(
+      (e: React.FocusEvent<HTMLInputElement>) => {
+        setFocused(false);
+        onBlur?.(e);
+      },
+      [onBlur]
+    );
 
-  return (
-    <InputContainer $fullWidth={fullWidth} $hasError={!!error}>
-      {label && <InputLabel>{label}</InputLabel>}
-      
-      <InputWrapper
-        $size={size}
-        $density={density}
-        $hasError={!!error}
-        $focused={focused}
-      >
-        {leftIcon && <IconWrapper>{leftIcon}</IconWrapper>}
-        
-        <StyledInput
-          ref={ref}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-          {...props}
-        />
-        
-        {rightIcon && <IconWrapper>{rightIcon}</IconWrapper>}
-      </InputWrapper>
-      
-      <InputError>{error || ' '}</InputError>
-    </InputContainer>
-  );
-});
+    return (
+      <InputContainer $fullWidth={fullWidth} $hasError={!!error}>
+        {label && <InputLabel>{label}</InputLabel>}
+
+        <InputWrapper $size={size} $density={density} $hasError={!!error} $focused={focused}>
+          {leftIcon && <IconWrapper>{leftIcon}</IconWrapper>}
+
+          <StyledInput ref={ref} onFocus={handleFocus} onBlur={handleBlur} {...props} />
+
+          {rightIcon && <IconWrapper>{rightIcon}</IconWrapper>}
+        </InputWrapper>
+
+        <InputError>{error || ' '}</InputError>
+      </InputContainer>
+    );
+  }
+);
 
 TouchInput.displayName = 'TouchInput';
 
@@ -492,7 +509,7 @@ const CheckboxWrapper = styled.label<{
   $density: TouchDensity;
 }>`
   ${touchOptimizedStyles}
-  
+
   display: inline-flex;
   align-items: center;
   gap: 12px;
@@ -500,11 +517,11 @@ const CheckboxWrapper = styled.label<{
   cursor: pointer;
   border-radius: 8px;
   transition: background-color 200ms ease-out;
-  
+
   &:hover {
     background-color: rgba(0, 0, 0, 0.04);
   }
-  
+
   &:active {
     background-color: rgba(0, 0, 0, 0.08);
   }
@@ -526,11 +543,12 @@ const CheckboxIndicator = styled.div<{ $checked: boolean; $size: TouchCheckboxPr
     const sizes = { small: 20, medium: 24, large: 28 };
     return sizes[props.$size || 'medium'];
   }}px;
-  border: 2px solid ${props => props.$checked ? tokens.colors.primary : tokens.colors.border.secondary};
+  border: 2px solid
+    ${props => (props.$checked ? tokens.colors.primary : tokens.colors.border.secondary)};
   border-radius: 4px;
-  background-color: ${props => props.$checked ? tokens.colors.primary : 'transparent'};
+  background-color: ${props => (props.$checked ? tokens.colors.primary : 'transparent')};
   transition: all 200ms ease-out;
-  
+
   &::after {
     content: '';
     position: absolute;
@@ -542,7 +560,7 @@ const CheckboxIndicator = styled.div<{ $checked: boolean; $size: TouchCheckboxPr
     border: solid white;
     border-width: 0 2px 2px 0;
     transform-origin: center;
-    transform: translate(-50%, -60%) rotate(45deg) scale(${props => props.$checked ? 1 : 0});
+    transform: translate(-50%, -60%) rotate(45deg) scale(${props => (props.$checked ? 1 : 0)});
     transition: transform 200ms ease-out;
   }
 `;
@@ -553,38 +571,38 @@ const CheckboxLabel = styled.span`
   user-select: none;
 `;
 
-export const TouchCheckbox = forwardRef<HTMLInputElement, TouchCheckboxProps>(({
-  label,
-  size = 'medium',
-  density = 'comfortable',
-  haptic = true,
-  checked,
-  onChange,
-  ...props
-}, ref) => {
-  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    if (haptic) {
-      hapticFeedback.light();
-    }
-    onChange?.(e);
-  }, [haptic, onChange]);
+export const TouchCheckbox = forwardRef<HTMLInputElement, TouchCheckboxProps>(
+  (
+    { label, size = 'medium', density = 'comfortable', haptic = true, checked, onChange, ...props },
+    ref
+  ) => {
+    const handleChange = useCallback(
+      (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (haptic) {
+          hapticFeedback.light();
+        }
+        onChange?.(e);
+      },
+      [haptic, onChange]
+    );
 
-  return (
-    <CheckboxWrapper $size={size} $density={density}>
-      <CheckboxInput
-        ref={ref}
-        type="checkbox"
-        checked={checked}
-        onChange={handleChange}
-        {...props}
-      />
-      
-      <CheckboxIndicator $checked={!!checked} $size={size} />
-      
-      {label && <CheckboxLabel>{label}</CheckboxLabel>}
-    </CheckboxWrapper>
-  );
-});
+    return (
+      <CheckboxWrapper $size={size} $density={density}>
+        <CheckboxInput
+          ref={ref}
+          type='checkbox'
+          checked={checked}
+          onChange={handleChange}
+          {...props}
+        />
+
+        <CheckboxIndicator $checked={!!checked} $size={size} />
+
+        {label && <CheckboxLabel>{label}</CheckboxLabel>}
+      </CheckboxWrapper>
+    );
+  }
+);
 
 TouchCheckbox.displayName = 'TouchCheckbox';
 
@@ -607,13 +625,13 @@ const CardBase = styled.div<{
   $padding: TouchCardProps['padding'];
 }>`
   ${props => props.$interactive && touchOptimizedStyles}
-  
+
   position: relative;
   background-color: white;
   border-radius: 12px;
   overflow: hidden;
   transition: all 200ms ease-out;
-  
+
   ${props => {
     const paddingMap = {
       none: '0',
@@ -621,9 +639,11 @@ const CardBase = styled.div<{
       medium: '16px',
       large: '24px',
     };
-    return css`padding: ${paddingMap[props.$padding || 'medium']};`;
+    return css`
+      padding: ${paddingMap[props.$padding || 'medium']};
+    `;
   }}
-  
+
   ${props => {
     const elevationMap = {
       none: 'none',
@@ -631,27 +651,34 @@ const CardBase = styled.div<{
       medium: '0 4px 12px rgba(0, 0, 0, 0.1)',
       high: '0 8px 24px rgba(0, 0, 0, 0.15)',
     };
-    return css`box-shadow: ${elevationMap[props.$elevation || 'medium']};`;
+    return css`
+      box-shadow: ${elevationMap[props.$elevation || 'medium']};
+    `;
   }}
   
-  ${props => props.$interactive && !props.$disabled && css`
-    cursor: pointer;
-    
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-    }
-    
-    &:active {
-      transform: translateY(0);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-    }
-  `}
+  ${props =>
+    props.$interactive &&
+    !props.$disabled &&
+    css`
+      cursor: pointer;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      }
+
+      &:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      }
+    `}
   
-  ${props => props.$disabled && css`
-    opacity: 0.6;
-    cursor: not-allowed;
-  `}
+  ${props =>
+    props.$disabled &&
+    css`
+      opacity: 0.6;
+      cursor: not-allowed;
+    `}
 `;
 
 export const TouchCard: React.FC<TouchCardProps> = ({
@@ -708,7 +735,7 @@ interface TouchTabProps {
 
 const TabWrapper = styled.div<{ $active?: boolean; $disabled?: boolean }>`
   ${touchOptimizedStyles}
-  
+
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -719,37 +746,43 @@ const TabWrapper = styled.div<{ $active?: boolean; $disabled?: boolean }>`
   transition: all 200ms ease-out;
   border-radius: 8px;
   position: relative;
+
+  ${props =>
+    props.$active &&
+    css`
+      background-color: rgba(0, 123, 255, 0.1);
+    `}
+
+  ${props =>
+    !props.$disabled &&
+    css`
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.04);
+      }
+
+      &:active {
+        background-color: rgba(0, 0, 0, 0.08);
+        transform: scale(0.98);
+      }
+    `}
   
-  ${props => props.$active && css`
-    background-color: rgba(0, 123, 255, 0.1);
-  `}
-  
-  ${props => !props.$disabled && css`
-    &:hover {
-      background-color: rgba(0, 0, 0, 0.04);
-    }
-    
-    &:active {
-      background-color: rgba(0, 0, 0, 0.08);
-      transform: scale(0.98);
-    }
-  `}
-  
-  ${props => props.$disabled && css`
-    opacity: 0.5;
-    cursor: not-allowed;
-  `}
+  ${props =>
+    props.$disabled &&
+    css`
+      opacity: 0.5;
+      cursor: not-allowed;
+    `}
 `;
 
 const TabIcon = styled.div<{ $active?: boolean }>`
-  color: ${props => props.$active ? tokens.colors.primary : tokens.colors.text.secondary};
+  color: ${props => (props.$active ? tokens.colors.primary : tokens.colors.text.secondary)};
   transition: color 200ms ease-out;
 `;
 
 const TabLabel = styled.span<{ $active?: boolean }>`
   font-size: 12px;
-  font-weight: ${props => props.$active ? '600' : '400'};
-  color: ${props => props.$active ? tokens.colors.primary : tokens.colors.text.secondary};
+  font-weight: ${props => (props.$active ? '600' : '400')};
+  color: ${props => (props.$active ? tokens.colors.primary : tokens.colors.text.secondary)};
   transition: all 200ms ease-out;
   text-align: center;
 `;
@@ -792,13 +825,9 @@ export const TouchTab: React.FC<TouchTabProps> = ({
   });
 
   return (
-    <TabWrapper
-      {...bind}
-      $active={active}
-      $disabled={disabled}
-    >
+    <TabWrapper {...bind} $active={active} $disabled={disabled}>
       {badge && <TabBadge>{badge}</TabBadge>}
-      
+
       {icon && <TabIcon $active={active}>{icon}</TabIcon>}
       <TabLabel $active={active}>{label}</TabLabel>
     </TabWrapper>
@@ -838,22 +867,11 @@ export const TouchFormGroup: React.FC<TouchFormGroupProps> = ({
   className,
 }) => {
   return (
-    <FormGroupWrapper
-      $density={density}
-      $spacing={spacing}
-      className={className}
-    >
+    <FormGroupWrapper $density={density} $spacing={spacing} className={className}>
       {children}
     </FormGroupWrapper>
   );
 };
 
 // Export all components
-export {
-  TouchButton,
-  TouchInput,
-  TouchCheckbox,
-  TouchCard,
-  TouchTab,
-  TouchFormGroup,
-};
+export { TouchButton, TouchInput, TouchCheckbox, TouchCard, TouchTab, TouchFormGroup };

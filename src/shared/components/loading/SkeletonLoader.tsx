@@ -16,8 +16,8 @@ const SkeletonBase = styled.div`
 `;
 
 // 텍스트 스켈레톤
-export const SkeletonText = styled(SkeletonBase)<{ 
-  width?: string; 
+export const SkeletonText = styled(SkeletonBase)<{
+  width?: string;
   height?: string;
   marginBottom?: string;
 }>`
@@ -34,8 +34,8 @@ export const SkeletonCircle = styled(SkeletonBase)<{ size?: number }>`
 `;
 
 // 사각형 스켈레톤 (이미지, 카드 등)
-export const SkeletonRect = styled(SkeletonBase)<{ 
-  width?: string; 
+export const SkeletonRect = styled(SkeletonBase)<{
+  width?: string;
   height?: string;
   radius?: string;
 }>`
@@ -70,13 +70,13 @@ export const KBAccountSkeleton: React.FC = () => (
     <AccountHeader>
       <SkeletonCircle size={40} />
       <div style={{ marginLeft: '12px', flex: 1 }}>
-        <SkeletonText width="120px" height="14px" marginBottom="4px" />
-        <SkeletonText width="160px" height="12px" />
+        <SkeletonText width='120px' height='14px' marginBottom='4px' />
+        <SkeletonText width='160px' height='12px' />
       </div>
     </AccountHeader>
     <AccountContent>
-      <SkeletonText width="80px" height="24px" />
-      <SkeletonText width="120px" height="20px" />
+      <SkeletonText width='80px' height='24px' />
+      <SkeletonText width='120px' height='20px' />
     </AccountContent>
   </AccountCardSkeleton>
 );
@@ -95,12 +95,12 @@ const TransactionInfo = styled.div`
 export const KBTransactionSkeleton: React.FC = () => (
   <TransactionItemSkeleton>
     <TransactionInfo>
-      <SkeletonText width="140px" height="16px" marginBottom="4px" />
-      <SkeletonText width="80px" height="14px" />
+      <SkeletonText width='140px' height='16px' marginBottom='4px' />
+      <SkeletonText width='80px' height='14px' />
     </TransactionInfo>
     <div style={{ textAlign: 'right' }}>
-      <SkeletonText width="80px" height="16px" marginBottom="4px" />
-      <SkeletonText width="100px" height="14px" />
+      <SkeletonText width='80px' height='16px' marginBottom='4px' />
+      <SkeletonText width='100px' height='14px' />
     </div>
   </TransactionItemSkeleton>
 );
@@ -117,13 +117,13 @@ const MenuItemSkeleton = styled.div`
 export const KBMenuItemSkeleton: React.FC = () => (
   <MenuItemSkeleton>
     <SkeletonCircle size={48} />
-    <SkeletonText width="50px" height="12px" marginBottom="0" style={{ marginTop: '8px' }} />
+    <SkeletonText width='50px' height='12px' marginBottom='0' style={{ marginTop: '8px' }} />
   </MenuItemSkeleton>
 );
 
 // 대시보드 배너 스켈레톤
 export const KBBannerSkeleton: React.FC = () => (
-  <SkeletonRect width="100%" height="180px" radius="0" />
+  <SkeletonRect width='100%' height='180px' radius='0' />
 );
 
 // 전체 페이지 스켈레톤 레이아웃
@@ -131,8 +131,8 @@ const PageSkeletonContainer = styled.div`
   padding: 20px;
 `;
 
-export const KBPageSkeleton: React.FC<{ type?: 'dashboard' | 'account' | 'transaction' }> = ({ 
-  type = 'dashboard' 
+export const KBPageSkeleton: React.FC<{ type?: 'dashboard' | 'account' | 'transaction' }> = ({
+  type = 'dashboard',
 }) => {
   if (type === 'account') {
     return (
@@ -143,7 +143,7 @@ export const KBPageSkeleton: React.FC<{ type?: 'dashboard' | 'account' | 'transa
       </PageSkeletonContainer>
     );
   }
-  
+
   if (type === 'transaction') {
     return (
       <>
@@ -158,18 +158,18 @@ export const KBPageSkeleton: React.FC<{ type?: 'dashboard' | 'account' | 'transa
       </>
     );
   }
-  
+
   // Dashboard skeleton
   return (
     <>
       <KBBannerSkeleton />
       <PageSkeletonContainer>
-        <SkeletonText width="100px" height="20px" marginBottom="16px" />
+        <SkeletonText width='100px' height='20px' marginBottom='16px' />
         <KBAccountSkeleton />
         <KBAccountSkeleton />
-        
+
         <div style={{ marginTop: '24px' }}>
-          <SkeletonText width="80px" height="18px" marginBottom="16px" />
+          <SkeletonText width='80px' height='18px' marginBottom='16px' />
           <div style={{ display: 'flex', flexWrap: 'wrap' }}>
             {[...Array(8)].map((_, i) => (
               <KBMenuItemSkeleton key={i} />
@@ -184,19 +184,19 @@ export const KBPageSkeleton: React.FC<{ type?: 'dashboard' | 'account' | 'transa
 // 스켈레톤 로딩 상태 관리 Hook
 export const useSkeletonLoading = (isLoading: boolean, delay: number = 200) => {
   const [showSkeleton, setShowSkeleton] = React.useState(isLoading);
-  
+
   React.useEffect(() => {
     let timer: NodeJS.Timeout;
-    
+
     if (isLoading) {
       setShowSkeleton(true);
     } else {
       // 로딩이 끝나도 최소 시간 동안 스켈레톤 표시 (깜빡임 방지)
       timer = setTimeout(() => setShowSkeleton(false), delay);
     }
-    
+
     return () => clearTimeout(timer);
   }, [isLoading, delay]);
-  
+
   return showSkeleton;
 };

@@ -74,9 +74,15 @@ const TransitionContainer = styled.div<{
   $style?: CSSProperties;
 }>`
   ${gpuAcceleration}
-  transition: transform ${props => props.$duration}ms ${props => props.$easing} ${props => props.$delay}ms,
-              opacity ${props => props.$duration}ms ${props => props.$easing} ${props => props.$delay}ms;
-  ${props => props.$style && Object.entries(props.$style).map(([key, value]) => `${key}: ${value};`).join('\n')}
+  transition: transform ${props => props.$duration}ms ${props => props.$easing} ${props =>
+    props.$delay}ms,
+              opacity ${props => props.$duration}ms ${props => props.$easing} ${props =>
+    props.$delay}ms;
+  ${props =>
+    props.$style &&
+    Object.entries(props.$style)
+      .map(([key, value]) => `${key}: ${value};`)
+      .join('\n')}
 `;
 
 // Fade Transition Component
@@ -111,16 +117,16 @@ export const FadeTransition: React.FC<FadeProps> = ({
       // Entering
       if (!mounted) setMounted(true);
       onEnter?.();
-      
+
       // Start performance tracking
       animationIdRef.current = `fade-${Date.now()}`;
       animationMonitor.startAnimation(animationIdRef.current);
-      
+
       // Use RAF for smooth transition start
       requestAnimationFrame(() => {
         setOpacity(to);
       });
-      
+
       timeoutRef.current = setTimeout(() => {
         onEntered?.();
         // End performance tracking
@@ -133,7 +139,7 @@ export const FadeTransition: React.FC<FadeProps> = ({
       // Exiting
       onExit?.();
       setOpacity(from);
-      
+
       timeoutRef.current = setTimeout(() => {
         onExited?.();
         if (unmountOnExit) setMounted(false);
@@ -185,11 +191,11 @@ export const SlideTransition: React.FC<SlideProps> = ({
 
   const getTransform = (show: boolean) => {
     if (disabled) return 'translate3d(0, 0, 0)';
-    
+
     const dist = typeof distance === 'number' ? `${distance}px` : distance;
-    
+
     if (show) return 'translate3d(0, 0, 0)';
-    
+
     switch (direction) {
       case 'left':
         return `translate3d(-${dist}, 0, 0)`;
@@ -217,15 +223,15 @@ export const SlideTransition: React.FC<SlideProps> = ({
       // Entering
       if (!mounted) setMounted(true);
       onEnter?.();
-      
+
       // Start performance tracking
       animationIdRef.current = `slide-${direction}-${Date.now()}`;
       animationMonitor.startAnimation(animationIdRef.current);
-      
+
       requestAnimationFrame(() => {
         setTransform(getTransform(true));
       });
-      
+
       timeoutRef.current = setTimeout(() => {
         onEntered?.();
         // End performance tracking
@@ -238,7 +244,7 @@ export const SlideTransition: React.FC<SlideProps> = ({
       // Exiting
       onExit?.();
       setTransform(getTransform(false));
-      
+
       timeoutRef.current = setTimeout(() => {
         onExited?.();
         if (unmountOnExit) setMounted(false);
@@ -299,15 +305,15 @@ export const ScaleTransition: React.FC<ScaleProps> = ({
       // Entering
       if (!mounted) setMounted(true);
       onEnter?.();
-      
+
       // Start performance tracking
       animationIdRef.current = `scale-${Date.now()}`;
       animationMonitor.startAnimation(animationIdRef.current);
-      
+
       requestAnimationFrame(() => {
         setScale(to);
       });
-      
+
       timeoutRef.current = setTimeout(() => {
         onEntered?.();
         // End performance tracking
@@ -320,7 +326,7 @@ export const ScaleTransition: React.FC<ScaleProps> = ({
       // Exiting
       onExit?.();
       setScale(from);
-      
+
       timeoutRef.current = setTimeout(() => {
         onExited?.();
         if (unmountOnExit) setMounted(false);
@@ -375,23 +381,23 @@ export const TransformTransition: React.FC<TransformProps> = ({
 
   const getStyle = (target: typeof from | typeof to): CSSProperties => {
     if (disabled) return {};
-    
+
     const transforms: string[] = [];
-    
+
     if (target.x !== undefined || target.y !== undefined) {
       const x = typeof target.x === 'number' ? `${target.x}px` : target.x || '0';
       const y = typeof target.y === 'number' ? `${target.y}px` : target.y || '0';
       transforms.push(`translate3d(${x}, ${y}, 0)`);
     }
-    
+
     if (target.scale !== undefined) {
       transforms.push(`scale3d(${target.scale}, ${target.scale}, 1)`);
     }
-    
+
     if (target.rotate !== undefined) {
       transforms.push(`rotate(${target.rotate})`);
     }
-    
+
     return {
       transform: transforms.join(' ') || 'none',
       opacity: target.opacity !== undefined ? target.opacity : 1,
@@ -411,15 +417,15 @@ export const TransformTransition: React.FC<TransformProps> = ({
       // Entering
       if (!mounted) setMounted(true);
       onEnter?.();
-      
+
       // Start performance tracking
       animationIdRef.current = `transform-${Date.now()}`;
       animationMonitor.startAnimation(animationIdRef.current);
-      
+
       requestAnimationFrame(() => {
         setStyle(getStyle(to));
       });
-      
+
       timeoutRef.current = setTimeout(() => {
         onEntered?.();
         // End performance tracking
@@ -432,7 +438,7 @@ export const TransformTransition: React.FC<TransformProps> = ({
       // Exiting
       onExit?.();
       setStyle(getStyle(from));
-      
+
       timeoutRef.current = setTimeout(() => {
         onExited?.();
         if (unmountOnExit) setMounted(false);
@@ -475,27 +481,26 @@ export const CompoundTransition: React.FC<CompoundTransitionProps> = ({
   ...props
 }) => {
   let result = <>{children}</>;
-  
+
   // Apply transitions in reverse order so they nest correctly
-  transitions.slice().reverse().forEach((transition) => {
-    const TransitionComponent = {
-      fade: FadeTransition,
-      slide: SlideTransition,
-      scale: ScaleTransition,
-      transform: TransformTransition,
-    }[transition.type];
-    
-    result = (
-      <TransitionComponent
-        in={inProp}
-        {...props}
-        {...transition.props}
-      >
-        {result}
-      </TransitionComponent>
-    );
-  });
-  
+  transitions
+    .slice()
+    .reverse()
+    .forEach(transition => {
+      const TransitionComponent = {
+        fade: FadeTransition,
+        slide: SlideTransition,
+        scale: ScaleTransition,
+        transform: TransformTransition,
+      }[transition.type];
+
+      result = (
+        <TransitionComponent in={inProp} {...props} {...transition.props}>
+          {result}
+        </TransitionComponent>
+      );
+    });
+
   return result;
 };
 

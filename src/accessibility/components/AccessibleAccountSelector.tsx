@@ -8,7 +8,11 @@ import React, { useRef, useEffect } from 'react';
 import styled from 'styled-components';
 
 import { KeyboardNavigator } from '../utils/focusManagement';
-import { announce, formatAmountForScreenReader, formatAccountNumberForScreenReader } from '../utils/screenReader';
+import {
+  announce,
+  formatAmountForScreenReader,
+  formatAccountNumberForScreenReader,
+} from '../utils/screenReader';
 
 interface Account {
   id: string;
@@ -37,7 +41,9 @@ const Label = styled.div<{ required?: boolean }>`
   font-weight: 500;
   color: ${({ theme }) => theme.colors.textPrimary};
 
-  ${({ required, theme }) => required && `
+  ${({ required, theme }) =>
+    required &&
+    `
     &::after {
       content: ' *';
       color: ${theme.colors.error};
@@ -56,7 +62,7 @@ const AccountItem = styled.label<{ selected?: boolean }>`
   align-items: center;
   padding: 16px;
   cursor: pointer;
-  background-color: ${({ theme, selected }) => 
+  background-color: ${({ theme, selected }) =>
     selected ? theme.colors.backgroundGray1 : theme.colors.background};
   border-bottom: 1px solid ${({ theme }) => theme.colors.borderLight};
   transition: background-color 0.2s ease;
@@ -89,14 +95,16 @@ const RadioInput = styled.input`
 const RadioButton = styled.span<{ checked?: boolean }>`
   width: 20px;
   height: 20px;
-  border: 2px solid ${({ theme, checked }) => 
-    checked ? theme.colors.accentBlue : theme.colors.border};
+  border: 2px solid
+    ${({ theme, checked }) => (checked ? theme.colors.accentBlue : theme.colors.border)};
   border-radius: 50%;
   margin-right: 12px;
   position: relative;
   flex-shrink: 0;
 
-  ${({ checked, theme }) => checked && `
+  ${({ checked, theme }) =>
+    checked &&
+    `
     &::after {
       content: '';
       position: absolute;
@@ -155,7 +163,7 @@ export const AccessibleAccountSelector: React.FC<Props> = ({
   onSelect,
   label = '계좌 선택',
   error,
-  required = false
+  required = false,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const navigatorRef = useRef<KeyboardNavigator | null>(null);
@@ -165,7 +173,7 @@ export const AccessibleAccountSelector: React.FC<Props> = ({
   useEffect(() => {
     if (containerRef.current) {
       navigatorRef.current = new KeyboardNavigator(containerRef.current, {
-        orientation: 'vertical'
+        orientation: 'vertical',
       });
     }
 
@@ -176,7 +184,7 @@ export const AccessibleAccountSelector: React.FC<Props> = ({
 
   const handleSelect = (account: Account) => {
     onSelect(account);
-    
+
     const balanceText = formatAmountForScreenReader(account.balance);
     announce(`${account.name} 계좌가 선택되었습니다. 잔액: ${balanceText}`);
   };
@@ -190,10 +198,10 @@ export const AccessibleAccountSelector: React.FC<Props> = ({
 
   return (
     <Container>
-      <Label 
-        id={groupId} 
+      <Label
+        id={groupId}
         required={required}
-        role="group"
+        role='group'
         aria-required={required}
         aria-invalid={!!error}
         aria-errormessage={error ? errorId : undefined}
@@ -202,11 +210,7 @@ export const AccessibleAccountSelector: React.FC<Props> = ({
         {required && <ScreenReaderOnly> (필수)</ScreenReaderOnly>}
       </Label>
 
-      <AccountList 
-        ref={containerRef}
-        role="radiogroup"
-        aria-labelledby={groupId}
-      >
+      <AccountList ref={containerRef} role='radiogroup' aria-labelledby={groupId}>
         {accounts.map((account, index) => {
           const isSelected = account.id === selectedAccountId;
           const accountNumberForSR = formatAccountNumberForScreenReader(account.accountNumber);
@@ -216,10 +220,10 @@ export const AccessibleAccountSelector: React.FC<Props> = ({
             <AccountItem
               key={account.id}
               selected={isSelected}
-              onKeyDown={(e) => handleKeyDown(e, account)}
+              onKeyDown={e => handleKeyDown(e, account)}
             >
               <RadioInput
-                type="radio"
+                type='radio'
                 name={groupId}
                 value={account.id}
                 checked={isSelected}
@@ -247,7 +251,7 @@ export const AccessibleAccountSelector: React.FC<Props> = ({
       </AccountList>
 
       {error && (
-        <ErrorMessage id={errorId} role="alert">
+        <ErrorMessage id={errorId} role='alert'>
           {error}
         </ErrorMessage>
       )}

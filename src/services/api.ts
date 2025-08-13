@@ -4,7 +4,12 @@
  */
 import { supabase } from '../lib/supabase';
 import { handleApiError, safeLog } from '../utils/errorHandler';
-import { validateAccountNumber, validateAmount, validateTransactionDescription, sanitizeInput } from '../utils/validation';
+import {
+  validateAccountNumber,
+  validateAmount,
+  validateTransactionDescription,
+  sanitizeInput,
+} from '../utils/validation';
 // API 기본 설정
 // const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:3001/api';
 // 타입 정의
@@ -94,9 +99,9 @@ class ApiService {
   // 개선된 메모리 캐시
   private cache = new Map<string, { data: any; timestamp: number }>();
   private readonly CACHE_TTL = {
-    accounts: 5 * 60 * 1000,     // 5분
-    transactions: 60 * 1000,      // 1분
-    default: 30 * 1000           // 30초
+    accounts: 5 * 60 * 1000, // 5분
+    transactions: 60 * 1000, // 1분
+    default: 30 * 1000, // 30초
   };
   private readonly MAX_CACHE_SIZE = 100; // 최대 캐시 항목 수
   private getCacheKey(endpoint: string, params?: any, userId?: string): string {
@@ -116,8 +121,9 @@ class ApiService {
     // 캐시 크기 제한
     if (this.cache.size >= this.MAX_CACHE_SIZE) {
       // 가장 오래된 항목 제거
-      const oldestKey = Array.from(this.cache.entries())
-        .sort((a, b) => a[1].timestamp - b[1].timestamp)[0][0];
+      const oldestKey = Array.from(this.cache.entries()).sort(
+        (a, b) => a[1].timestamp - b[1].timestamp
+      )[0][0];
       this.cache.delete(oldestKey);
     }
     this.cache.set(key, { data, timestamp: Date.now() });
@@ -138,7 +144,9 @@ class ApiService {
   // 계좌 관련 API (캐싱 적용)
   async getAccounts(): Promise<Account[]> {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (!session) {
         safeLog('error', '세션이 없습니다.');
         return [];
@@ -190,7 +198,7 @@ class ApiService {
       if (error) throw error;
       return {
         balance: data.balance,
-        last_updated: data.updated_at
+        last_updated: data.updated_at,
       };
     } catch (error) {
       safeLog('error', '잔액 조회 실패', error);
@@ -201,10 +209,15 @@ class ApiService {
   async getTransactions(filter: TransactionFilter = {}): Promise<TransactionResponse> {
     try {
       // 캐시 확인 (거래내역은 자주 변경되므로 짧은 TTL 사용)
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (!session) return this.getEmptyTransactionResponse();
       const cacheKey = this.getCacheKey('transactions', filter, session.user.id);
-      const cachedData = this.getCachedData<TransactionResponse>(cacheKey, this.CACHE_TTL.transactions);
+      const cachedData = this.getCachedData<TransactionResponse>(
+        cacheKey,
+        this.CACHE_TTL.transactions
+      );
       if (cachedData) {
         safeLog('info', '📦 거래내역 캐시 히트');
         return cachedData;
@@ -252,8 +265,8 @@ class ApiService {
           total_pages: totalPages,
           total_count: totalCount,
           has_next: page < totalPages,
-          has_previous: page > 1
-        }
+          has_previous: page > 1,
+        },
       };
       // 캐시 저장
       this.setCacheData(cacheKey, result);
@@ -272,12 +285,12 @@ class ApiService {
         total_pages: 0,
         total_count: 0,
         has_next: false,
-        has_previous: false
-      }
+        has_previous: false,
+      },
     };
   }
   async getTransactionStatistics(
-    accountId?: string, 
+    accountId?: string,
     period?: 'today' | 'week' | 'month' | '3months' | '6months'
   ): Promise<TransactionStatistics> {
     try {
@@ -323,9 +336,8 @@ class ApiService {
         total_income: income,
         total_expense: expense,
         transaction_count: transactions.length,
-        average_transaction: transactions.length > 0 ? 
-          (income + expense) / transactions.length : 0,
-        period: period || 'month'
+        average_transaction: transactions.length > 0 ? (income + expense) / transactions.length : 0,
+        period: period || 'month',
       };
     } catch (error) {
       safeLog('error', '거래내역 통계 조회 실패', error);
@@ -334,7 +346,7 @@ class ApiService {
         total_expense: 0,
         transaction_count: 0,
         average_transaction: 0,
-        period: period || 'month'
+        period: period || 'month',
       };
     }
   }
@@ -352,7 +364,7 @@ class ApiService {
         return {
           transfer_id: '',
           status: 'failed',
-          message: accountValidation.errors[0]
+          message: accountValidation.errors[0],
         };
       }
       const amountValidation = validateAmount(transferRequest.amount);
@@ -360,7 +372,7 @@ class ApiService {
         return {
           transfer_id: '',
           status: 'failed',
-          message: amountValidation.errors[0]
+          message: amountValidation.errors[0],
         };
       }
       if (transferRequest.description) {
@@ -369,7 +381,7 @@ class ApiService {
           return {
             transfer_id: '',
             status: 'failed',
-            message: descriptionValidation.errors[0]
+            message: descriptionValidation.errors[0],
           };
         }
       }
@@ -378,7 +390,9 @@ class ApiService {
         ...transferRequest,
         to_account_number: sanitizeInput(transferRequest.to_account_number),
         to_account_name: sanitizeInput(transferRequest.to_account_name),
-        description: transferRequest.description ? sanitizeInput(transferRequest.description) : undefined
+        description: transferRequest.description
+          ? sanitizeInput(transferRequest.description)
+          : undefined,
       };
       // 트랜잭션 시작
       const { data: session } = await supabase.auth.getSession();
@@ -399,20 +413,22 @@ class ApiService {
         return {
           transfer_id: '',
           status: 'failed',
-          message: '잔액이 부족합니다.'
+          message: '잔액이 부족합니다.',
         };
       }
       // 3. 이체 내역 생성
       const { data: transferData, error: transferError } = await supabase
         .from('transfer_history')
-        .insert([{
-          from_account_id: sanitizedRequest.from_account_id,
-          to_account_number: sanitizedRequest.to_account_number,
-          to_account_name: sanitizedRequest.to_account_name,
-          amount: sanitizedRequest.amount,
-          description: sanitizedRequest.description,
-          status: 'completed'
-        }])
+        .insert([
+          {
+            from_account_id: sanitizedRequest.from_account_id,
+            to_account_number: sanitizedRequest.to_account_number,
+            to_account_name: sanitizedRequest.to_account_name,
+            amount: sanitizedRequest.amount,
+            description: sanitizedRequest.description,
+            status: 'completed',
+          },
+        ])
         .select()
         .single();
       if (transferError) throw transferError;
@@ -420,25 +436,27 @@ class ApiService {
       const newBalanceFrom = fromAccount.balance - sanitizedRequest.amount;
       const { data: withdrawalTransaction, error: withdrawalError } = await supabase
         .from('transactions')
-        .insert([{
-          account_id: sanitizedRequest.from_account_id,
-          transaction_type: '이체',
-          amount: sanitizedRequest.amount,
-          balance_after: newBalanceFrom,
-          description: `${sanitizedRequest.to_account_name} ${sanitizedRequest.to_account_number.slice(-4)}`,
-          target_account: sanitizedRequest.to_account_number,
-          target_name: sanitizedRequest.to_account_name,
-          transaction_date: new Date().toISOString()
-        }])
+        .insert([
+          {
+            account_id: sanitizedRequest.from_account_id,
+            transaction_type: '이체',
+            amount: sanitizedRequest.amount,
+            balance_after: newBalanceFrom,
+            description: `${sanitizedRequest.to_account_name} ${sanitizedRequest.to_account_number.slice(-4)}`,
+            target_account: sanitizedRequest.to_account_number,
+            target_name: sanitizedRequest.to_account_name,
+            transaction_date: new Date().toISOString(),
+          },
+        ])
         .select()
         .single();
       if (withdrawalError) throw withdrawalError;
       // 5. 출금 계좌 잔액 업데이트
       const { error: updateFromError } = await supabase
         .from('accounts')
-        .update({ 
+        .update({
           balance: newBalanceFrom,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', sanitizedRequest.from_account_id);
       if (updateFromError) throw updateFromError;
@@ -453,22 +471,24 @@ class ApiService {
         const newBalanceTo = toAccount.balance + sanitizedRequest.amount;
         const { error: depositError } = await supabase
           .from('transactions')
-          .insert([{
-            account_id: toAccount.id,
-            transaction_type: '입금',
-            amount: sanitizedRequest.amount,
-            balance_after: newBalanceTo,
-            description: `${fromAccount.account_name} ${fromAccount.account_number.slice(-4)}`,
-            transaction_date: new Date().toISOString()
-          }])
+          .insert([
+            {
+              account_id: toAccount.id,
+              transaction_type: '입금',
+              amount: sanitizedRequest.amount,
+              balance_after: newBalanceTo,
+              description: `${fromAccount.account_name} ${fromAccount.account_number.slice(-4)}`,
+              transaction_date: new Date().toISOString(),
+            },
+          ])
           .select();
         if (depositError) throw depositError;
         // 8. 입금 계좌 잔액 업데이트
         const { error: updateToError } = await supabase
           .from('accounts')
-          .update({ 
+          .update({
             balance: newBalanceTo,
-            updated_at: new Date().toISOString()
+            updated_at: new Date().toISOString(),
           })
           .eq('id', toAccount.id);
         if (updateToError) throw updateToError;
@@ -498,14 +518,14 @@ class ApiService {
         transfer_id: transferData.id,
         status: 'success',
         message: '이체가 완료되었습니다.',
-        transaction_id: withdrawalTransaction.id
+        transaction_id: withdrawalTransaction.id,
       };
     } catch (error) {
       const errorMessage = handleApiError(error, '이체 실행 실패');
       return {
         transfer_id: '',
         status: 'failed',
-        message: errorMessage
+        message: errorMessage,
       };
     }
   }
@@ -515,9 +535,7 @@ class ApiService {
     limit: number = 20
   ): Promise<{ transfers: TransferHistory[]; pagination: any }> {
     try {
-      let query = supabase
-        .from('transfer_history')
-        .select('*');
+      let query = supabase.from('transfer_history').select('*');
       if (accountId) {
         query = query.eq('from_account_id', accountId);
       }
@@ -536,8 +554,8 @@ class ApiService {
           total_pages: totalPages,
           total_count: totalCount,
           has_next: page < totalPages,
-          has_previous: page > 1
-        }
+          has_previous: page > 1,
+        },
       };
     } catch (error) {
       safeLog('error', '이체 내역 조회 실패', error);
@@ -548,8 +566,8 @@ class ApiService {
           total_pages: 0,
           total_count: 0,
           has_next: false,
-          has_previous: false
-        }
+          has_previous: false,
+        },
       };
     }
   }

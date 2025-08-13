@@ -26,23 +26,23 @@ const PageWrapper = styled.div`
   width: 100%;
   height: 100%;
   will-change: transform, opacity;
-  
+
   &.page-enter {
     animation: ${kbPageSlideIn} ${kbTimings.normal} ${kbTimings.easeOut} forwards;
     z-index: 2;
   }
-  
+
   &.page-exit {
     animation: ${kbPageSlideOut} ${kbTimings.normal} ${kbTimings.easeIn} forwards;
     z-index: 1;
   }
-  
+
   /* 뒤로가기 애니메이션 (반대 방향) */
   &.page-enter-back {
     animation: ${kbPageSlideOut} ${kbTimings.normal} ${kbTimings.easeOut} reverse forwards;
     z-index: 2;
   }
-  
+
   &.page-exit-back {
     animation: ${kbPageSlideIn} ${kbTimings.normal} ${kbTimings.easeIn} reverse forwards;
     z-index: 1;
@@ -60,23 +60,16 @@ export const PageTransition: React.FC<PageTransitionProps> = ({
   children,
   transitionKey,
   timeout = 300,
-  classNames = 'page'
+  classNames = 'page',
 }) => {
   const location = useLocation();
   const key = transitionKey || location.pathname;
-  
+
   return (
     <TransitionContainer>
       <TransitionGroup component={null}>
-        <CSSTransition
-          key={key}
-          timeout={timeout}
-          classNames={classNames}
-          unmountOnExit
-        >
-          <PageWrapper>
-            {children}
-          </PageWrapper>
+        <CSSTransition key={key} timeout={timeout} classNames={classNames} unmountOnExit>
+          <PageWrapper>{children}</PageWrapper>
         </CSSTransition>
       </TransitionGroup>
     </TransitionContainer>
@@ -90,20 +83,20 @@ const FadeWrapper = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  
+
   &.fade-enter {
     opacity: 0;
   }
-  
+
   &.fade-enter-active {
     opacity: 1;
     transition: opacity ${kbTimings.fast} ${kbTimings.easeOut};
   }
-  
+
   &.fade-exit {
     opacity: 1;
   }
-  
+
   &.fade-exit-active {
     opacity: 0;
     transition: opacity ${kbTimings.fast} ${kbTimings.easeIn};
@@ -114,23 +107,16 @@ export const FadeTransition: React.FC<PageTransitionProps> = ({
   children,
   transitionKey,
   timeout = 200,
-  classNames = 'fade'
+  classNames = 'fade',
 }) => {
   const location = useLocation();
   const key = transitionKey || location.pathname;
-  
+
   return (
     <TransitionContainer>
       <TransitionGroup component={null}>
-        <CSSTransition
-          key={key}
-          timeout={timeout}
-          classNames={classNames}
-          unmountOnExit
-        >
-          <FadeWrapper>
-            {children}
-          </FadeWrapper>
+        <CSSTransition key={key} timeout={timeout} classNames={classNames} unmountOnExit>
+          <FadeWrapper>{children}</FadeWrapper>
         </CSSTransition>
       </TransitionGroup>
     </TransitionContainer>
@@ -144,25 +130,25 @@ const TabWrapper = styled.div<{ $direction: 'left' | 'right' }>`
   left: 0;
   width: 100%;
   height: 100%;
-  
+
   &.tab-enter {
-    transform: translateX(${props => props.$direction === 'right' ? '100%' : '-100%'});
+    transform: translateX(${props => (props.$direction === 'right' ? '100%' : '-100%')});
     opacity: 0.8;
   }
-  
+
   &.tab-enter-active {
     transform: translateX(0);
     opacity: 1;
     transition: all ${kbTimings.fast} ${kbTimings.easeOut};
   }
-  
+
   &.tab-exit {
     transform: translateX(0);
     opacity: 1;
   }
-  
+
   &.tab-exit-active {
-    transform: translateX(${props => props.$direction === 'right' ? '-100%' : '100%'});
+    transform: translateX(${props => (props.$direction === 'right' ? '-100%' : '100%')});
     opacity: 0.8;
     transition: all ${kbTimings.fast} ${kbTimings.easeIn};
   }
@@ -177,22 +163,15 @@ export const TabTransition: React.FC<TabTransitionProps> = ({
   transitionKey,
   timeout = 200,
   classNames = 'tab',
-  direction = 'right'
+  direction = 'right',
 }) => {
   const key = transitionKey || Date.now().toString();
-  
+
   return (
     <TransitionContainer>
       <TransitionGroup component={null}>
-        <CSSTransition
-          key={key}
-          timeout={timeout}
-          classNames={classNames}
-          unmountOnExit
-        >
-          <TabWrapper $direction={direction}>
-            {children}
-          </TabWrapper>
+        <CSSTransition key={key} timeout={timeout} classNames={classNames} unmountOnExit>
+          <TabWrapper $direction={direction}>{children}</TabWrapper>
         </CSSTransition>
       </TransitionGroup>
     </TransitionContainer>

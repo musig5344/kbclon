@@ -1,6 +1,6 @@
 /**
  * CSRF Protection System for KB StarBanking Clone
- * 
+ *
  * Implements comprehensive CSRF (Cross-Site Request Forgery) protection
  * including token generation, validation, and automatic header injection.
  */
@@ -19,9 +19,7 @@ function generateSecureToken(): string {
  * Validates that a token is in the correct format
  */
 function isValidTokenFormat(token: string): boolean {
-  return typeof token === 'string' && 
-         token.length === 64 && 
-         /^[a-f0-9]+$/.test(token);
+  return typeof token === 'string' && token.length === 64 && /^[a-f0-9]+$/.test(token);
 }
 /**
  * CSRF Token Manager
@@ -36,9 +34,11 @@ class CSRFTokenManager {
   getToken(): string {
     const now = Date.now();
     // Check if we need a new token
-    if (!this.token || 
-        !isValidTokenFormat(this.token) || 
-        (now - this.tokenTimestamp) > this.TOKEN_LIFETIME) {
+    if (
+      !this.token ||
+      !isValidTokenFormat(this.token) ||
+      now - this.tokenTimestamp > this.TOKEN_LIFETIME
+    ) {
       this.generateNewToken();
     }
     return this.token!;
@@ -51,10 +51,13 @@ class CSRFTokenManager {
       this.token = generateSecureToken();
       this.tokenTimestamp = Date.now();
       // Store in sessionStorage (not localStorage for security)
-      sessionStorage.setItem(CSRF_TOKEN_KEY, JSON.stringify({
-        token: this.token,
-        timestamp: this.tokenTimestamp
-      }));
+      sessionStorage.setItem(
+        CSRF_TOKEN_KEY,
+        JSON.stringify({
+          token: this.token,
+          timestamp: this.tokenTimestamp,
+        })
+      );
       safeLog('info', 'CSRF token generated', { tokenLength: this.token.length });
     } catch (error) {
       safeLog('error', 'Failed to generate CSRF token', error);
@@ -97,8 +100,7 @@ class CSRFTokenManager {
         const { token, timestamp } = JSON.parse(stored);
         const now = Date.now();
         // Check if stored token is still valid
-        if (isValidTokenFormat(token) && 
-            (now - timestamp) < this.TOKEN_LIFETIME) {
+        if (isValidTokenFormat(token) && now - timestamp < this.TOKEN_LIFETIME) {
           this.token = token;
           this.tokenTimestamp = timestamp;
           safeLog('info', 'CSRF token restored from storage');
@@ -133,7 +135,7 @@ export const CSRFProtection = {
    */
   getHeaders(): Record<string, string> {
     return {
-      [CSRF_HEADER_NAME]: csrfManager.getToken()
+      [CSRF_HEADER_NAME]: csrfManager.getToken(),
     };
   },
   /**
@@ -153,7 +155,7 @@ export const CSRFProtection = {
    */
   getHeaderName(): string {
     return CSRF_HEADER_NAME;
-  }
+  },
 };
 /**
  * React hook for CSRF protection in forms
@@ -166,8 +168,8 @@ export function useCSRFProtection() {
     hiddenInput: {
       type: 'hidden' as const,
       name: 'csrf_token',
-      value: token
-    }
+      value: token,
+    },
   };
 }
 /**
@@ -184,8 +186,8 @@ export function withCSRFProtection<T extends (...args: any[]) => Promise<any>>(
       ...options,
       headers: {
         ...options.headers,
-        ...csrfHeaders
-      }
+        ...csrfHeaders,
+      },
     };
     return fetchFunction(url, enhancedOptions, ...restArgs);
   }) as T;
@@ -237,12 +239,15 @@ export function initializeCSRFProtection(config: CSRFConfig): void {
     throw new Error('CSRF protection: Invalid origin detected');
   }
   // Set up automatic token refresh
-  setInterval(() => {
-    csrfManager.getToken(); // This will refresh if needed
-  }, 30 * 60 * 1000); // Check every 30 minutes
-  safeLog('info', 'CSRF protection initialized', { 
+  setInterval(
+    () => {
+      csrfManager.getToken(); // This will refresh if needed
+    },
+    30 * 60 * 1000
+  ); // Check every 30 minutes
+  safeLog('info', 'CSRF protection initialized', {
     allowedOrigins: allowedOrigins.length,
-    strictMode 
+    strictMode,
   });
 }
 export default CSRFProtection;

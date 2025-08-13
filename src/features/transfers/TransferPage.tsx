@@ -5,9 +5,9 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { apiService } from '../../services/api';
 import { PageHeader, FormRow, FormLabel, FormInput } from '../../shared/components';
 import TabBar from '../../shared/components/layout/TabBar';
-import { 
+import {
   androidAppContainer,
-  androidOptimizedScroll 
+  androidOptimizedScroll,
 } from '../../styles/android-webview-optimizations';
 import { formatCurrency } from '../../utils/textFormatter';
 
@@ -26,7 +26,7 @@ import {
   CameraButton,
   ButtonContainer,
   TransferButton,
-  BankSelectableInput
+  BankSelectableInput,
 } from './TransferPage.styles';
 
 /**
@@ -73,8 +73,7 @@ const TransferPage: React.FC = React.memo(() => {
         // 주계좌 또는 첫번째 계좌 선택
         const primaryAccount = accountList.find(acc => acc.is_primary) || accountList[0];
         setSelectedAccount(primaryAccount);
-      } catch (error) {
-      }
+      } catch (error) {}
     };
     fetchAccounts();
   }, []);
@@ -110,7 +109,7 @@ const TransferPage: React.FC = React.memo(() => {
         to_account_name: recipientName,
         amount: parseInt(amount),
         description: memo || `${recipientName}님께 이체`,
-        password: '1234' // 실제로는 사용자 입력 받아야 함
+        password: '1234', // 실제로는 사용자 입력 받아야 함
       });
       if (transferResult.status === 'success') {
         // 이체 성공 - 거래내역은 API에서 자동 생성됨
@@ -154,23 +153,21 @@ const TransferPage: React.FC = React.memo(() => {
       handleSuccessConfirm();
     }
   };
-  const isFormValid = recipientBank && recipientAccount && recipientName && amount && parseInt(amount) > 0;
+  const isFormValid =
+    recipientBank && recipientAccount && recipientName && amount && parseInt(amount) > 0;
   const renderContent = () => {
     if (step === 1) {
       return (
         <>
           {/* 보내는 계좌 */}
-          <FromAccountSelector
-            selectedAccount={selectedAccount}
-            formatAmount={formatAmount}
-          />
+          <FromAccountSelector selectedAccount={selectedAccount} formatAmount={formatAmount} />
           {/* 이체 정보 입력 */}
           <TransferForm>
             <FormRow>
               <FormLabel>받는 은행</FormLabel>
               <BankSelectableInput
-                type="text"
-                placeholder="은행을 선택해주세요"
+                type='text'
+                placeholder='은행을 선택해주세요'
                 value={recipientBank}
                 onClick={handleBankInputClick}
                 readOnly
@@ -180,23 +177,23 @@ const TransferPage: React.FC = React.memo(() => {
               <FormLabel>받는 계좌</FormLabel>
               <InputWithButton>
                 <FormInput
-                  type="text"
-                  placeholder="계좌번호를 입력해주세요"
+                  type='text'
+                  placeholder='계좌번호를 입력해주세요'
                   value={recipientAccount}
-                  onChange={(e) => setRecipientAccount(e.target.value)}
+                  onChange={e => setRecipientAccount(e.target.value)}
                 />
                 <CameraButton onClick={() => navigate('/transfer/picture')}>
-                  <img src="/assets/images/icon_transfer_camera.png" alt="카메라" />
+                  <img src='/assets/images/icon_transfer_camera.png' alt='카메라' />
                 </CameraButton>
               </InputWithButton>
             </FormRow>
             <FormRow>
               <FormLabel>받는 분</FormLabel>
               <FormInput
-                type="text"
-                placeholder="받는 분 이름을 입력해주세요"
+                type='text'
+                placeholder='받는 분 이름을 입력해주세요'
                 value={recipientName}
-                onChange={(e) => setRecipientName(e.target.value)}
+                onChange={e => setRecipientName(e.target.value)}
               />
             </FormRow>
             <AmountInputSection
@@ -208,10 +205,10 @@ const TransferPage: React.FC = React.memo(() => {
             <FormRow>
               <FormLabel>메모 (선택사항)</FormLabel>
               <FormInput
-                type="text"
-                placeholder="메모를 입력해주세요"
+                type='text'
+                placeholder='메모를 입력해주세요'
                 value={memo}
-                onChange={(e) => setMemo(e.target.value)}
+                onChange={e => setMemo(e.target.value)}
               />
             </FormRow>
           </TransferForm>
@@ -245,22 +242,23 @@ const TransferPage: React.FC = React.memo(() => {
     return '확인';
   };
   return (
-    <TransferContainer style={{
-      transform: 'translateZ(0)', // Android WebView GPU 가속
-      willChange: 'scroll-position' // Android WebView 성능 최적화
-    }}>
-      <PageHeader title="이체" backTo="/dashboard" />
-      <MainContent style={{
-        touchAction: 'pan-y', // Android WebView 터치 최적화
-        overscrollBehavior: 'none' // Android WebView 스크롤 최적화
-      }}>
+    <TransferContainer
+      style={{
+        transform: 'translateZ(0)', // Android WebView GPU 가속
+        willChange: 'scroll-position', // Android WebView 성능 최적화
+      }}
+    >
+      <PageHeader title='이체' backTo='/dashboard' />
+      <MainContent
+        style={{
+          touchAction: 'pan-y', // Android WebView 터치 최적화
+          overscrollBehavior: 'none', // Android WebView 스크롤 최적화
+        }}
+      >
         {renderContent()}
       </MainContent>
       <ButtonContainer>
-        <TransferButton
-          onClick={handleNext}
-          disabled={step === 1 ? !isFormValid : false}
-        >
+        <TransferButton onClick={handleNext} disabled={step === 1 ? !isFormValid : false}>
           {getButtonText()}
         </TransferButton>
       </ButtonContainer>
@@ -283,7 +281,7 @@ const TransferPage: React.FC = React.memo(() => {
           recipientName,
           amount: parseInt(amount) || 0,
           fee: 0,
-          memo
+          memo,
         }}
         onCancel={() => setShowConfirmDialog(false)}
         onConfirm={handleFinalConfirm}

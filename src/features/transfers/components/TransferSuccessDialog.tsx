@@ -138,7 +138,7 @@ const TransferSuccessDialog: React.FC<TransferSuccessDialogProps> = ({
   amount,
   recipientBank,
   recipientAccount,
-  onConfirm
+  onConfirm,
 }) => {
   if (!isVisible) return null;
   const formatAmount = (amount: number): string => {
@@ -152,12 +152,12 @@ const TransferSuccessDialog: React.FC<TransferSuccessDialogProps> = ({
       day: '2-digit',
       hour: '2-digit',
       minute: '2-digit',
-      second: '2-digit'
+      second: '2-digit',
     });
   };
   return (
     <DialogOverlay onClick={onConfirm}>
-      <MaterialCardView onClick={(e) => e.stopPropagation()}>
+      <MaterialCardView onClick={e => e.stopPropagation()}>
         <DialogContentLayout>
           <CheckIconContainer>
             <CheckIcon />
@@ -174,7 +174,9 @@ const TransferSuccessDialog: React.FC<TransferSuccessDialogProps> = ({
             </DetailRow>
             <DetailRow>
               <DetailLabel>받는 계좌</DetailLabel>
-              <DetailValue>{recipientBank} {recipientAccount}</DetailValue>
+              <DetailValue>
+                {recipientBank} {recipientAccount}
+              </DetailValue>
             </DetailRow>
             <DetailRow>
               <DetailLabel>이체 금액</DetailLabel>
@@ -187,9 +189,7 @@ const TransferSuccessDialog: React.FC<TransferSuccessDialogProps> = ({
           </TransferDetails>
         </DialogContentLayout>
         <ButtonLayout>
-          <ConfirmButton onClick={onConfirm}>
-            확인
-          </ConfirmButton>
+          <ConfirmButton onClick={onConfirm}>확인</ConfirmButton>
         </ButtonLayout>
       </MaterialCardView>
     </DialogOverlay>

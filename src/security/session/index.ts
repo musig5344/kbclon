@@ -1,6 +1,6 @@
 /**
  * Session Management Module Index
- * 
+ *
  * 안전한 세션 관리 시스템
  * - 세션 생성, 검증, 무효화
  * - React 컨텍스트 통합
@@ -9,8 +9,17 @@
  */
 
 // Core session management
+// Quick setup functions
+import { sessionManager, SessionConfig } from './SessionManager';
+
 export { default as SessionManager, sessionManager } from './SessionManager';
-export type { SessionData, SessionConfig, SessionEvent, SuspiciousActivity, SessionStatus } from './SessionManager';
+export type {
+  SessionData,
+  SessionConfig,
+  SessionEvent,
+  SuspiciousActivity,
+  SessionStatus,
+} from './SessionManager';
 
 // React integration
 export {
@@ -18,21 +27,20 @@ export {
   useSession,
   useAuthGuard,
   useSessionMonitoring,
-  useAutoLogout
+  useAutoLogout,
 } from './SessionProvider';
-
-// Quick setup functions
-import { sessionManager, SessionConfig } from './SessionManager';
 
 /**
  * KB StarBanking 세션 관리 시스템 초기화
  */
 export const setupBankingSessionManagement = (
-  config?: Partial<SessionConfig & {
-    enableAutoCleanup?: boolean;
-    enableSecurityMonitoring?: boolean;
-    enablePerformanceLogging?: boolean;
-  }>
+  config?: Partial<
+    SessionConfig & {
+      enableAutoCleanup?: boolean;
+      enableSecurityMonitoring?: boolean;
+      enablePerformanceLogging?: boolean;
+    }
+  >
 ) => {
   const {
     enableAutoCleanup = true,
@@ -53,7 +61,7 @@ export const setupBankingSessionManagement = (
     requireSecureTransport: true,
     ipBindingEnabled: true,
     enableSessionFixationProtection: true,
-    ...sessionConfig
+    ...sessionConfig,
   };
 
   // SessionManager 재구성 (실제 구현에서는 생성자 매개변수로 전달)
@@ -72,7 +80,7 @@ export const setupBankingSessionManagement = (
     sessionManager,
     config: bankingConfig,
     initialized: true,
-    timestamp: Date.now()
+    timestamp: Date.now(),
   };
 };
 
@@ -81,15 +89,15 @@ export const setupBankingSessionManagement = (
  */
 const setupSecurityEventMonitoring = () => {
   // 실제 구현에서는 SessionManager에 이벤트 리스너 추가
-  
+
   // 예시: 주기적으로 보안 통계 확인
   setInterval(() => {
     const stats = sessionManager.getSessionStatistics();
-    
+
     if (stats.highRiskSessions > 0) {
       console.warn(`[Session Security] ${stats.highRiskSessions} high-risk sessions detected`);
     }
-    
+
     // 비정상적인 세션 패턴 감지
     if (stats.active > 1000) {
       console.warn('[Session Security] Unusually high number of active sessions');
@@ -101,15 +109,18 @@ const setupSecurityEventMonitoring = () => {
  * 성능 모니터링 설정
  */
 const setupPerformanceMonitoring = () => {
-  
-  setInterval(() => {
-    const stats = sessionManager.getSessionStatistics();
-      totalSessions: stats.total,
-      activeSessions: stats.active,
-      averageDuration: Math.round(stats.averageSessionDuration / 1000 / 60), // 분 단위
-      timestamp: new Date().toISOString()
-    });
-  }, 5 * 60 * 1000); // 5분마다 로깅
+  setInterval(
+    () => {
+      const stats = sessionManager.getSessionStatistics();
+      console.log('[Session] Performance monitoring:', {
+        totalSessions: stats.total,
+        activeSessions: stats.active,
+        averageDuration: Math.round(stats.averageSessionDuration / 1000 / 60), // 분 단위
+        timestamp: new Date().toISOString(),
+      });
+    },
+    5 * 60 * 1000
+  ); // 5분마다 로깅
 };
 
 /**
@@ -131,29 +142,32 @@ export const createSessionMiddleware = (
     httpOnly = true,
     sameSite = 'strict',
     domain,
-    path = '/'
+    path = '/',
   } = options;
 
   return (req: any, res: any, next: any) => {
     const sessionToken = req.cookies?.[cookieName] || req.headers['x-session-token'];
-    
+
     if (sessionToken) {
       const sessionId = sessionManager.decryptSessionToken(sessionToken);
-      
+
       if (sessionId) {
-        sessionManager.validateSession(sessionId, {
-          ipAddress: req.ip || req.connection.remoteAddress,
-          userAgent: req.headers['user-agent'] || '',
-          timestamp: Date.now()
-        }).then(validation => {
-          if (validation.isValid && validation.session) {
-            req.session = validation.session;
-            req.sessionId = sessionId;
-          }
-          next();
-        }).catch(() => {
-          next();
-        });
+        sessionManager
+          .validateSession(sessionId, {
+            ipAddress: req.ip || req.connection.remoteAddress,
+            userAgent: req.headers['user-agent'] || '',
+            timestamp: Date.now(),
+          })
+          .then(validation => {
+            if (validation.isValid && validation.session) {
+              req.session = validation.session;
+              req.sessionId = sessionId;
+            }
+            next();
+          })
+          .catch(() => {
+            next();
+          });
       } else {
         next();
       }
@@ -166,20 +180,18 @@ export const createSessionMiddleware = (
 /**
  * 세션 기반 인증 미들웨어
  */
-export const requireAuthentication = (
-  requiredPermissions: string[] = []
-) => {
+export const requireAuthentication = (requiredPermissions: string[] = []) => {
   return (req: any, res: any, next: any) => {
     if (!req.session || req.session.status !== 'active') {
       return res.status(401).json({
         error: 'Authentication required',
-        code: 'NO_VALID_SESSION'
+        code: 'NO_VALID_SESSION',
       });
     }
 
     // 권한 확인
     if (requiredPermissions.length > 0) {
-      const hasAllPermissions = requiredPermissions.every(perm => 
+      const hasAllPermissions = requiredPermissions.every(perm =>
         req.session.permissions.includes(perm)
       );
 
@@ -188,7 +200,7 @@ export const requireAuthentication = (
           error: 'Insufficient permissions',
           code: 'INSUFFICIENT_PERMISSIONS',
           required: requiredPermissions,
-          current: req.session.permissions
+          current: req.session.permissions,
         });
       }
     }
@@ -215,7 +227,7 @@ export const performSecureLogin = async (
     const result = await sessionManager.createSession(userId, {
       ...request,
       loginMethod,
-      permissions
+      permissions,
     });
 
     const token = sessionManager.encryptSessionToken(result.session.sessionId);
@@ -225,13 +237,13 @@ export const performSecureLogin = async (
       session: result.session,
       token,
       warnings: result.warnings,
-      expiresAt: result.session.expiresAt
+      expiresAt: result.session.expiresAt,
     };
   } catch (error) {
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Login failed',
-      warnings: []
+      warnings: [],
     };
   }
 };
@@ -249,19 +261,21 @@ export const getSessionDashboardData = () => {
       activeSessions: stats.active,
       expiredSessions: stats.expired,
       highRiskSessions: stats.highRiskSessions,
-      averageSessionDuration: Math.round(stats.averageSessionDuration / 1000 / 60) // 분
+      averageSessionDuration: Math.round(stats.averageSessionDuration / 1000 / 60), // 분
     },
     status: stats.byStatus,
     healthScore: calculateHealthScore(stats),
     recommendations: generateRecommendations(stats),
-    lastUpdated: now
+    lastUpdated: now,
   };
 };
 
 /**
  * 세션 건강도 점수 계산
  */
-const calculateHealthScore = (stats: ReturnType<typeof sessionManager.getSessionStatistics>): number => {
+const calculateHealthScore = (
+  stats: ReturnType<typeof sessionManager.getSessionStatistics>
+): number => {
   let score = 100;
 
   // 고위험 세션 비율
@@ -284,7 +298,9 @@ const calculateHealthScore = (stats: ReturnType<typeof sessionManager.getSession
 /**
  * 권장사항 생성
  */
-const generateRecommendations = (stats: ReturnType<typeof sessionManager.getSessionStatistics>): string[] => {
+const generateRecommendations = (
+  stats: ReturnType<typeof sessionManager.getSessionStatistics>
+): string[] => {
   const recommendations: string[] = [];
 
   if (stats.highRiskSessions > 0) {
@@ -332,7 +348,7 @@ export const performSecurityAudit = async (): Promise<{
     findings.push({
       severity: 'high',
       description: `${stats.highRiskSessions} high-risk sessions detected`,
-      recommendation: 'Investigate suspicious activities and consider terminating risky sessions'
+      recommendation: 'Investigate suspicious activities and consider terminating risky sessions',
     });
   }
 
@@ -342,7 +358,7 @@ export const performSecurityAudit = async (): Promise<{
     findings.push({
       severity: 'medium',
       description: `Average session duration is ${avgDurationHours.toFixed(1)} hours`,
-      recommendation: 'Consider implementing shorter session timeouts for better security'
+      recommendation: 'Consider implementing shorter session timeouts for better security',
     });
   }
 
@@ -351,16 +367,16 @@ export const performSecurityAudit = async (): Promise<{
     findings.push({
       severity: 'medium',
       description: `High number of concurrent sessions: ${stats.active}`,
-      recommendation: 'Monitor for potential DDoS or automated attacks'
+      recommendation: 'Monitor for potential DDoS or automated attacks',
     });
   }
 
   const score = Math.max(0, 100 - findings.length * 20);
-  
+
   return {
     passed: findings.filter(f => f.severity === 'high' || f.severity === 'critical').length === 0,
     findings,
-    score
+    score,
   };
 };
 
@@ -369,7 +385,7 @@ export const performSecurityAudit = async (): Promise<{
  */
 export const exportUserSessionData = (userId: string) => {
   const sessions = sessionManager.getUserSessions(userId);
-  
+
   return {
     userId,
     sessions: sessions.map(session => ({
@@ -381,9 +397,9 @@ export const exportUserSessionData = (userId: string) => {
       deviceId: session.deviceId,
       ipAddress: session.ipAddress, // 필요에 따라 마스킹
       loginMethod: session.loginMethod,
-      permissions: session.permissions
+      permissions: session.permissions,
     })),
-    exportedAt: new Date().toISOString()
+    exportedAt: new Date().toISOString(),
   };
 };
 
@@ -399,20 +415,20 @@ export default {
   // Core
   SessionManager,
   sessionManager,
-  
+
   // Setup
   setupBankingSessionManagement,
-  
+
   // Middleware
   createSessionMiddleware,
   requireAuthentication,
-  
+
   // Utilities
   performSecureLogin,
   getSessionDashboardData,
   performSecurityAudit,
-  
+
   // GDPR
   exportUserSessionData,
-  deleteUserSessionData
+  deleteUserSessionData,
 };

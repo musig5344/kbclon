@@ -2,10 +2,10 @@ import { keyframes, css } from 'styled-components';
 
 /**
  * KB 스타뱅킹 통합 애니메이션 시스템
- * 
+ *
  * 목적:
  * - 중복 애니메이션 제거
- * - 통합 애니메이션 시스템 구축  
+ * - 통합 애니메이션 시스템 구축
  * - GPU 가속 최적화
  * - 60fps 부드러운 애니메이션 보장
  * - 메모리 효율성 향상
@@ -202,13 +202,13 @@ export const ANIMATION_TIMING = {
   MEDIUM: '300ms',
   SLOW: '500ms',
   VERY_SLOW: '800ms',
-  
+
   // 특수 목적 타이밍
   SPLASH: '600ms',
   PAGE_TRANSITION: '300ms',
   MODAL: '250ms',
   LOADING: '80ms', // 프레임 애니메이션용
-  
+
   // 이징 함수
   EASE_OUT: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
   EASE_IN: 'cubic-bezier(0.55, 0.055, 0.675, 0.19)',
@@ -264,7 +264,7 @@ export const splashAnimations = {
     animation: ${fadeIn} ${ANIMATION_TIMING.SPLASH} ${ANIMATION_TIMING.KB_EASE};
     ${reducedMotionSupport}
   `,
-  
+
   fadeOut: css`
     ${smoothAnimation}
     animation: ${fadeOut} ${ANIMATION_TIMING.VERY_SLOW} ${ANIMATION_TIMING.EASE_IN};
@@ -281,37 +281,37 @@ export const pageTransitionAnimations = {
     animation: ${slideInFromRight} ${ANIMATION_TIMING.PAGE_TRANSITION} ${ANIMATION_TIMING.KB_EASE};
     ${reducedMotionSupport}
   `,
-  
+
   slideInLeft: css`
     ${smoothAnimation}
     animation: ${slideInFromLeft} ${ANIMATION_TIMING.PAGE_TRANSITION} ${ANIMATION_TIMING.KB_EASE};
     ${reducedMotionSupport}
   `,
-  
+
   slideOutLeft: css`
     ${smoothAnimation}
     animation: ${slideOutToLeft} ${ANIMATION_TIMING.PAGE_TRANSITION} ${ANIMATION_TIMING.KB_EASE};
     ${reducedMotionSupport}
   `,
-  
+
   slideOutRight: css`
     ${smoothAnimation}
     animation: ${slideOutToRight} ${ANIMATION_TIMING.PAGE_TRANSITION} ${ANIMATION_TIMING.KB_EASE};
     ${reducedMotionSupport}
   `,
-  
+
   slideUp: css`
     ${smoothAnimation}
     animation: ${slideUpIn} ${ANIMATION_TIMING.PAGE_TRANSITION} ${ANIMATION_TIMING.KB_EASE};
     ${reducedMotionSupport}
   `,
-  
+
   slideDown: css`
     ${smoothAnimation}
     animation: ${slideDownIn} ${ANIMATION_TIMING.PAGE_TRANSITION} ${ANIMATION_TIMING.KB_EASE};
     ${reducedMotionSupport}
   `,
-  
+
   fade: css`
     ${smoothAnimation}
     animation: ${fadeIn} ${ANIMATION_TIMING.FAST} ${ANIMATION_TIMING.KB_EASE};
@@ -328,19 +328,19 @@ export const modalAnimations = {
     animation: ${slideUpIn} ${ANIMATION_TIMING.MODAL} ${ANIMATION_TIMING.KB_EASE};
     ${reducedMotionSupport}
   `,
-  
+
   slideDown: css`
     ${smoothAnimation}
     animation: ${slideDownOut} ${ANIMATION_TIMING.MODAL} ${ANIMATION_TIMING.EASE_IN};
     ${reducedMotionSupport}
   `,
-  
+
   scale: css`
     ${smoothAnimation}
     animation: ${scaleIn} ${ANIMATION_TIMING.MODAL} ${ANIMATION_TIMING.KB_EASE};
     ${reducedMotionSupport}
   `,
-  
+
   fade: css`
     ${smoothAnimation}
     animation: ${fadeIn} ${ANIMATION_TIMING.FAST} ${ANIMATION_TIMING.KB_EASE};
@@ -357,13 +357,13 @@ export const loadingAnimations = {
     animation: ${spin} 1s linear infinite;
     ${reducedMotionSupport}
   `,
-  
+
   pulse: css`
     ${smoothAnimation}
     animation: ${pulse} 1.5s ease-in-out infinite;
     ${reducedMotionSupport}
   `,
-  
+
   bounce: css`
     ${smoothAnimation}
     animation: ${bounceIn} ${ANIMATION_TIMING.MEDIUM} ${ANIMATION_TIMING.KB_EASE};
@@ -383,11 +383,11 @@ export const touchFeedback = css`
   transition: transform ${ANIMATION_TIMING.FAST} ${ANIMATION_TIMING.KB_EASE},
               background-color ${ANIMATION_TIMING.FAST} ${ANIMATION_TIMING.KB_EASE},
               box-shadow ${ANIMATION_TIMING.FAST} ${ANIMATION_TIMING.KB_EASE};
-  
+
   &:active {
     transform: scale3d(0.98, 0.98, 1);
   }
-  
+
   ${reducedMotionSupport}
 `;
 
@@ -398,14 +398,14 @@ export const hoverEffect = css`
   ${gpuAcceleration}
   transition: transform ${ANIMATION_TIMING.FAST} ${ANIMATION_TIMING.KB_EASE},
               box-shadow ${ANIMATION_TIMING.FAST} ${ANIMATION_TIMING.KB_EASE};
-  
+
   @media (hover: hover) {
     &:hover {
       transform: translate3d(0, -2px, 0);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
   }
-  
+
   ${reducedMotionSupport}
 `;
 
@@ -445,7 +445,7 @@ export const cleanupAfterAnimation = () => {
     onAnimationEnd: (element: HTMLElement) => {
       element.style.willChange = 'auto';
       element.style.transform = '';
-    }
+    },
   };
 };
 

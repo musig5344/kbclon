@@ -2,9 +2,9 @@ import React from 'react';
 
 import styled from 'styled-components';
 
-import { 
-  androidOptimizedButton, 
-  androidOptimizedScroll 
+import {
+  androidOptimizedButton,
+  androidOptimizedScroll,
 } from '../../../styles/android-webview-optimizations';
 import { fadeIn } from '../../../styles/animations';
 import { formatCurrency } from '../../../utils/textFormatter';
@@ -26,7 +26,7 @@ const DialogOverlay = styled.div`
   justify-content: center;
   z-index: 1000;
   padding: 40px 20px;
-  
+
   /* Android WebView 터치 최적화 */
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
@@ -56,7 +56,7 @@ const ScrollContainer = styled.div`
   ${androidOptimizedScroll}
   max-height: 300px;
   overflow-y: auto;
-  
+
   /* Android WebView 스크롤 최적화 */
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
@@ -113,12 +113,14 @@ const DialogButton = styled.button<{ variant: 'left' | 'right' }>`
   line-height: 1.17;
   letter-spacing: -0.02em;
   cursor: pointer;
-  
+
   /* Android WebView 터치 최적화 */
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
   will-change: transform;
-  ${props => props.variant === 'left' ? `
+  ${props =>
+    props.variant === 'left'
+      ? `
     background: #f5f5f5;
     border-top: 1px solid #eee;
     &:hover {
@@ -127,7 +129,8 @@ const DialogButton = styled.button<{ variant: 'left' | 'right' }>`
     &:active {
       background: #ddd;
     }
-  ` : `
+  `
+      : `
     background: #ffd338;
     border-top: 1px solid #ffd338;
     &:hover {
@@ -158,7 +161,7 @@ const TransferConfirmDialog: React.FC<TransferConfirmDialogProps> = ({
   isVisible,
   transferData,
   onCancel,
-  onConfirm
+  onConfirm,
 }) => {
   if (!isVisible) return null;
   const formatAmount = (amount: number): string => {
@@ -167,7 +170,7 @@ const TransferConfirmDialog: React.FC<TransferConfirmDialogProps> = ({
   const totalAmount = transferData.amount + transferData.fee;
   return (
     <DialogOverlay onClick={onCancel}>
-      <MaterialCardView onClick={(e) => e.stopPropagation()}>
+      <MaterialCardView onClick={e => e.stopPropagation()}>
         <DialogContentLayout>
           <DialogTitle>이체 정보 확인</DialogTitle>
           <ScrollContainer>
@@ -210,10 +213,10 @@ const TransferConfirmDialog: React.FC<TransferConfirmDialogProps> = ({
           </ScrollContainer>
         </DialogContentLayout>
         <ButtonLayout>
-          <DialogButton variant="left" onClick={onCancel}>
+          <DialogButton variant='left' onClick={onCancel}>
             취소
           </DialogButton>
-          <DialogButton variant="right" onClick={onConfirm}>
+          <DialogButton variant='right' onClick={onConfirm}>
             이체하기
           </DialogButton>
         </ButtonLayout>

@@ -4,10 +4,10 @@ import KBFGTextBoldOTF from '../assets/fonts/kbfg_text_b.otf';
 import KBFGTextLightOTF from '../assets/fonts/kbfg_text_l.otf';
 import KBFGTextMediumOTF from '../assets/fonts/kbfg_text_m.otf';
 
-import { 
+import {
   androidWebViewGlobalStyles,
   androidFontOptimization,
-  androidImageOptimization 
+  androidImageOptimization,
 } from './android-webview-optimizations';
 import { kbFontOptimization, kbSmoothScroll, kbTimings } from './KBMicroDetails';
 import { tokens } from './tokens';
@@ -217,4 +217,4 @@ const GlobalStyle = createGlobalStyle`
     ${androidImageOptimization}
   }
 `;
-export default GlobalStyle; 
+export default GlobalStyle;

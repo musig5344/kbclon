@@ -19,13 +19,8 @@ interface KBModalProps extends Omit<ModalProps, 'variant'> {
   onBackClick?: () => void;
 }
 
-const KBModal: React.FC<KBModalProps> = (props) => {
-  return (
-    <Modal
-      {...props}
-      variant="kb"
-    />
-  );
+const KBModal: React.FC<KBModalProps> = props => {
+  return <Modal {...props} variant='kb' />;
 };
 
 export default KBModal;

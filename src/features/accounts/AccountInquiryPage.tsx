@@ -73,7 +73,7 @@ const BankLogo = styled.div`
   justify-content: center;
   margin-right: 12px;
   &::before {
-    content: "★";
+    content: '★';
     color: #26282c;
     font-size: 20px;
     font-weight: bold;
@@ -223,12 +223,12 @@ const TransactionDescription = styled.div`
 const TransactionAmount = styled.div<{ type: '입금' | '출금' | '이체' }>`
   font-size: 16px;
   font-weight: 600;
-  color: ${props => props.type === '입금' ? '#22c55e' : '#26282c'};
+  color: ${props => (props.type === '입금' ? '#22c55e' : '#26282c')};
   text-align: right;
 `;
 const TransactionType = styled.div<{ type: '입금' | '출금' | '이체' }>`
   font-size: 12px;
-  color: ${props => props.type === '입금' ? '#22c55e' : '#696e76'};
+  color: ${props => (props.type === '입금' ? '#22c55e' : '#696e76')};
   text-align: right;
   margin-top: 2px;
 `;
@@ -252,7 +252,7 @@ const AccountInquiryPage: React.FC = () => {
       // 계좌 정보와 최근 거래내역을 병렬로 로드
       const [accountData, transactionsData] = await Promise.all([
         accountService.getAccount(accountId),
-        transactionService.getRecentTransactions(accountId, 5)
+        transactionService.getRecentTransactions(accountId, 5),
       ]);
       setAccount(accountData);
       setRecentTransactions(transactionsData);
@@ -271,7 +271,7 @@ const AccountInquiryPage: React.FC = () => {
         is_primary: true,
         status: 'active',
         created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       });
       setRecentTransactions([
         {
@@ -282,7 +282,7 @@ const AccountInquiryPage: React.FC = () => {
           description: '카카오뱅크',
           transaction_date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
           balance_after: 102418,
-          created_at: new Date().toISOString()
+          created_at: new Date().toISOString(),
         },
         {
           id: '2',
@@ -292,7 +292,7 @@ const AccountInquiryPage: React.FC = () => {
           description: '스타벅스코리아',
           transaction_date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
           balance_after: 52418,
-          created_at: new Date().toISOString()
+          created_at: new Date().toISOString(),
         },
         {
           id: '3',
@@ -302,8 +302,8 @@ const AccountInquiryPage: React.FC = () => {
           description: '교보문고',
           transaction_date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
           balance_after: 56918,
-          created_at: new Date().toISOString()
-        }
+          created_at: new Date().toISOString(),
+        },
       ]);
     } finally {
       setLoading(false);
@@ -321,7 +321,7 @@ const AccountInquiryPage: React.FC = () => {
     return (
       <AccountInquiryContainer>
         <AccountInquiryHeader>
-          <Button as={Link} to="/comprehensive-account">
+          <Button as={Link} to='/comprehensive-account'>
             <span style={{ fontSize: '18px', transform: 'rotate(180deg)' }}>→</span>
           </Button>
           <HeaderTitle>계좌정보</HeaderTitle>
@@ -340,7 +340,7 @@ const AccountInquiryPage: React.FC = () => {
     return (
       <AccountInquiryContainer>
         <AccountInquiryHeader>
-          <Button as={Link} to="/comprehensive-account">
+          <Button as={Link} to='/comprehensive-account'>
             <span style={{ fontSize: '18px', transform: 'rotate(180deg)' }}>→</span>
           </Button>
           <HeaderTitle>계좌정보</HeaderTitle>
@@ -358,7 +358,7 @@ const AccountInquiryPage: React.FC = () => {
   return (
     <AccountInquiryContainer>
       <AccountInquiryHeader>
-        <Button as={Link} to="/dashboard">
+        <Button as={Link} to='/dashboard'>
           <span style={{ fontSize: '18px', transform: 'rotate(180deg)' }}>→</span>
         </Button>
         <HeaderTitle>계좌정보</HeaderTitle>
@@ -376,9 +376,7 @@ const AccountInquiryPage: React.FC = () => {
           <AccountNumber>{account.account_number}</AccountNumber>
           <AccountHolder>{account.account_holder}</AccountHolder>
           <BalanceContainer>
-            <Balance>
-              {balanceVisible ? formatCurrency(account.balance) + '원' : '●●●●●●●'}
-            </Balance>
+            <Balance>{balanceVisible ? formatCurrency(account.balance) + '원' : '●●●●●●●'}</Balance>
             <BalanceToggle onClick={() => setBalanceVisible(!balanceVisible)}>
               {balanceVisible ? '숨김' : '표시'}
             </BalanceToggle>
@@ -386,11 +384,11 @@ const AccountInquiryPage: React.FC = () => {
         </AccountInfoCard>
         {/* 액션 버튼 그리드 */}
         <ActionButtonGrid>
-          <ActionButton as={Link} to="/transaction-history">
+          <ActionButton as={Link} to='/transaction-history'>
             <ActionIcon>📋</ActionIcon>
             <ActionText>거래내역조회</ActionText>
           </ActionButton>
-          <ActionButton as={Link} to="/transfer">
+          <ActionButton as={Link} to='/transfer'>
             <ActionIcon>💳</ActionIcon>
             <ActionText>계좌이체</ActionText>
           </ActionButton>
@@ -407,7 +405,7 @@ const AccountInquiryPage: React.FC = () => {
         <RecentTransactionsSection>
           <SectionHeader>
             <SectionTitle>최근 거래내역</SectionTitle>
-            <SeeMoreButton as={Link} to="/transaction-history">
+            <SeeMoreButton as={Link} to='/transaction-history'>
               전체보기
               <span style={{ fontSize: '12px' }}>→</span>
             </SeeMoreButton>
@@ -418,15 +416,18 @@ const AccountInquiryPage: React.FC = () => {
                 최근 거래내역이 없습니다.
               </div>
             ) : (
-              recentTransactions.map((transaction) => (
+              recentTransactions.map(transaction => (
                 <TransactionItem key={transaction.id}>
                   <TransactionInfo>
-                    <TransactionDate>{formatTransactionDate(transaction.transaction_date)}</TransactionDate>
+                    <TransactionDate>
+                      {formatTransactionDate(transaction.transaction_date)}
+                    </TransactionDate>
                     <TransactionDescription>{transaction.description}</TransactionDescription>
                   </TransactionInfo>
                   <div>
                     <TransactionAmount type={transaction.transaction_type}>
-                      {transaction.transaction_type === '입금' ? '+' : '-'}{formatCurrency(transaction.amount) + '원'}
+                      {transaction.transaction_type === '입금' ? '+' : '-'}
+                      {formatCurrency(transaction.amount) + '원'}
                     </TransactionAmount>
                     <TransactionType type={transaction.transaction_type}>
                       {transaction.transaction_type}

@@ -1,6 +1,6 @@
 /**
  * Environment Manager for KB StarBanking Clone
- * 
+ *
  * Provides secure environment variable handling, configuration validation,
  * and environment-specific settings management.
  */
@@ -8,12 +8,7 @@ import { safeLog } from '../../utils/errorHandler';
 
 import { CONFIG_SCHEMA } from './schemas';
 
-import type { 
-  Environment, 
-  ConfigSchema, 
-  EnvironmentConfig,
-  ValidationResult 
-} from './types';
+import type { Environment, ConfigSchema, EnvironmentConfig, ValidationResult } from './types';
 /**
  * Environment Manager Class
  */
@@ -101,29 +96,29 @@ export class EnvironmentManager {
     const cleanKey = key.replace('REACT_APP_', '').toLowerCase();
     // Map environment keys to config structure
     const keyMappings: Record<string, string> = {
-      'name': 'app.name',
-      'version': 'app.version',
-      'environment': 'app.environment',
-      'debug': 'app.debug',
-      'base_url': 'app.baseUrl',
-      'port': 'app.port',
-      'api_base_url': 'api.baseUrl',
-      'api_timeout': 'api.timeout',
-      'api_retries': 'api.retries',
-      'supabase_url': 'services.supabase.url',
-      'supabase_anon_key': 'services.supabase.anonKey',
-      'supabase_service_role_key': 'services.supabase.serviceRoleKey',
-      'exchange_rate_api_key': 'services.exchangeRate.apiKey',
-      'exchange_rate_base_url': 'services.exchangeRate.baseUrl',
-      'allowed_origins': 'security.allowedOrigins',
-      'https_only': 'security.httpsOnly',
-      'enable_biometrics': 'features.biometrics',
-      'enable_push_notifications': 'features.pushNotifications',
-      'enable_offline_mode': 'features.offlineMode',
-      'enable_analytics': 'features.analytics',
-      'log_level': 'logging.level',
-      'enable_logging': 'logging.enabled',
-      'log_endpoint': 'logging.logEndpoint'
+      name: 'app.name',
+      version: 'app.version',
+      environment: 'app.environment',
+      debug: 'app.debug',
+      base_url: 'app.baseUrl',
+      port: 'app.port',
+      api_base_url: 'api.baseUrl',
+      api_timeout: 'api.timeout',
+      api_retries: 'api.retries',
+      supabase_url: 'services.supabase.url',
+      supabase_anon_key: 'services.supabase.anonKey',
+      supabase_service_role_key: 'services.supabase.serviceRoleKey',
+      exchange_rate_api_key: 'services.exchangeRate.apiKey',
+      exchange_rate_base_url: 'services.exchangeRate.baseUrl',
+      allowed_origins: 'security.allowedOrigins',
+      https_only: 'security.httpsOnly',
+      enable_biometrics: 'features.biometrics',
+      enable_push_notifications: 'features.pushNotifications',
+      enable_offline_mode: 'features.offlineMode',
+      enable_analytics: 'features.analytics',
+      log_level: 'logging.level',
+      enable_logging: 'logging.enabled',
+      log_endpoint: 'logging.logEndpoint',
     };
     return keyMappings[cleanKey] || cleanKey;
   }
@@ -147,7 +142,7 @@ export class EnvironmentManager {
    */
   private buildConfigObject(rawConfig: any): EnvironmentConfig {
     // Parse allowed origins
-    const allowedOrigins = rawConfig.security?.allowedOrigins 
+    const allowedOrigins = rawConfig.security?.allowedOrigins
       ? rawConfig.security.allowedOrigins.split(',').map((origin: string) => origin.trim())
       : [];
     return {
@@ -157,7 +152,7 @@ export class EnvironmentManager {
         environment: this.environment,
         debug: rawConfig.app?.debug || this.environment === 'development',
         baseUrl: rawConfig.app?.baseUrl || 'http://localhost:3000',
-        port: rawConfig.app?.port || 3000
+        port: rawConfig.app?.port || 3000,
       },
       api: {
         baseUrl: rawConfig.api?.baseUrl || 'http://localhost:3001/api',
@@ -165,50 +160,51 @@ export class EnvironmentManager {
         retries: rawConfig.api?.retries || 3,
         rateLimit: {
           requests: 100,
-          window: 15 * 60 * 1000
-        }
+          window: 15 * 60 * 1000,
+        },
       },
       auth: {
         sessionTimeout: 4 * 60 * 60 * 1000, // 4 hours
         refreshTokenExpiry: 7 * 24 * 60 * 60 * 1000, // 7 days
         maxLoginAttempts: 5,
-        lockoutDuration: 15 * 60 * 1000 // 15 minutes
+        lockoutDuration: 15 * 60 * 1000, // 15 minutes
       },
       services: {
         supabase: {
           url: rawConfig.services?.supabase?.url || '',
           anonKey: rawConfig.services?.supabase?.anonKey || '',
-          serviceRoleKey: rawConfig.services?.supabase?.serviceRoleKey
+          serviceRoleKey: rawConfig.services?.supabase?.serviceRoleKey,
         },
         exchangeRate: {
           apiKey: rawConfig.services?.exchangeRate?.apiKey || '',
-          baseUrl: rawConfig.services?.exchangeRate?.baseUrl || 'https://api.exchangerate-api.com/v4',
-          cacheDuration: 5 * 60 * 1000 // 5 minutes
+          baseUrl:
+            rawConfig.services?.exchangeRate?.baseUrl || 'https://api.exchangerate-api.com/v4',
+          cacheDuration: 5 * 60 * 1000, // 5 minutes
         },
         analytics: {
           trackingId: '',
-          enabled: rawConfig.features?.analytics || false
-        }
+          enabled: rawConfig.features?.analytics || false,
+        },
       },
       security: {
         allowedOrigins,
         csrfEnabled: true,
         httpsOnly: rawConfig.security?.httpsOnly || this.environment === 'production',
-        securityHeaders: true
+        securityHeaders: true,
       },
       features: {
         biometrics: rawConfig.features?.biometrics || false,
         pushNotifications: rawConfig.features?.pushNotifications || false,
         offlineMode: rawConfig.features?.offlineMode || false,
         darkMode: true,
-        analytics: rawConfig.features?.analytics || false
+        analytics: rawConfig.features?.analytics || false,
       },
       logging: {
         level: rawConfig.logging?.level || (this.environment === 'production' ? 'warn' : 'info'),
         enabled: rawConfig.logging?.enabled !== false,
         remoteLogging: this.environment === 'production',
-        logEndpoint: rawConfig.logging?.logEndpoint
-      }
+        logEndpoint: rawConfig.logging?.logEndpoint,
+      },
     };
   }
   /**
@@ -242,14 +238,14 @@ export class EnvironmentManager {
     if (this.validationErrors.length > 0) {
       safeLog('error', 'Configuration validation failed', {
         errors: this.validationErrors,
-        environment: this.environment
+        environment: this.environment,
       });
     } else {
       safeLog('info', 'Configuration validation passed', {
         environment: this.environment,
-        features: Object.keys(this.config.features).filter(key => 
-          this.config.features[key as keyof typeof this.config.features]
-        )
+        features: Object.keys(this.config.features).filter(
+          key => this.config.features[key as keyof typeof this.config.features]
+        ),
       });
     }
   }
@@ -363,7 +359,7 @@ export const environmentManager = new EnvironmentManager();
  */
 export const getConfig = () => environmentManager.getConfig();
 export const getEnvironment = () => environmentManager.getEnvironment();
-export const isFeatureEnabled = (feature: keyof EnvironmentConfig['features']) => 
+export const isFeatureEnabled = (feature: keyof EnvironmentConfig['features']) =>
   environmentManager.isFeatureEnabled(feature);
 export const isDevelopment = () => environmentManager.isDevelopment();
 export const isProduction = () => environmentManager.isProduction();

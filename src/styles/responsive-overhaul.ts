@@ -27,7 +27,7 @@ const phoneSpecs = {
 // 뷰포트 기반 동적 스케일링 함수
 const vwScale = (baseSize: number, minSize?: number, maxSize?: number) => {
   const vwSize = `${(baseSize / 375) * 100}vw`; // 375px 기준으로 vw 계산
-  
+
   if (minSize && maxSize) {
     return `clamp(${minSize}px, ${vwSize}, ${maxSize}px)`;
   } else if (minSize) {
@@ -35,35 +35,35 @@ const vwScale = (baseSize: number, minSize?: number, maxSize?: number) => {
   } else if (maxSize) {
     return `min(${vwSize}, ${maxSize}px)`;
   }
-  
+
   return vwSize;
 };
 
 // 반응형 폰트 크기 (vw 기반으로 모든 화면에 완벽 적응)
 const responsiveFontSizes = {
-  displayLarge: vwScale(32, 28, 40),    // 헤드라인
-  displayMedium: vwScale(28, 24, 34),   // 큰 제목
-  displaySmall: vwScale(24, 20, 28),    // 중간 제목
-  titleLarge: vwScale(20, 18, 24),      // 페이지 제목
-  titleMedium: vwScale(18, 16, 22),     // 섹션 제목
-  titleSmall: vwScale(16, 14, 18),      // 카드 제목
-  bodyLarge: vwScale(16, 14, 18),       // 큰 본문
-  bodyMedium: vwScale(14, 12, 16),      // 기본 본문
-  bodySmall: vwScale(12, 11, 14),       // 작은 본문
-  labelLarge: vwScale(12, 11, 14),      // 버튼 텍스트
-  labelMedium: vwScale(11, 10, 12),     // 폼 라벨
-  labelSmall: vwScale(10, 9, 11),       // 캡션
+  displayLarge: vwScale(32, 28, 40), // 헤드라인
+  displayMedium: vwScale(28, 24, 34), // 큰 제목
+  displaySmall: vwScale(24, 20, 28), // 중간 제목
+  titleLarge: vwScale(20, 18, 24), // 페이지 제목
+  titleMedium: vwScale(18, 16, 22), // 섹션 제목
+  titleSmall: vwScale(16, 14, 18), // 카드 제목
+  bodyLarge: vwScale(16, 14, 18), // 큰 본문
+  bodyMedium: vwScale(14, 12, 16), // 기본 본문
+  bodySmall: vwScale(12, 11, 14), // 작은 본문
+  labelLarge: vwScale(12, 11, 14), // 버튼 텍스트
+  labelMedium: vwScale(11, 10, 12), // 폼 라벨
+  labelSmall: vwScale(10, 9, 11), // 캡션
 } as const;
 
 // 반응형 간격 (vw 기반으로 화면 크기에 비례하여 조정)
 const responsiveSpacing = {
-  micro: vwScale(2, 2, 4),      // 아주 작은 간격
-  xs: vwScale(4, 4, 6),         // 매우 작은 간격
-  sm: vwScale(8, 6, 10),        // 작은 간격
-  md: vwScale(16, 12, 20),      // 기본 간격
-  lg: vwScale(24, 18, 28),      // 큰 간격
-  xl: vwScale(32, 24, 40),      // 매우 큰 간격
-  xxl: vwScale(48, 36, 56),     // 최대 간격
+  micro: vwScale(2, 2, 4), // 아주 작은 간격
+  xs: vwScale(4, 4, 6), // 매우 작은 간격
+  sm: vwScale(8, 6, 10), // 작은 간격
+  md: vwScale(16, 12, 20), // 기본 간격
+  lg: vwScale(24, 18, 28), // 큰 간격
+  xl: vwScale(32, 24, 40), // 매우 큰 간격
+  xxl: vwScale(48, 36, 56), // 최대 간격
 } as const;
 
 // 반응형 컴포넌트 크기
@@ -72,21 +72,21 @@ const responsiveSizes = {
   buttonSmall: vwScale(32, 32, 36),
   buttonMedium: vwScale(44, 40, 48),
   buttonLarge: vwScale(52, 48, 56),
-  
+
   // 입력 필드 높이
   inputHeight: vwScale(44, 40, 48),
-  
+
   // 헤더 높이
   headerHeight: vwScale(48, 44, 56),
-  
+
   // 네비게이션 바 높이
   navHeight: vwScale(60, 56, 68),
-  
+
   // 아이콘 크기
   iconSmall: vwScale(16, 14, 18),
   iconMedium: vwScale(24, 20, 28),
   iconLarge: vwScale(32, 28, 36),
-  
+
   // 터치 타겟 최소 크기
   touchTarget: vwScale(44, 44, 48),
 } as const;
@@ -101,23 +101,23 @@ const responsiveAppContainer = css`
   height: 100dvh; /* 동적 뷰포트 높이 지원 */
   min-height: 100vh;
   min-height: 100dvh;
-  
+
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   position: relative;
   overflow-x: hidden;
-  
+
   /* iOS Safari 주소창 대응 */
   min-height: -webkit-fill-available;
-  
+
   /* 모바일 최적화 */
   -webkit-overflow-scrolling: touch;
   -webkit-user-select: none;
   -webkit-touch-callout: none;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
-  
+
   /* 안전 영역 지원 */
   padding-top: env(safe-area-inset-top);
   padding-bottom: env(safe-area-inset-bottom);
@@ -139,23 +139,23 @@ const responsiveHeader = css`
   width: 100%;
   height: ${responsiveSizes.headerHeight};
   min-height: ${responsiveSizes.headerHeight};
-  
+
   display: flex;
   align-items: center;
   justify-content: space-between;
-  
+
   padding: 0 ${responsiveSpacing.md};
   box-sizing: border-box;
-  
+
   position: fixed;
   top: env(safe-area-inset-top, 0);
   left: 0;
   right: 0;
   z-index: 100;
-  
-  background-color: #FFFFFF;
-  border-bottom: 1px solid #EBEEF0;
-  
+
+  background-color: #ffffff;
+  border-bottom: 1px solid #ebeef0;
+
   /* 더 작은 화면에서 패딩 조정 */
   @media (max-width: ${phoneSpecs.small}px) {
     padding: 0 ${responsiveSpacing.sm};
@@ -166,15 +166,15 @@ const responsiveHeader = css`
 const responsiveMainContent = css`
   width: 100%;
   min-height: calc(100vh - ${responsiveSizes.headerHeight} - ${responsiveSizes.navHeight});
-  
+
   padding-top: ${responsiveSizes.headerHeight};
   padding-bottom: calc(${responsiveSizes.navHeight} + env(safe-area-inset-bottom));
-  
+
   box-sizing: border-box;
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
-  
+
   /* 스크롤바 숨김 */
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -187,24 +187,24 @@ const responsiveMainContent = css`
 const responsiveButton = css`
   height: ${responsiveSizes.buttonMedium};
   min-height: ${responsiveSizes.touchTarget};
-  
+
   padding: 0 ${responsiveSpacing.md};
   border-radius: ${vwScale(8, 6, 10)};
-  
+
   font-size: ${responsiveFontSizes.labelLarge};
   font-weight: 600;
-  
+
   display: flex;
   align-items: center;
   justify-content: center;
-  
+
   border: none;
   cursor: pointer;
-  
+
   transition: all 0.2s ease;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
-  
+
   /* 작은 화면에서 조정 */
   @media (max-width: ${phoneSpecs.small}px) {
     padding: 0 ${responsiveSpacing.sm};
@@ -217,22 +217,22 @@ const responsiveInput = css`
   width: 100%;
   height: ${responsiveSizes.inputHeight};
   min-height: ${responsiveSizes.touchTarget};
-  
+
   padding: 0 ${responsiveSpacing.md};
-  border: 1px solid #EBEEF0;
+  border: 1px solid #ebeef0;
   border-radius: ${vwScale(8, 6, 10)};
-  
+
   font-size: ${responsiveFontSizes.bodyMedium};
-  background-color: #FFFFFF;
-  
+  background-color: #ffffff;
+
   box-sizing: border-box;
-  
+
   &:focus {
     outline: none;
-    border-color: #FFD338;
+    border-color: #ffd338;
     box-shadow: 0 0 0 2px rgba(255, 211, 56, 0.2);
   }
-  
+
   /* 모바일 입력 최적화 */
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -244,13 +244,13 @@ const responsiveCard = css`
   width: 100%;
   margin: ${responsiveSpacing.sm} ${responsiveSpacing.md};
   padding: ${responsiveSpacing.lg};
-  
+
   border-radius: ${vwScale(12, 8, 16)};
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  
+
   box-sizing: border-box;
-  
+
   /* 작은 화면에서 마진/패딩 조정 */
   @media (max-width: ${phoneSpecs.small}px) {
     margin: ${responsiveSpacing.xs} ${responsiveSpacing.sm};
@@ -264,20 +264,20 @@ const responsiveTabBar = css`
   bottom: 0;
   left: 0;
   right: 0;
-  
+
   width: 100%;
   height: calc(${responsiveSizes.navHeight} + env(safe-area-inset-bottom));
-  
-  background-color: #FFFFFF;
-  border-top: 1px solid #EBEEF0;
-  
+
+  background-color: #ffffff;
+  border-top: 1px solid #ebeef0;
+
   display: flex;
   justify-content: space-around;
   align-items: center;
-  
+
   padding-bottom: env(safe-area-inset-bottom);
   box-sizing: border-box;
-  
+
   z-index: 100;
 `;
 
@@ -288,30 +288,30 @@ const responsiveText = {
     font-weight: 700;
     line-height: 1.1;
   `,
-  
+
   title: css`
     font-size: ${responsiveFontSizes.titleLarge};
     font-weight: 600;
     line-height: 1.2;
   `,
-  
+
   subtitle: css`
     font-size: ${responsiveFontSizes.titleMedium};
     font-weight: 500;
     line-height: 1.3;
   `,
-  
+
   body: css`
     font-size: ${responsiveFontSizes.bodyMedium};
     font-weight: 400;
     line-height: 1.4;
   `,
-  
+
   caption: css`
     font-size: ${responsiveFontSizes.bodySmall};
     font-weight: 400;
     line-height: 1.3;
-    color: #696E76;
+    color: #696e76;
   `,
 };
 
@@ -322,32 +322,32 @@ const responsiveGrid = {
     gap: ${responsiveSpacing.md};
     padding: 0 ${responsiveSpacing.md};
     box-sizing: border-box;
-    
+
     @media (max-width: ${phoneSpecs.small}px) {
       gap: ${responsiveSpacing.sm};
       padding: 0 ${responsiveSpacing.sm};
     }
   `,
-  
+
   twoColumn: css`
     grid-template-columns: 1fr 1fr;
   `,
-  
+
   threeColumn: css`
     grid-template-columns: repeat(3, 1fr);
-    
+
     @media (max-width: ${phoneSpecs.small}px) {
       grid-template-columns: repeat(2, 1fr);
     }
   `,
-  
+
   fourColumn: css`
     grid-template-columns: repeat(4, 1fr);
-    
+
     @media (max-width: ${phoneSpecs.medium}px) {
       grid-template-columns: repeat(3, 1fr);
     }
-    
+
     @media (max-width: ${phoneSpecs.small}px) {
       grid-template-columns: repeat(2, 1fr);
     }
@@ -356,7 +356,8 @@ const responsiveGrid = {
 
 // 디버깅을 위한 반응형 정보 표시 (개발 모드에서만)
 const debugResponsive = css`
-  ${process.env.NODE_ENV === 'development' && `
+  ${process.env.NODE_ENV === 'development' &&
+  `
     &::after {
       content: 'XS';
       position: fixed;

@@ -1,6 +1,6 @@
 /**
  * In-App Notification Component
- * 
+ *
  * 앱 내에서 표시되는 알림 컴포넌트
  * - 실시간 알림 표시
  * - 드롭다운 애니메이션
@@ -12,10 +12,10 @@ import React, { useState, useEffect, useRef } from 'react';
 
 import styled, { keyframes, css } from 'styled-components';
 
-import { 
-  PushNotificationData, 
-  NotificationType, 
-  NotificationPriority 
+import {
+  PushNotificationData,
+  NotificationType,
+  NotificationPriority,
 } from '../../services/pushNotificationService';
 
 interface InAppNotificationProps {
@@ -57,7 +57,7 @@ const pulse = keyframes`
   }
 `;
 
-const NotificationContainer = styled.div<{ 
+const NotificationContainer = styled.div<{
   isVisible: boolean;
   priority: NotificationPriority;
   notificationType: NotificationType;
@@ -69,13 +69,17 @@ const NotificationContainer = styled.div<{
   width: calc(100% - 40px);
   max-width: 400px;
   z-index: 10000;
-  
-  animation: ${props => props.isVisible ? slideDown : slideUp} 0.3s ease-out forwards;
-  
-  ${props => props.priority === NotificationPriority.CRITICAL && css`
-    animation: ${slideDown} 0.3s ease-out, ${pulse} 2s ease-in-out infinite;
-  `}
-  
+
+  animation: ${props => (props.isVisible ? slideDown : slideUp)} 0.3s ease-out forwards;
+
+  ${props =>
+    props.priority === NotificationPriority.CRITICAL &&
+    css`
+      animation:
+        ${slideDown} 0.3s ease-out,
+        ${pulse} 2s ease-in-out infinite;
+    `}
+
   @media (max-width: 768px) {
     top: 10px;
     left: 10px;
@@ -85,7 +89,7 @@ const NotificationContainer = styled.div<{
   }
 `;
 
-const NotificationCard = styled.div<{ 
+const NotificationCard = styled.div<{
   priority: NotificationPriority;
   notificationType: NotificationType;
 }>`
@@ -96,12 +100,12 @@ const NotificationCard = styled.div<{
   cursor: pointer;
   transition: all 0.2s ease;
   position: relative;
-  
+
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
   }
-  
+
   &::before {
     content: '';
     position: absolute;
@@ -128,11 +132,13 @@ const NotificationCard = styled.div<{
       }
     }};
   }
-  
-  ${props => props.priority === NotificationPriority.CRITICAL && css`
-    border: 2px solid #F44336;
-    box-shadow: 0 0 20px rgba(244, 67, 54, 0.3);
-  `}
+
+  ${props =>
+    props.priority === NotificationPriority.CRITICAL &&
+    css`
+      border: 2px solid #f44336;
+      box-shadow: 0 0 20px rgba(244, 67, 54, 0.3);
+    `}
 `;
 
 const NotificationHeader = styled.div`
@@ -169,7 +175,7 @@ const NotificationIcon = styled.div<{ notificationType: NotificationType }>`
         return 'linear-gradient(135deg, #FFD338, #FFCC00)';
     }
   }};
-  
+
   &::after {
     content: '${props => {
       switch (props.notificationType) {
@@ -220,7 +226,7 @@ const PriorityBadge = styled.div<{ priority: NotificationPriority }>`
   border-radius: 12px;
   font-size: 11px;
   font-weight: 600;
-  
+
   ${props => {
     switch (props.priority) {
       case NotificationPriority.CRITICAL:
@@ -266,12 +272,12 @@ const CloseButton = styled.button`
   cursor: pointer;
   color: #999;
   transition: all 0.2s ease;
-  
+
   &:hover {
     background: rgba(0, 0, 0, 0.05);
     color: #666;
   }
-  
+
   &::after {
     content: '×';
     font-size: 16px;
@@ -283,7 +289,7 @@ const NotificationImage = styled.img`
   width: 100%;
   height: 120px;
   object-fit: cover;
-  border-bottom: 1px solid #F0F0F0;
+  border-bottom: 1px solid #f0f0f0;
 `;
 
 const NotificationFooter = styled.div`
@@ -291,7 +297,7 @@ const NotificationFooter = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-top: 1px solid #F0F0F0;
+  border-top: 1px solid #f0f0f0;
 `;
 
 const NotificationTime = styled.div`
@@ -312,15 +318,18 @@ const ActionButton = styled.button<{ primary?: boolean }>`
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  
-  ${props => props.primary ? `
+
+  ${props =>
+    props.primary
+      ? `
     background: #FFD338;
     color: #333;
     
     &:hover {
       background: #FFCC00;
     }
-  ` : `
+  `
+      : `
     background: #F5F5F5;
     color: #666;
     
@@ -335,9 +344,9 @@ const ProgressBar = styled.div<{ duration: number }>`
   bottom: 0;
   left: 0;
   height: 2px;
-  background: #FFD338;
+  background: #ffd338;
   animation: shrink ${props => props.duration}ms linear forwards;
-  
+
   @keyframes shrink {
     from {
       width: 100%;
@@ -353,7 +362,7 @@ const InAppNotification: React.FC<InAppNotificationProps> = ({
   onClose,
   onAction,
   autoClose = true,
-  autoCloseDelay = 5000
+  autoCloseDelay = 5000,
 }) => {
   const [isVisible, setIsVisible] = useState(true);
   const [timeLeft, setTimeLeft] = useState(autoCloseDelay);
@@ -420,13 +429,13 @@ const InAppNotification: React.FC<InAppNotificationProps> = ({
     const now = Date.now();
     const diff = now - timestamp;
     const minutes = Math.floor(diff / 60000);
-    
+
     if (minutes < 1) return '지금';
     if (minutes < 60) return `${minutes}분 전`;
-    
+
     const hours = Math.floor(minutes / 60);
     if (hours < 24) return `${hours}시간 전`;
-    
+
     const days = Math.floor(hours / 24);
     return `${days}일 전`;
   };
@@ -457,27 +466,29 @@ const InAppNotification: React.FC<InAppNotificationProps> = ({
         notificationType={notification.type}
         onClick={() => onAction?.('view')}
       >
-        <CloseButton onClick={(e) => {
-          e.stopPropagation();
-          handleClose();
-        }} />
-        
+        <CloseButton
+          onClick={e => {
+            e.stopPropagation();
+            handleClose();
+          }}
+        />
+
         {notification.priority !== NotificationPriority.LOW && (
           <PriorityBadge priority={notification.priority}>
             {getPriorityText(notification.priority)}
           </PriorityBadge>
         )}
-        
+
         {notification.image && (
-          <NotificationImage 
-            src={notification.image} 
-            alt="Notification image"
-            onError={(e) => {
+          <NotificationImage
+            src={notification.image}
+            alt='Notification image'
+            onError={e => {
               e.currentTarget.style.display = 'none';
             }}
           />
         )}
-        
+
         <NotificationHeader>
           <NotificationIcon notificationType={notification.type} />
           <NotificationContent>
@@ -485,19 +496,17 @@ const InAppNotification: React.FC<InAppNotificationProps> = ({
             <NotificationBody>{notification.body}</NotificationBody>
           </NotificationContent>
         </NotificationHeader>
-        
+
         <NotificationFooter>
-          <NotificationTime>
-            {formatTime(notification.timestamp || Date.now())}
-          </NotificationTime>
-          
+          <NotificationTime>{formatTime(notification.timestamp || Date.now())}</NotificationTime>
+
           {notification.actions && notification.actions.length > 0 && (
             <ActionButtons>
-              {notification.actions.slice(0, 2).map((action) => (
+              {notification.actions.slice(0, 2).map(action => (
                 <ActionButton
                   key={action.id}
                   primary={action.id === 'view' || action.id === 'confirm'}
-                  onClick={(e) => {
+                  onClick={e => {
                     e.stopPropagation();
                     handleActionClick(action.id);
                   }}
@@ -508,7 +517,7 @@ const InAppNotification: React.FC<InAppNotificationProps> = ({
             </ActionButtons>
           )}
         </NotificationFooter>
-        
+
         {autoClose && notification.priority !== NotificationPriority.CRITICAL && timeLeft > 0 && (
           <ProgressBar duration={autoCloseDelay} />
         )}

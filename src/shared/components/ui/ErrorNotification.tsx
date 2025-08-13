@@ -25,8 +25,8 @@ const Container = styled.div`
   transform: translateX(-50%);
   width: calc(100% - 32px);
   max-width: 398px;
-  background: #FFF5F5;
-  border: 1px solid #FFCCCC;
+  background: #fff5f5;
+  border: 1px solid #ffcccc;
   border-radius: 8px;
   padding: 16px;
   display: flex;
@@ -40,7 +40,7 @@ const Icon = styled.div`
   width: 20px;
   height: 20px;
   flex-shrink: 0;
-  color: #E53E3E;
+  color: #e53e3e;
 `;
 const Content = styled.div`
   flex: 1;
@@ -76,10 +76,10 @@ const ActionButton = styled.button`
   }
 `;
 const RetryButton = styled(ActionButton)`
-  background: #E53E3E;
+  background: #e53e3e;
   color: white;
   &:hover:not(:disabled) {
-    background: #C53030;
+    background: #c53030;
   }
 `;
 const DismissButton = styled(ActionButton)`
@@ -92,30 +92,31 @@ const DismissButton = styled(ActionButton)`
 export const ErrorNotification: React.FC<ErrorNotificationProps> = ({
   error,
   onRetry,
-  onDismiss
+  onDismiss,
 }) => {
   if (!error) return null;
   return (
     <Container>
       <Icon>
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
-            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        <svg
+          xmlns='http://www.w3.org/2000/svg'
+          fill='none'
+          viewBox='0 0 24 24'
+          stroke='currentColor'
+        >
+          <path
+            strokeLinecap='round'
+            strokeLinejoin='round'
+            strokeWidth={2}
+            d='M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
+          />
         </svg>
       </Icon>
       <Content>
         <ErrorMessage>{error}</ErrorMessage>
         <Actions>
-          {onRetry && (
-            <RetryButton onClick={onRetry}>
-              다시 시도
-            </RetryButton>
-          )}
-          {onDismiss && (
-            <DismissButton onClick={onDismiss}>
-              닫기
-            </DismissButton>
-          )}
+          {onRetry && <RetryButton onClick={onRetry}>다시 시도</RetryButton>}
+          {onDismiss && <DismissButton onClick={onDismiss}>닫기</DismissButton>}
         </Actions>
       </Content>
     </Container>

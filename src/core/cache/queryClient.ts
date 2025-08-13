@@ -53,13 +53,13 @@ export const refetchQuery = (queryKey: string[]) => {
 export const getCacheStats = () => {
   const queryCache = queryClient.getQueryCache();
   const mutationCache = queryClient.getMutationCache();
-  
+
   const queries = queryCache.getAll();
   const mutations = mutationCache.getAll();
-  
+
   // 메모리 캐시 키 수집
   const memoryKeys = queries.map(query => query.queryHash);
-  
+
   // LocalStorage 사용량 계산
   let localStorageSize = 0;
   let localStorageCount = 0;
@@ -73,22 +73,22 @@ export const getCacheStats = () => {
   } catch (error) {
     // localStorage 접근 불가 시 기본값
   }
-  
+
   return Promise.resolve({
     memory: {
       count: queries.length,
-      keys: memoryKeys
+      keys: memoryKeys,
     },
     localStorage: {
       count: localStorageCount,
-      size: localStorageSize
+      size: localStorageSize,
     },
     indexedDB: {
-      count: 0 // IndexedDB 구현 시 추가
+      count: 0, // IndexedDB 구현 시 추가
     },
     reactQuery: {
       queries: queries.length,
-      mutations: mutations.length
-    }
+      mutations: mutations.length,
+    },
   });
 };

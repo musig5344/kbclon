@@ -10,10 +10,10 @@ interface AuthGuardProps {
   requireAuth?: boolean;
   redirectTo?: string;
 }
-export const AuthGuard: React.FC<AuthGuardProps> = ({ 
-  children, 
+export const AuthGuard: React.FC<AuthGuardProps> = ({
+  children,
   requireAuth = true,
-  redirectTo = '/auth/login'
+  redirectTo = '/auth/login',
 }) => {
   const navigate = useNavigate();
   const { user, isInitialized, checkSession } = useAuth();

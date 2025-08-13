@@ -18,7 +18,7 @@ const TouchableContainer = styled.div<{
   $isPressed: boolean;
 }>`
   position: relative;
-  cursor: ${props => props.$disabled ? 'not-allowed' : 'pointer'};
+  cursor: ${props => (props.$disabled ? 'not-allowed' : 'pointer')};
   transition: opacity 100ms ease-out;
   opacity: ${props => {
     if (props.$disabled) return 0.6;
@@ -28,7 +28,7 @@ const TouchableContainer = styled.div<{
   user-select: none;
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
-  
+
   /* Ensure touch target meets minimum size */
   min-height: 44px;
   min-width: 44px;
@@ -87,27 +87,27 @@ export const TouchableOpacity: React.FC<TouchableOpacityProps> = ({
   const [isPressed, setIsPressed] = useState(false);
   const pressOutsideBounds = useRef(false);
   const elementRef = useRef<HTMLDivElement>(null);
-  
+
   // Handle press in
   const handlePressIn = useCallback(() => {
     if (disabled) return;
-    
+
     setIsPressed(true);
     pressOutsideBounds.current = false;
-    
+
     if (enableHaptic) {
       haptic.trigger(hapticStyle);
     }
-    
+
     onPressIn?.();
   }, [disabled, enableHaptic, hapticStyle, onPressIn]);
-  
+
   // Handle press out
   const handlePressOut = useCallback(() => {
     setIsPressed(false);
     onPressOut?.();
   }, [onPressOut]);
-  
+
   // Use touch optimization hook
   const { bind } = useTouchOptimized(
     {
@@ -126,19 +126,19 @@ export const TouchableOpacity: React.FC<TouchableOpacityProps> = ({
       },
       onGestureStart: handlePressIn,
       onGestureEnd: handlePressOut,
-      onGestureMove: (gesture) => {
+      onGestureMove: gesture => {
         // Check if touch moved outside bounds
         if (!elementRef.current || pressOutsideBounds.current) return;
-        
+
         const rect = elementRef.current.getBoundingClientRect();
         const offset = pressRetentionOffset || { top: 20, left: 20, bottom: 20, right: 20 };
-        
-        const isOutside = 
+
+        const isOutside =
           gesture.currentX < rect.left - offset.left! ||
           gesture.currentX > rect.right + offset.right! ||
           gesture.currentY < rect.top - offset.top! ||
           gesture.currentY > rect.bottom + offset.bottom!;
-        
+
         if (isOutside && !pressOutsideBounds.current) {
           pressOutsideBounds.current = true;
           handlePressOut();
@@ -153,13 +153,15 @@ export const TouchableOpacity: React.FC<TouchableOpacityProps> = ({
       enableHaptic: false, // We handle haptic manually
     }
   );
-  
+
   // Apply hit slop
-  const hitSlopStyle = hitSlop ? {
-    padding: `${hitSlop.top || 0}px ${hitSlop.right || 0}px ${hitSlop.bottom || 0}px ${hitSlop.left || 0}px`,
-    margin: `-${hitSlop.top || 0}px -${hitSlop.right || 0}px -${hitSlop.bottom || 0}px -${hitSlop.left || 0}px`,
-  } : {};
-  
+  const hitSlopStyle = hitSlop
+    ? {
+        padding: `${hitSlop.top || 0}px ${hitSlop.right || 0}px ${hitSlop.bottom || 0}px ${hitSlop.left || 0}px`,
+        margin: `-${hitSlop.top || 0}px -${hitSlop.right || 0}px -${hitSlop.bottom || 0}px -${hitSlop.left || 0}px`,
+      }
+    : {};
+
   return (
     <TouchableContainer
       ref={elementRef}
@@ -181,8 +183,10 @@ const HighlightContainer = styled(TouchableContainer)<{
   $underlayColor: string;
   $isPressed: boolean;
 }>`
-  background-color: ${props => props.$isPressed ? props.$underlayColor : 'transparent'};
-  transition: background-color 100ms ease-out, opacity 100ms ease-out;
+  background-color: ${props => (props.$isPressed ? props.$underlayColor : 'transparent')};
+  transition:
+    background-color 100ms ease-out,
+    opacity 100ms ease-out;
 `;
 
 export interface TouchableHighlightProps extends TouchableOpacityProps {
@@ -194,7 +198,7 @@ export const TouchableHighlight: React.FC<TouchableHighlightProps> = ({
   ...props
 }) => {
   const [isPressed, setIsPressed] = useState(false);
-  
+
   return (
     <TouchableOpacity
       {...props}
@@ -220,7 +224,9 @@ export const TouchableHighlight: React.FC<TouchableHighlightProps> = ({
 };
 
 // Touchable without feedback (no visual feedback)
-export const TouchableWithoutFeedback: React.FC<Omit<TouchableOpacityProps, 'activeOpacity'>> = (props) => {
+export const TouchableWithoutFeedback: React.FC<
+  Omit<TouchableOpacityProps, 'activeOpacity'>
+> = props => {
   return <TouchableOpacity {...props} activeOpacity={1} />;
 };
 

@@ -25,10 +25,7 @@ interface EnvironmentConfig {
 }
 
 // 필수 환경변수 목록
-const REQUIRED_ENV_VARS = [
-  'REACT_APP_SUPABASE_URL',
-  'REACT_APP_SUPABASE_ANON_KEY',
-] as const;
+const REQUIRED_ENV_VARS = ['REACT_APP_SUPABASE_URL', 'REACT_APP_SUPABASE_ANON_KEY'] as const;
 
 // 환경변수 검증
 function validateEnvironment(): void {

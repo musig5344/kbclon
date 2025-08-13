@@ -28,14 +28,14 @@ const MainContent = styled.div`
 const CenterTitle = styled(Typography).attrs({
   variant: 'headlineMedium',
   weight: 'bold',
-  align: 'center'
+  align: 'center',
 })`
   color: ${tokens.colors.text.black};
   margin-bottom: ${tokens.spacing[5]};
 `;
 const CenterSubtitle = styled(Typography).attrs({
   variant: 'bodyLarge',
-  align: 'center'
+  align: 'center',
 })`
   color: ${tokens.colors.text.primary};
   line-height: ${tokens.typography.lineHeight.comfortable};
@@ -63,7 +63,7 @@ const TabContainer = styled.div`
   display: flex;
   margin: 0 ${tokens.spacing[6]} ${tokens.spacing[8]} ${tokens.spacing[6]};
   border-radius: ${tokens.borderRadius.large};
-  background-color: #E8E8E8;
+  background-color: #e8e8e8;
   padding: 4px;
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
 `;
@@ -72,18 +72,18 @@ const Tab = styled.button<{ $active: boolean }>`
   padding: 12px 16px;
   border: none;
   border-radius: 8px;
-  background-color: ${props => props.$active ? '#FFFFFF' : 'transparent'};
-  color: ${props => props.$active ? '#1A1A1A' : '#666666'};
+  background-color: ${props => (props.$active ? '#FFFFFF' : 'transparent')};
+  color: ${props => (props.$active ? '#1A1A1A' : '#666666')};
   font-family: 'KBFGText', sans-serif;
   font-size: 16px;
-  font-weight: ${props => props.$active ? '700' : '500'};
+  font-weight: ${props => (props.$active ? '700' : '500')};
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: ${props => props.$active ? '0 2px 8px rgba(0, 0, 0, 0.12)' : 'none'};
+  box-shadow: ${props => (props.$active ? '0 2px 8px rgba(0, 0, 0, 0.12)' : 'none')};
   position: relative;
   &:hover {
-    color: ${props => props.$active ? '#1A1A1A' : '#333333'};
-    background-color: ${props => props.$active ? '#FFFFFF' : 'rgba(255, 255, 255, 0.5)'};
+    color: ${props => (props.$active ? '#1A1A1A' : '#333333')};
+    background-color: ${props => (props.$active ? '#FFFFFF' : 'rgba(255, 255, 255, 0.5)')};
   }
   &:active {
     transform: scale(0.98);
@@ -100,7 +100,7 @@ const InputLabel = styled.label`
   display: block;
   font-family: 'KBFGText', sans-serif;
   font-size: 16px;
-  color: #1A1A1A;
+  color: #1a1a1a;
   margin-bottom: 8px;
   font-weight: 600;
   letter-spacing: -0.3px;
@@ -108,17 +108,17 @@ const InputLabel = styled.label`
 const UnderlineInput = styled.input`
   width: 100%;
   border: none;
-  border-bottom: 2px solid #D0D0D0;
+  border-bottom: 2px solid #d0d0d0;
   padding: 12px 0;
   font-family: 'KBFGText', sans-serif;
   font-size: 16px;
-  color: #1A1A1A;
+  color: #1a1a1a;
   background: transparent;
   outline: none;
   font-weight: 500;
   transition: border-color 0.2s ease;
   &:focus {
-    border-bottom-color: #FFD338;
+    border-bottom-color: #ffd338;
   }
   &::placeholder {
     color: #999999;
@@ -154,8 +154,8 @@ const Divider = styled.div`
 const LoginButton = styled.button<{ disabled: boolean }>`
   width: calc(100% - 48px);
   height: 56px;
-  background-color: #FFD338; /* 원본 KB 옷로우 */
-  color: #1A1A1A; /* 원본 버튼 텍스트 */
+  background-color: #ffd338; /* 원본 KB 옷로우 */
+  color: #1a1a1a; /* 원본 버튼 텍스트 */
   border: none;
   border-radius: 0;
   font-family: 'KBFGText', sans-serif;
@@ -168,10 +168,10 @@ const LoginButton = styled.button<{ disabled: boolean }>`
   right: 24px;
   margin: 0;
   &:hover {
-    background-color: #FFBC00;
+    background-color: #ffbc00;
   }
   &:disabled {
-    background-color: #E0E0E0; /* 비활성화 배경 */
+    background-color: #e0e0e0; /* 비활성화 배경 */
     color: #999999; /* 비활성화 텍스트 */
     cursor: not-allowed;
   }
@@ -209,36 +209,24 @@ const IdPasswordLoginPage: React.FC = () => {
   };
   return (
     <Container>
-      <LoginHeader 
-        showCloseButton={false}
-        onSearchClick={() => {}}
-        onMenuClick={() => {}}
-      />
+      <LoginHeader showCloseButton={false} onSearchClick={() => {}} onMenuClick={() => {}} />
       <MainContent>
         <CenterTitle>KB국민인증서</CenterTitle>
         <CenterSubtitle>
-          금융에서 생활까지 모든 인증을 하나로<br />
+          금융에서 생활까지 모든 인증을 하나로
+          <br />
           지문, 패턴으로 로그인
         </CenterSubtitle>
         <BottomSheet>
           <SlideBar />
           <TabContainer>
-            <Tab 
-              $active={activeTab === '공동인증서'} 
-              onClick={() => setActiveTab('공동인증서')}
-            >
+            <Tab $active={activeTab === '공동인증서'} onClick={() => setActiveTab('공동인증서')}>
               공동인증서
             </Tab>
-            <Tab 
-              $active={activeTab === '금융인증서'} 
-              onClick={() => setActiveTab('금융인증서')}
-            >
+            <Tab $active={activeTab === '금융인증서'} onClick={() => setActiveTab('금융인증서')}>
               금융인증서
             </Tab>
-            <Tab 
-              $active={activeTab === '아이디'} 
-              onClick={() => setActiveTab('아이디')}
-            >
+            <Tab $active={activeTab === '아이디'} onClick={() => setActiveTab('아이디')}>
               아이디
             </Tab>
           </TabContainer>
@@ -247,22 +235,22 @@ const IdPasswordLoginPage: React.FC = () => {
               <InputContainer>
                 <InputLabel>아이디 (이메일)</InputLabel>
                 <UnderlineInput
-                  type="email"
+                  type='email'
                   value={loginId}
-                  onChange={(e) => setLoginId(e.target.value)}
-                  placeholder="아이디 입력"
-                  autoComplete="email"
+                  onChange={e => setLoginId(e.target.value)}
+                  placeholder='아이디 입력'
+                  autoComplete='email'
                   disabled={loading}
                 />
               </InputContainer>
               <InputContainer>
                 <InputLabel>사용자 암호</InputLabel>
                 <UnderlineInput
-                  type="password"
+                  type='password'
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="비밀번호 입력"
-                  autoComplete="current-password"
+                  onChange={e => setPassword(e.target.value)}
+                  placeholder='비밀번호 입력'
+                  autoComplete='current-password'
                   disabled={loading}
                 />
               </InputContainer>
@@ -273,10 +261,7 @@ const IdPasswordLoginPage: React.FC = () => {
               <LinkText>아이디조회/암호 설정</LinkText>
             </BottomLinks>
           </FormContent>
-          <LoginButton 
-            disabled={loading || !loginId || !password}
-            onClick={handleLogin}
-          >
+          <LoginButton disabled={loading || !loginId || !password} onClick={handleLogin}>
             {loading ? '로그인 중...' : '로그인'}
           </LoginButton>
         </BottomSheet>

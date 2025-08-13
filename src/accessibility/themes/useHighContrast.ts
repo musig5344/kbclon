@@ -1,6 +1,10 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 
-import { HighContrastManager, HighContrastMode, HighContrastPreferences } from './HighContrastManager';
+import {
+  HighContrastManager,
+  HighContrastMode,
+  HighContrastPreferences,
+} from './HighContrastManager';
 import { HighContrastColors, highContrastThemes } from './HighContrastTheme';
 
 export interface UseHighContrastReturn {
@@ -17,12 +21,14 @@ export interface UseHighContrastReturn {
 
 export const useHighContrast = (): UseHighContrastReturn => {
   const manager = useMemo(() => HighContrastManager.getInstance(), []);
-  
+
   const [mode, setModeState] = useState<HighContrastMode>(manager.getCurrentMode());
-  const [preferences, setPreferencesState] = useState<HighContrastPreferences>(manager.getPreferences());
+  const [preferences, setPreferencesState] = useState<HighContrastPreferences>(
+    manager.getPreferences()
+  );
 
   useEffect(() => {
-    const unsubscribe = manager.subscribe((newMode) => {
+    const unsubscribe = manager.subscribe(newMode => {
       setModeState(newMode);
       setPreferencesState(manager.getPreferences());
     });
@@ -30,24 +36,30 @@ export const useHighContrast = (): UseHighContrastReturn => {
     return unsubscribe;
   }, [manager]);
 
-  const setMode = useCallback((newMode: HighContrastMode) => {
-    manager.setMode(newMode);
-  }, [manager]);
+  const setMode = useCallback(
+    (newMode: HighContrastMode) => {
+      manager.setMode(newMode);
+    },
+    [manager]
+  );
 
   const toggle = useCallback(() => {
     manager.toggle();
   }, [manager]);
 
-  const updatePreferences = useCallback((newPreferences: Partial<HighContrastPreferences>) => {
-    manager.updatePreferences(newPreferences);
-    setPreferencesState(manager.getPreferences());
-  }, [manager]);
+  const updatePreferences = useCallback(
+    (newPreferences: Partial<HighContrastPreferences>) => {
+      manager.updatePreferences(newPreferences);
+      setPreferencesState(manager.getPreferences());
+    },
+    [manager]
+  );
 
   const isActive = mode !== 'off';
 
   const currentTheme = useMemo(() => {
     if (!isActive) return null;
-    
+
     switch (mode) {
       case 'light':
         return highContrastThemes.light;
@@ -61,9 +73,10 @@ export const useHighContrast = (): UseHighContrastReturn => {
   }, [mode, isActive]);
 
   const isSystemSupported = useMemo(() => {
-    return window.matchMedia && (
-      window.matchMedia('(prefers-contrast: high)').matches ||
-      window.matchMedia('(forced-colors: active)').matches
+    return (
+      window.matchMedia &&
+      (window.matchMedia('(prefers-contrast: high)').matches ||
+        window.matchMedia('(forced-colors: active)').matches)
     );
   }, []);
 
@@ -93,7 +106,7 @@ export const useSystemHighContrast = () => {
     if (window.matchMedia) {
       const highContrastQuery = window.matchMedia('(prefers-contrast: high)');
       const forcedColorsQuery = window.matchMedia('(forced-colors: active)');
-      
+
       setIsSystemHighContrast(highContrastQuery.matches);
       setIsForcedColors(forcedColorsQuery.matches);
 
@@ -113,6 +126,7 @@ export const useSystemHighContrast = () => {
         forcedColorsQuery.removeEventListener('change', handleForcedColorsChange);
       };
     }
+    return undefined;
   }, []);
 
   return {
@@ -126,48 +140,69 @@ export const useSystemHighContrast = () => {
 export const useHighContrastColors = () => {
   const { currentTheme, isActive } = useHighContrast();
 
-  const getColor = useCallback((path: string): string => {
-    if (!isActive || !currentTheme) return '';
+  const getColor = useCallback(
+    (path: string): string => {
+      if (!isActive || !currentTheme) return '';
 
-    const pathParts = path.split('.');
-    let current: any = currentTheme;
+      const pathParts = path.split('.');
+      let current: any = currentTheme;
 
-    for (const part of pathParts) {
-      if (current && typeof current === 'object' && part in current) {
-        current = current[part];
-      } else {
-        return '';
+      for (const part of pathParts) {
+        if (current && typeof current === 'object' && part in current) {
+          current = current[part];
+        } else {
+          return '';
+        }
       }
-    }
 
-    return typeof current === 'string' ? current : '';
-  }, [currentTheme, isActive]);
+      return typeof current === 'string' ? current : '';
+    },
+    [currentTheme, isActive]
+  );
 
-  const textColor = useCallback((level: 'primary' | 'secondary' | 'tertiary' = 'primary', size: 'normal' | 'large' | 'enhanced' = 'normal') => {
-    return getColor(`text.${level}.${size}`);
-  }, [getColor]);
+  const textColor = useCallback(
+    (
+      level: 'primary' | 'secondary' | 'tertiary' = 'primary',
+      size: 'normal' | 'large' | 'enhanced' = 'normal'
+    ) => {
+      return getColor(`text.${level}.${size}`);
+    },
+    [getColor]
+  );
 
-  const backgroundColor = useCallback((level: 'primary' | 'secondary' | 'tertiary' = 'primary') => {
-    return getColor(`background.${level}`);
-  }, [getColor]);
+  const backgroundColor = useCallback(
+    (level: 'primary' | 'secondary' | 'tertiary' = 'primary') => {
+      return getColor(`background.${level}`);
+    },
+    [getColor]
+  );
 
-  const interactiveColor = useCallback((
-    type: 'primary' | 'secondary' | 'danger' = 'primary',
-    property: 'background' | 'text' | 'border' | 'hover' | 'active' | 'disabled' = 'background'
-  ) => {
-    return getColor(`interactive.${type}.${property}`);
-  }, [getColor]);
+  const interactiveColor = useCallback(
+    (
+      type: 'primary' | 'secondary' | 'danger' = 'primary',
+      property: 'background' | 'text' | 'border' | 'hover' | 'active' | 'disabled' = 'background'
+    ) => {
+      return getColor(`interactive.${type}.${property}`);
+    },
+    [getColor]
+  );
 
-  const systemColor = useCallback((type: 'focus' | 'border' | 'divider' | 'shadow' | 'selection' | 'highlight') => {
-    return getColor(`system.${type}`);
-  }, [getColor]);
+  const systemColor = useCallback(
+    (type: 'focus' | 'border' | 'divider' | 'shadow' | 'selection' | 'highlight') => {
+      return getColor(`system.${type}`);
+    },
+    [getColor]
+  );
 
-  const financialColor = useCallback((
-    type: 'positive' | 'negative' | 'neutral' | 'balance' = 'balance',
-    size: 'normal' | 'large' | 'enhanced' = 'normal'
-  ) => {
-    return getColor(`financial.${type}.${size}`);
-  }, [getColor]);
+  const financialColor = useCallback(
+    (
+      type: 'positive' | 'negative' | 'neutral' | 'balance' = 'balance',
+      size: 'normal' | 'large' | 'enhanced' = 'normal'
+    ) => {
+      return getColor(`financial.${type}.${size}`);
+    },
+    [getColor]
+  );
 
   return {
     getColor,

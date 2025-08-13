@@ -3,14 +3,7 @@
  * 완전한 키보드 네비게이션과 접근성 지원
  */
 
-import React, { 
-  useState, 
-  useRef, 
-  useEffect, 
-  useCallback,
-  KeyboardEvent,
-  useMemo
-} from 'react';
+import React, { useState, useRef, useEffect, useCallback, KeyboardEvent, useMemo } from 'react';
 
 import styled from 'styled-components';
 
@@ -44,8 +37,10 @@ const Label = styled.label<{ required?: boolean }>`
   font-weight: 500;
   color: #333;
   margin-bottom: 4px;
-  
-  ${props => props.required && `
+
+  ${props =>
+    props.required &&
+    `
     &::after {
       content: ' *';
       color: #e74c3c;
@@ -57,11 +52,11 @@ const InputContainer = styled.div<{ hasError?: boolean; disabled?: boolean }>`
   position: relative;
   display: flex;
   align-items: center;
-  border: 2px solid ${props => props.hasError ? '#e74c3c' : '#ddd'};
+  border: 2px solid ${props => (props.hasError ? '#e74c3c' : '#ddd')};
   border-radius: 8px;
-  background: ${props => props.disabled ? '#f5f5f5' : 'white'};
+  background: ${props => (props.disabled ? '#f5f5f5' : 'white')};
   transition: border-color 0.2s ease;
-  
+
   &:focus-within {
     border-color: #007bff;
     box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
@@ -75,12 +70,12 @@ const DateInput = styled.input`
   background: transparent;
   font-size: 16px;
   outline: none;
-  
+
   &:disabled {
     color: #999;
     cursor: not-allowed;
   }
-  
+
   &::placeholder {
     color: #999;
   }
@@ -93,17 +88,17 @@ const CalendarButton = styled.button`
   cursor: pointer;
   color: #666;
   font-size: 18px;
-  
+
   &:hover:not(:disabled) {
     color: #007bff;
   }
-  
+
   &:focus {
     outline: 2px solid #007bff;
     outline-offset: 2px;
     border-radius: 4px;
   }
-  
+
   &:disabled {
     color: #ccc;
     cursor: not-allowed;
@@ -151,17 +146,17 @@ const NavButton = styled.button`
   justify-content: center;
   font-size: 18px;
   color: #666;
-  
+
   &:hover {
     background: #f0f0f0;
     color: #007bff;
   }
-  
+
   &:focus {
     outline: 2px solid #007bff;
     outline-offset: 2px;
   }
-  
+
   &:disabled {
     color: #ccc;
     cursor: not-allowed;
@@ -212,34 +207,46 @@ const CalendarDay = styled.button<{
   justify-content: center;
   position: relative;
   transition: all 0.1s ease;
-  
-  ${props => props.isDisabled && `
+
+  ${props =>
+    props.isDisabled &&
+    `
     color: #ccc;
     cursor: not-allowed;
   `}
-  
-  ${props => props.isOtherMonth && !props.isDisabled && `
+
+  ${props =>
+    props.isOtherMonth &&
+    !props.isDisabled &&
+    `
     color: #999;
   `}
   
-  ${props => props.isToday && !props.isSelected && `
+  ${props =>
+    props.isToday &&
+    !props.isSelected &&
+    `
     border: 2px solid #007bff;
     font-weight: 600;
   `}
   
-  ${props => props.isSelected && `
+  ${props =>
+    props.isSelected &&
+    `
     background: #007bff;
     color: white;
     font-weight: 600;
   `}
   
-  ${props => props.isFocused && `
+  ${props =>
+    props.isFocused &&
+    `
     outline: 2px solid #007bff;
     outline-offset: 2px;
   `}
   
   &:hover:not(:disabled) {
-    background: ${props => props.isSelected ? '#0056b3' : '#f0f8ff'};
+    background: ${props => (props.isSelected ? '#0056b3' : '#f0f8ff')};
   }
 `;
 
@@ -258,12 +265,12 @@ const QuickActionButton = styled.button`
   background: white;
   font-size: 12px;
   cursor: pointer;
-  
+
   &:hover {
     background: #f0f8ff;
     border-color: #007bff;
   }
-  
+
   &:focus {
     outline: 2px solid #007bff;
     outline-offset: 2px;
@@ -298,7 +305,7 @@ export const KeyboardDatePicker: React.FC<KeyboardDatePickerProps> = ({
   showWeekNumbers = false,
   onChange,
   className,
-  'aria-describedby': ariaDescribedBy
+  'aria-describedby': ariaDescribedBy,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [focusedDate, setFocusedDate] = useState<Date>(value || new Date());
@@ -311,83 +318,103 @@ export const KeyboardDatePicker: React.FC<KeyboardDatePickerProps> = ({
   const datePickerId = useRef(`datepicker-${Math.random().toString(36).substr(2, 9)}`);
 
   // 로케일 설정
-  const weekDays = locale === 'ko' 
-    ? ['일', '월', '화', '수', '목', '금', '토']
-    : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const weekDays =
+    locale === 'ko'
+      ? ['일', '월', '화', '수', '목', '금', '토']
+      : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-  const monthNames = locale === 'ko'
-    ? ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월']
-    : ['January', 'February', 'March', 'April', 'May', 'June',
-       'July', 'August', 'September', 'October', 'November', 'December'];
+  const monthNames =
+    locale === 'ko'
+      ? ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월']
+      : [
+          'January',
+          'February',
+          'March',
+          'April',
+          'May',
+          'June',
+          'July',
+          'August',
+          'September',
+          'October',
+          'November',
+          'December',
+        ];
 
   // 날짜 포맷 유틸리티
-  const formatDate = useCallback((date: Date): string => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
+  const formatDate = useCallback(
+    (date: Date): string => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
 
-    switch (format) {
-      case 'MM/DD/YYYY':
-        return `${month}/${day}/${year}`;
-      case 'DD.MM.YYYY':
-        return `${day}.${month}.${year}`;
-      default:
-        return `${year}-${month}-${day}`;
-    }
-  }, [format]);
-
-  const parseDate = useCallback((dateString: string): Date | null => {
-    if (!dateString) return null;
-
-    let year: number, month: number, day: number;
-
-    switch (format) {
-      case 'MM/DD/YYYY': {
-        const parts = dateString.split('/');
-        if (parts.length !== 3) return null;
-        month = parseInt(parts[0], 10);
-        day = parseInt(parts[1], 10);
-        year = parseInt(parts[2], 10);
-        break;
+      switch (format) {
+        case 'MM/DD/YYYY':
+          return `${month}/${day}/${year}`;
+        case 'DD.MM.YYYY':
+          return `${day}.${month}.${year}`;
+        default:
+          return `${year}-${month}-${day}`;
       }
-      case 'DD.MM.YYYY': {
-        const parts = dateString.split('.');
-        if (parts.length !== 3) return null;
-        day = parseInt(parts[0], 10);
-        month = parseInt(parts[1], 10);
-        year = parseInt(parts[2], 10);
-        break;
-      }
-      default: {
-        const parts = dateString.split('-');
-        if (parts.length !== 3) return null;
-        year = parseInt(parts[0], 10);
-        month = parseInt(parts[1], 10);
-        day = parseInt(parts[2], 10);
-        break;
-      }
-    }
+    },
+    [format]
+  );
 
-    if (isNaN(year) || isNaN(month) || isNaN(day)) return null;
-    if (month < 1 || month > 12) return null;
-    if (day < 1 || day > 31) return null;
+  const parseDate = useCallback(
+    (dateString: string): Date | null => {
+      if (!dateString) return null;
 
-    const date = new Date(year, month - 1, day);
-    return date.getFullYear() === year && 
-           date.getMonth() === month - 1 && 
-           date.getDate() === day ? date : null;
-  }, [format]);
+      let year: number, month: number, day: number;
+
+      switch (format) {
+        case 'MM/DD/YYYY': {
+          const parts = dateString.split('/');
+          if (parts.length !== 3) return null;
+          month = parseInt(parts[0], 10);
+          day = parseInt(parts[1], 10);
+          year = parseInt(parts[2], 10);
+          break;
+        }
+        case 'DD.MM.YYYY': {
+          const parts = dateString.split('.');
+          if (parts.length !== 3) return null;
+          day = parseInt(parts[0], 10);
+          month = parseInt(parts[1], 10);
+          year = parseInt(parts[2], 10);
+          break;
+        }
+        default: {
+          const parts = dateString.split('-');
+          if (parts.length !== 3) return null;
+          year = parseInt(parts[0], 10);
+          month = parseInt(parts[1], 10);
+          day = parseInt(parts[2], 10);
+          break;
+        }
+      }
+
+      if (isNaN(year) || isNaN(month) || isNaN(day)) return null;
+      if (month < 1 || month > 12) return null;
+      if (day < 1 || day > 31) return null;
+
+      const date = new Date(year, month - 1, day);
+      return date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day
+        ? date
+        : null;
+    },
+    [format]
+  );
 
   // 달력 그리드 생성
   const calendarDays = useMemo(() => {
     const year = focusedDate.getFullYear();
     const month = focusedDate.getMonth();
-    
+
     const firstDayOfMonth = new Date(year, month, 1);
     const lastDayOfMonth = new Date(year, month + 1, 0);
     const firstDayOfWeek = firstDayOfMonth.getDay();
     const daysInMonth = lastDayOfMonth.getDate();
-    
+
     const days: Array<{
       date: Date;
       isCurrentMonth: boolean;
@@ -399,7 +426,7 @@ export const KeyboardDatePicker: React.FC<KeyboardDatePickerProps> = ({
     // 이전 달의 날짜들
     const prevMonth = new Date(year, month - 1, 0);
     const daysFromPrevMonth = firstDayOfWeek;
-    
+
     for (let i = daysFromPrevMonth; i > 0; i--) {
       const date = new Date(year, month - 1, prevMonth.getDate() - i + 1);
       days.push({
@@ -407,7 +434,7 @@ export const KeyboardDatePicker: React.FC<KeyboardDatePickerProps> = ({
         isCurrentMonth: false,
         isToday: false,
         isSelected: value ? isSameDay(date, value) : false,
-        isDisabled: isDateDisabled(date)
+        isDisabled: isDateDisabled(date),
       });
     }
 
@@ -419,14 +446,14 @@ export const KeyboardDatePicker: React.FC<KeyboardDatePickerProps> = ({
         isCurrentMonth: true,
         isToday: isSameDay(date, new Date()),
         isSelected: value ? isSameDay(date, value) : false,
-        isDisabled: isDateDisabled(date)
+        isDisabled: isDateDisabled(date),
       });
     }
 
     // 다음 달의 날짜들로 6주 채우기
     const totalCells = 42; // 6주 × 7일
     const remainingCells = totalCells - days.length;
-    
+
     for (let day = 1; day <= remainingCells; day++) {
       const date = new Date(year, month + 1, day);
       days.push({
@@ -434,7 +461,7 @@ export const KeyboardDatePicker: React.FC<KeyboardDatePickerProps> = ({
         isCurrentMonth: false,
         isToday: false,
         isSelected: value ? isSameDay(date, value) : false,
-        isDisabled: isDateDisabled(date)
+        isDisabled: isDateDisabled(date),
       });
     }
 
@@ -442,9 +469,11 @@ export const KeyboardDatePicker: React.FC<KeyboardDatePickerProps> = ({
   }, [focusedDate, value, minDate, maxDate]);
 
   const isSameDay = (date1: Date, date2: Date): boolean => {
-    return date1.getFullYear() === date2.getFullYear() &&
-           date1.getMonth() === date2.getMonth() &&
-           date1.getDate() === date2.getDate();
+    return (
+      date1.getFullYear() === date2.getFullYear() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getDate() === date2.getDate()
+    );
   };
 
   const isDateDisabled = (date: Date): boolean => {
@@ -461,39 +490,42 @@ export const KeyboardDatePicker: React.FC<KeyboardDatePickerProps> = ({
   // 달력 열기/닫기
   const openCalendar = useCallback(() => {
     if (disabled) return;
-    
+
     setIsOpen(true);
     setFocusedDate(value || new Date());
-    
+
     if (calendarRef.current) {
       globalKeyboardTrapManager.addTrap(calendarRef.current, {
         autoFocus: true,
         escapeDeactivates: true,
-        returnFocusOnDeactivate: true
+        returnFocusOnDeactivate: true,
       });
     }
   }, [disabled, value]);
 
   const closeCalendar = useCallback(() => {
     setIsOpen(false);
-    
+
     if (calendarRef.current) {
       globalKeyboardTrapManager.removeTrap(calendarRef.current);
     }
-    
+
     inputRef.current?.focus();
   }, []);
 
   // 날짜 선택
-  const selectDate = useCallback((date: Date) => {
-    if (isDateDisabled(date)) return;
-    
-    onChange(date);
-    setInputValue(formatDate(date));
-    closeCalendar();
-    
-    setAnnouncement(`${formatDate(date)} 선택됨`);
-  }, [onChange, formatDate, closeCalendar]);
+  const selectDate = useCallback(
+    (date: Date) => {
+      if (isDateDisabled(date)) return;
+
+      onChange(date);
+      setInputValue(formatDate(date));
+      closeCalendar();
+
+      setAnnouncement(`${formatDate(date)} 선택됨`);
+    },
+    [onChange, formatDate, closeCalendar]
+  );
 
   // 월/년 네비게이션
   const navigateMonth = useCallback((direction: 'prev' | 'next') => {
@@ -509,95 +541,102 @@ export const KeyboardDatePicker: React.FC<KeyboardDatePickerProps> = ({
   }, []);
 
   // 키보드 네비게이션
-  const handleInputKeyDown = useCallback((event: KeyboardEvent) => {
-    switch (event.key) {
-      case 'ArrowDown':
-      case 'F4':
-        event.preventDefault();
-        openCalendar();
-        break;
-      case 'Escape':
-        if (isOpen) {
+  const handleInputKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      switch (event.key) {
+        case 'ArrowDown':
+        case 'F4':
+          event.preventDefault();
+          openCalendar();
+          break;
+        case 'Escape':
+          if (isOpen) {
+            event.preventDefault();
+            closeCalendar();
+          }
+          break;
+      }
+    },
+    [isOpen, openCalendar, closeCalendar]
+  );
+
+  const handleCalendarKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      const currentIndex = calendarDays.findIndex(day => isSameDay(day.date, focusedDate));
+
+      let newIndex = currentIndex;
+
+      switch (event.key) {
+        case 'ArrowLeft':
+          event.preventDefault();
+          newIndex = Math.max(0, currentIndex - 1);
+          break;
+        case 'ArrowRight':
+          event.preventDefault();
+          newIndex = Math.min(calendarDays.length - 1, currentIndex + 1);
+          break;
+        case 'ArrowUp':
+          event.preventDefault();
+          newIndex = Math.max(0, currentIndex - 7);
+          break;
+        case 'ArrowDown':
+          event.preventDefault();
+          newIndex = Math.min(calendarDays.length - 1, currentIndex + 7);
+          break;
+        case 'Home':
+          event.preventDefault();
+          newIndex = currentIndex - (currentIndex % 7);
+          break;
+        case 'End':
+          event.preventDefault();
+          newIndex = currentIndex + (6 - (currentIndex % 7));
+          break;
+        case 'PageUp':
+          event.preventDefault();
+          navigateMonth('prev');
+          return;
+        case 'PageDown':
+          event.preventDefault();
+          navigateMonth('next');
+          return;
+        case 'Enter':
+        case ' ':
+          event.preventDefault();
+          selectDate(focusedDate);
+          return;
+        case 'Escape':
           event.preventDefault();
           closeCalendar();
-        }
-        break;
-    }
-  }, [isOpen, openCalendar, closeCalendar]);
+          return;
+      }
 
-  const handleCalendarKeyDown = useCallback((event: KeyboardEvent) => {
-    const currentIndex = calendarDays.findIndex(day => 
-      isSameDay(day.date, focusedDate)
-    );
-    
-    let newIndex = currentIndex;
-    
-    switch (event.key) {
-      case 'ArrowLeft':
-        event.preventDefault();
-        newIndex = Math.max(0, currentIndex - 1);
-        break;
-      case 'ArrowRight':
-        event.preventDefault();
-        newIndex = Math.min(calendarDays.length - 1, currentIndex + 1);
-        break;
-      case 'ArrowUp':
-        event.preventDefault();
-        newIndex = Math.max(0, currentIndex - 7);
-        break;
-      case 'ArrowDown':
-        event.preventDefault();
-        newIndex = Math.min(calendarDays.length - 1, currentIndex + 7);
-        break;
-      case 'Home':
-        event.preventDefault();
-        newIndex = currentIndex - (currentIndex % 7);
-        break;
-      case 'End':
-        event.preventDefault();
-        newIndex = currentIndex + (6 - (currentIndex % 7));
-        break;
-      case 'PageUp':
-        event.preventDefault();
-        navigateMonth('prev');
-        return;
-      case 'PageDown':
-        event.preventDefault();
-        navigateMonth('next');
-        return;
-      case 'Enter':
-      case ' ':
-        event.preventDefault();
-        selectDate(focusedDate);
-        return;
-      case 'Escape':
-        event.preventDefault();
-        closeCalendar();
-        return;
-    }
-    
-    if (newIndex !== currentIndex && calendarDays[newIndex]) {
-      setFocusedDate(calendarDays[newIndex].date);
-      
-      const dayName = weekDays[calendarDays[newIndex].date.getDay()];
-      const dateStr = formatDate(calendarDays[newIndex].date);
-      setAnnouncement(`${dayName}, ${dateStr}`);
-    }
-  }, [calendarDays, focusedDate, selectDate, closeCalendar, navigateMonth, weekDays, formatDate]);
+      if (newIndex !== currentIndex && calendarDays[newIndex]) {
+        setFocusedDate(calendarDays[newIndex].date);
+
+        const dayName = weekDays[calendarDays[newIndex].date.getDay()];
+        const dateStr = formatDate(calendarDays[newIndex].date);
+        setAnnouncement(`${dayName}, ${dateStr}`);
+      }
+    },
+    [calendarDays, focusedDate, selectDate, closeCalendar, navigateMonth, weekDays, formatDate]
+  );
 
   // 입력 처리
-  const handleInputChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = event.target.value;
-    setInputValue(newValue);
-    
-    const parsedDate = parseDate(newValue);
-    if (parsedDate && !isDateDisabled(parsedDate)) {
-      onChange(parsedDate);
-      setFocusedDate(parsedDate);
-    } else if (!newValue) {
-      onChange(null);
-    }
-  }, [parseDate, onChange]);
+  const handleInputChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      const newValue = event.target.value;
+      setInputValue(newValue);
+
+      const parsedDate = parseDate(newValue);
+      if (parsedDate && !isDateDisabled(parsedDate)) {
+        onChange(parsedDate);
+        setFocusedDate(parsedDate);
+      } else if (!newValue) {
+        onChange(null);
+      }
+    },
+    [parseDate, onChange]
+  );
 
   // 빠른 액션들
   const selectToday = () => selectDate(new Date());
@@ -614,12 +653,12 @@ export const KeyboardDatePicker: React.FC<KeyboardDatePickerProps> = ({
           {label}
         </Label>
       )}
-      
+
       <InputContainer hasError={!!error} disabled={disabled}>
         <DateInput
           ref={inputRef}
           id={datePickerId.current}
-          type="text"
+          type='text'
           value={inputValue}
           placeholder={placeholder}
           disabled={disabled}
@@ -629,14 +668,14 @@ export const KeyboardDatePicker: React.FC<KeyboardDatePickerProps> = ({
           aria-describedby={ariaDescribedBy}
           aria-invalid={!!error}
           aria-expanded={isOpen}
-          aria-haspopup="dialog"
+          aria-haspopup='dialog'
         />
-        
+
         <CalendarButton
-          type="button"
+          type='button'
           disabled={disabled}
           onClick={openCalendar}
-          aria-label="달력 열기"
+          aria-label='달력 열기'
         >
           📅
         </CalendarButton>
@@ -645,30 +684,22 @@ export const KeyboardDatePicker: React.FC<KeyboardDatePickerProps> = ({
       {isOpen && (
         <CalendarContainer
           ref={calendarRef}
-          role="dialog"
-          aria-modal="true"
-          aria-label="날짜 선택"
+          role='dialog'
+          aria-modal='true'
+          aria-label='날짜 선택'
           onKeyDown={handleCalendarKeyDown}
           tabIndex={-1}
         >
           <CalendarHeader>
-            <NavButton
-              type="button"
-              onClick={() => navigateMonth('prev')}
-              aria-label="이전 달"
-            >
+            <NavButton type='button' onClick={() => navigateMonth('prev')} aria-label='이전 달'>
               ←
             </NavButton>
-            
+
             <MonthYearDisplay>
               {monthNames[focusedDate.getMonth()]} {focusedDate.getFullYear()}
             </MonthYearDisplay>
-            
-            <NavButton
-              type="button"
-              onClick={() => navigateMonth('next')}
-              aria-label="다음 달"
-            >
+
+            <NavButton type='button' onClick={() => navigateMonth('next')} aria-label='다음 달'>
               →
             </NavButton>
           </CalendarHeader>
@@ -679,12 +710,12 @@ export const KeyboardDatePicker: React.FC<KeyboardDatePickerProps> = ({
                 <WeekHeaderCell key={day}>{day}</WeekHeaderCell>
               ))}
             </WeekHeader>
-            
-            <CalendarMonth role="grid">
+
+            <CalendarMonth role='grid'>
               {calendarDays.map((dayInfo, index) => (
                 <CalendarDay
                   key={index}
-                  role="gridcell"
+                  role='gridcell'
                   isToday={dayInfo.isToday}
                   isSelected={dayInfo.isSelected}
                   isOtherMonth={!dayInfo.isCurrentMonth}
@@ -702,26 +733,19 @@ export const KeyboardDatePicker: React.FC<KeyboardDatePickerProps> = ({
           </CalendarGrid>
 
           <QuickActions>
-            <QuickActionButton onClick={selectToday}>
-              오늘
-            </QuickActionButton>
-            <QuickActionButton onClick={clearDate}>
-              지우기
-            </QuickActionButton>
+            <QuickActionButton onClick={selectToday}>오늘</QuickActionButton>
+            <QuickActionButton onClick={clearDate}>지우기</QuickActionButton>
           </QuickActions>
         </CalendarContainer>
       )}
 
       {error && (
-        <ErrorMessage role="alert" aria-live="polite">
+        <ErrorMessage role='alert' aria-live='polite'>
           {error}
         </ErrorMessage>
       )}
 
-      <ScreenReaderAnnouncement 
-        aria-live="polite" 
-        aria-atomic="true"
-      >
+      <ScreenReaderAnnouncement aria-live='polite' aria-atomic='true'>
         {announcement}
       </ScreenReaderAnnouncement>
     </Container>

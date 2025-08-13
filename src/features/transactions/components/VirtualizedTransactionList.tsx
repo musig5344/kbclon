@@ -1,8 +1,11 @@
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
+
 import styled from 'styled-components';
+
 import VirtualizedList from '@components/common/VirtualizedList';
-import { tokens } from '@styles/tokens';
+
 import { responsiveSpacing, responsiveFontSizes } from '@styles/responsive-overhaul';
+import { tokens } from '@styles/tokens';
 
 // 거래내역 타입 정의
 export interface Transaction {
@@ -26,8 +29,11 @@ export interface MonthGroup {
 }
 
 // 리스트 아이템 타입 (월 헤더 + 거래내역)
-export type ListItem = 
-  | { type: 'month-header'; data: { month: string; summary: { deposits: number; withdrawals: number; } } }
+export type ListItem =
+  | {
+      type: 'month-header';
+      data: { month: string; summary: { deposits: number; withdrawals: number } };
+    }
   | { type: 'transaction'; data: Transaction };
 
 const TransactionItem = styled.div`
@@ -73,7 +79,8 @@ const TransactionRight = styled.div`
 const TransactionAmount = styled.div<{ isDeposit: boolean }>`
   font-size: ${responsiveFontSizes.bodyMedium};
   font-weight: 600;
-  color: ${props => props.isDeposit ? tokens.colors.semantic.success : tokens.colors.text.primary};
+  color: ${props =>
+    props.isDeposit ? tokens.colors.semantic.success : tokens.colors.text.primary};
   font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
 `;
 
@@ -107,11 +114,8 @@ const MonthSummary = styled.div`
 `;
 
 const SummaryItem = styled.div<{ isDeposit?: boolean }>`
-  color: ${props => 
-    props.isDeposit 
-      ? tokens.colors.semantic.success 
-      : tokens.colors.text.secondary
-  };
+  color: ${props =>
+    props.isDeposit ? tokens.colors.semantic.success : tokens.colors.text.secondary};
   font-weight: 500;
 `;
 
@@ -133,12 +137,12 @@ const EmptyState = styled.div`
   padding: ${responsiveSpacing.xl} ${responsiveSpacing.lg};
   color: ${tokens.colors.text.secondary};
   gap: ${responsiveSpacing.md};
-  
+
   .icon {
     font-size: 48px;
     opacity: 0.5;
   }
-  
+
   .message {
     font-size: ${responsiveFontSizes.bodyMedium};
     text-align: center;
@@ -168,41 +172,44 @@ const formatAmount = (amount: number): string => {
 // 월별 그룹핑 유틸리티
 const groupTransactionsByMonth = (transactions: Transaction[]): MonthGroup[] => {
   const groups = new Map<string, Transaction[]>();
-  
+
   transactions.forEach(transaction => {
     const date = new Date(transaction.date);
     const monthKey = `${date.getFullYear()}년 ${date.getMonth() + 1}월`;
-    
+
     if (!groups.has(monthKey)) {
       groups.set(monthKey, []);
     }
     groups.get(monthKey)!.push(transaction);
   });
-  
-  return Array.from(groups.entries()).map(([month, transactions]) => {
-    const totalDeposit = transactions
-      .filter(t => t.type === 'deposit')
-      .reduce((sum, t) => sum + t.amount, 0);
-    
-    const totalWithdrawal = transactions
-      .filter(t => t.type === 'withdrawal')
-      .reduce((sum, t) => sum + t.amount, 0);
-    
-    return {
-      month,
-      transactions: transactions.sort((a, b) => 
-        new Date(b.date + ' ' + b.time).getTime() - new Date(a.date + ' ' + a.time).getTime()
-      ),
-      totalDeposit,
-      totalWithdrawal
-    };
-  }).sort((a, b) => b.month.localeCompare(a.month));
+
+  return Array.from(groups.entries())
+    .map(([month, transactions]) => {
+      const totalDeposit = transactions
+        .filter(t => t.type === 'deposit')
+        .reduce((sum, t) => sum + t.amount, 0);
+
+      const totalWithdrawal = transactions
+        .filter(t => t.type === 'withdrawal')
+        .reduce((sum, t) => sum + t.amount, 0);
+
+      return {
+        month,
+        transactions: transactions.sort(
+          (a, b) =>
+            new Date(b.date + ' ' + b.time).getTime() - new Date(a.date + ' ' + a.time).getTime()
+        ),
+        totalDeposit,
+        totalWithdrawal,
+      };
+    })
+    .sort((a, b) => b.month.localeCompare(a.month));
 };
 
 // 리스트 아이템 생성
 const createListItems = (monthGroups: MonthGroup[]): ListItem[] => {
   const items: ListItem[] = [];
-  
+
   monthGroups.forEach(group => {
     // 월 헤더 추가
     items.push({
@@ -211,20 +218,20 @@ const createListItems = (monthGroups: MonthGroup[]): ListItem[] => {
         month: group.month,
         summary: {
           deposits: group.totalDeposit,
-          withdrawals: group.totalWithdrawal
-        }
-      }
+          withdrawals: group.totalWithdrawal,
+        },
+      },
     });
-    
+
     // 거래내역 추가
     group.transactions.forEach(transaction => {
       items.push({
         type: 'transaction',
-        data: transaction
+        data: transaction,
       });
     });
   });
-  
+
   return items;
 };
 
@@ -234,7 +241,7 @@ const VirtualizedTransactionList: React.FC<VirtualizedTransactionListProps> = ({
   loading = false,
   onLoadMore,
   onTransactionClick,
-  onScroll
+  onScroll,
 }) => {
   // 월별 그룹핑된 데이터 생성
   const monthGroups = useMemo(() => {
@@ -255,56 +262,54 @@ const VirtualizedTransactionList: React.FC<VirtualizedTransactionListProps> = ({
   const averageItemHeight = 70;
 
   // 아이템 렌더링
-  const renderItem = useCallback((item: ListItem, index: number) => {
-    if (item.type === 'month-header') {
-      const { month, summary } = item.data;
-      return (
-        <MonthHeader>
-          <MonthTitle>{month}</MonthTitle>
-          <MonthSummary>
-            {summary.deposits > 0 && (
-              <SummaryItem isDeposit>
-                입금 {formatAmount(summary.deposits)}원
-              </SummaryItem>
-            )}
-            {summary.withdrawals > 0 && (
-              <SummaryItem>
-                출금 {formatAmount(summary.withdrawals)}원
-              </SummaryItem>
-            )}
-          </MonthSummary>
-        </MonthHeader>
-      );
-    }
+  const renderItem = useCallback(
+    (item: ListItem, index: number) => {
+      if (item.type === 'month-header') {
+        const { month, summary } = item.data;
+        return (
+          <MonthHeader>
+            <MonthTitle>{month}</MonthTitle>
+            <MonthSummary>
+              {summary.deposits > 0 && (
+                <SummaryItem isDeposit>입금 {formatAmount(summary.deposits)}원</SummaryItem>
+              )}
+              {summary.withdrawals > 0 && (
+                <SummaryItem>출금 {formatAmount(summary.withdrawals)}원</SummaryItem>
+              )}
+            </MonthSummary>
+          </MonthHeader>
+        );
+      }
 
-    const transaction = item.data;
-    const isDeposit = transaction.type === 'deposit';
-    
-    return (
-      <TransactionItem 
-        onClick={() => onTransactionClick?.(transaction)}
-        style={{ cursor: onTransactionClick ? 'pointer' : 'default' }}
-      >
-        <TransactionLeft>
-          <TransactionTitle>{transaction.description}</TransactionTitle>
-          <TransactionMeta>
-            <span>{new Date(transaction.date).toLocaleDateString('ko-KR')}</span>
-            <span>{transaction.time}</span>
-            {transaction.category && <span>{transaction.category}</span>}
-          </TransactionMeta>
-        </TransactionLeft>
-        
-        <TransactionRight>
-          <TransactionAmount isDeposit={isDeposit}>
-            {isDeposit ? '+' : '-'}{formatAmount(transaction.amount)}원
-          </TransactionAmount>
-          <TransactionBalance>
-            잔액 {formatAmount(transaction.balance)}원
-          </TransactionBalance>
-        </TransactionRight>
-      </TransactionItem>
-    );
-  }, [onTransactionClick]);
+      const transaction = item.data;
+      const isDeposit = transaction.type === 'deposit';
+
+      return (
+        <TransactionItem
+          onClick={() => onTransactionClick?.(transaction)}
+          style={{ cursor: onTransactionClick ? 'pointer' : 'default' }}
+        >
+          <TransactionLeft>
+            <TransactionTitle>{transaction.description}</TransactionTitle>
+            <TransactionMeta>
+              <span>{new Date(transaction.date).toLocaleDateString('ko-KR')}</span>
+              <span>{transaction.time}</span>
+              {transaction.category && <span>{transaction.category}</span>}
+            </TransactionMeta>
+          </TransactionLeft>
+
+          <TransactionRight>
+            <TransactionAmount isDeposit={isDeposit}>
+              {isDeposit ? '+' : '-'}
+              {formatAmount(transaction.amount)}원
+            </TransactionAmount>
+            <TransactionBalance>잔액 {formatAmount(transaction.balance)}원</TransactionBalance>
+          </TransactionRight>
+        </TransactionItem>
+      );
+    },
+    [onTransactionClick]
+  );
 
   // 키 생성
   const getItemKey = useCallback((item: ListItem, index: number): string => {
@@ -315,20 +320,22 @@ const VirtualizedTransactionList: React.FC<VirtualizedTransactionListProps> = ({
   }, []);
 
   // 로딩 컴포넌트
-  const loadingComponent = useMemo(() => (
-    <LoadingItem>거래내역을 불러오는 중...</LoadingItem>
-  ), []);
+  const loadingComponent = useMemo(() => <LoadingItem>거래내역을 불러오는 중...</LoadingItem>, []);
 
   // 빈 상태 컴포넌트
-  const emptyComponent = useMemo(() => (
-    <EmptyState>
-      <div className="icon">📋</div>
-      <div className="message">
-        거래내역이 없습니다.<br />
-        거래가 발생하면 이곳에 표시됩니다.
-      </div>
-    </EmptyState>
-  ), []);
+  const emptyComponent = useMemo(
+    () => (
+      <EmptyState>
+        <div className='icon'>📋</div>
+        <div className='message'>
+          거래내역이 없습니다.
+          <br />
+          거래가 발생하면 이곳에 표시됩니다.
+        </div>
+      </EmptyState>
+    ),
+    []
+  );
 
   // 무한 스크롤 처리
   const handleEndReached = useCallback(() => {
@@ -372,22 +379,28 @@ export const useVirtualizedTransactions = (initialTransactions: Transaction[] = 
     try {
       // API 호출 시뮬레이션 (실제 구현에서는 실제 API 호출)
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       // 더미 데이터 생성 (실제로는 API에서 받은 데이터)
       const newTransactions: Transaction[] = Array.from({ length: 20 }, (_, i) => ({
         id: `${page}-${i}`,
-        date: new Date(Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-        time: `${Math.floor(Math.random() * 24).toString().padStart(2, '0')}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`,
+        date: new Date(Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000)
+          .toISOString()
+          .split('T')[0],
+        time: `${Math.floor(Math.random() * 24)
+          .toString()
+          .padStart(2, '0')}:${Math.floor(Math.random() * 60)
+          .toString()
+          .padStart(2, '0')}`,
         description: `거래내역 ${page * 20 + i + 1}`,
         amount: Math.floor(Math.random() * 1000000),
         balance: Math.floor(Math.random() * 10000000),
         type: Math.random() > 0.5 ? 'deposit' : 'withdrawal',
-        category: ['식료품', '교통', '쇼핑', '의료', '엔터테인먼트'][Math.floor(Math.random() * 5)]
+        category: ['식료품', '교통', '쇼핑', '의료', '엔터테인먼트'][Math.floor(Math.random() * 5)],
       }));
 
       setTransactions(prev => [...prev, ...newTransactions]);
       setPage(prev => prev + 1);
-      
+
       // 페이지 5까지만 로드
       if (page >= 5) {
         setHasMore(false);
@@ -412,6 +425,6 @@ export const useVirtualizedTransactions = (initialTransactions: Transaction[] = 
     hasMore,
     loadMore,
     refresh,
-    setTransactions
+    setTransactions,
   };
 };

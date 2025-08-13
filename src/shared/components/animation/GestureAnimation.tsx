@@ -157,175 +157,184 @@ export const useGestureRecognizer = (
   }, []);
 
   // Apply bounds with rubber band effect
-  const applyBounds = useCallback((value: number, min?: number, max?: number): number => {
-    if (min === undefined && max === undefined) return value;
+  const applyBounds = useCallback(
+    (value: number, min?: number, max?: number): number => {
+      if (min === undefined && max === undefined) return value;
 
-    if (config.rubberBand) {
-      if (min !== undefined && value < min) {
-        const diff = min - value;
-        return min - diff * config.rubberBandFactor!;
+      if (config.rubberBand) {
+        if (min !== undefined && value < min) {
+          const diff = min - value;
+          return min - diff * config.rubberBandFactor!;
+        }
+        if (max !== undefined && value > max) {
+          const diff = value - max;
+          return max + diff * config.rubberBandFactor!;
+        }
+      } else {
+        if (min !== undefined) value = Math.max(value, min);
+        if (max !== undefined) value = Math.min(value, max);
       }
-      if (max !== undefined && value > max) {
-        const diff = value - max;
-        return max + diff * config.rubberBandFactor!;
-      }
-    } else {
-      if (min !== undefined) value = Math.max(value, min);
-      if (max !== undefined) value = Math.min(value, max);
-    }
 
-    return value;
-  }, [config.rubberBand, config.rubberBandFactor]);
+      return value;
+    },
+    [config.rubberBand, config.rubberBandFactor]
+  );
 
   // Handle gesture start
-  const handleStart = useCallback((event: React.MouseEvent | React.TouchEvent) => {
-    event.preventDefault();
+  const handleStart = useCallback(
+    (event: React.MouseEvent | React.TouchEvent) => {
+      event.preventDefault();
 
-    const touch = 'touches' in event ? event.touches[0] : event;
-    const startX = touch.clientX;
-    const startY = touch.clientY;
-    const startTime = Date.now();
+      const touch = 'touches' in event ? event.touches[0] : event;
+      const startX = touch.clientX;
+      const startY = touch.clientY;
+      const startTime = Date.now();
 
-    // Reset velocity samples
-    velocitySamplesRef.current = [{ x: startX, y: startY, time: startTime }];
+      // Reset velocity samples
+      velocitySamplesRef.current = [{ x: startX, y: startY, time: startTime }];
 
-    // Initialize gesture state
-    const newGesture: GestureState = {
-      type: null,
-      isActive: true,
-      startTime,
-      startX,
-      startY,
-      currentX: startX,
-      currentY: startY,
-      deltaX: 0,
-      deltaY: 0,
-      velocityX: 0,
-      velocityY: 0,
-      distance: 0,
-      direction: null,
-      scale: 1,
-      rotation: 0,
-    };
+      // Initialize gesture state
+      const newGesture: GestureState = {
+        type: null,
+        isActive: true,
+        startTime,
+        startX,
+        startY,
+        currentX: startX,
+        currentY: startY,
+        deltaX: 0,
+        deltaY: 0,
+        velocityX: 0,
+        velocityY: 0,
+        distance: 0,
+        direction: null,
+        scale: 1,
+        rotation: 0,
+      };
 
-    setGesture(newGesture);
+      setGesture(newGesture);
 
-    // Setup tap detection
-    if (config.enableTap) {
-      tapTimeoutRef.current = setTimeout(() => {
-        if (config.enableLongPress && newGesture.distance < config.tapThreshold!) {
-          newGesture.type = 'longpress';
-          onGesture?.(newGesture);
-        }
-      }, config.longPressDuration);
-    }
-
-    // Handle multi-touch for pinch/rotate
-    if ('touches' in event && event.touches.length === 2) {
-      const touch1 = event.touches[0];
-      const touch2 = event.touches[1];
-      
-      initialDistanceRef.current = Math.hypot(
-        touch2.clientX - touch1.clientX,
-        touch2.clientY - touch1.clientY
-      );
-      
-      initialAngleRef.current = Math.atan2(
-        touch2.clientY - touch1.clientY,
-        touch2.clientX - touch1.clientX
-      );
-    }
-  }, [config, onGesture]);
-
-  // Handle gesture move
-  const handleMove = useCallback((event: MouseEvent | TouchEvent) => {
-    if (!gesture.isActive) return;
-
-    const touch = 'touches' in event ? event.touches[0] : event;
-    const currentX = touch.clientX;
-    const currentY = touch.clientY;
-    const currentTime = Date.now();
-
-    // Calculate deltas
-    let deltaX = currentX - gesture.startX;
-    let deltaY = currentY - gesture.startY;
-
-    // Apply bounds
-    if (config.bounds) {
-      deltaX = applyBounds(deltaX, config.bounds.left, config.bounds.right);
-      deltaY = applyBounds(deltaY, config.bounds.top, config.bounds.bottom);
-    }
-
-    const distance = Math.hypot(deltaX, deltaY);
-
-    // Add velocity sample
-    velocitySamplesRef.current.push({ x: currentX, y: currentY, time: currentTime });
-    if (velocitySamplesRef.current.length > 10) {
-      velocitySamplesRef.current.shift();
-    }
-
-    const velocity = calculateVelocity();
-    const direction = getDirection(deltaX, deltaY);
-
-    // Determine gesture type
-    let type = gesture.type;
-    if (!type) {
-      if (distance > config.dragThreshold!) {
-        type = 'drag';
-        // Cancel tap/longpress
-        if (tapTimeoutRef.current) {
-          clearTimeout(tapTimeoutRef.current);
-        }
-        if (longPressTimeoutRef.current) {
-          clearTimeout(longPressTimeoutRef.current);
-        }
+      // Setup tap detection
+      if (config.enableTap) {
+        tapTimeoutRef.current = setTimeout(() => {
+          if (config.enableLongPress && newGesture.distance < config.tapThreshold!) {
+            newGesture.type = 'longpress';
+            onGesture?.(newGesture);
+          }
+        }, config.longPressDuration);
       }
-    }
 
-    // Handle pinch/rotate
-    let scale = gesture.scale;
-    let rotation = gesture.rotation;
+      // Handle multi-touch for pinch/rotate
+      if ('touches' in event && event.touches.length === 2) {
+        const touch1 = event.touches[0];
+        const touch2 = event.touches[1];
 
-    if ('touches' in event && event.touches.length === 2 && config.enablePinch) {
-      const touch1 = event.touches[0];
-      const touch2 = event.touches[1];
-      
-      const currentDistance = Math.hypot(
-        touch2.clientX - touch1.clientX,
-        touch2.clientY - touch1.clientY
-      );
-      
-      scale = currentDistance / initialDistanceRef.current;
+        initialDistanceRef.current = Math.hypot(
+          touch2.clientX - touch1.clientX,
+          touch2.clientY - touch1.clientY
+        );
 
-      if (config.enableRotate) {
-        const currentAngle = Math.atan2(
+        initialAngleRef.current = Math.atan2(
           touch2.clientY - touch1.clientY,
           touch2.clientX - touch1.clientX
         );
-        rotation = (currentAngle - initialAngleRef.current) * 180 / Math.PI;
+      }
+    },
+    [config, onGesture]
+  );
+
+  // Handle gesture move
+  const handleMove = useCallback(
+    (event: MouseEvent | TouchEvent) => {
+      if (!gesture.isActive) return;
+
+      const touch = 'touches' in event ? event.touches[0] : event;
+      const currentX = touch.clientX;
+      const currentY = touch.clientY;
+      const currentTime = Date.now();
+
+      // Calculate deltas
+      let deltaX = currentX - gesture.startX;
+      let deltaY = currentY - gesture.startY;
+
+      // Apply bounds
+      if (config.bounds) {
+        deltaX = applyBounds(deltaX, config.bounds.left, config.bounds.right);
+        deltaY = applyBounds(deltaY, config.bounds.top, config.bounds.bottom);
       }
 
-      type = scale !== 1 ? 'pinch' : type;
-    }
+      const distance = Math.hypot(deltaX, deltaY);
 
-    const newGesture: GestureState = {
-      ...gesture,
-      type,
-      currentX,
-      currentY,
-      deltaX,
-      deltaY,
-      velocityX: velocity.x,
-      velocityY: velocity.y,
-      distance,
-      direction,
-      scale,
-      rotation,
-    };
+      // Add velocity sample
+      velocitySamplesRef.current.push({ x: currentX, y: currentY, time: currentTime });
+      if (velocitySamplesRef.current.length > 10) {
+        velocitySamplesRef.current.shift();
+      }
 
-    setGesture(newGesture);
-    onGesture?.(newGesture);
-  }, [gesture, config, applyBounds, calculateVelocity, getDirection, onGesture]);
+      const velocity = calculateVelocity();
+      const direction = getDirection(deltaX, deltaY);
+
+      // Determine gesture type
+      let type = gesture.type;
+      if (!type) {
+        if (distance > config.dragThreshold!) {
+          type = 'drag';
+          // Cancel tap/longpress
+          if (tapTimeoutRef.current) {
+            clearTimeout(tapTimeoutRef.current);
+          }
+          if (longPressTimeoutRef.current) {
+            clearTimeout(longPressTimeoutRef.current);
+          }
+        }
+      }
+
+      // Handle pinch/rotate
+      let scale = gesture.scale;
+      let rotation = gesture.rotation;
+
+      if ('touches' in event && event.touches.length === 2 && config.enablePinch) {
+        const touch1 = event.touches[0];
+        const touch2 = event.touches[1];
+
+        const currentDistance = Math.hypot(
+          touch2.clientX - touch1.clientX,
+          touch2.clientY - touch1.clientY
+        );
+
+        scale = currentDistance / initialDistanceRef.current;
+
+        if (config.enableRotate) {
+          const currentAngle = Math.atan2(
+            touch2.clientY - touch1.clientY,
+            touch2.clientX - touch1.clientX
+          );
+          rotation = ((currentAngle - initialAngleRef.current) * 180) / Math.PI;
+        }
+
+        type = scale !== 1 ? 'pinch' : type;
+      }
+
+      const newGesture: GestureState = {
+        ...gesture,
+        type,
+        currentX,
+        currentY,
+        deltaX,
+        deltaY,
+        velocityX: velocity.x,
+        velocityY: velocity.y,
+        distance,
+        direction,
+        scale,
+        rotation,
+      };
+
+      setGesture(newGesture);
+      onGesture?.(newGesture);
+    },
+    [gesture, config, applyBounds, calculateVelocity, getDirection, onGesture]
+  );
 
   // Handle gesture end
   const handleEnd = useCallback(() => {
@@ -346,17 +355,22 @@ export const useGestureRecognizer = (
     let type = gesture.type;
 
     // Detect tap
-    if (!type && config.enableTap && 
-        gesture.distance < config.tapThreshold! && 
-        duration < config.tapDuration!) {
+    if (
+      !type &&
+      config.enableTap &&
+      gesture.distance < config.tapThreshold! &&
+      duration < config.tapDuration!
+    ) {
       type = 'tap';
     }
 
     // Detect swipe
     if (config.enableSwipe && gesture.type === 'drag') {
       const velocityMagnitude = Math.hypot(velocity.x, velocity.y);
-      if (velocityMagnitude > config.swipeVelocityThreshold! ||
-          gesture.distance > config.swipeThreshold!) {
+      if (
+        velocityMagnitude > config.swipeVelocityThreshold! ||
+        gesture.distance > config.swipeThreshold!
+      ) {
         type = 'swipe';
       }
     }
@@ -379,43 +393,46 @@ export const useGestureRecognizer = (
   }, [gesture, config, calculateVelocity, onGesture]);
 
   // Apply momentum animation
-  const applyMomentum = useCallback((finalGesture: GestureState, velocity: { x: number; y: number }) => {
-    let currentVelocity = { ...velocity };
-    let currentDelta = { x: finalGesture.deltaX, y: finalGesture.deltaY };
+  const applyMomentum = useCallback(
+    (finalGesture: GestureState, velocity: { x: number; y: number }) => {
+      let currentVelocity = { ...velocity };
+      let currentDelta = { x: finalGesture.deltaX, y: finalGesture.deltaY };
 
-    const animate = () => {
-      // Apply decay
-      currentVelocity.x *= config.momentumDecay!;
-      currentVelocity.y *= config.momentumDecay!;
+      const animate = () => {
+        // Apply decay
+        currentVelocity.x *= config.momentumDecay!;
+        currentVelocity.y *= config.momentumDecay!;
 
-      // Update position
-      currentDelta.x += currentVelocity.x * 16; // Assume 60fps
-      currentDelta.y += currentVelocity.y * 16;
+        // Update position
+        currentDelta.x += currentVelocity.x * 16; // Assume 60fps
+        currentDelta.y += currentVelocity.y * 16;
 
-      // Apply bounds
-      if (config.bounds) {
-        currentDelta.x = applyBounds(currentDelta.x, config.bounds.left, config.bounds.right);
-        currentDelta.y = applyBounds(currentDelta.y, config.bounds.top, config.bounds.bottom);
-      }
+        // Apply bounds
+        if (config.bounds) {
+          currentDelta.x = applyBounds(currentDelta.x, config.bounds.left, config.bounds.right);
+          currentDelta.y = applyBounds(currentDelta.y, config.bounds.top, config.bounds.bottom);
+        }
 
-      const momentumGesture: GestureState = {
-        ...finalGesture,
-        deltaX: currentDelta.x,
-        deltaY: currentDelta.y,
-        velocityX: currentVelocity.x,
-        velocityY: currentVelocity.y,
+        const momentumGesture: GestureState = {
+          ...finalGesture,
+          deltaX: currentDelta.x,
+          deltaY: currentDelta.y,
+          velocityX: currentVelocity.x,
+          velocityY: currentVelocity.y,
+        };
+
+        onGesture?.(momentumGesture);
+
+        // Continue if velocity is significant
+        if (Math.abs(currentVelocity.x) > 0.1 || Math.abs(currentVelocity.y) > 0.1) {
+          rafRef.current = requestAnimationFrame(animate);
+        }
       };
 
-      onGesture?.(momentumGesture);
-
-      // Continue if velocity is significant
-      if (Math.abs(currentVelocity.x) > 0.1 || Math.abs(currentVelocity.y) > 0.1) {
-        rafRef.current = requestAnimationFrame(animate);
-      }
-    };
-
-    rafRef.current = requestAnimationFrame(animate);
-  }, [config, applyBounds, onGesture]);
+      rafRef.current = requestAnimationFrame(animate);
+    },
+    [config, applyBounds, onGesture]
+  );
 
   // Cleanup
   useEffect(() => {
@@ -485,7 +502,7 @@ export const Swipeable: React.FC<SwipeableProps> = ({
       enableSwipe: true,
       swipeThreshold: threshold,
     },
-    (gesture) => {
+    gesture => {
       if (gesture.type === 'swipe' && !gesture.isActive) {
         switch (gesture.direction) {
           case 'left':
@@ -539,7 +556,7 @@ export const Draggable: React.FC<DraggableProps> = ({
       bounds,
       momentum,
     },
-    (gesture) => {
+    gesture => {
       if (gesture.type === 'drag') {
         if (gesture.isActive) {
           setTransform({ x: gesture.deltaX, y: gesture.deltaY });
@@ -602,10 +619,10 @@ export const Pinchable: React.FC<PinchableProps> = ({
     {
       enablePinch: true,
     },
-    (gesture) => {
+    gesture => {
       if (gesture.type === 'pinch') {
         const clampedScale = Math.max(minScale, Math.min(maxScale, gesture.scale));
-        
+
         if (gesture.isActive) {
           setScale(clampedScale);
           onPinch?.(clampedScale);

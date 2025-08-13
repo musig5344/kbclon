@@ -40,7 +40,9 @@ export const PageContent = styled.main`
   width: 100%;
   overflow-y: auto;
   overflow-x: hidden;
-  padding-bottom: calc(${tokens.sizes.navigation.height} + ${tokens.spacing[4]}); /* TabBar 높이 + 여유분 */
+  padding-bottom: calc(
+    ${tokens.sizes.navigation.height} + ${tokens.spacing[4]}
+  ); /* TabBar 높이 + 여유분 */
   -webkit-overflow-scrolling: touch;
 `;
 /**
@@ -62,7 +64,9 @@ export const FixedBottomContainer = styled.div`
  */
 export const FixedBottomButtonArea = styled(FixedBottomContainer)`
   padding: ${tokens.spacing[4]} ${tokens.sizes.page.paddingHorizontal};
-  padding-bottom: calc(${tokens.spacing[4]} + ${tokens.sizes.navigation.height} + env(safe-area-inset-bottom)); /* 패딩 + TabBar 높이 + safe area */
+  padding-bottom: calc(
+    ${tokens.spacing[4]} + ${tokens.sizes.navigation.height} + env(safe-area-inset-bottom)
+  ); /* 패딩 + TabBar 높이 + safe area */
 `;
 /**
  * 전체화면 모달 컨테이너 - 메뉴 등에 사용

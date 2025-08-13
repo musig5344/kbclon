@@ -32,7 +32,7 @@ class OptimizedApiService {
   constructor() {
     // LocalStorage에서 캐시 복원
     this.restoreCache();
-    
+
     // 페이지 언로드 시 캐시 저장
     window.addEventListener('beforeunload', () => this.saveCache());
   }
@@ -82,7 +82,7 @@ class OptimizedApiService {
     // 진행 중인 요청으로 등록
     this.pendingRequests.set(key, {
       promise,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
 
     return promise;
@@ -102,7 +102,7 @@ class OptimizedApiService {
       if (!this.batchQueue.has(batchKey)) {
         this.batchQueue.set(batchKey, []);
       }
-      
+
       const queue = this.batchQueue.get(batchKey)!;
       const itemIndex = queue.length;
       queue.push({ item, resolve, reject });
@@ -148,20 +148,20 @@ class OptimizedApiService {
       shouldRetry?: (error: any) => boolean;
     }
   ): Promise<T> {
-    const { 
-      maxRetries = 3, 
+    const {
+      maxRetries = 3,
       retryDelay = 1000,
-      shouldRetry = (error) => error.status >= 500 || error.code === 'NETWORK_ERROR'
+      shouldRetry = error => error.status >= 500 || error.code === 'NETWORK_ERROR',
     } = options || {};
 
     let lastError: any;
-    
+
     for (let i = 0; i <= maxRetries; i++) {
       try {
         return await fetcher();
       } catch (error) {
         lastError = error;
-        
+
         if (i < maxRetries && shouldRetry(error)) {
           await new Promise(resolve => setTimeout(resolve, retryDelay * (i + 1)));
         } else {
@@ -192,7 +192,7 @@ class OptimizedApiService {
     this.cache.set(key, {
       data,
       timestamp: Date.now(),
-      ttl
+      ttl,
     });
   }
 
@@ -218,7 +218,7 @@ class OptimizedApiService {
           cacheData[key] = value;
         }
       });
-      
+
       localStorage.setItem(this.CACHE_PREFIX + 'data', JSON.stringify(cacheData));
     } catch (error) {
       console.error('Failed to save cache:', error);
@@ -260,7 +260,7 @@ export const getAccountCached = async (accountId: string) => {
         .select('*')
         .eq('id', accountId)
         .single();
-      
+
       if (error) throw error;
       return data;
     },
@@ -279,7 +279,7 @@ export const getTransactionsCached = async (accountId: string, page: number = 1)
         .eq('account_id', accountId)
         .order('transaction_date', { ascending: false })
         .range((page - 1) * 50, page * 50 - 1);
-      
+
       if (error) throw error;
       return data;
     },
@@ -290,16 +290,13 @@ export const getTransactionsCached = async (accountId: string, page: number = 1)
 // 배치 거래 생성
 export const createTransactionsBatch = async (transactions: any[]) => {
   return Promise.all(
-    transactions.map(tx => 
+    transactions.map(tx =>
       optimizedApi.batchRequest(
         'create_transactions',
         tx,
-        async (items) => {
-          const { data, error } = await supabase
-            .from('transactions')
-            .insert(items)
-            .select();
-          
+        async items => {
+          const { data, error } = await supabase.from('transactions').insert(items).select();
+
           if (error) throw error;
           return data;
         },
@@ -318,19 +315,21 @@ export const transferWithRetry = async (transferData: any) => {
         .insert(transferData)
         .select()
         .single();
-      
+
       if (error) throw error;
       return data;
     },
     {
       maxRetries: 3,
       retryDelay: 2000,
-      shouldRetry: (error) => {
+      shouldRetry: error => {
         // 네트워크 에러나 서버 에러일 때만 재시도
-        return error.code === 'NETWORK_ERROR' || 
-               error.status >= 500 ||
-               error.message?.includes('fetch failed');
-      }
+        return (
+          error.code === 'NETWORK_ERROR' ||
+          error.status >= 500 ||
+          error.message?.includes('fetch failed')
+        );
+      },
     }
   );
 };

@@ -9,15 +9,14 @@ export const useCacheManagement = () => {
   const clearAllCache = useCallback(async () => {
     // React Query 캐시 클리어
     clearCache();
-    
+
     // LocalStorage 클리어 (필요한 것만)
-    const keysToRemove = Object.keys(localStorage).filter(key => 
-      key.startsWith('kb-cache-') || 
-      key.startsWith('account-') || 
-      key.startsWith('transaction-')
+    const keysToRemove = Object.keys(localStorage).filter(
+      key =>
+        key.startsWith('kb-cache-') || key.startsWith('account-') || key.startsWith('transaction-')
     );
     keysToRemove.forEach(key => localStorage.removeItem(key));
-    
+
     console.log('모든 캐시가 삭제되었습니다.');
   }, []);
 
@@ -33,7 +32,7 @@ export const useCacheManagement = () => {
     const queryCache = queryClient.getQueryCache();
     return {
       queryCount: queryCache.getAll().length,
-      status: 'active'
+      status: 'active',
     };
   }, []);
 
@@ -41,6 +40,6 @@ export const useCacheManagement = () => {
     clearAllCache,
     refreshAccount,
     refreshTransactions,
-    getCacheStatus
+    getCacheStatus,
   };
 };

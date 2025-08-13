@@ -5,7 +5,9 @@ import styled from 'styled-components';
 const ImageContainer = styled.div<{ aspectRatio?: number }>`
   position: relative;
   width: 100%;
-  ${props => props.aspectRatio && `
+  ${props =>
+    props.aspectRatio &&
+    `
     padding-bottom: ${(1 / props.aspectRatio) * 100}%;
   `}
   overflow: hidden;
@@ -19,7 +21,7 @@ const StyledImage = styled.img<{ loaded: boolean }>`
   width: 100%;
   height: 100%;
   object-fit: cover;
-  opacity: ${props => props.loaded ? 1 : 0};
+  opacity: ${props => (props.loaded ? 1 : 0)};
   transition: opacity 0.3s ease-in-out;
 `;
 
@@ -29,12 +31,12 @@ const StyledPicture = styled.picture<{ loaded: boolean }>`
   left: 0;
   width: 100%;
   height: 100%;
-  
+
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    opacity: ${props => props.loaded ? 1 : 0};
+    opacity: ${props => (props.loaded ? 1 : 0)};
     transition: opacity 0.3s ease-in-out;
   }
 `;
@@ -45,10 +47,11 @@ const Placeholder = styled.div<{ placeholderColor?: string }>`
   left: 0;
   width: 100%;
   height: 100%;
-  background: ${props => props.placeholderColor || 'linear-gradient(90deg, #f0f0f0 0%, #f8f8f8 50%, #f0f0f0 100%)'};
+  background: ${props =>
+    props.placeholderColor || 'linear-gradient(90deg, #f0f0f0 0%, #f8f8f8 50%, #f0f0f0 100%)'};
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
-  
+
   @keyframes shimmer {
     0% {
       background-position: -200% center;
@@ -102,7 +105,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
   onLoad,
   onError,
   sizes,
-  fallbackText = '이미지를 불러올 수 없습니다'
+  fallbackText = '이미지를 불러올 수 없습니다',
 }) => {
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
@@ -118,7 +121,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
     }
 
     const observer = new IntersectionObserver(
-      (entries) => {
+      entries => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
             setIsIntersecting(true);
@@ -127,7 +130,7 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
         });
       },
       {
-        rootMargin: '50px' // Start loading 50px before the image enters viewport
+        rootMargin: '50px', // Start loading 50px before the image enters viewport
       }
     );
 
@@ -146,25 +149,25 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
 
     const img = new Image();
     const srcToLoad = webpSrc || src;
-    
+
     img.src = srcToLoad;
-    
+
     img.onload = () => {
       setLoaded(true);
       onLoad?.();
     };
-    
+
     img.onerror = () => {
       // If WebP fails, try fallback
       if (webpSrc && src !== webpSrc) {
         const fallbackImg = new Image();
         fallbackImg.src = src;
-        
+
         fallbackImg.onload = () => {
           setLoaded(true);
           onLoad?.();
         };
-        
+
         fallbackImg.onerror = () => {
           setError(true);
           onError?.();
@@ -194,11 +197,9 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
     if (webpSrc) {
       return (
         <>
-          {(!loaded || thumbnailSrc) && (
-            <Placeholder placeholderColor={placeholderColor} />
-          )}
+          {(!loaded || thumbnailSrc) && <Placeholder placeholderColor={placeholderColor} />}
           <StyledPicture loaded={loaded}>
-            <source srcSet={webpSrc} type="image/webp" />
+            <source srcSet={webpSrc} type='image/webp' />
             <img
               ref={imageRef}
               src={src}
@@ -240,20 +241,20 @@ export const OptimizedImage: React.FC<OptimizedImageProps> = ({
 export const ImagePresets = {
   thumbnail: {
     sizes: '(max-width: 768px) 100px, 150px',
-    aspectRatio: 1
+    aspectRatio: 1,
   },
   card: {
     sizes: '(max-width: 768px) 100vw, 300px',
-    aspectRatio: 16/9
+    aspectRatio: 16 / 9,
   },
   hero: {
     sizes: '100vw',
-    aspectRatio: 16/9,
-    priority: true
+    aspectRatio: 16 / 9,
+    priority: true,
   },
   icon: {
     sizes: '48px',
     aspectRatio: 1,
-    lazy: false
-  }
+    lazy: false,
+  },
 } as const;

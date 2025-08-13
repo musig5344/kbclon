@@ -4,50 +4,56 @@
  * 원본 앱과 85% 스케일 일관성 유지
  */
 
-import { BREAKPOINTS, MEDIA_QUERIES, KB_BREAKPOINTS, getDeviceType, getSafeAreaDimensions } from './breakpoints';
+import {
+  BREAKPOINTS,
+  MEDIA_QUERIES,
+  KB_BREAKPOINTS,
+  getDeviceType,
+  getSafeAreaDimensions,
+} from './breakpoints';
 
 // KB 디자인 토큰 - 원본 앱 기준
 export const KB_DESIGN_TOKENS = {
   // 원본 KB 옐로우
   colors: {
     primary: '#FFD338',
-    primaryDark: '#E6BE32',
+    primaryDark: '#FFBC00', // 정확한 KB 눌림 색상
     primaryLight: '#FFF066',
     background: '#FFFFFF',
     surface: '#F8F9FA',
     surfaceVariant: '#EBEEF0',
-    onSurface: '#1C1C1E',
+    onSurface: '#26282C', // KB 정확한 블랙 색상
     onSurfaceVariant: '#757575',
     error: '#F44336',
-    success: '#4CAF50'
+    success: '#4CAF50',
   },
-  
+
   // 원본 앱 그림자 효과
   shadows: {
     card: '0 2px 8px rgba(0, 0, 0, 0.1)',
     button: '0 2px 4px rgba(0, 0, 0, 0.2)',
     modal: '0 8px 32px rgba(0, 0, 0, 0.2)',
-    bottomSheet: '0 -4px 16px rgba(0, 0, 0, 0.1)'
+    bottomSheet: '0 -4px 16px rgba(0, 0, 0, 0.1)',
   },
-  
+
   // 원본 앱 border-radius 값
   borderRadius: {
     small: '4px',
     medium: '8px',
     large: '12px',
     xlarge: '16px',
-    round: '50%'
+    round: '50%',
   },
-  
+
   // 85% 스케일 적용된 간격
   spacing: {
-    xs: '4px',   // 4 * 0.85 = 3.4px ≈ 4px
-    sm: '8px',   // 8 * 0.85 = 6.8px ≈ 8px  
-    md: '16px',  // 16 * 0.85 = 13.6px ≈ 16px
-    lg: '24px',  // 24 * 0.85 = 20.4px ≈ 24px
-    xl: '32px',  // 32 * 0.85 = 27.2px ≈ 32px
-    xxl: '48px'  // 48 * 0.85 = 40.8px ≈ 48px
-  }
+    xs: '4px', // 4 * 0.85 = 3.4px ≈ 4px
+    sm: '8px', // 8 * 0.85 = 6.8px ≈ 8px
+    md: '16px', // 16 * 0.85 = 13.6px ≈ 16px
+    lg: '24px', // 24 * 0.85 = 20.4px ≈ 24px
+    xl: '32px', // 32 * 0.85 = 27.2px ≈ 32px
+    xxl: '48px', // 48 * 0.85 = 40.8px ≈ 48px
+  },
 } as const;
 
 // DPI 및 화면 밀도 계산
@@ -66,14 +72,14 @@ export const calculateResponsiveSize = (
   // KB 앱 기준 430px에서의 비율 계산
   const scale = Math.min(screenWidth / KB_BREAKPOINTS.kbOptimal, 1.2);
   const dpiScale = getDPIScale();
-  
+
   // 85% 스케일 적용
   let calculatedSize = baseSize * 0.85 * scale * dpiScale;
-  
+
   // 최소/최대 크기 제한
   if (minSize) calculatedSize = Math.max(calculatedSize, minSize);
   if (maxSize) calculatedSize = Math.min(calculatedSize, maxSize);
-  
+
   return Math.round(calculatedSize);
 };
 
@@ -90,7 +96,7 @@ export const createSafeAreaStyle = (includeBottom = true, includeTop = true) => 
     paddingTop: includeTop ? safeArea.top : '0',
     paddingBottom: includeBottom ? safeArea.bottom : '0',
     paddingLeft: safeArea.left,
-    paddingRight: safeArea.right
+    paddingRight: safeArea.right,
   };
 };
 
@@ -101,7 +107,7 @@ export const getResponsiveFontSize = (
   deviceType?: string
 ): string => {
   let scale = 1;
-  
+
   // 디바이스 타입별 폰트 스케일
   switch (deviceType) {
     case 'phone_small':
@@ -132,7 +138,7 @@ export const getResponsiveFontSize = (
       // 화면 너비 기반 스케일
       scale = Math.min(screenWidth / KB_BREAKPOINTS.kbOptimal, 1.3);
   }
-  
+
   // 85% 스케일 적용
   const finalSize = baseFontSize * 0.85 * scale;
   return `${Math.round(finalSize)}px`;
@@ -161,9 +167,11 @@ export const createResponsiveContainer = (maxWidth = KB_BREAKPOINTS.kbOptimal) =
   position: relative;
   
   /* 안전 영역 고려 */
-  ${Object.entries(createSafeAreaStyle()).map(([key, value]) => 
-    `${key.replace(/[A-Z]/g, match => `-${match.toLowerCase()}`)}: ${value};`
-  ).join('\n  ')}
+  ${Object.entries(createSafeAreaStyle())
+    .map(
+      ([key, value]) => `${key.replace(/[A-Z]/g, match => `-${match.toLowerCase()}`)}: ${value};`
+    )
+    .join('\n  ')}
   
   /* 모바일 최적화 */
   -webkit-overflow-scrolling: touch;
@@ -216,27 +224,29 @@ export const createResponsiveHeader = (includeSearch = false) => `
 `;
 
 // 버튼 반응형 스타일
-export const createResponsiveButton = (variant: 'primary' | 'secondary' | 'outline' = 'primary') => {
+export const createResponsiveButton = (
+  variant: 'primary' | 'secondary' | 'outline' = 'primary'
+) => {
   const baseColors = {
     primary: {
       background: KB_DESIGN_TOKENS.colors.primary,
       color: KB_DESIGN_TOKENS.colors.onSurface,
-      border: 'none'
+      border: 'none',
     },
     secondary: {
       background: KB_DESIGN_TOKENS.colors.surface,
       color: KB_DESIGN_TOKENS.colors.onSurface,
-      border: `1px solid ${KB_DESIGN_TOKENS.colors.surfaceVariant}`
+      border: `1px solid ${KB_DESIGN_TOKENS.colors.surfaceVariant}`,
     },
     outline: {
       background: 'transparent',
       color: KB_DESIGN_TOKENS.colors.primary,
-      border: `1px solid ${KB_DESIGN_TOKENS.colors.primary}`
-    }
+      border: `1px solid ${KB_DESIGN_TOKENS.colors.primary}`,
+    },
   };
-  
+
   const colors = baseColors[variant];
-  
+
   return `
     display: flex;
     align-items: center;
@@ -305,9 +315,9 @@ export const createResponsiveCard = (elevation: 'low' | 'medium' | 'high' = 'low
   const shadows = {
     low: KB_DESIGN_TOKENS.shadows.card,
     medium: KB_DESIGN_TOKENS.shadows.button,
-    high: KB_DESIGN_TOKENS.shadows.modal
+    high: KB_DESIGN_TOKENS.shadows.modal,
   };
-  
+
   return `
     background: ${KB_DESIGN_TOKENS.colors.background};
     border-radius: ${KB_DESIGN_TOKENS.borderRadius.large};
@@ -378,11 +388,11 @@ export const createResponsiveText = (variant: 'h1' | 'h2' | 'h3' | 'body' | 'cap
     h2: 20,
     h3: 18,
     body: 14,
-    caption: 12
+    caption: 12,
   };
-  
+
   const baseSize = baseSizes[variant];
-  
+
   return `
     font-size: ${baseSize * 0.85}px;
     line-height: ${variant.startsWith('h') ? '1.2' : '1.4'};
@@ -391,15 +401,15 @@ export const createResponsiveText = (variant: 'h1' | 'h2' | 'h3' | 'body' | 'cap
     font-weight: ${variant.startsWith('h') ? '600' : '400'};
     
     ${MEDIA_QUERIES.phoneSmall} {
-      font-size: ${Math.max((baseSize * 0.85) - 2, 10)}px;
+      font-size: ${Math.max(baseSize * 0.85 - 2, 10)}px;
     }
     
     ${MEDIA_QUERIES.phoneLarge} {
-      font-size: ${(baseSize * 0.85) + 1}px;
+      font-size: ${baseSize * 0.85 + 1}px;
     }
     
     ${MEDIA_QUERIES.tablet} {
-      font-size: ${(baseSize * 0.85) + 2}px;
+      font-size: ${baseSize * 0.85 + 2}px;
     }
   `;
 };
@@ -439,7 +449,10 @@ export const createResponsiveListItem = () => `
 `;
 
 // 그리드 반응형 레이아웃
-export const createResponsiveGrid = (columns: number, gap: keyof typeof KB_DESIGN_TOKENS.spacing = 'md') => `
+export const createResponsiveGrid = (
+  columns: number,
+  gap: keyof typeof KB_DESIGN_TOKENS.spacing = 'md'
+) => `
   display: grid;
   gap: ${KB_DESIGN_TOKENS.spacing[gap]};
   
@@ -540,5 +553,5 @@ export default {
   createResponsiveListItem,
   createResponsiveGrid,
   createDeviceOptimizedStyle,
-  createResponsiveAnimation
+  createResponsiveAnimation,
 };

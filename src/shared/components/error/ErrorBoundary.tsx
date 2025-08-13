@@ -47,7 +47,7 @@ const ErrorMessage = styled.p`
 `;
 const RetryButton = styled.button`
   padding: 12px 24px;
-  background-color: #FFD338;
+  background-color: #ffd338;
   color: #26282c;
   border: none;
   border-radius: 8px;
@@ -83,26 +83,26 @@ export class ErrorBoundary extends Component<Props, State> {
     this.state = {
       hasError: false,
       error: null,
-      errorInfo: null
+      errorInfo: null,
     };
   }
   static getDerivedStateFromError(error: Error): State {
     return {
       hasError: true,
       error,
-      errorInfo: null
+      errorInfo: null,
     };
   }
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     this.setState({
       error,
-      errorInfo
+      errorInfo,
     });
     // Log error using centralized error handler
     safeLog('error', 'ErrorBoundary caught error', {
       error: error.message,
       stack: error.stack,
-      componentStack: errorInfo.componentStack
+      componentStack: errorInfo.componentStack,
     });
     // Call custom error handler if provided
     this.props.onError?.(error, errorInfo);
@@ -128,7 +128,7 @@ export class ErrorBoundary extends Component<Props, State> {
       this.setState({
         hasError: false,
         error: null,
-        errorInfo: null
+        errorInfo: null,
       });
     }, 100);
   };
@@ -159,9 +159,7 @@ export const PageErrorBoundary: React.FC<{ children: ReactNode }> = ({ children 
           <br />
           홈으로 돌아가거나 새로고침해 주세요.
         </ErrorMessage>
-        <RetryButton onClick={() => window.location.reload()}>
-          새로고침
-        </RetryButton>
+        <RetryButton onClick={() => window.location.reload()}>새로고침</RetryButton>
       </ErrorContainer>
     }
   >
@@ -170,7 +168,7 @@ export const PageErrorBoundary: React.FC<{ children: ReactNode }> = ({ children 
 );
 export const ComponentErrorBoundary: React.FC<{ children: ReactNode; componentName?: string }> = ({
   children,
-  componentName = '컴포넌트'
+  componentName = '컴포넌트',
 }) => (
   <ErrorBoundary
     fallback={

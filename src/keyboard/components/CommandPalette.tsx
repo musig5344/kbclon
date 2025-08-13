@@ -3,14 +3,7 @@
  * 키보드로 빠른 액션 실행 및 네비게이션
  */
 
-import React, { 
-  useState, 
-  useRef, 
-  useEffect, 
-  useCallback,
-  KeyboardEvent,
-  useMemo
-} from 'react';
+import React, { useState, useRef, useEffect, useCallback, KeyboardEvent, useMemo } from 'react';
 
 import styled from 'styled-components';
 
@@ -33,20 +26,28 @@ const Overlay = styled.div<{ isOpen: boolean }>`
   bottom: 0;
   background: rgba(0, 0, 0, 0.6);
   z-index: 9999;
-  display: ${props => props.isOpen ? 'flex' : 'none'};
+  display: ${props => (props.isOpen ? 'flex' : 'none')};
   align-items: flex-start;
   justify-content: center;
   padding-top: 10vh;
-  animation: ${props => props.isOpen ? 'fadeIn' : 'fadeOut'} 0.2s ease;
-  
+  animation: ${props => (props.isOpen ? 'fadeIn' : 'fadeOut')} 0.2s ease;
+
   @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
-  
+
   @keyframes fadeOut {
-    from { opacity: 1; }
-    to { opacity: 0; }
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
   }
 `;
 
@@ -58,7 +59,7 @@ const Container = styled.div`
   box-shadow: 0 16px 64px rgba(0, 0, 0, 0.2);
   overflow: hidden;
   animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  
+
   @keyframes slideIn {
     from {
       opacity: 0;
@@ -69,7 +70,7 @@ const Container = styled.div`
       transform: translateY(0) scale(1);
     }
   }
-  
+
   @media (max-width: 640px) {
     margin: 0 16px;
     max-width: calc(100vw - 32px);
@@ -99,7 +100,7 @@ const SearchInput = styled.input`
   font-size: 18px;
   outline: none;
   color: #333;
-  
+
   &::placeholder {
     color: #999;
   }
@@ -120,7 +121,7 @@ const CategoryHeader = styled.div`
   letter-spacing: 0.5px;
   background: #f8f9fa;
   border-bottom: 1px solid #f0f0f0;
-  
+
   &:not(:first-child) {
     border-top: 1px solid #f0f0f0;
   }
@@ -128,18 +129,23 @@ const CategoryHeader = styled.div`
 
 const ResultItem = styled.div<{ isHighlighted?: boolean; disabled?: boolean }>`
   padding: 12px 20px;
-  cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
+  cursor: ${props => (props.disabled ? 'not-allowed' : 'pointer')};
   display: flex;
   align-items: center;
   gap: 12px;
   transition: background-color 0.1s ease;
-  
-  ${props => props.disabled && `
+
+  ${props =>
+    props.disabled &&
+    `
     opacity: 0.5;
     color: #999;
   `}
-  
-  ${props => props.isHighlighted && !props.disabled && `
+
+  ${props =>
+    props.isHighlighted &&
+    !props.disabled &&
+    `
     background: #f0f8ff;
     border-left: 4px solid #007bff;
   `}
@@ -233,21 +239,21 @@ const KeyCode = styled.kbd`
 const fuzzySearch = (query: string, text: string): number => {
   const normalizedQuery = query.toLowerCase();
   const normalizedText = text.toLowerCase();
-  
+
   if (normalizedText.includes(normalizedQuery)) {
     return normalizedQuery.length / normalizedText.length;
   }
-  
+
   let score = 0;
   let queryIndex = 0;
-  
+
   for (let i = 0; i < normalizedText.length && queryIndex < normalizedQuery.length; i++) {
     if (normalizedText[i] === normalizedQuery[queryIndex]) {
       score += 1;
       queryIndex++;
     }
   }
-  
+
   return queryIndex === normalizedQuery.length ? score / normalizedText.length : 0;
 };
 
@@ -262,11 +268,11 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
   showCategories = true,
   showShortcuts = true,
   theme = 'light',
-  className
+  className,
 }) => {
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
-  
+
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
@@ -276,33 +282,40 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
     if (!query.trim()) {
       return items.slice(0, maxResults);
     }
-    
+
     const searchResults = items
       .map(item => {
         // 키워드와 제목, 설명에서 검색
-        const titleScore = enableFuzzySearch 
+        const titleScore = enableFuzzySearch
           ? fuzzySearch(query, item.title)
-          : item.title.toLowerCase().includes(query.toLowerCase()) ? 1 : 0;
-        
-        const descriptionScore = enableFuzzySearch && item.description
-          ? fuzzySearch(query, item.description) * 0.7
-          : (item.description?.toLowerCase().includes(query.toLowerCase()) ? 0.7 : 0);
-        
-        const keywordScore = item.keywords.some(keyword => 
+          : item.title.toLowerCase().includes(query.toLowerCase())
+            ? 1
+            : 0;
+
+        const descriptionScore =
+          enableFuzzySearch && item.description
+            ? fuzzySearch(query, item.description) * 0.7
+            : item.description?.toLowerCase().includes(query.toLowerCase())
+              ? 0.7
+              : 0;
+
+        const keywordScore = item.keywords.some(keyword =>
           enableFuzzySearch
             ? fuzzySearch(query, keyword) > 0.5
             : keyword.toLowerCase().includes(query.toLowerCase())
-        ) ? 0.8 : 0;
-        
+        )
+          ? 0.8
+          : 0;
+
         const totalScore = Math.max(titleScore, descriptionScore, keywordScore);
-        
+
         return { item, score: totalScore };
       })
       .filter(result => result.score > 0)
       .sort((a, b) => b.score - a.score)
       .slice(0, maxResults)
       .map(result => result.item);
-    
+
     return searchResults;
   }, [query, items, maxResults, enableFuzzySearch]);
 
@@ -311,9 +324,9 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
     if (!showCategories) {
       return { '': filteredItems };
     }
-    
+
     const groups: Record<string, CommandPaletteItem[]> = {};
-    
+
     filteredItems.forEach(item => {
       const category = item.category || '기타';
       if (!groups[category]) {
@@ -321,62 +334,66 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
       }
       groups[category].push(item);
     });
-    
+
     return groups;
   }, [filteredItems, showCategories]);
 
   // 플랫 아이템 리스트 (키보드 네비게이션용)
   const flatItems = useMemo(() => {
-    return Object.values(groupedItems).flat().filter(item => item.enabled !== false);
+    return Object.values(groupedItems)
+      .flat()
+      .filter(item => item.enabled !== false);
   }, [groupedItems]);
 
   // 키보드 네비게이션
-  const handleKeyDown = useCallback((event: KeyboardEvent) => {
-    switch (event.key) {
-      case 'ArrowDown':
-        event.preventDefault();
-        setSelectedIndex(prev => 
-          prev < flatItems.length - 1 ? prev + 1 : 0
-        );
-        break;
-        
-      case 'ArrowUp':
-        event.preventDefault();
-        setSelectedIndex(prev => 
-          prev > 0 ? prev - 1 : flatItems.length - 1
-        );
-        break;
-        
-      case 'Enter':
-        event.preventDefault();
-        if (flatItems[selectedIndex]) {
-          executeCommand(flatItems[selectedIndex]);
-        }
-        break;
-        
-      case 'Escape':
-        event.preventDefault();
-        onClose();
-        break;
-        
-      case 'Tab':
-        event.preventDefault();
-        break;
-    }
-  }, [flatItems, selectedIndex, onClose]);
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      switch (event.key) {
+        case 'ArrowDown':
+          event.preventDefault();
+          setSelectedIndex(prev => (prev < flatItems.length - 1 ? prev + 1 : 0));
+          break;
+
+        case 'ArrowUp':
+          event.preventDefault();
+          setSelectedIndex(prev => (prev > 0 ? prev - 1 : flatItems.length - 1));
+          break;
+
+        case 'Enter':
+          event.preventDefault();
+          if (flatItems[selectedIndex]) {
+            executeCommand(flatItems[selectedIndex]);
+          }
+          break;
+
+        case 'Escape':
+          event.preventDefault();
+          onClose();
+          break;
+
+        case 'Tab':
+          event.preventDefault();
+          break;
+      }
+    },
+    [flatItems, selectedIndex, onClose]
+  );
 
   // 명령 실행
-  const executeCommand = useCallback(async (item: CommandPaletteItem) => {
-    if (item.enabled === false) return;
-    
-    try {
-      onExecute(item);
-      await item.action();
-      onClose();
-    } catch (error) {
-      console.error('Command execution failed:', error);
-    }
-  }, [onExecute, onClose]);
+  const executeCommand = useCallback(
+    async (item: CommandPaletteItem) => {
+      if (item.enabled === false) return;
+
+      try {
+        onExecute(item);
+        await item.action();
+        onClose();
+      } catch (error) {
+        console.error('Command execution failed:', error);
+      }
+    },
+    [onExecute, onClose]
+  );
 
   // 검색어 변경
   const handleQueryChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
@@ -386,10 +403,13 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
   }, []);
 
   // 아이템 클릭
-  const handleItemClick = useCallback((item: CommandPaletteItem, index: number) => {
-    setSelectedIndex(index);
-    executeCommand(item);
-  }, [executeCommand]);
+  const handleItemClick = useCallback(
+    (item: CommandPaletteItem, index: number) => {
+      setSelectedIndex(index);
+      executeCommand(item);
+    },
+    [executeCommand]
+  );
 
   // 키보드 트랩 설정
   useEffect(() => {
@@ -397,12 +417,12 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
       globalKeyboardTrapManager.addTrap(containerRef.current, {
         autoFocus: true,
         escapeDeactivates: true,
-        returnFocusOnDeactivate: true
+        returnFocusOnDeactivate: true,
       });
-      
+
       // 입력 필드에 포커스
       inputRef.current?.focus();
-      
+
       return () => {
         if (containerRef.current) {
           globalKeyboardTrapManager.removeTrap(containerRef.current);
@@ -418,7 +438,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
       if (selectedElement) {
         selectedElement.scrollIntoView({
           block: 'nearest',
-          behavior: 'smooth'
+          behavior: 'smooth',
         });
       }
     }
@@ -446,26 +466,22 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
           <SearchIcon>🔍</SearchIcon>
           <SearchInput
             ref={inputRef}
-            type="text"
+            type='text'
             value={query}
             onChange={handleQueryChange}
             placeholder={placeholder}
-            autoComplete="off"
+            autoComplete='off'
             spellCheck={false}
           />
         </SearchContainer>
 
         <ResultsContainer ref={resultsRef}>
           {Object.keys(groupedItems).length === 0 ? (
-            <NoResults>
-              검색 결과가 없습니다
-            </NoResults>
+            <NoResults>검색 결과가 없습니다</NoResults>
           ) : (
             Object.entries(groupedItems).map(([category, categoryItems]) => (
               <div key={category}>
-                {showCategories && category && (
-                  <CategoryHeader>{category}</CategoryHeader>
-                )}
+                {showCategories && category && <CategoryHeader>{category}</CategoryHeader>}
                 {categoryItems.map((item, index) => {
                   const flatIndex = flatItems.indexOf(item);
                   return (
@@ -475,14 +491,10 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
                       disabled={item.enabled === false}
                       onClick={() => handleItemClick(item, flatIndex)}
                     >
-                      {item.icon && (
-                        <ItemIcon>{item.icon}</ItemIcon>
-                      )}
+                      {item.icon && <ItemIcon>{item.icon}</ItemIcon>}
                       <ItemContent>
                         <ItemTitle>{item.title}</ItemTitle>
-                        {item.description && (
-                          <ItemDescription>{item.description}</ItemDescription>
-                        )}
+                        {item.description && <ItemDescription>{item.description}</ItemDescription>}
                       </ItemContent>
                       {showShortcuts && item.shortcut && (
                         <ItemShortcut>
@@ -509,9 +521,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({
               <KeyCode>Esc</KeyCode> 닫기
             </KeyHint>
           </FooterHint>
-          <div>
-            {flatItems.length}개 결과
-          </div>
+          <div>{flatItems.length}개 결과</div>
         </Footer>
       </Container>
     </Overlay>

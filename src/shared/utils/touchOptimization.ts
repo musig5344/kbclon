@@ -67,9 +67,7 @@ export const hapticFeedback = {
 };
 
 // Touch event normalization
-export const normalizeTouch = (
-  event: TouchEvent | MouseEvent
-): TouchPoint => {
+export const normalizeTouch = (event: TouchEvent | MouseEvent): TouchPoint => {
   let x: number, y: number, identifier: number;
 
   if ('touches' in event && event.touches.length > 0) {
@@ -114,10 +112,7 @@ export const calculateVelocity = (
 };
 
 // Calculate touch distance
-export const calculateDistance = (
-  start: TouchPoint,
-  end: TouchPoint
-): number => {
+export const calculateDistance = (start: TouchPoint, end: TouchPoint): number => {
   const dx = end.x - start.x;
   const dy = end.y - start.y;
   return Math.sqrt(dx ** 2 + dy ** 2);
@@ -145,10 +140,7 @@ export const getSwipeDirection = (
 };
 
 // Touch area expansion for small targets
-export const expandTouchArea = (
-  element: HTMLElement,
-  expansion: number = 10
-): void => {
+export const expandTouchArea = (element: HTMLElement, expansion: number = 10): void => {
   const rect = element.getBoundingClientRect();
   const width = rect.width;
   const height = rect.height;
@@ -156,7 +148,7 @@ export const expandTouchArea = (
   // Only expand if below minimum touch target size
   if (width < TOUCH_CONSTANTS.MIN_TOUCH_TARGET || height < TOUCH_CONSTANTS.MIN_TOUCH_TARGET) {
     element.style.position = 'relative';
-    
+
     // Create invisible expanded touch area
     const touchArea = document.createElement('div');
     touchArea.style.position = 'absolute';
@@ -165,15 +157,15 @@ export const expandTouchArea = (
     touchArea.style.bottom = `-${expansion}px`;
     touchArea.style.left = `-${expansion}px`;
     touchArea.style.zIndex = '1';
-    
+
     // Forward touch events to the original element
-    touchArea.addEventListener('touchstart', (e) => {
+    touchArea.addEventListener('touchstart', e => {
       element.dispatchEvent(new TouchEvent('touchstart', e));
     });
-    touchArea.addEventListener('touchend', (e) => {
+    touchArea.addEventListener('touchend', e => {
       element.dispatchEvent(new TouchEvent('touchend', e));
     });
-    
+
     element.appendChild(touchArea);
   }
 };
@@ -186,7 +178,7 @@ export const preventGhostClick = (element: HTMLElement): void => {
     lastTouchTime = Date.now();
   });
 
-  element.addEventListener('click', (e) => {
+  element.addEventListener('click', e => {
     const timeSinceTouch = Date.now() - lastTouchTime;
     if (timeSinceTouch < 500) {
       e.preventDefault();
@@ -207,15 +199,18 @@ export const useTouchDebounce = (
     callbackRef.current = callback;
   }, [callback]);
 
-  return useCallback((gesture: TouchGesture) => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
+  return useCallback(
+    (gesture: TouchGesture) => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
 
-    timeoutRef.current = setTimeout(() => {
-      callbackRef.current(gesture);
-    }, delay);
-  }, [delay]);
+      timeoutRef.current = setTimeout(() => {
+        callbackRef.current(gesture);
+      }, delay);
+    },
+    [delay]
+  );
 };
 
 // Scroll lock during gestures
@@ -236,7 +231,7 @@ export const useScrollLock = () => {
     document.body.style.left = `-${scrollPositionRef.current.x}px`;
     document.body.style.width = '100%';
     document.body.style.overflow = 'hidden';
-    
+
     isLockedRef.current = true;
   }, []);
 
@@ -250,7 +245,7 @@ export const useScrollLock = () => {
     document.body.style.overflow = '';
 
     window.scrollTo(scrollPositionRef.current.x, scrollPositionRef.current.y);
-    
+
     isLockedRef.current = false;
   }, []);
 
@@ -302,15 +297,11 @@ export const detectMultiTouchGesture = (
 
   // Calculate distance between touches
   const distance = Math.sqrt(
-    Math.pow(touch2.clientX - touch1.clientX, 2) +
-    Math.pow(touch2.clientY - touch1.clientY, 2)
+    Math.pow(touch2.clientX - touch1.clientX, 2) + Math.pow(touch2.clientY - touch1.clientY, 2)
   );
 
   // Calculate angle between touches
-  const angle = Math.atan2(
-    touch2.clientY - touch1.clientY,
-    touch2.clientX - touch1.clientX
-  );
+  const angle = Math.atan2(touch2.clientY - touch1.clientY, touch2.clientX - touch1.clientX);
 
   return {
     type: 'pinch',
@@ -322,30 +313,40 @@ export const detectMultiTouchGesture = (
 export const preventIOSBounce = (element: HTMLElement): void => {
   let startY = 0;
 
-  element.addEventListener('touchstart', (e) => {
-    startY = e.touches[0].pageY;
-  }, { passive: false });
+  element.addEventListener(
+    'touchstart',
+    e => {
+      startY = e.touches[0].pageY;
+    },
+    { passive: false }
+  );
 
-  element.addEventListener('touchmove', (e) => {
-    const scrollTop = element.scrollTop;
-    const scrollHeight = element.scrollHeight;
-    const height = element.clientHeight;
-    const deltaY = e.touches[0].pageY - startY;
-    const isScrollingUp = deltaY > 0;
-    const isAtTop = scrollTop === 0;
-    const isAtBottom = scrollTop + height >= scrollHeight;
+  element.addEventListener(
+    'touchmove',
+    e => {
+      const scrollTop = element.scrollTop;
+      const scrollHeight = element.scrollHeight;
+      const height = element.clientHeight;
+      const deltaY = e.touches[0].pageY - startY;
+      const isScrollingUp = deltaY > 0;
+      const isAtTop = scrollTop === 0;
+      const isAtBottom = scrollTop + height >= scrollHeight;
 
-    if ((isScrollingUp && isAtTop) || (!isScrollingUp && isAtBottom)) {
-      e.preventDefault();
-    }
-  }, { passive: false });
+      if ((isScrollingUp && isAtTop) || (!isScrollingUp && isAtBottom)) {
+        e.preventDefault();
+      }
+    },
+    { passive: false }
+  );
 };
 
 // Touch target size validator
 export const validateTouchTarget = (element: HTMLElement): boolean => {
   const rect = element.getBoundingClientRect();
-  return rect.width >= TOUCH_CONSTANTS.MIN_TOUCH_TARGET && 
-         rect.height >= TOUCH_CONSTANTS.MIN_TOUCH_TARGET;
+  return (
+    rect.width >= TOUCH_CONSTANTS.MIN_TOUCH_TARGET &&
+    rect.height >= TOUCH_CONSTANTS.MIN_TOUCH_TARGET
+  );
 };
 
 // Fast click implementation (removes 300ms delay)
@@ -360,27 +361,30 @@ export const useFastClick = (
     touchStartRef.current = normalizeTouch(e);
   }, []);
 
-  const handleTouchEnd = useCallback((e: TouchEvent) => {
-    if (!touchStartRef.current) return;
+  const handleTouchEnd = useCallback(
+    (e: TouchEvent) => {
+      if (!touchStartRef.current) return;
 
-    const touchEnd = normalizeTouch(e);
-    const distance = calculateDistance(touchStartRef.current, touchEnd);
+      const touchEnd = normalizeTouch(e);
+      const distance = calculateDistance(touchStartRef.current, touchEnd);
 
-    if (distance < TOUCH_CONSTANTS.TOUCH_SLOP) {
-      const now = Date.now();
-      const timeSinceLastTap = now - lastTapRef.current;
+      if (distance < TOUCH_CONSTANTS.TOUCH_SLOP) {
+        const now = Date.now();
+        const timeSinceLastTap = now - lastTapRef.current;
 
-      if (options.preventDoubleTap && timeSinceLastTap < TOUCH_CONSTANTS.DOUBLE_TAP_DELAY) {
-        e.preventDefault();
-        return;
+        if (options.preventDoubleTap && timeSinceLastTap < TOUCH_CONSTANTS.DOUBLE_TAP_DELAY) {
+          e.preventDefault();
+          return;
+        }
+
+        onClick(e);
+        lastTapRef.current = now;
       }
 
-      onClick(e);
-      lastTapRef.current = now;
-    }
-
-    touchStartRef.current = null;
-  }, [onClick, options.preventDoubleTap]);
+      touchStartRef.current = null;
+    },
+    [onClick, options.preventDoubleTap]
+  );
 
   return {
     onTouchStart: handleTouchStart,

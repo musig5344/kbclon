@@ -1,6 +1,6 @@
 /**
  * CSRF Protection Utilities
- * 
+ *
  * Cross-Site Request Forgery (CSRF) 공격 방어를 위한 유틸리티
  * - CSRF 토큰 생성 및 검증
  * - SameSite 쿠키 설정
@@ -39,7 +39,8 @@ interface CSRFConfig {
 
 class CSRFProtection {
   private config: CSRFConfig;
-  private tokenStore: Map<string, { token: string; expiresAt: number; sessionId: string }> = new Map();
+  private tokenStore: Map<string, { token: string; expiresAt: number; sessionId: string }> =
+    new Map();
   private readonly SECRET_KEY: string;
 
   constructor(config?: Partial<CSRFConfig>) {
@@ -53,7 +54,7 @@ class CSRFProtection {
       httpOnly: true,
       secure: true,
       maxAge: 3600000, // 1 hour
-      ...config
+      ...config,
     };
 
     // 보안 시크릿 키 생성
@@ -72,20 +73,20 @@ class CSRFProtection {
       expiry: this.config.maxAge,
       algorithm: 'SHA256',
       secret: this.SECRET_KEY,
-      ...options
+      ...options,
     };
 
     // 기본 토큰 데이터
     const timestamp = Date.now();
     const expiresAt = timestamp + opts.expiry;
     const randomBytes = this.generateRandomString(opts.length);
-    
+
     // 토큰 페이로드
     const payload = {
       sessionId,
       timestamp,
       expiresAt,
-      randomBytes
+      randomBytes,
     };
 
     // HMAC 기반 토큰 생성
@@ -97,7 +98,7 @@ class CSRFProtection {
     this.tokenStore.set(token, {
       token,
       expiresAt,
-      sessionId
+      sessionId,
     });
 
     // 만료된 토큰 정리
@@ -178,9 +179,8 @@ class CSRFProtection {
         token,
         errors,
         warnings,
-        expiresAt: decodedToken.expiresAt
+        expiresAt: decodedToken.expiresAt,
       };
-
     } catch (error) {
       errors.push(`Token validation error: ${error}`);
       return { isValid: false, token, errors, warnings };
@@ -220,7 +220,7 @@ class CSRFProtection {
     try {
       const decoded = atob(token);
       const [tokenData, signature] = decoded.split('.');
-      
+
       // 서명 검증
       const expectedSignature = CryptoJS.HmacSHA256(tokenData, this.SECRET_KEY).toString();
       if (signature !== expectedSignature) {
@@ -241,7 +241,7 @@ class CSRFProtection {
   private validateOrigin(origin: string): boolean {
     try {
       const url = new URL(origin);
-      
+
       // HTTPS 검증
       if (url.protocol !== 'https:' && process.env.NODE_ENV === 'production') {
         return false;
@@ -295,7 +295,7 @@ class CSRFProtection {
       Date.now().toString(),
       Math.random().toString(),
       navigator?.userAgent || 'server',
-      window?.location?.hostname || 'localhost'
+      window?.location?.hostname || 'localhost',
     ].join('|');
 
     return CryptoJS.SHA256(randomData).toString();
@@ -323,7 +323,7 @@ class CSRFProtection {
       `Expires=${expires}`,
       `Max-Age=${Math.floor((expiresAt - Date.now()) / 1000)}`,
       `SameSite=${this.config.sameSitePolicy}`,
-      `Path=/`
+      `Path=/`,
     ];
 
     if (this.config.httpOnly) {
@@ -346,10 +346,10 @@ class CSRFProtection {
       if (req.method === 'GET' && !req.session?.csrfToken) {
         const sessionId = req.sessionID || this.generateRandomString(16);
         const { token, expiresAt } = this.generateToken(sessionId);
-        
+
         req.session.csrfToken = token;
         res.locals.csrfToken = token;
-        
+
         // 쿠키 설정
         const cookieHeader = this.generateCookieHeader(token, expiresAt);
         res.setHeader('Set-Cookie', cookieHeader);
@@ -357,22 +357,23 @@ class CSRFProtection {
 
       // CSRF 토큰 검증
       if (!this.config.excludedMethods.includes(req.method)) {
-        const token = req.headers[this.config.headerName.toLowerCase()] || 
-                     req.body[this.config.tokenName] || 
-                     req.query[this.config.tokenName];
+        const token =
+          req.headers[this.config.headerName.toLowerCase()] ||
+          req.body[this.config.tokenName] ||
+          req.query[this.config.tokenName];
 
         const sessionId = req.sessionID || '';
         const validation = this.validateToken(token, sessionId, {
           method: req.method,
           origin: req.headers.origin,
           referer: req.headers.referer,
-          userAgent: req.headers['user-agent']
+          userAgent: req.headers['user-agent'],
         });
 
         if (!validation.isValid) {
           return res.status(403).json({
             error: 'CSRF token validation failed',
-            details: validation.errors
+            details: validation.errors,
           });
         }
       }
@@ -393,7 +394,7 @@ class CSRFProtection {
     return {
       token,
       headerName: this.config.headerName,
-      formFieldName: this.config.tokenName
+      formFieldName: this.config.tokenName,
     };
   }
 
@@ -412,7 +413,7 @@ class CSRFProtection {
   } {
     let expiredTokens = 0;
     const now = Date.now();
-    
+
     for (const data of this.tokenStore.values()) {
       if (now > data.expiresAt) {
         expiredTokens++;
@@ -426,8 +427,8 @@ class CSRFProtection {
       security: {
         sameSiteEnabled: this.config.sameSitePolicy !== 'None',
         httpsOnly: this.config.secure,
-        httpOnlyEnabled: this.config.httpOnly
-      }
+        httpOnlyEnabled: this.config.httpOnly,
+      },
     };
   }
 
@@ -452,7 +453,7 @@ class CSRFProtection {
     const baseValidation = this.validateToken(token, sessionId, {
       method: requestData.method,
       origin: requestData.origin,
-      userAgent: requestData.userAgent
+      userAgent: requestData.userAgent,
     });
 
     const additionalChecks: string[] = [];
@@ -482,7 +483,7 @@ class CSRFProtection {
     return {
       ...baseValidation,
       bankingRisk,
-      additionalChecks
+      additionalChecks,
     };
   }
 }
@@ -496,8 +497,8 @@ export const generateCSRFToken = (sessionId: string, options?: CSRFTokenOptions)
 };
 
 export const validateCSRFToken = (
-  token: string, 
-  sessionId: string, 
+  token: string,
+  sessionId: string,
   request?: Parameters<typeof csrfProtection.validateToken>[2]
 ) => {
   return csrfProtection.validateToken(token, sessionId, request);

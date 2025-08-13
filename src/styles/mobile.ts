@@ -128,4 +128,4 @@ export const mobileMediaQueries = {
   mobile: '@media (max-width: 768px)',
   // 최소 너비 보장
   minWidth: '@media (min-width: 320px)',
-} as const; 
+} as const;

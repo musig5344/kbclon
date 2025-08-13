@@ -34,11 +34,11 @@ const TransactionItem = styled.div<{ $offset: number }>`
   align-items: center;
   cursor: pointer;
   transition: background-color 0.2s;
-  
+
   &:hover {
     background-color: ${tokens.colors.background.secondary};
   }
-  
+
   &:active {
     background-color: ${tokens.colors.background.secondary};
   }
@@ -61,13 +61,13 @@ const TransactionDate = styled.div`
 
 const TransactionAmount = styled.div<{ $isIncome: boolean }>`
   text-align: right;
-  
+
   .amount {
     font-size: 16px;
     font-weight: 600;
-    color: ${props => props.$isIncome ? tokens.colors.success : tokens.colors.textPrimary};
+    color: ${props => (props.$isIncome ? tokens.colors.success : tokens.colors.textPrimary)};
   }
-  
+
   .balance {
     font-size: 12px;
     color: ${tokens.colors.textSecondary};
@@ -98,7 +98,7 @@ export const VirtualizedTransactionList: React.FC<VirtualizedTransactionListProp
   itemHeight = 80,
   containerHeight = 600,
   overscan = 3,
-  onItemClick
+  onItemClick,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [scrollTop, setScrollTop] = useState(0);
@@ -158,7 +158,7 @@ export const VirtualizedTransactionList: React.FC<VirtualizedTransactionListProp
         {visibleItems.map((transaction, index) => {
           const actualIndex = startIndex + index;
           const offset = actualIndex * itemHeight;
-          
+
           return (
             <TransactionItem
               key={transaction.id}
@@ -176,13 +176,11 @@ export const VirtualizedTransactionList: React.FC<VirtualizedTransactionListProp
                 </TransactionDate>
               </TransactionInfo>
               <TransactionAmount $isIncome={transaction.type === 'income'}>
-                <div className="amount">
+                <div className='amount'>
                   {transaction.type === 'income' ? '+' : '-'}
                   {formatAmount(transaction.amount)}원
                 </div>
-                <div className="balance">
-                  잔액 {formatBalance(transaction.balance)}원
-                </div>
+                <div className='balance'>잔액 {formatBalance(transaction.balance)}원</div>
               </TransactionAmount>
             </TransactionItem>
           );
@@ -201,7 +199,7 @@ export const GroupedVirtualizedTransactionList: React.FC<{
   // 모든 거래를 플랫하게 만들어서 가상화
   const flatTransactions = groupedTransactions.flatMap(group => [
     { id: `header-${group.date}`, type: 'header' as const, date: group.date },
-    ...group.transactions.map(t => ({ ...t, type: 'transaction' as const }))
+    ...group.transactions.map(t => ({ ...t, type: 'transaction' as const })),
   ]);
 
   const HEADER_HEIGHT = 40;

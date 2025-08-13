@@ -1,6 +1,6 @@
 /**
  * Security Configuration Management for KB StarBanking Clone
- * 
+ *
  * Centralized security configuration with environment-specific settings,
  * secure environment variable handling, and security policy management.
  */
@@ -96,13 +96,13 @@ const SECURITY_LEVELS: Record<SecurityLevel, Partial<SecurityConfiguration>> = {
       enableMFA: false,
       passwordExpiryDays: 365,
       maxLoginAttempts: 10,
-      lockoutDurationMinutes: 5
+      lockoutDurationMinutes: 5,
     },
     csrf: {
       enabled: true,
       tokenLifetime: 2 * 60 * 60 * 1000, // 2 hours
       strictOriginValidation: false,
-      allowedOrigins: []
+      allowedOrigins: [],
     },
     inputValidation: {
       enabled: true,
@@ -110,17 +110,17 @@ const SECURITY_LEVELS: Record<SecurityLevel, Partial<SecurityConfiguration>> = {
       maxInputLength: 10000,
       allowHtml: false,
       allowUrls: true,
-      logViolations: false
+      logViolations: false,
     },
     rateLimit: {
       enabled: true,
       requests: {
         general: { max: 1000, windowMs: 15 * 60 * 1000 },
         auth: { max: 20, windowMs: 15 * 60 * 1000 },
-        transfer: { max: 50, windowMs: 15 * 60 * 1000 }
+        transfer: { max: 50, windowMs: 15 * 60 * 1000 },
       },
-      blockDurationMs: 5 * 60 * 1000
-    }
+      blockDurationMs: 5 * 60 * 1000,
+    },
   },
   medium: {
     auth: {
@@ -130,13 +130,13 @@ const SECURITY_LEVELS: Record<SecurityLevel, Partial<SecurityConfiguration>> = {
       enableMFA: false,
       passwordExpiryDays: 180,
       maxLoginAttempts: 5,
-      lockoutDurationMinutes: 15
+      lockoutDurationMinutes: 15,
     },
     csrf: {
       enabled: true,
       tokenLifetime: 60 * 60 * 1000, // 1 hour
       strictOriginValidation: true,
-      allowedOrigins: []
+      allowedOrigins: [],
     },
     inputValidation: {
       enabled: true,
@@ -144,17 +144,17 @@ const SECURITY_LEVELS: Record<SecurityLevel, Partial<SecurityConfiguration>> = {
       maxInputLength: 5000,
       allowHtml: false,
       allowUrls: false,
-      logViolations: true
+      logViolations: true,
     },
     rateLimit: {
       enabled: true,
       requests: {
         general: { max: 500, windowMs: 15 * 60 * 1000 },
         auth: { max: 10, windowMs: 15 * 60 * 1000 },
-        transfer: { max: 20, windowMs: 15 * 60 * 1000 }
+        transfer: { max: 20, windowMs: 15 * 60 * 1000 },
       },
-      blockDurationMs: 15 * 60 * 1000
-    }
+      blockDurationMs: 15 * 60 * 1000,
+    },
   },
   high: {
     auth: {
@@ -164,13 +164,13 @@ const SECURITY_LEVELS: Record<SecurityLevel, Partial<SecurityConfiguration>> = {
       enableMFA: true,
       passwordExpiryDays: 90,
       maxLoginAttempts: 3,
-      lockoutDurationMinutes: 30
+      lockoutDurationMinutes: 30,
     },
     csrf: {
       enabled: true,
       tokenLifetime: 30 * 60 * 1000, // 30 minutes
       strictOriginValidation: true,
-      allowedOrigins: []
+      allowedOrigins: [],
     },
     inputValidation: {
       enabled: true,
@@ -178,17 +178,17 @@ const SECURITY_LEVELS: Record<SecurityLevel, Partial<SecurityConfiguration>> = {
       maxInputLength: 2000,
       allowHtml: false,
       allowUrls: false,
-      logViolations: true
+      logViolations: true,
     },
     rateLimit: {
       enabled: true,
       requests: {
         general: { max: 200, windowMs: 15 * 60 * 1000 },
         auth: { max: 5, windowMs: 15 * 60 * 1000 },
-        transfer: { max: 10, windowMs: 15 * 60 * 1000 }
+        transfer: { max: 10, windowMs: 15 * 60 * 1000 },
       },
-      blockDurationMs: 30 * 60 * 1000
-    }
+      blockDurationMs: 30 * 60 * 1000,
+    },
   },
   maximum: {
     auth: {
@@ -198,13 +198,13 @@ const SECURITY_LEVELS: Record<SecurityLevel, Partial<SecurityConfiguration>> = {
       enableMFA: true,
       passwordExpiryDays: 30,
       maxLoginAttempts: 3,
-      lockoutDurationMinutes: 60
+      lockoutDurationMinutes: 60,
     },
     csrf: {
       enabled: true,
       tokenLifetime: 15 * 60 * 1000, // 15 minutes
       strictOriginValidation: true,
-      allowedOrigins: []
+      allowedOrigins: [],
     },
     inputValidation: {
       enabled: true,
@@ -212,18 +212,18 @@ const SECURITY_LEVELS: Record<SecurityLevel, Partial<SecurityConfiguration>> = {
       maxInputLength: 1000,
       allowHtml: false,
       allowUrls: false,
-      logViolations: true
+      logViolations: true,
     },
     rateLimit: {
       enabled: true,
       requests: {
         general: { max: 100, windowMs: 15 * 60 * 1000 },
         auth: { max: 3, windowMs: 15 * 60 * 1000 },
-        transfer: { max: 5, windowMs: 15 * 60 * 1000 }
+        transfer: { max: 5, windowMs: 15 * 60 * 1000 },
       },
-      blockDurationMs: 60 * 60 * 1000
-    }
-  }
+      blockDurationMs: 60 * 60 * 1000,
+    },
+  },
 };
 /**
  * Environment-specific configurations
@@ -234,79 +234,79 @@ const ENVIRONMENT_CONFIGS: Record<Environment, Partial<SecurityConfiguration>> =
       enabled: true,
       reportOnly: true,
       strictDynamic: false,
-      requireTrustedTypes: false
+      requireTrustedTypes: false,
     },
     api: {
       timeout: 30000,
       maxRetries: 3,
       validateResponses: false,
-      encryptSensitiveData: false
+      encryptSensitiveData: false,
     },
     logging: {
       logSecurityEvents: true,
       logLevel: 'debug',
       maxLogSize: 10 * 1024 * 1024, // 10MB
-      retentionDays: 7
+      retentionDays: 7,
     },
     features: {
       enableBiometrics: false,
       enableDeviceFingerprinting: false,
       enableGeolocation: false,
-      enableOfflineMode: true
-    }
+      enableOfflineMode: true,
+    },
   },
   testing: {
     csp: {
       enabled: true,
       reportOnly: false,
       strictDynamic: false,
-      requireTrustedTypes: false
+      requireTrustedTypes: false,
     },
     api: {
       timeout: 10000,
       maxRetries: 2,
       validateResponses: true,
-      encryptSensitiveData: true
+      encryptSensitiveData: true,
     },
     logging: {
       logSecurityEvents: true,
       logLevel: 'info',
       maxLogSize: 50 * 1024 * 1024, // 50MB
-      retentionDays: 30
+      retentionDays: 30,
     },
     features: {
       enableBiometrics: true,
       enableDeviceFingerprinting: true,
       enableGeolocation: false,
-      enableOfflineMode: false
-    }
+      enableOfflineMode: false,
+    },
   },
   production: {
     csp: {
       enabled: true,
       reportOnly: false,
       strictDynamic: true,
-      requireTrustedTypes: true
+      requireTrustedTypes: true,
     },
     api: {
       timeout: 5000,
       maxRetries: 1,
       validateResponses: true,
-      encryptSensitiveData: true
+      encryptSensitiveData: true,
     },
     logging: {
       logSecurityEvents: true,
       logLevel: 'warn',
       maxLogSize: 100 * 1024 * 1024, // 100MB
-      retentionDays: 90
+      retentionDays: 90,
     },
     features: {
       enableBiometrics: true,
       enableDeviceFingerprinting: true,
       enableGeolocation: true,
-      enableOfflineMode: false
-    }
-  }
+      enableOfflineMode: false,
+    },
+  },
 };
 /**
  * Default configuration
@@ -321,13 +321,13 @@ const DEFAULT_CONFIG: SecurityConfiguration = {
     enableMFA: false,
     passwordExpiryDays: 180,
     maxLoginAttempts: 5,
-    lockoutDurationMinutes: 15
+    lockoutDurationMinutes: 15,
   },
   csrf: {
     enabled: true,
     tokenLifetime: 60 * 60 * 1000,
     strictOriginValidation: true,
-    allowedOrigins: []
+    allowedOrigins: [],
   },
   inputValidation: {
     enabled: true,
@@ -335,41 +335,41 @@ const DEFAULT_CONFIG: SecurityConfiguration = {
     maxInputLength: 5000,
     allowHtml: false,
     allowUrls: false,
-    logViolations: true
+    logViolations: true,
   },
   rateLimit: {
     enabled: true,
     requests: {
       general: { max: 500, windowMs: 15 * 60 * 1000 },
       auth: { max: 10, windowMs: 15 * 60 * 1000 },
-      transfer: { max: 20, windowMs: 15 * 60 * 1000 }
+      transfer: { max: 20, windowMs: 15 * 60 * 1000 },
     },
-    blockDurationMs: 15 * 60 * 1000
+    blockDurationMs: 15 * 60 * 1000,
   },
   csp: {
     enabled: true,
     reportOnly: false,
     strictDynamic: false,
-    requireTrustedTypes: false
+    requireTrustedTypes: false,
   },
   api: {
     timeout: 10000,
     maxRetries: 2,
     validateResponses: true,
-    encryptSensitiveData: true
+    encryptSensitiveData: true,
   },
   logging: {
     logSecurityEvents: true,
     logLevel: 'info',
     maxLogSize: 50 * 1024 * 1024,
-    retentionDays: 30
+    retentionDays: 30,
   },
   features: {
     enableBiometrics: false,
     enableDeviceFingerprinting: false,
     enableGeolocation: false,
-    enableOfflineMode: false
-  }
+    enableOfflineMode: false,
+  },
 };
 /**
  * Security Configuration Manager
@@ -396,7 +396,7 @@ export class SecurityConfigManager {
       'REACT_APP_SECURITY_LEVEL',
       'REACT_APP_ALLOWED_ORIGINS',
       'REACT_APP_API_BASE_URL',
-      'REACT_APP_ENABLE_LOGGING'
+      'REACT_APP_ENABLE_LOGGING',
     ];
     allowedEnvVars.forEach(varName => {
       const value = process.env[varName];
@@ -427,7 +427,9 @@ export class SecurityConfigManager {
     const finalEnvironment = environment || envFromVar || 'development';
     config.environment = finalEnvironment;
     // Apply security level from env var or parameter
-    const securityFromVar = this.environmentVariables.get('REACT_APP_SECURITY_LEVEL') as SecurityLevel;
+    const securityFromVar = this.environmentVariables.get(
+      'REACT_APP_SECURITY_LEVEL'
+    ) as SecurityLevel;
     const finalSecurityLevel = securityLevel || securityFromVar || 'medium';
     config.securityLevel = finalSecurityLevel;
     // Apply security level config
@@ -467,7 +469,8 @@ export class SecurityConfigManager {
   private validateConfiguration(): void {
     const errors: string[] = [];
     // Validate session timeout
-    if (this.config.auth.sessionTimeout < 5 * 60 * 1000) { // Minimum 5 minutes
+    if (this.config.auth.sessionTimeout < 5 * 60 * 1000) {
+      // Minimum 5 minutes
       errors.push('Session timeout too short (minimum 5 minutes)');
     }
     // Validate rate limits
@@ -475,7 +478,8 @@ export class SecurityConfigManager {
       errors.push('Auth rate limit too restrictive');
     }
     // Validate CSRF token lifetime
-    if (this.config.csrf.tokenLifetime < 5 * 60 * 1000) { // Minimum 5 minutes
+    if (this.config.csrf.tokenLifetime < 5 * 60 * 1000) {
+      // Minimum 5 minutes
       errors.push('CSRF token lifetime too short (minimum 5 minutes)');
     }
     if (errors.length > 0) {
@@ -484,7 +488,7 @@ export class SecurityConfigManager {
     }
     safeLog('info', 'Security configuration validated successfully', {
       environment: this.config.environment,
-      securityLevel: this.config.securityLevel
+      securityLevel: this.config.securityLevel,
     });
   }
   /**
@@ -541,8 +545,8 @@ export class SecurityConfigManager {
       // Remove sensitive information
       csrf: {
         ...config.csrf,
-        allowedOrigins: config.csrf.allowedOrigins.map(() => '[REDACTED]')
-      }
+        allowedOrigins: config.csrf.allowedOrigins.map(() => '[REDACTED]'),
+      },
     };
   }
 }
@@ -561,7 +565,7 @@ export function initializeSecurityConfig(
   const manager = new SecurityConfigManager(environment, securityLevel, customConfig);
   safeLog('info', 'Security configuration initialized', {
     environment: manager.getConfig().environment,
-    securityLevel: manager.getConfig().securityLevel
+    securityLevel: manager.getConfig().securityLevel,
   });
   return manager;
 }

@@ -57,7 +57,7 @@ const FortuneContent = styled.div`
 const FortuneIcon = styled.div`
   width: 48px;
   height: 48px;
-  background: linear-gradient(135deg, #FFE5CC 0%, #FFD4A3 100%);
+  background: linear-gradient(135deg, #ffe5cc 0%, #ffd4a3 100%);
   border-radius: ${tokens.borderRadius.xl};
   display: flex;
   align-items: center;
@@ -83,7 +83,7 @@ const FortuneArrow = styled.div`
 // === 게임 프로모션 섹션 ===
 const GamePromotionSection = styled(Section)``;
 const GameBanner = styled.div`
-  background: linear-gradient(135deg, #4A69BD 0%, #3C5BA9 100%);
+  background: linear-gradient(135deg, #4a69bd 0%, #3c5ba9 100%);
   border-radius: ${tokens.borderRadius.xxl};
   padding: ${tokens.spacing[5]};
   display: flex;
@@ -292,47 +292,47 @@ interface ContentSectionsProps {
 }
 // === 기본 데이터 ===
 const monthlyPicks: PickItem[] = [
-  { 
-    icon: '💳', 
-    title: '함께 모으는 순간', 
-    subtitle: '여행은 이미 시작!', 
-    desc: 'KB모임통장 서비스' 
+  {
+    icon: '💳',
+    title: '함께 모으는 순간',
+    subtitle: '여행은 이미 시작!',
+    desc: 'KB모임통장 서비스',
   },
-  { 
-    icon: '💵', 
-    title: '환전 걱정 없이', 
-    subtitle: '공항에서 외화받기', 
-    desc: '인천공항 환전하기' 
+  {
+    icon: '💵',
+    title: '환전 걱정 없이',
+    subtitle: '공항에서 외화받기',
+    desc: '인천공항 환전하기',
   },
-  { 
-    icon: '🔔', 
-    title: '안 쓰는 계좌의 잔액을 모아보세요', 
-    subtitle: '숨은 잔돈 모으기' 
-  }
+  {
+    icon: '🔔',
+    title: '안 쓰는 계좌의 잔액을 모아보세요',
+    subtitle: '숨은 잔돈 모으기',
+  },
 ];
 const recommendServices: RecommendItem[] = [
-  { 
-    icon: '📊', 
-    title: 'KB금융그룹 계열사 상품까지 한번에!', 
-    desc: '내게 맞는 대출 찾기' 
+  {
+    icon: '📊',
+    title: 'KB금융그룹 계열사 상품까지 한번에!',
+    desc: '내게 맞는 대출 찾기',
   },
-  { 
-    icon: '🏠', 
-    title: '홈 화면 계좌와 알림을 바로 확인', 
-    desc: '빠른 로그인 설정하기' 
+  {
+    icon: '🏠',
+    title: '홈 화면 계좌와 알림을 바로 확인',
+    desc: '빠른 로그인 설정하기',
   },
-  { 
-    icon: '📱', 
-    title: '7,500원에 10GB 든든하게!', 
-    desc: '가입도 간단해서 걱정 없어요' 
-  }
+  {
+    icon: '📱',
+    title: '7,500원에 10GB 든든하게!',
+    desc: '가입도 간단해서 걱정 없어요',
+  },
 ];
 export const ContentSections: React.FC<ContentSectionsProps> = ({
   className,
   onFortuneClick,
   onGameClick,
   onPickClick,
-  onRecommendClick
+  onRecommendClick,
 }) => {
   return (
     <div className={className}>
@@ -364,18 +364,12 @@ export const ContentSections: React.FC<ContentSectionsProps> = ({
         <SectionTitle>이달의 pick</SectionTitle>
         <PickGrid>
           {monthlyPicks.map((pick, index) => (
-            <PickCard 
-              key={index} 
-              $animationIndex={index}
-              onClick={() => onPickClick?.(index)}
-            >
+            <PickCard key={index} $animationIndex={index} onClick={() => onPickClick?.(index)}>
               <PickIcon>{pick.icon}</PickIcon>
               <PickContent>
                 <PickTitle>{pick.title}</PickTitle>
                 <PickSubtitle>{pick.subtitle}</PickSubtitle>
-                {pick.desc && (
-                  <PickDescription>{pick.desc}</PickDescription>
-                )}
+                {pick.desc && <PickDescription>{pick.desc}</PickDescription>}
               </PickContent>
             </PickCard>
           ))}
@@ -386,8 +380,8 @@ export const ContentSections: React.FC<ContentSectionsProps> = ({
         <SectionTitle>추천서비스</SectionTitle>
         <RecommendGrid>
           {recommendServices.map((service, index) => (
-            <RecommendCard 
-              key={index} 
+            <RecommendCard
+              key={index}
               $animationIndex={index}
               onClick={() => onRecommendClick?.(index)}
             >

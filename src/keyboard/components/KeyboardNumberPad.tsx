@@ -3,14 +3,7 @@
  * 뱅킹 보안을 위한 안전한 숫자 입력 지원
  */
 
-import React, { 
-  useState, 
-  useRef, 
-  useEffect, 
-  useCallback,
-  KeyboardEvent,
-  useMemo
-} from 'react';
+import React, { useState, useRef, useEffect, useCallback, KeyboardEvent, useMemo } from 'react';
 
 import styled from 'styled-components';
 
@@ -48,8 +41,10 @@ const Label = styled.label<{ required?: boolean }>`
   font-weight: 500;
   color: #333;
   margin-bottom: 8px;
-  
-  ${props => props.required && `
+
+  ${props =>
+    props.required &&
+    `
     &::after {
       content: ' *';
       color: #e74c3c;
@@ -60,9 +55,9 @@ const Label = styled.label<{ required?: boolean }>`
 const Display = styled.div<{ hasError?: boolean; disabled?: boolean; focused?: boolean }>`
   width: 100%;
   padding: 16px;
-  border: 2px solid ${props => props.hasError ? '#e74c3c' : props.focused ? '#007bff' : '#ddd'};
+  border: 2px solid ${props => (props.hasError ? '#e74c3c' : props.focused ? '#007bff' : '#ddd')};
   border-radius: 8px;
-  background: ${props => props.disabled ? '#f5f5f5' : 'white'};
+  background: ${props => (props.disabled ? '#f5f5f5' : 'white')};
   font-size: 24px;
   font-weight: 600;
   text-align: center;
@@ -70,16 +65,18 @@ const Display = styled.div<{ hasError?: boolean; disabled?: boolean; focused?: b
   display: flex;
   align-items: center;
   justify-content: center;
-  color: ${props => props.disabled ? '#999' : '#333'};
+  color: ${props => (props.disabled ? '#999' : '#333')};
   letter-spacing: 2px;
   font-family: 'Courier New', monospace;
   margin-bottom: 16px;
   position: relative;
-  
-  ${props => props.focused && `
+
+  ${props =>
+    props.focused &&
+    `
     box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
   `}
-  
+
   &:focus {
     outline: 2px solid #007bff;
     outline-offset: 2px;
@@ -104,9 +101,9 @@ const NumberPadGrid = styled.div`
   margin-bottom: 16px;
 `;
 
-const NumberButton = styled.button<{ 
-  isHighlighted?: boolean; 
-  variant?: 'primary' | 'secondary' | 'danger' 
+const NumberButton = styled.button<{
+  isHighlighted?: boolean;
+  variant?: 'primary' | 'secondary' | 'danger';
 }>`
   height: 60px;
   border: 2px solid #ddd;
@@ -120,38 +117,42 @@ const NumberButton = styled.button<{
   align-items: center;
   justify-content: center;
   position: relative;
-  
+
   &:hover:not(:disabled) {
     background: #f8f9fa;
     border-color: #007bff;
     transform: translateY(-2px);
   }
-  
+
   &:active:not(:disabled) {
     transform: translateY(0);
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
   }
-  
+
   &:focus {
     outline: 3px solid #007bff;
     outline-offset: 2px;
     border-color: #007bff;
   }
-  
+
   &:disabled {
     background: #f5f5f5;
     color: #ccc;
     cursor: not-allowed;
     border-color: #eee;
   }
-  
-  ${props => props.isHighlighted && `
+
+  ${props =>
+    props.isHighlighted &&
+    `
     background: #e3f2fd;
     border-color: #1976d2;
     box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.2);
   `}
-  
-  ${props => props.variant === 'primary' && `
+
+  ${props =>
+    props.variant === 'primary' &&
+    `
     background: #007bff;
     color: white;
     border-color: #0056b3;
@@ -161,7 +162,9 @@ const NumberButton = styled.button<{
     }
   `}
   
-  ${props => props.variant === 'secondary' && `
+  ${props =>
+    props.variant === 'secondary' &&
+    `
     background: #6c757d;
     color: white;
     border-color: #545b62;
@@ -171,7 +174,9 @@ const NumberButton = styled.button<{
     }
   `}
   
-  ${props => props.variant === 'danger' && `
+  ${props =>
+    props.variant === 'danger' &&
+    `
     background: #dc3545;
     color: white;
     border-color: #c82333;
@@ -228,12 +233,12 @@ export const KeyboardNumberPad: React.FC<KeyboardNumberPadProps> = ({
   onFocus,
   onBlur,
   className,
-  'aria-describedby': ariaDescribedBy
+  'aria-describedby': ariaDescribedBy,
 }) => {
   const [internalValue, setInternalValue] = useState(value);
   const [focused, setFocused] = useState(false);
   const [highlightedButton, setHighlightedButton] = useState<string | null>(null);
-  
+
   const containerRef = useRef<HTMLDivElement>(null);
   const displayRef = useRef<HTMLDivElement>(null);
   const padId = useRef(`numberpad-${Math.random().toString(36).substr(2, 9)}`);
@@ -241,7 +246,7 @@ export const KeyboardNumberPad: React.FC<KeyboardNumberPadProps> = ({
   // 스크램블된 숫자 레이아웃
   const numberLayout = useMemo(() => {
     const numbers = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
-    
+
     if (scramble) {
       // 피셔-예이츠 셔플 알고리즘
       const shuffled = [...numbers];
@@ -249,84 +254,90 @@ export const KeyboardNumberPad: React.FC<KeyboardNumberPadProps> = ({
         const j = Math.floor(Math.random() * (i + 1));
         [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
       }
-      
+
       // 3x4 레이아웃으로 재배열 (0은 마지막 행 가운데)
       const layout = [];
       for (let i = 0; i < 9; i++) {
         layout.push(shuffled[i]);
       }
-      layout.push('');  // 빈 칸
+      layout.push(''); // 빈 칸
       layout.push(shuffled[9]); // 0
       layout.push(''); // 빈 칸
-      
+
       return layout;
     }
-    
+
     // 표준 레이아웃
     return ['1', '2', '3', '4', '5', '6', '7', '8', '9', '', '0', ''];
   }, [scramble]);
 
   // 값 포맷팅
-  const formatValue = useCallback((val: string): string => {
-    if (!val) return '';
-    
-    if (currency) {
-      const numericValue = val.replace(/[^\d.]/g, '');
-      const number = parseFloat(numericValue);
-      if (isNaN(number)) return '';
-      
-      return new Intl.NumberFormat('ko-KR', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: allowDecimal ? 2 : 0
-      }).format(number);
-    }
-    
-    return val;
-  }, [currency, allowDecimal]);
+  const formatValue = useCallback(
+    (val: string): string => {
+      if (!val) return '';
+
+      if (currency) {
+        const numericValue = val.replace(/[^\d.]/g, '');
+        const number = parseFloat(numericValue);
+        if (isNaN(number)) return '';
+
+        return new Intl.NumberFormat('ko-KR', {
+          minimumFractionDigits: 0,
+          maximumFractionDigits: allowDecimal ? 2 : 0,
+        }).format(number);
+      }
+
+      return val;
+    },
+    [currency, allowDecimal]
+  );
 
   // 값 표시 (마스킹 처리)
   const displayValue = useMemo(() => {
     if (!internalValue) return placeholder;
-    
+
     if (showValue) {
       return currency ? `₩ ${formatValue(internalValue)}` : formatValue(internalValue);
     }
-    
+
     // 마스킹 처리
     return '●'.repeat(internalValue.length);
   }, [internalValue, showValue, currency, formatValue, placeholder]);
 
   // 숫자 입력 처리
-  const handleNumberInput = useCallback((digit: string) => {
-    if (disabled || internalValue.length >= maxLength) return;
-    
-    const newValue = internalValue + digit;
-    
-    // 소수점 처리
-    if (digit === '.' && !allowDecimal) return;
-    if (digit === '.' && internalValue.includes('.')) return;
-    
-    setInternalValue(newValue);
-    onChange(newValue);
-    
-    // 완료 체크
-    if (newValue.length >= minLength && onComplete) {
-      onComplete(newValue);
-    }
-    
-    // 시각적 피드백
-    setHighlightedButton(digit);
-    setTimeout(() => setHighlightedButton(null), 150);
-  }, [disabled, internalValue, maxLength, allowDecimal, onChange, onComplete, minLength]);
+  const handleNumberInput = useCallback(
+    (digit: string) => {
+      if (disabled || internalValue.length >= maxLength) return;
+
+      const newValue = internalValue + digit;
+
+      // 소수점 처리
+      if (digit === '.' && !allowDecimal) return;
+      if (digit === '.' && internalValue.includes('.')) return;
+
+      setInternalValue(newValue);
+      onChange(newValue);
+
+      // 완료 체크
+      if (newValue.length >= minLength && onComplete) {
+        onComplete(newValue);
+      }
+
+      // 시각적 피드백
+      setHighlightedButton(digit);
+      setTimeout(() => setHighlightedButton(null), 150);
+    },
+    [disabled, internalValue, maxLength, allowDecimal, onChange, onComplete, minLength]
+  );
 
   // 백스페이스 처리
   const handleBackspace = useCallback(() => {
     if (disabled || !internalValue) return;
-    
+
     const newValue = internalValue.slice(0, -1);
     setInternalValue(newValue);
     onChange(newValue);
-    
+
     setHighlightedButton('backspace');
     setTimeout(() => setHighlightedButton(null), 150);
   }, [disabled, internalValue, onChange]);
@@ -334,48 +345,59 @@ export const KeyboardNumberPad: React.FC<KeyboardNumberPadProps> = ({
   // 전체 삭제
   const handleClear = useCallback(() => {
     if (disabled) return;
-    
+
     setInternalValue('');
     onChange('');
-    
+
     setHighlightedButton('clear');
     setTimeout(() => setHighlightedButton(null), 150);
   }, [disabled, onChange]);
 
   // 키보드 이벤트 처리
-  const handleKeyDown = useCallback((event: KeyboardEvent) => {
-    const { key } = event;
-    
-    if (key >= '0' && key <= '9') {
-      event.preventDefault();
-      handleNumberInput(key);
-    } else if (key === '.' && allowDecimal) {
-      event.preventDefault();
-      handleNumberInput('.');
-    } else if (key === 'Backspace') {
-      event.preventDefault();
-      handleBackspace();
-    } else if (key === 'Delete' || (event.ctrlKey && key === 'a')) {
-      event.preventDefault();
-      handleClear();
-    } else if (key === 'Enter') {
-      event.preventDefault();
-      if (internalValue.length >= minLength && onComplete) {
-        onComplete(internalValue);
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      const { key } = event;
+
+      if (key >= '0' && key <= '9') {
+        event.preventDefault();
+        handleNumberInput(key);
+      } else if (key === '.' && allowDecimal) {
+        event.preventDefault();
+        handleNumberInput('.');
+      } else if (key === 'Backspace') {
+        event.preventDefault();
+        handleBackspace();
+      } else if (key === 'Delete' || (event.ctrlKey && key === 'a')) {
+        event.preventDefault();
+        handleClear();
+      } else if (key === 'Enter') {
+        event.preventDefault();
+        if (internalValue.length >= minLength && onComplete) {
+          onComplete(internalValue);
+        }
       }
-    }
-  }, [handleNumberInput, handleBackspace, handleClear, allowDecimal, internalValue, minLength, onComplete]);
+    },
+    [
+      handleNumberInput,
+      handleBackspace,
+      handleClear,
+      allowDecimal,
+      internalValue,
+      minLength,
+      onComplete,
+    ]
+  );
 
   // 포커스 관리
   const handleFocus = useCallback(() => {
     setFocused(true);
     onFocus?.();
-    
+
     if (containerRef.current) {
       globalKeyboardTrapManager.addTrap(containerRef.current, {
         autoFocus: false,
         escapeDeactivates: true,
-        returnFocusOnDeactivate: true
+        returnFocusOnDeactivate: true,
       });
     }
   }, [onFocus]);
@@ -383,7 +405,7 @@ export const KeyboardNumberPad: React.FC<KeyboardNumberPadProps> = ({
   const handleBlur = useCallback(() => {
     setFocused(false);
     onBlur?.();
-    
+
     if (containerRef.current) {
       globalKeyboardTrapManager.removeTrap(containerRef.current);
     }
@@ -401,7 +423,7 @@ export const KeyboardNumberPad: React.FC<KeyboardNumberPadProps> = ({
           {label}
         </Label>
       )}
-      
+
       <Display
         ref={displayRef}
         id={padId.current}
@@ -412,7 +434,7 @@ export const KeyboardNumberPad: React.FC<KeyboardNumberPadProps> = ({
         onFocus={handleFocus}
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
-        role="textbox"
+        role='textbox'
         aria-label={label || '숫자 입력'}
         aria-describedby={ariaDescribedBy}
         aria-invalid={!!error}
@@ -423,20 +445,22 @@ export const KeyboardNumberPad: React.FC<KeyboardNumberPadProps> = ({
         {showValue ? (
           <span>{formatValue(internalValue) || placeholder}</span>
         ) : (
-          <HiddenValue>{internalValue ? '●'.repeat(internalValue.length) : placeholder}</HiddenValue>
+          <HiddenValue>
+            {internalValue ? '●'.repeat(internalValue.length) : placeholder}
+          </HiddenValue>
         )}
-        
-        <ScreenReaderText aria-live="polite">
+
+        <ScreenReaderText aria-live='polite'>
           {internalValue ? `${internalValue.length}자리 입력됨` : ''}
         </ScreenReaderText>
       </Display>
 
       <NumberPadGrid>
-        {numberLayout.map((digit, index) => (
+        {numberLayout.map((digit, index) =>
           digit ? (
             <NumberButton
               key={`${digit}-${index}`}
-              type="button"
+              type='button'
               disabled={disabled}
               isHighlighted={highlightedButton === digit}
               onClick={() => handleNumberInput(digit)}
@@ -447,15 +471,15 @@ export const KeyboardNumberPad: React.FC<KeyboardNumberPadProps> = ({
           ) : (
             <div key={`empty-${index}`} />
           )
-        ))}
-        
+        )}
+
         {allowDecimal && (
           <NumberButton
-            type="button"
+            type='button'
             disabled={disabled || internalValue.includes('.')}
             isHighlighted={highlightedButton === '.'}
             onClick={() => handleNumberInput('.')}
-            aria-label="소수점"
+            aria-label='소수점'
           >
             .
           </NumberButton>
@@ -464,37 +488,35 @@ export const KeyboardNumberPad: React.FC<KeyboardNumberPadProps> = ({
 
       <ActionButtons>
         <NumberButton
-          type="button"
-          variant="secondary"
+          type='button'
+          variant='secondary'
           disabled={disabled || !internalValue}
           isHighlighted={highlightedButton === 'backspace'}
           onClick={handleBackspace}
-          aria-label="한 글자 지우기"
+          aria-label='한 글자 지우기'
         >
           ⌫
         </NumberButton>
-        
+
         <NumberButton
-          type="button"
-          variant="danger"
+          type='button'
+          variant='danger'
           disabled={disabled || !internalValue}
           isHighlighted={highlightedButton === 'clear'}
           onClick={handleClear}
-          aria-label="전체 지우기"
+          aria-label='전체 지우기'
         >
           전체삭제
         </NumberButton>
       </ActionButtons>
 
       {error && (
-        <ErrorMessage role="alert" aria-live="polite">
+        <ErrorMessage role='alert' aria-live='polite'>
           {error}
         </ErrorMessage>
       )}
 
-      <KeyboardHint>
-        키보드 숫자키 또는 버튼을 클릭하여 입력하세요
-      </KeyboardHint>
+      <KeyboardHint>키보드 숫자키 또는 버튼을 클릭하여 입력하세요</KeyboardHint>
     </Container>
   );
 };

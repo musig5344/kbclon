@@ -10,18 +10,18 @@ const GroupContainer = styled.div`
   background: #ffffff;
 `;
 const DateHeader = styled.div<{ $variant?: 'primary' | 'secondary' }>`
-  font-size: ${props => props.$variant === 'secondary' ? '15px' : '15px'};
+  font-size: ${props => (props.$variant === 'secondary' ? '15px' : '15px')};
   font-weight: 600;
-  color: ${props => props.$variant === 'secondary' ? '#666666' : '#333333'};
+  color: ${props => (props.$variant === 'secondary' ? '#666666' : '#333333')};
   margin-bottom: 0;
-  padding: ${props => props.$variant === 'secondary' ? '16px 24px' : '16px 24px'};
-  border-bottom: ${props => props.$variant === 'secondary' ? 'none' : '1px solid #ebeef0'};
-  background-color: ${props => props.$variant === 'secondary' ? '#f8f9fa' : '#f8f9fa'};
+  padding: ${props => (props.$variant === 'secondary' ? '16px 24px' : '16px 24px')};
+  border-bottom: ${props => (props.$variant === 'secondary' ? 'none' : '1px solid #ebeef0')};
+  background-color: ${props => (props.$variant === 'secondary' ? '#f8f9fa' : '#f8f9fa')};
   margin-left: 0;
   margin-right: 0;
-  position: ${props => props.$variant === 'secondary' ? 'sticky' : 'static'};
-  top: ${props => props.$variant === 'secondary' ? '0' : 'auto'};
-  z-index: ${props => props.$variant === 'secondary' ? '1' : 'auto'};
+  position: ${props => (props.$variant === 'secondary' ? 'sticky' : 'static')};
+  top: ${props => (props.$variant === 'secondary' ? '0' : 'auto')};
+  z-index: ${props => (props.$variant === 'secondary' ? '1' : 'auto')};
   letter-spacing: -0.3px;
 `;
 const MonthHeader = styled.div`
@@ -49,37 +49,39 @@ interface TransactionGroupProps {
   headerVariant?: 'primary' | 'secondary' | 'month';
   showCount?: boolean;
 }
-export const TransactionGroup: React.FC<TransactionGroupProps> = memo(({
-  title,
-  transactions,
-  showBalance = true,
-  onTransactionClick,
-  headerVariant = 'primary',
-  showCount = false
-}) => {
-  return (
-    <GroupContainer>
-      {headerVariant === 'month' ? (
-        <MonthHeader>
-          <span>{title}</span>
-          <span>▲</span>
-        </MonthHeader>
-      ) : (
-        <DateHeader $variant={headerVariant}>
-          {title}
-          {showCount && ` (${transactions.length}건)`}
-        </DateHeader>
-      )}
-      {transactions.map((transaction) => (
-        <TransactionItem
-          key={transaction.id}
-          transaction={transaction}
-          showBalance={showBalance}
-          onClick={onTransactionClick}
-          dateFormat={headerVariant === 'secondary' ? 'time' : 'full'}
-        />
-      ))}
-    </GroupContainer>
-  );
-});
+export const TransactionGroup: React.FC<TransactionGroupProps> = memo(
+  ({
+    title,
+    transactions,
+    showBalance = true,
+    onTransactionClick,
+    headerVariant = 'primary',
+    showCount = false,
+  }) => {
+    return (
+      <GroupContainer>
+        {headerVariant === 'month' ? (
+          <MonthHeader>
+            <span>{title}</span>
+            <span>▲</span>
+          </MonthHeader>
+        ) : (
+          <DateHeader $variant={headerVariant}>
+            {title}
+            {showCount && ` (${transactions.length}건)`}
+          </DateHeader>
+        )}
+        {transactions.map(transaction => (
+          <TransactionItem
+            key={transaction.id}
+            transaction={transaction}
+            showBalance={showBalance}
+            onClick={onTransactionClick}
+            dateFormat={headerVariant === 'secondary' ? 'time' : 'full'}
+          />
+        ))}
+      </GroupContainer>
+    );
+  }
+);
 export default TransactionGroup;

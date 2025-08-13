@@ -4,7 +4,13 @@
  */
 import { useState, useEffect, useCallback, useMemo } from 'react';
 
-import { apiService, Transaction, TransactionFilter, TransactionResponse, TransactionStatistics } from '../../../services/api';
+import {
+  apiService,
+  Transaction,
+  TransactionFilter,
+  TransactionResponse,
+  TransactionStatistics,
+} from '../../../services/api';
 import { safeLog } from '../../../utils/errorHandler';
 interface UseTransactionsResult {
   // 데이터
@@ -40,12 +46,7 @@ interface UseTransactionsOptions {
   pageSize?: number;
 }
 export const useTransactions = (options: UseTransactionsOptions = {}): UseTransactionsResult => {
-  const {
-    accountId,
-    initialFilters = {},
-    autoLoad = true,
-    pageSize = 50
-  } = options;
+  const { accountId, initialFilters = {}, autoLoad = true, pageSize = 50 } = options;
   // 상태 관리
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [statistics, setStatistics] = useState<TransactionStatistics | null>(null);
@@ -59,41 +60,49 @@ export const useTransactions = (options: UseTransactionsOptions = {}): UseTransa
     page: 1,
     limit: pageSize,
     sort_by: 'date_desc',
-    ...initialFilters
+    ...initialFilters,
   });
   // 필터 업데이트 함수
   const setFilters = useCallback((newFilters: Partial<TransactionFilter>) => {
     setFiltersState(prev => ({
       ...prev,
       ...newFilters,
-      page: newFilters.page !== undefined ? newFilters.page : 1 // 필터 변경시 첫 페이지로
+      page: newFilters.page !== undefined ? newFilters.page : 1, // 필터 변경시 첫 페이지로
     }));
   }, []);
   // 거래내역 로드 - 항상 최신 데이터 가져오기 (캐시 사용 안함)
-  const loadTransactions = useCallback(async (append: boolean = false, currentFilters?: TransactionFilter, _forceRefresh: boolean = false) => {
-    try {
-      if (!append) {
-        setLoading(true);
+  const loadTransactions = useCallback(
+    async (
+      append: boolean = false,
+      currentFilters?: TransactionFilter,
+      _forceRefresh: boolean = false
+    ) => {
+      try {
+        if (!append) {
+          setLoading(true);
+        }
+        setError(null);
+        // 전달받은 필터 또는 현재 필터 사용
+        const filtersToUse = currentFilters || filters;
+        // forceRefresh가 true면 캐시 무시하고 항상 새로운 데이터 가져오기
+        const response = await apiService.getTransactions(filtersToUse);
+        if (append) {
+          setTransactions(prev => [...prev, ...response.transactions]);
+        } else {
+          setTransactions(response.transactions);
+        }
+        setPagination(response.pagination);
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : '거래내역을 불러오는데 실패했습니다.';
+        setError(errorMessage);
+        safeLog('error', '거래내역 로드 실패', err);
+      } finally {
+        setLoading(false);
       }
-      setError(null);
-      // 전달받은 필터 또는 현재 필터 사용
-      const filtersToUse = currentFilters || filters;
-      // forceRefresh가 true면 캐시 무시하고 항상 새로운 데이터 가져오기
-      const response = await apiService.getTransactions(filtersToUse);
-      if (append) {
-        setTransactions(prev => [...prev, ...response.transactions]);
-      } else {
-        setTransactions(response.transactions);
-      }
-      setPagination(response.pagination);
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : '거래내역을 불러오는데 실패했습니다.';
-      setError(errorMessage);
-      safeLog('error', '거래내역 로드 실패', err);
-    } finally {
-      setLoading(false);
-    }
-  }, [filters]); // filters 의존성 유지
+    },
+    [filters]
+  ); // filters 의존성 유지
   // 더 많은 거래내역 로드 (무한 스크롤용)
   const loadMore = useCallback(async () => {
     if (!pagination?.has_next) {
@@ -107,7 +116,7 @@ export const useTransactions = (options: UseTransactionsOptions = {}): UseTransa
       const nextPage = (filters.page || 1) + 1;
       const nextFilters = {
         ...filters,
-        page: nextPage
+        page: nextPage,
       };
       const response = await apiService.getTransactions(nextFilters);
       setTransactions(prev => [...prev, ...response.transactions]);
@@ -137,14 +146,17 @@ export const useTransactions = (options: UseTransactionsOptions = {}): UseTransa
     }
   }, [filters]); // filters 의존성 추가
   // 통계 정보 로드
-  const loadStatistics = useCallback(async (period?: 'today' | 'week' | 'month' | '3months' | '6months') => {
-    try {
-      const stats = await apiService.getTransactionStatistics(accountId, period);
-      setStatistics(stats);
-    } catch (err) {
-      safeLog('error', '통계 정보 로드 실패', err);
-    }
-  }, [accountId]);
+  const loadStatistics = useCallback(
+    async (period?: 'today' | 'week' | 'month' | '3months' | '6months') => {
+      try {
+        const stats = await apiService.getTransactionStatistics(accountId, period);
+        setStatistics(stats);
+      } catch (err) {
+        safeLog('error', '통계 정보 로드 실패', err);
+      }
+    },
+    [accountId]
+  );
   // 초기 로드 - 페이지 진입시 항상 최신 데이터로 새로고침
   const [isInitialized, setIsInitialized] = useState(false);
   useEffect(() => {
@@ -161,7 +173,7 @@ export const useTransactions = (options: UseTransactionsOptions = {}): UseTransa
     transaction_type: filters.transaction_type,
     sort_by: filters.sort_by,
     min_amount: filters.min_amount,
-    max_amount: filters.max_amount
+    max_amount: filters.max_amount,
   });
   useEffect(() => {
     if (isInitialized && filters.page === 1) {
@@ -211,7 +223,7 @@ export const useTransactions = (options: UseTransactionsOptions = {}): UseTransa
       totalExpense,
       totalTransfer,
       totalCount: filteredTransactions.length,
-      netAmount: totalIncome - totalExpense - totalTransfer
+      netAmount: totalIncome - totalExpense - totalTransfer,
     };
   }, [filteredTransactions]);
   return {
@@ -233,15 +245,18 @@ export const useTransactions = (options: UseTransactionsOptions = {}): UseTransa
     loadStatistics,
     // 추가 유틸리티 (필요시 사용)
     groupedTransactions,
-    summary
+    summary,
   };
 };
 // 특정 계좌의 거래내역을 위한 편의 훅
-export const useAccountTransactions = (accountId: string, initialFilters?: Partial<TransactionFilter>) => {
+export const useAccountTransactions = (
+  accountId: string,
+  initialFilters?: Partial<TransactionFilter>
+) => {
   return useTransactions({
     accountId,
     initialFilters,
-    autoLoad: true
+    autoLoad: true,
   });
 };
 // 통계 정보만 필요한 경우를 위한 훅
@@ -249,19 +264,23 @@ export const useTransactionStatistics = (accountId?: string) => {
   const [statistics, setStatistics] = useState<TransactionStatistics | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const loadStatistics = useCallback(async (period?: 'today' | 'week' | 'month' | '3months' | '6months') => {
-    setLoading(true);
-    setError(null);
-    try {
-      const stats = await apiService.getTransactionStatistics(accountId, period);
-      setStatistics(stats);
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : '통계 정보를 불러오는데 실패했습니다.';
-      setError(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  }, [accountId]);
+  const loadStatistics = useCallback(
+    async (period?: 'today' | 'week' | 'month' | '3months' | '6months') => {
+      setLoading(true);
+      setError(null);
+      try {
+        const stats = await apiService.getTransactionStatistics(accountId, period);
+        setStatistics(stats);
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : '통계 정보를 불러오는데 실패했습니다.';
+        setError(errorMessage);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [accountId]
+  );
   useEffect(() => {
     loadStatistics('month');
   }, [loadStatistics]);
@@ -269,6 +288,6 @@ export const useTransactionStatistics = (accountId?: string) => {
     statistics,
     loading,
     error,
-    loadStatistics
+    loadStatistics,
   };
 };

@@ -38,7 +38,7 @@ export class ScreenReaderManager {
       announceRoles: true,
       announceStates: true,
     };
-    
+
     this.initialize();
   }
 
@@ -87,7 +87,7 @@ export class ScreenReaderManager {
   private setupEventListeners(): void {
     // Listen for focus changes to provide context
     document.addEventListener('focusin', this.handleFocusChange.bind(this));
-    
+
     // Listen for route changes to announce page changes
     window.addEventListener('popstate', this.handleRouteChange.bind(this));
   }
@@ -112,7 +112,7 @@ export class ScreenReaderManager {
     const role = element.getAttribute('role');
     const ariaLabel = element.getAttribute('aria-label');
     const tagName = element.tagName.toLowerCase();
-    
+
     // Generate context based on element type
     switch (tagName) {
       case 'button':
@@ -132,7 +132,7 @@ export class ScreenReaderManager {
     const text = button.textContent?.trim() || '';
     const ariaLabel = button.getAttribute('aria-label');
     const label = ariaLabel || text;
-    
+
     return `${label} 버튼`;
   }
 
@@ -140,13 +140,13 @@ export class ScreenReaderManager {
     const type = input.type;
     const label = this.findInputLabel(input);
     const value = input.value;
-    
+
     let context = '';
-    
+
     if (label) {
       context += `${label} `;
     }
-    
+
     switch (type) {
       case 'text':
         context += '텍스트 입력 필드';
@@ -163,15 +163,15 @@ export class ScreenReaderManager {
       default:
         context += '입력 필드';
     }
-    
+
     if (input.required) {
       context += ', 필수 항목';
     }
-    
+
     if (value && type !== 'password') {
       context += `, 현재 값: ${value}`;
     }
-    
+
     return context;
   }
 
@@ -179,34 +179,34 @@ export class ScreenReaderManager {
     const label = this.findInputLabel(select);
     const selectedOption = select.options[select.selectedIndex];
     const selectedText = selectedOption?.textContent || '';
-    
+
     let context = '';
-    
+
     if (label) {
       context += `${label} `;
     }
-    
+
     context += '선택 상자';
-    
+
     if (selectedText) {
       context += `, 현재 선택: ${selectedText}`;
     }
-    
+
     context += `, ${select.options.length}개 옵션 중 ${select.selectedIndex + 1}번째`;
-    
+
     return context;
   }
 
   private generateLinkContext(link: HTMLAnchorElement): string {
     const text = link.textContent?.trim() || '';
     const href = link.getAttribute('href');
-    
+
     let context = `${text} 링크`;
-    
+
     if (href && href.startsWith('http')) {
       context += ', 외부 링크';
     }
-    
+
     return context;
   }
 
@@ -214,27 +214,27 @@ export class ScreenReaderManager {
     // Try aria-label first
     const ariaLabel = input.getAttribute('aria-label');
     if (ariaLabel) return ariaLabel;
-    
+
     // Try aria-labelledby
     const labelledBy = input.getAttribute('aria-labelledby');
     if (labelledBy) {
       const labelElement = document.getElementById(labelledBy);
       if (labelElement) return labelElement.textContent?.trim() || null;
     }
-    
+
     // Try associated label element
     const id = input.getAttribute('id');
     if (id) {
       const label = document.querySelector(`label[for="${id}"]`);
       if (label) return label.textContent?.trim() || null;
     }
-    
+
     // Try parent label
     const parentLabel = input.closest('label');
     if (parentLabel) {
       return parentLabel.textContent?.replace(input.textContent || '', '').trim() || null;
     }
-    
+
     return null;
   }
 
@@ -264,22 +264,22 @@ export class ScreenReaderManager {
 
     while (this.announceQueue.length > 0) {
       const { message, options } = this.announceQueue.shift()!;
-      
+
       if (options.delay) {
         await this.delay(options.delay);
       }
 
       const region = options.priority === 'assertive' ? this.assertiveRegion : this.liveRegion;
-      
+
       if (region) {
         // Clear previous message
         region.textContent = '';
-        
+
         // Add new message
         setTimeout(() => {
           region.textContent = this.formatMessage(message, options);
         }, 10);
-        
+
         // Wait for screen reader to process
         await this.delay(100);
       }
@@ -326,33 +326,33 @@ export class ScreenReaderManager {
   public announceTransaction(type: string, amount: number, account?: string): void {
     const formattedAmount = this.formatCurrency(amount);
     let message = `${type} ${formattedAmount}원`;
-    
+
     if (account) {
       message += ` ${account}`;
     }
-    
+
     message += ' 완료';
-    
+
     this.announce(message, { priority: 'assertive' });
   }
 
   public announceError(error: string, suggestion?: string): void {
     let message = `오류: ${error}`;
-    
+
     if (suggestion) {
       message += `. ${suggestion}`;
     }
-    
+
     this.announce(message, { priority: 'assertive' });
   }
 
   public announcePageLoad(title: string, mainContent?: string): void {
     let message = `${title} 페이지 로드됨`;
-    
+
     if (mainContent && this.config.enableDescriptions) {
       message += `. ${mainContent}`;
     }
-    
+
     this.announce(message, { priority: 'assertive' });
   }
 
@@ -393,12 +393,12 @@ export class ScreenReaderManager {
       document.body.removeChild(this.liveRegion);
       this.liveRegion = null;
     }
-    
+
     if (this.assertiveRegion) {
       document.body.removeChild(this.assertiveRegion);
       this.assertiveRegion = null;
     }
-    
+
     document.removeEventListener('focusin', this.handleFocusChange);
     window.removeEventListener('popstate', this.handleRouteChange);
   }

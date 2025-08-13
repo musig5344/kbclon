@@ -1,6 +1,6 @@
 /**
  * Notification Provider
- * 
+ *
  * 전체 앱에서 알림을 관리하는 컨텍스트 프로바이더
  * - 알림 상태 관리
  * - 인앱 알림 표시
@@ -8,13 +8,20 @@
  * - 알림 이벤트 처리
  */
 
-import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  ReactNode,
+} from 'react';
 
-import { 
-  pushNotificationService, 
-  PushNotificationData, 
+import {
+  pushNotificationService,
+  PushNotificationData,
   NotificationPreferences,
-  NotificationType
+  NotificationType,
 } from '../../services/pushNotificationService';
 
 import InAppNotification from './InAppNotification';
@@ -52,7 +59,7 @@ interface StoredNotification extends PushNotificationData {
 const NotificationProvider: React.FC<NotificationProviderProps> = ({
   children,
   userId,
-  maxNotifications = 10
+  maxNotifications = 10,
 }) => {
   const [notifications, setNotifications] = useState<StoredNotification[]>([]);
   const [currentNotification, setCurrentNotification] = useState<PushNotificationData | null>(null);
@@ -88,8 +95,14 @@ const NotificationProvider: React.FC<NotificationProviderProps> = ({
     window.addEventListener('navigateToTransfer', handleNavigateToTransfer as EventListener);
 
     return () => {
-      window.removeEventListener('pushNotificationReceived', handlePushNotification as EventListener);
-      window.removeEventListener('navigateToTransaction', handleNavigateToTransaction as EventListener);
+      window.removeEventListener(
+        'pushNotificationReceived',
+        handlePushNotification as EventListener
+      );
+      window.removeEventListener(
+        'navigateToTransaction',
+        handleNavigateToTransaction as EventListener
+      );
       window.removeEventListener('navigateToTransfer', handleNavigateToTransfer as EventListener);
     };
   }, []);
@@ -98,18 +111,18 @@ const NotificationProvider: React.FC<NotificationProviderProps> = ({
     try {
       // 푸시 알림 서비스 초기화
       const initialized = await pushNotificationService.initialize();
-      
+
       if (initialized) {
         // 권한 상태 확인
         const permissionStatus = pushNotificationService.constructor.getPermissionStatus();
         setIsPermissionGranted(permissionStatus === 'granted');
-        
+
         // 저장된 알림 로드
         loadStoredNotifications();
-        
+
         // 저장된 설정 로드
         loadStoredPreferences();
-        
+
         setIsInitialized(true);
       }
     } catch (error) {
@@ -119,7 +132,7 @@ const NotificationProvider: React.FC<NotificationProviderProps> = ({
 
   const loadStoredNotifications = () => {
     if (!userId) return;
-    
+
     try {
       const stored = localStorage.getItem(`notifications_${userId}`);
       if (stored) {
@@ -138,7 +151,7 @@ const NotificationProvider: React.FC<NotificationProviderProps> = ({
 
   const loadStoredPreferences = () => {
     if (!userId) return;
-    
+
     try {
       const stored = localStorage.getItem(`notification_preferences_${userId}`);
       if (stored) {
@@ -149,109 +162,137 @@ const NotificationProvider: React.FC<NotificationProviderProps> = ({
     }
   };
 
-  const saveNotifications = useCallback((notifications: StoredNotification[]) => {
-    if (!userId) return;
-    
-    try {
-      localStorage.setItem(`notifications_${userId}`, JSON.stringify(notifications));
-    } catch (error) {
-      console.error('Failed to save notifications:', error);
-    }
-  }, [userId]);
+  const saveNotifications = useCallback(
+    (notifications: StoredNotification[]) => {
+      if (!userId) return;
 
-  const savePreferences = useCallback((preferences: NotificationPreferences) => {
-    if (!userId) return;
-    
-    try {
-      localStorage.setItem(`notification_preferences_${userId}`, JSON.stringify(preferences));
-    } catch (error) {
-      console.error('Failed to save preferences:', error);
-    }
-  }, [userId]);
-
-  const shouldShowNotification = useCallback((notification: PushNotificationData) => {
-    if (!preferences) return true;
-    
-    // 전체 알림이 비활성화된 경우
-    if (!preferences.enabled) return false;
-    
-    // 해당 알림 유형이 비활성화된 경우
-    if (!preferences.types[notification.type]) return false;
-    
-    // 빈도 설정 확인
-    if (preferences.frequency === 'critical' && notification.priority !== 'critical') return false;
-    if (preferences.frequency === 'important' && 
-        notification.priority !== 'critical' && 
-        notification.priority !== 'high') return false;
-    
-    // 조용한 시간 확인
-    if (preferences.quietHours.enabled) {
-      const now = new Date();
-      const currentTime = now.getHours() * 60 + now.getMinutes();
-      const startTime = preferences.quietHours.start.split(':').map(Number);
-      const endTime = preferences.quietHours.end.split(':').map(Number);
-      const startMinutes = startTime[0] * 60 + startTime[1];
-      const endMinutes = endTime[0] * 60 + endTime[1];
-      
-      const isQuietTime = startMinutes <= endMinutes
-        ? currentTime >= startMinutes && currentTime <= endMinutes
-        : currentTime >= startMinutes || currentTime <= endMinutes;
-      
-      // 조용한 시간에는 중요한 알림만 표시
-      if (isQuietTime && notification.priority !== 'critical' && notification.priority !== 'high') {
-        return false;
+      try {
+        localStorage.setItem(`notifications_${userId}`, JSON.stringify(notifications));
+      } catch (error) {
+        console.error('Failed to save notifications:', error);
       }
-    }
-    
-    return true;
-  }, [preferences]);
+    },
+    [userId]
+  );
 
-  const handleIncomingNotification = useCallback((notification: PushNotificationData) => {
-    if (!shouldShowNotification(notification)) return;
-    
-    const storedNotification: StoredNotification = {
-      ...notification,
-      isRead: false,
-      receivedAt: Date.now()
-    };
-    
-    // 알림 목록에 추가
-    setNotifications(prev => {
-      const updated = [storedNotification, ...prev].slice(0, maxNotifications);
-      saveNotifications(updated);
-      return updated;
-    });
-    
-    // 인앱 알림 표시
-    setCurrentNotification(notification);
-  }, [shouldShowNotification, maxNotifications, saveNotifications]);
+  const savePreferences = useCallback(
+    (preferences: NotificationPreferences) => {
+      if (!userId) return;
 
-  const showNotification = useCallback((notification: PushNotificationData) => {
-    handleIncomingNotification(notification);
-  }, [handleIncomingNotification]);
+      try {
+        localStorage.setItem(`notification_preferences_${userId}`, JSON.stringify(preferences));
+      } catch (error) {
+        console.error('Failed to save preferences:', error);
+      }
+    },
+    [userId]
+  );
 
-  const removeNotification = useCallback((notificationId: string) => {
-    setNotifications(prev => {
-      const updated = prev.filter(n => n.id !== notificationId);
-      saveNotifications(updated);
-      return updated;
-    });
-  }, [saveNotifications]);
+  const shouldShowNotification = useCallback(
+    (notification: PushNotificationData) => {
+      if (!preferences) return true;
+
+      // 전체 알림이 비활성화된 경우
+      if (!preferences.enabled) return false;
+
+      // 해당 알림 유형이 비활성화된 경우
+      if (!preferences.types[notification.type]) return false;
+
+      // 빈도 설정 확인
+      if (preferences.frequency === 'critical' && notification.priority !== 'critical')
+        return false;
+      if (
+        preferences.frequency === 'important' &&
+        notification.priority !== 'critical' &&
+        notification.priority !== 'high'
+      )
+        return false;
+
+      // 조용한 시간 확인
+      if (preferences.quietHours.enabled) {
+        const now = new Date();
+        const currentTime = now.getHours() * 60 + now.getMinutes();
+        const startTime = preferences.quietHours.start.split(':').map(Number);
+        const endTime = preferences.quietHours.end.split(':').map(Number);
+        const startMinutes = startTime[0] * 60 + startTime[1];
+        const endMinutes = endTime[0] * 60 + endTime[1];
+
+        const isQuietTime =
+          startMinutes <= endMinutes
+            ? currentTime >= startMinutes && currentTime <= endMinutes
+            : currentTime >= startMinutes || currentTime <= endMinutes;
+
+        // 조용한 시간에는 중요한 알림만 표시
+        if (
+          isQuietTime &&
+          notification.priority !== 'critical' &&
+          notification.priority !== 'high'
+        ) {
+          return false;
+        }
+      }
+
+      return true;
+    },
+    [preferences]
+  );
+
+  const handleIncomingNotification = useCallback(
+    (notification: PushNotificationData) => {
+      if (!shouldShowNotification(notification)) return;
+
+      const storedNotification: StoredNotification = {
+        ...notification,
+        isRead: false,
+        receivedAt: Date.now(),
+      };
+
+      // 알림 목록에 추가
+      setNotifications(prev => {
+        const updated = [storedNotification, ...prev].slice(0, maxNotifications);
+        saveNotifications(updated);
+        return updated;
+      });
+
+      // 인앱 알림 표시
+      setCurrentNotification(notification);
+    },
+    [shouldShowNotification, maxNotifications, saveNotifications]
+  );
+
+  const showNotification = useCallback(
+    (notification: PushNotificationData) => {
+      handleIncomingNotification(notification);
+    },
+    [handleIncomingNotification]
+  );
+
+  const removeNotification = useCallback(
+    (notificationId: string) => {
+      setNotifications(prev => {
+        const updated = prev.filter(n => n.id !== notificationId);
+        saveNotifications(updated);
+        return updated;
+      });
+    },
+    [saveNotifications]
+  );
 
   const clearAllNotifications = useCallback(() => {
     setNotifications([]);
     saveNotifications([]);
   }, [saveNotifications]);
 
-  const markAsRead = useCallback((notificationId: string) => {
-    setNotifications(prev => {
-      const updated = prev.map(n => 
-        n.id === notificationId ? { ...n, isRead: true } : n
-      );
-      saveNotifications(updated);
-      return updated;
-    });
-  }, [saveNotifications]);
+  const markAsRead = useCallback(
+    (notificationId: string) => {
+      setNotifications(prev => {
+        const updated = prev.map(n => (n.id === notificationId ? { ...n, isRead: true } : n));
+        saveNotifications(updated);
+        return updated;
+      });
+    },
+    [saveNotifications]
+  );
 
   const markAllAsRead = useCallback(() => {
     setNotifications(prev => {
@@ -266,43 +307,52 @@ const NotificationProvider: React.FC<NotificationProviderProps> = ({
       alert('이 브라우저는 푸시 알림을 지원하지 않습니다.');
       return;
     }
-    
+
     setShowPermissionModal(true);
   }, []);
 
-  const handlePermissionGranted = useCallback(async (newPreferences: NotificationPreferences) => {
-    setIsPermissionGranted(true);
-    setPreferences(newPreferences);
-    savePreferences(newPreferences);
-    setShowPermissionModal(false);
-    
-    // 구독 설정
-    if (userId) {
-      await subscribe(userId);
-    }
-  }, [userId, savePreferences]);
+  const handlePermissionGranted = useCallback(
+    async (newPreferences: NotificationPreferences) => {
+      setIsPermissionGranted(true);
+      setPreferences(newPreferences);
+      savePreferences(newPreferences);
+      setShowPermissionModal(false);
+
+      // 구독 설정
+      if (userId) {
+        await subscribe(userId);
+      }
+    },
+    [userId, savePreferences]
+  );
 
   const handlePermissionDenied = useCallback(() => {
     setIsPermissionGranted(false);
     setShowPermissionModal(false);
   }, []);
 
-  const updatePreferences = useCallback((newPreferences: NotificationPreferences) => {
-    setPreferences(newPreferences);
-    savePreferences(newPreferences);
-  }, [savePreferences]);
+  const updatePreferences = useCallback(
+    (newPreferences: NotificationPreferences) => {
+      setPreferences(newPreferences);
+      savePreferences(newPreferences);
+    },
+    [savePreferences]
+  );
 
-  const subscribe = useCallback(async (userId: string): Promise<boolean> => {
-    if (!isPermissionGranted || !preferences) return false;
-    
-    try {
-      const subscription = await pushNotificationService.subscribe(userId, preferences);
-      return subscription !== null;
-    } catch (error) {
-      console.error('Failed to subscribe to push notifications:', error);
-      return false;
-    }
-  }, [isPermissionGranted, preferences]);
+  const subscribe = useCallback(
+    async (userId: string): Promise<boolean> => {
+      if (!isPermissionGranted || !preferences) return false;
+
+      try {
+        const subscription = await pushNotificationService.subscribe(userId, preferences);
+        return subscription !== null;
+      } catch (error) {
+        console.error('Failed to subscribe to push notifications:', error);
+        return false;
+      }
+    },
+    [isPermissionGranted, preferences]
+  );
 
   const unsubscribe = useCallback(async () => {
     try {
@@ -321,43 +371,46 @@ const NotificationProvider: React.FC<NotificationProviderProps> = ({
     setCurrentNotification(null);
   }, []);
 
-  const handleNotificationAction = useCallback((actionId: string) => {
-    if (!currentNotification) return;
-    
-    // 알림을 읽음으로 표시
-    markAsRead(currentNotification.id);
-    
-    // 액션별 처리
-    switch (actionId) {
-      case 'view':
-        if (currentNotification.data?.url) {
-          window.location.href = currentNotification.data.url;
-        }
-        break;
-      case 'view_transaction':
-        if (currentNotification.data?.transactionId) {
-          window.location.href = `/transactions/${currentNotification.data.transactionId}`;
-        }
-        break;
-      case 'view_account':
-        if (currentNotification.data?.accountNumber) {
-          window.location.href = `/accounts/${currentNotification.data.accountNumber}`;
-        }
-        break;
-      case 'quick_transfer':
-        window.location.href = '/transfer';
-        break;
-      case 'pay_bill':
-        if (currentNotification.data?.billId) {
-          window.location.href = `/bills/${currentNotification.data.billId}/pay`;
-        }
-        break;
-      default:
+  const handleNotificationAction = useCallback(
+    (actionId: string) => {
+      if (!currentNotification) return;
+
+      // 알림을 읽음으로 표시
+      markAsRead(currentNotification.id);
+
+      // 액션별 처리
+      switch (actionId) {
+        case 'view':
+          if (currentNotification.data?.url) {
+            window.location.href = currentNotification.data.url;
+          }
+          break;
+        case 'view_transaction':
+          if (currentNotification.data?.transactionId) {
+            window.location.href = `/transactions/${currentNotification.data.transactionId}`;
+          }
+          break;
+        case 'view_account':
+          if (currentNotification.data?.accountNumber) {
+            window.location.href = `/accounts/${currentNotification.data.accountNumber}`;
+          }
+          break;
+        case 'quick_transfer':
+          window.location.href = '/transfer';
+          break;
+        case 'pay_bill':
+          if (currentNotification.data?.billId) {
+            window.location.href = `/bills/${currentNotification.data.billId}/pay`;
+          }
+          break;
+        default:
         // 기타 액션 처리
-    }
-    
-    setCurrentNotification(null);
-  }, [currentNotification, markAsRead]);
+      }
+
+      setCurrentNotification(null);
+    },
+    [currentNotification, markAsRead]
+  );
 
   const unreadCount = notifications.filter(n => !n.isRead).length;
 
@@ -374,13 +427,13 @@ const NotificationProvider: React.FC<NotificationProviderProps> = ({
     requestPermission,
     updatePreferences,
     subscribe,
-    unsubscribe
+    unsubscribe,
   };
 
   return (
     <NotificationContext.Provider value={contextValue}>
       {children}
-      
+
       {/* 인앱 알림 표시 */}
       {currentNotification && (
         <InAppNotification
@@ -389,7 +442,7 @@ const NotificationProvider: React.FC<NotificationProviderProps> = ({
           onAction={handleNotificationAction}
         />
       )}
-      
+
       {/* 권한 요청 모달 */}
       {showPermissionModal && (
         <NotificationPermissionModal
@@ -404,7 +457,7 @@ const NotificationProvider: React.FC<NotificationProviderProps> = ({
 };
 
 // 컨텍스트 훅
- export const useNotifications = () => {
+export const useNotifications = () => {
   const context = useContext(NotificationContext);
   if (!context) {
     throw new Error('useNotifications must be used within a NotificationProvider');

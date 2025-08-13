@@ -6,7 +6,7 @@ import {
   TabLayout,
   TabButton,
   ActiveTabIndicator,
-  ViewPagerContainer
+  ViewPagerContainer,
 } from './LoginScreen.styles';
 import { CertificateLoginTab } from './tabs/CertificateLoginTab';
 import { FinanceCertificateTab } from './tabs/FinanceCertificateTab';
@@ -23,7 +23,7 @@ export const LoginBottomSheet: React.FC<LoginBottomSheetProps> = ({
   isOpen,
   isClosing,
   onClose,
-  initialTab = 0
+  initialTab = 0,
 }) => {
   const [activeTab, setActiveTab] = useState(initialTab);
   const tabs = ['공동인증서', '금융인증서', '아이디'];
@@ -41,11 +41,7 @@ export const LoginBottomSheet: React.FC<LoginBottomSheetProps> = ({
       <TabLayout>
         <ActiveTabIndicator $activeIndex={activeTab} $tabCount={tabs.length} />
         {tabs.map((tab, index) => (
-          <TabButton
-            key={tab}
-            $active={activeTab === index}
-            onClick={() => setActiveTab(index)}
-          >
+          <TabButton key={tab} $active={activeTab === index} onClick={() => setActiveTab(index)}>
             {tab}
           </TabButton>
         ))}

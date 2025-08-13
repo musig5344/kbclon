@@ -29,7 +29,7 @@ const Header = styled.header`
   padding: 12px 16px;
   padding-top: calc(12px + env(safe-area-inset-top));
   z-index: 10;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%);
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0) 100%);
 `;
 const CloseButton = styled.button`
   background: none;
@@ -118,16 +118,11 @@ const ScanLine = styled.div<{ isScanning: boolean }>`
   left: 10%;
   right: 10%;
   height: 2px;
-  background: linear-gradient(to right, 
-    transparent 0%, 
-    #ffd338 20%, 
-    #ffd338 80%, 
-    transparent 100%
-  );
+  background: linear-gradient(to right, transparent 0%, #ffd338 20%, #ffd338 80%, transparent 100%);
   box-shadow: 0 0 10px #ffd338;
   top: 20%;
-  opacity: ${props => props.isScanning ? 1 : 0};
-  animation: ${props => props.isScanning ? 'scanAnimation 2s linear infinite' : 'none'};
+  opacity: ${props => (props.isScanning ? 1 : 0)};
+  animation: ${props => (props.isScanning ? 'scanAnimation 2s linear infinite' : 'none')};
   @keyframes scanAnimation {
     0% {
       top: 20%;
@@ -152,7 +147,7 @@ const BottomControls = styled.div`
   right: 0;
   padding: 24px;
   padding-bottom: calc(24px + env(safe-area-inset-bottom));
-  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0) 100%);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -181,9 +176,9 @@ const ModeSelector = styled.div`
 const ModeButton = styled.button<{ isActive?: boolean }>`
   background: none;
   border: none;
-  color: ${props => props.isActive ? '#ffd338' : '#999999'};
+  color: ${props => (props.isActive ? '#ffd338' : '#999999')};
   font-size: 14px;
-  font-weight: ${props => props.isActive ? '600' : '400'};
+  font-weight: ${props => (props.isActive ? '600' : '400')};
   padding: 8px 12px;
   cursor: pointer;
   position: relative;
@@ -195,7 +190,7 @@ const ModeButton = styled.button<{ isActive?: boolean }>`
     right: 0;
     height: 2px;
     background-color: #ffd338;
-    opacity: ${props => props.isActive ? 1 : 0};
+    opacity: ${props => (props.isActive ? 1 : 0)};
     transition: opacity 0.2s ease;
   }
 `;
@@ -259,19 +254,19 @@ const TransferPicturePage: React.FC = () => {
     setTimeout(() => {
       setIsScanning(false);
       // 실제로는 여기서 OCR 결과를 처리하고 이체 페이지로 데이터 전달
-      navigate('/transfer', { 
-        state: { 
+      navigate('/transfer', {
+        state: {
           scannedData: {
             bank: 'KB국민은행',
             account: '123456-78-901234',
-            name: '홍길동'
-          }
-        }
+            name: '홍길동',
+          },
+        },
       });
     }, 2000);
   };
   const getModeText = () => {
-    switch(scanMode) {
+    switch (scanMode) {
       case 'account':
         return '계좌번호가 인쇄된 부분을 화면에 맞춰주세요';
       case 'giro':
@@ -286,55 +281,40 @@ const TransferPicturePage: React.FC = () => {
     <Container>
       <Header>
         <CloseButton onClick={handleClose}>
-          <img src="/assets/images/icon_close_white.png" alt="닫기" />
+          <img src='/assets/images/icon_close_white.png' alt='닫기' />
         </CloseButton>
         <Title>사진전송</Title>
         <Spacer />
       </Header>
       <CameraPreview>
         <PreviewMessage>
-          카메라 미리보기<br />
+          카메라 미리보기
+          <br />
           (실제 카메라 기능은 미구현)
         </PreviewMessage>
         <ScanGuide>
-          <GuideCorner 
-            className="top-left" 
-            src="/assets/images/img_cameraline_tl.png" 
-            alt="" 
-          />
-          <GuideCorner 
-            className="top-right" 
-            src="/assets/images/img_cameraline_tr.png" 
-            alt="" 
-          />
-          <GuideCorner 
-            className="bottom-left" 
-            src="/assets/images/img_cameraline_bl.png" 
-            alt="" 
-          />
-          <GuideCorner 
-            className="bottom-right" 
-            src="/assets/images/img_cameraline_br.png" 
-            alt="" 
-          />
-          <GuideText className="top">{getModeText()}</GuideText>
+          <GuideCorner className='top-left' src='/assets/images/img_cameraline_tl.png' alt='' />
+          <GuideCorner className='top-right' src='/assets/images/img_cameraline_tr.png' alt='' />
+          <GuideCorner className='bottom-left' src='/assets/images/img_cameraline_bl.png' alt='' />
+          <GuideCorner className='bottom-right' src='/assets/images/img_cameraline_br.png' alt='' />
+          <GuideText className='top'>{getModeText()}</GuideText>
           <ScanLine isScanning={isScanning} />
           {scanMode === 'giro' && (
-            <img 
-              src="/assets/images/img_ocr_t.png" 
-              alt="지로 가이드" 
-              style={{ 
-                position: 'absolute', 
-                top: '50%', 
-                left: '50%', 
+            <img
+              src='/assets/images/img_ocr_t.png'
+              alt='지로 가이드'
+              style={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
                 transform: 'translate(-50%, -50%)',
-                opacity: 0.6 
-              }} 
+                opacity: 0.6,
+              }}
             />
           )}
         </ScanGuide>
         {isScanning && (
-          <GuideText className="bottom" style={{ color: '#ffd338' }}>
+          <GuideText className='bottom' style={{ color: '#ffd338' }}>
             인식 중...
           </GuideText>
         )}
@@ -349,30 +329,18 @@ const TransferPicturePage: React.FC = () => {
       </InfoBox>
       <BottomControls>
         <ModeSelector>
-          <ModeButton 
-            isActive={scanMode === 'account'}
-            onClick={() => setScanMode('account')}
-          >
+          <ModeButton isActive={scanMode === 'account'} onClick={() => setScanMode('account')}>
             계좌번호
           </ModeButton>
-          <ModeButton 
-            isActive={scanMode === 'giro'}
-            onClick={() => setScanMode('giro')}
-          >
+          <ModeButton isActive={scanMode === 'giro'} onClick={() => setScanMode('giro')}>
             지로
           </ModeButton>
-          <ModeButton 
-            isActive={scanMode === 'qr'}
-            onClick={() => setScanMode('qr')}
-          >
+          <ModeButton isActive={scanMode === 'qr'} onClick={() => setScanMode('qr')}>
             QR코드
           </ModeButton>
         </ModeSelector>
         <ShutterButton onClick={handleCapture} disabled={isScanning}>
-          <img 
-            src={`/assets/images/bt_shutter_${isScanning ? 'dim' : 'nor'}.png`} 
-            alt="촬영" 
-          />
+          <img src={`/assets/images/bt_shutter_${isScanning ? 'dim' : 'nor'}.png`} alt='촬영' />
         </ShutterButton>
       </BottomControls>
       <GalleryButton>

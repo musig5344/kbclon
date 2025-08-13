@@ -1,6 +1,6 @@
 /**
  * KB StarBanking 애니메이션 시스템 - 통합 Export
- * 
+ *
  * 성능 최적화 완료:
  * ✅ PNG 프레임 애니메이션 → 고성능 CSS/SVG 애니메이션
  * ✅ requestAnimationFrame 기반 60fps 보장
@@ -13,7 +13,7 @@
 // 최적화된 로딩 애니메이션
 export {
   OptimizedKBLoadingAnimation,
-  default as OptimizedKBLoadingAnimationDefault
+  default as OptimizedKBLoadingAnimationDefault,
 } from './OptimizedKBLoadingAnimation';
 
 // 성능 최적화된 애니메이션 컴포넌트들
@@ -35,13 +35,13 @@ export {
   scaleInAnimation,
   rotateAnimation,
   pulseAnimation,
-  bounceAnimation
+  bounceAnimation,
 } from './PerformanceOptimizedAnimations';
 
 // 최적화된 훅들
 export {
   useOptimizedLoadingAnimation,
-  useCSSLoadingAnimation
+  useCSSLoadingAnimation,
 } from '../../hooks/useOptimizedLoadingAnimation';
 
 // 레거시 호환성을 위한 훅 (내부적으로 최적화됨)
@@ -50,7 +50,7 @@ export {
   LOADING_FRAMES,
   type LoadingAnimationType,
   type LegacyLoadingHook,
-  type OptimizedLoadingHook
+  type OptimizedLoadingHook,
 } from '../../hooks/useLoadingAnimation';
 
 // 애니메이션 헬퍼 유틸리티
@@ -63,7 +63,7 @@ export {
   transform,
   scroll,
   measure,
-  CubicBezier
+  CubicBezier,
 } from '../../utils/animationHelpers';
 
 // 기본 애니메이션 스타일
@@ -97,36 +97,36 @@ export {
   smoothTransition,
   microInteraction,
   respectMotionPreference,
-  staggerDelay
+  staggerDelay,
 } from '../../../styles/animations';
 
 /**
  * 마이그레이션 가이드
- * 
+ *
  * 기존 PNG 프레임 애니메이션에서 최적화된 애니메이션으로 마이그레이션
- * 
+ *
  * === Before (기존 방식) ===
  * ```tsx
  * import { useLoadingAnimation } from './hooks/useLoadingAnimation';
  * import loading_1_01 from './assets/images/loading/loading_1_01.png';
- * 
+ *
  * const { currentFrame } = useLoadingAnimation({ type: 'type1' });
  * return <img src={currentFrame} alt="Loading" />;
  * ```
- * 
+ *
  * === After (최적화된 방식) ===
  * ```tsx
  * import { OptimizedKBLoadingAnimation } from './shared/components/animations';
- * 
+ *
  * return (
- *   <OptimizedKBLoadingAnimation 
- *     type="star" 
- *     size={60} 
- *     color="#FFB800" 
+ *   <OptimizedKBLoadingAnimation
+ *     type="star"
+ *     size={60}
+ *     color="#FFB800"
  *   />
  * );
  * ```
- * 
+ *
  * === 성능 향상 효과 ===
  * - 메모리 사용량: 90% 이상 감소
  * - 네트워크 대역폭: 95% 이상 절약
@@ -143,21 +143,21 @@ export const AnimationPerformanceDebugger = {
   measureAnimation: (name: string, callback: () => void) => {
     const startTime = performance.now();
     performance.mark(`${name}-start`);
-    
+
     callback();
-    
+
     performance.mark(`${name}-end`);
     const endTime = performance.now();
     const duration = endTime - startTime;
-    
+
     performance.measure(`${name}-duration`, `${name}-start`, `${name}-end`);
-    
+
     console.log(`🎬 Animation '${name}' performance:`, {
       duration: `${duration.toFixed(2)}ms`,
       within60fps: duration < 16.67 ? '✅' : '❌',
-      recommendation: duration > 16.67 ? 'Consider optimization' : 'Good performance'
+      recommendation: duration > 16.67 ? 'Consider optimization' : 'Good performance',
     });
-    
+
     return duration;
   },
 
@@ -173,15 +173,15 @@ export const AnimationPerformanceDebugger = {
     const beforeMemory = performance.memory.usedJSHeapSize;
     before();
     const afterBeforeMemory = performance.memory.usedJSHeapSize;
-    
+
     after();
     const afterMemory = performance.memory.usedJSHeapSize;
-    
+
     console.log('🧠 Memory Usage Comparison:', {
       before: `${(beforeMemory / 1024 / 1024).toFixed(2)}MB`,
       afterBefore: `${(afterBeforeMemory / 1024 / 1024).toFixed(2)}MB`,
       after: `${(afterMemory / 1024 / 1024).toFixed(2)}MB`,
-      savings: `${(((afterBeforeMemory - afterMemory) / afterBeforeMemory) * 100).toFixed(1)}%`
+      savings: `${(((afterBeforeMemory - afterMemory) / afterBeforeMemory) * 100).toFixed(1)}%`,
     });
   },
 
@@ -210,7 +210,7 @@ export const AnimationPerformanceDebugger = {
 
     return {
       getCurrentFPS: () => fps,
-      log: () => console.log(`📊 Current FPS: ${fps}`)
+      log: () => console.log(`📊 Current FPS: ${fps}`),
     };
   },
 
@@ -225,7 +225,7 @@ export const AnimationPerformanceDebugger = {
           elem.style.transform = 'translateZ(0)';
           return elem.style.transform === 'translateZ(0)';
         },
-        name: 'GPU Acceleration Support'
+        name: 'GPU Acceleration Support',
       },
       willChangeSupport: {
         test: () => {
@@ -233,7 +233,7 @@ export const AnimationPerformanceDebugger = {
           elem.style.willChange = 'transform';
           return elem.style.willChange === 'transform';
         },
-        name: 'will-change Property Support'
+        name: 'will-change Property Support',
       },
       containmentSupport: {
         test: () => {
@@ -241,12 +241,12 @@ export const AnimationPerformanceDebugger = {
           elem.style.contain = 'layout';
           return elem.style.contain === 'layout';
         },
-        name: 'CSS Containment Support'
+        name: 'CSS Containment Support',
       },
       requestAnimationFrameSupport: {
         test: () => typeof requestAnimationFrame === 'function',
-        name: 'requestAnimationFrame Support'
-      }
+        name: 'requestAnimationFrame Support',
+      },
     };
 
     console.log('🔍 Animation Quality Check:');
@@ -256,13 +256,13 @@ export const AnimationPerformanceDebugger = {
     });
 
     return checks;
-  }
+  },
 };
 
 // 개발 환경에서만 성능 디버거 활성화
 if (process.env.NODE_ENV === 'development') {
   (window as any).AnimationPerformanceDebugger = AnimationPerformanceDebugger;
-  
+
   console.log(`
 🎭 KB StarBanking Animation System Loaded!
 

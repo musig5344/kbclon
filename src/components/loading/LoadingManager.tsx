@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useCallback, useRef, useEffect } from 'react';
+
 import { KBFullscreenLoading, LoadingVariant } from './KBLoadingSpinner';
 
 // 로딩 상태 타입
@@ -12,24 +13,27 @@ interface LoadingState {
 // 로딩 매니저 컨텍스트 타입
 interface LoadingContextType {
   /** 로딩 표시 */
-  showLoading: (id: string, options?: {
-    message?: string;
-    variant?: LoadingVariant;
-    priority?: number;
-  }) => void;
-  
+  showLoading: (
+    id: string,
+    options?: {
+      message?: string;
+      variant?: LoadingVariant;
+      priority?: number;
+    }
+  ) => void;
+
   /** 로딩 숨김 */
   hideLoading: (id: string) => void;
-  
+
   /** 모든 로딩 숨김 */
   hideAllLoading: () => void;
-  
+
   /** 현재 로딩 상태 */
   isLoading: boolean;
-  
+
   /** 현재 로딩 메시지 */
   currentMessage?: string;
-  
+
   /** 현재 로딩 변형 */
   currentVariant?: LoadingVariant;
 }
@@ -50,7 +54,7 @@ interface LoadingManagerProps {
 
 /**
  * 글로벌 로딩 매니저 컴포넌트
- * 
+ *
  * 기능:
  * - 페이지 전환 시 자동 로딩 표시
  * - 데이터 로딩 시 로딩 스피너
@@ -62,7 +66,7 @@ export const LoadingManager: React.FC<LoadingManagerProps> = ({
   children,
   defaultMessage = '처리중입니다...',
   defaultVariant = 'type1',
-  minDisplayTime = 300
+  minDisplayTime = 300,
 }) => {
   const [loadingStates, setLoadingStates] = useState<Map<string, LoadingState>>(new Map());
   const loadingTimers = useRef<Map<string, NodeJS.Timeout>>(new Map());
@@ -89,52 +93,58 @@ export const LoadingManager: React.FC<LoadingManagerProps> = ({
   }, [loadingStates]);
 
   // 로딩 표시 함수
-  const showLoading = useCallback((
-    id: string, 
-    options: {
-      message?: string;
-      variant?: LoadingVariant;
-      priority?: number;
-    } = {}
-  ) => {
-    // 기존 타이머 제거
-    const existingTimer = loadingTimers.current.get(id);
-    if (existingTimer) {
-      clearTimeout(existingTimer);
-      loadingTimers.current.delete(id);
-    }
+  const showLoading = useCallback(
+    (
+      id: string,
+      options: {
+        message?: string;
+        variant?: LoadingVariant;
+        priority?: number;
+      } = {}
+    ) => {
+      // 기존 타이머 제거
+      const existingTimer = loadingTimers.current.get(id);
+      if (existingTimer) {
+        clearTimeout(existingTimer);
+        loadingTimers.current.delete(id);
+      }
 
-    const newState: LoadingState = {
-      id,
-      message: options.message || defaultMessage,
-      variant: options.variant || defaultVariant,
-      priority: options.priority || 0
-    };
+      const newState: LoadingState = {
+        id,
+        message: options.message || defaultMessage,
+        variant: options.variant || defaultVariant,
+        priority: options.priority || 0,
+      };
 
-    setLoadingStates(prev => new Map(prev.set(id, newState)));
-  }, [defaultMessage, defaultVariant]);
+      setLoadingStates(prev => new Map(prev.set(id, newState)));
+    },
+    [defaultMessage, defaultVariant]
+  );
 
   // 로딩 숨김 함수
-  const hideLoading = useCallback((id: string) => {
-    // 최소 표시 시간 적용
-    const timer = setTimeout(() => {
-      setLoadingStates(prev => {
-        const newMap = new Map(prev);
-        newMap.delete(id);
-        return newMap;
-      });
-      loadingTimers.current.delete(id);
-    }, minDisplayTime);
+  const hideLoading = useCallback(
+    (id: string) => {
+      // 최소 표시 시간 적용
+      const timer = setTimeout(() => {
+        setLoadingStates(prev => {
+          const newMap = new Map(prev);
+          newMap.delete(id);
+          return newMap;
+        });
+        loadingTimers.current.delete(id);
+      }, minDisplayTime);
 
-    loadingTimers.current.set(id, timer);
-  }, [minDisplayTime]);
+      loadingTimers.current.set(id, timer);
+    },
+    [minDisplayTime]
+  );
 
   // 모든 로딩 숨김 함수
   const hideAllLoading = useCallback(() => {
     // 모든 타이머 제거
     loadingTimers.current.forEach(timer => clearTimeout(timer));
     loadingTimers.current.clear();
-    
+
     setLoadingStates(new Map());
   }, []);
 
@@ -153,13 +163,13 @@ export const LoadingManager: React.FC<LoadingManagerProps> = ({
     hideAllLoading,
     isLoading: loadingStates.size > 0,
     currentMessage: currentLoading?.message,
-    currentVariant: currentLoading?.variant
+    currentVariant: currentLoading?.variant,
   };
 
   return (
     <LoadingContext.Provider value={contextValue}>
       {children}
-      
+
       {/* 글로벌 로딩 오버레이 */}
       {currentLoading && (
         <KBFullscreenLoading
@@ -175,16 +185,16 @@ export const LoadingManager: React.FC<LoadingManagerProps> = ({
 
 /**
  * 로딩 매니저 훅
- * 
+ *
  * @returns LoadingContextType
  */
 export const useLoadingManager = (): LoadingContextType => {
   const context = useContext(LoadingContext);
-  
+
   if (!context) {
     throw new Error('useLoadingManager must be used within LoadingManager');
   }
-  
+
   return context;
 };
 
@@ -195,24 +205,27 @@ export const useLoadingManager = (): LoadingContextType => {
 export const usePageTransitionLoading = () => {
   const { showLoading, hideLoading } = useLoadingManager();
 
-  const startPageTransition = useCallback((
-    page: string,
-    message?: string
-  ) => {
-    showLoading(`page-transition-${page}`, {
-      message: message || '페이지를 불러오고 있습니다...',
-      variant: 'type2',
-      priority: 100 // 페이지 전환은 최고 우선순위
-    });
-  }, [showLoading]);
+  const startPageTransition = useCallback(
+    (page: string, message?: string) => {
+      showLoading(`page-transition-${page}`, {
+        message: message || '페이지를 불러오고 있습니다...',
+        variant: 'type2',
+        priority: 100, // 페이지 전환은 최고 우선순위
+      });
+    },
+    [showLoading]
+  );
 
-  const endPageTransition = useCallback((page: string) => {
-    hideLoading(`page-transition-${page}`);
-  }, [hideLoading]);
+  const endPageTransition = useCallback(
+    (page: string) => {
+      hideLoading(`page-transition-${page}`);
+    },
+    [hideLoading]
+  );
 
   return {
     startPageTransition,
-    endPageTransition
+    endPageTransition,
   };
 };
 
@@ -223,24 +236,27 @@ export const usePageTransitionLoading = () => {
 export const useApiLoading = () => {
   const { showLoading, hideLoading } = useLoadingManager();
 
-  const startApiLoading = useCallback((
-    apiName: string,
-    message?: string
-  ) => {
-    showLoading(`api-${apiName}`, {
-      message: message || '데이터를 불러오고 있습니다...',
-      variant: 'type1',
-      priority: 50 // API 로딩은 중간 우선순위
-    });
-  }, [showLoading]);
+  const startApiLoading = useCallback(
+    (apiName: string, message?: string) => {
+      showLoading(`api-${apiName}`, {
+        message: message || '데이터를 불러오고 있습니다...',
+        variant: 'type1',
+        priority: 50, // API 로딩은 중간 우선순위
+      });
+    },
+    [showLoading]
+  );
 
-  const endApiLoading = useCallback((apiName: string) => {
-    hideLoading(`api-${apiName}`);
-  }, [hideLoading]);
+  const endApiLoading = useCallback(
+    (apiName: string) => {
+      hideLoading(`api-${apiName}`);
+    },
+    [hideLoading]
+  );
 
   return {
     startApiLoading,
-    endApiLoading
+    endApiLoading,
   };
 };
 
@@ -251,24 +267,27 @@ export const useApiLoading = () => {
 export const useActionLoading = () => {
   const { showLoading, hideLoading } = useLoadingManager();
 
-  const startActionLoading = useCallback((
-    actionName: string,
-    message?: string
-  ) => {
-    showLoading(`action-${actionName}`, {
-      message: message || '처리 중입니다...',
-      variant: 'type2',
-      priority: 75 // 사용자 액션은 높은 우선순위
-    });
-  }, [showLoading]);
+  const startActionLoading = useCallback(
+    (actionName: string, message?: string) => {
+      showLoading(`action-${actionName}`, {
+        message: message || '처리 중입니다...',
+        variant: 'type2',
+        priority: 75, // 사용자 액션은 높은 우선순위
+      });
+    },
+    [showLoading]
+  );
 
-  const endActionLoading = useCallback((actionName: string) => {
-    hideLoading(`action-${actionName}`);
-  }, [hideLoading]);
+  const endActionLoading = useCallback(
+    (actionName: string) => {
+      hideLoading(`action-${actionName}`);
+    },
+    [hideLoading]
+  );
 
   return {
     startActionLoading,
-    endActionLoading
+    endActionLoading,
   };
 };
 

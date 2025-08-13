@@ -73,8 +73,9 @@ const ShortcutButton = styled.button<{ $active?: boolean }>`
   padding: 0 16px;
   border: 1px solid ${tokens.colors.border.light};
   border-radius: ${dimensions.borderRadius.round}px;
-  background-color: ${props => props.$active ? tokens.colors.brand.primary : colors.backgroundGray2};
-  color: ${props => props.$active ? colors.textPrimary : colors.textSecondary};
+  background-color: ${props =>
+    props.$active ? tokens.colors.brand.primary : colors.backgroundGray2};
+  color: ${props => (props.$active ? colors.textPrimary : colors.textSecondary)};
   font-size: 14px;
   font-family: ${typography.fontFamily.kbfgTextMedium};
   cursor: pointer;
@@ -108,7 +109,7 @@ const KeypadGrid = styled.div`
 const KeypadButton = styled.button<{ $wide?: boolean }>`
   height: ${dimensions.height.keypadButton}px;
   border: none;
-  border-radius: ${props => props.$wide ? `${dimensions.height.keypadButton / 2}px` : '50%'};
+  border-radius: ${props => (props.$wide ? `${dimensions.height.keypadButton / 2}px` : '50%')};
   background-color: ${tokens.colors.background.primary};
   color: ${tokens.colors.text.primary};
   font-size: ${typography.styles.keypadButton.fontSize.replace('dp', 'px')};
@@ -120,7 +121,9 @@ const KeypadButton = styled.button<{ $wide?: boolean }>`
   align-items: center;
   justify-content: center;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  ${props => props.$wide && `
+  ${props =>
+    props.$wide &&
+    `
     grid-column: span 2;
   `}
   &:hover {
@@ -140,21 +143,23 @@ const DeleteIcon = styled.div`
 const ConfirmButton = styled.button<{ $disabled?: boolean }>`
   width: 100%;
   height: ${dimensions.height.bottomSheetButton}px;
-  background-color: ${props => props.$disabled ? colors.backgroundGray2 : tokens.colors.brand.primary};
+  background-color: ${props =>
+    props.$disabled ? colors.backgroundGray2 : tokens.colors.brand.primary};
   border: none;
   border-radius: ${dimensions.borderRadius.medium}px;
-  color: ${props => props.$disabled ? colors.textHint : colors.textPrimary};
+  color: ${props => (props.$disabled ? colors.textHint : colors.textPrimary)};
   font-size: 18px;
   font-family: ${typography.fontFamily.kbfgTextBold};
   font-weight: 700;
-  cursor: ${props => props.$disabled ? 'not-allowed' : 'pointer'};
+  cursor: ${props => (props.$disabled ? 'not-allowed' : 'pointer')};
   transition: all 0.2s ease;
   margin-top: ${dimensions.amountBottomSheet.confirmButtonTop}px;
   &:hover {
-    background-color: ${props => props.$disabled ? colors.backgroundGray2 : tokens.colors.brand.primaryDark};
+    background-color: ${props =>
+      props.$disabled ? colors.backgroundGray2 : tokens.colors.brand.primaryDark};
   }
   &:active {
-    transform: ${props => props.$disabled ? 'none' : 'scale(0.98)'};
+    transform: ${props => (props.$disabled ? 'none' : 'scale(0.98)')};
   }
 `;
 const AmountInputBottomSheet: React.FC<AmountInputBottomSheetProps> = ({
@@ -196,7 +201,7 @@ const AmountInputBottomSheet: React.FC<AmountInputBottomSheetProps> = ({
     setActiveShortcut(null);
   };
   // 단축 버튼 클릭 처리
-  const handleShortcutClick = (shortcut: typeof shortcutAmounts[0]) => {
+  const handleShortcutClick = (shortcut: (typeof shortcutAmounts)[0]) => {
     if (shortcut.value === 'all') {
       // 전액의 경우 계좌 잔액을 가져와야 함 (임시로 100만원)
       setAmount('1000000');
@@ -221,13 +226,7 @@ const AmountInputBottomSheet: React.FC<AmountInputBottomSheetProps> = ({
   }, [isOpen]);
   const isConfirmDisabled = !amount || parseInt(amount.replace(/,/g, '')) <= 0;
   return (
-    <BottomSheet
-      isOpen={isOpen}
-      onClose={onClose}
-      height="70vh"
-      title={title}
-      showSlideBar={true}
-    >
+    <BottomSheet isOpen={isOpen} onClose={onClose} height='70vh' title={title} showSlideBar={true}>
       <AmountInputContainer>
         {/* 금액 표시 영역 */}
         <AmountDisplaySection>
@@ -239,7 +238,7 @@ const AmountInputBottomSheet: React.FC<AmountInputBottomSheetProps> = ({
         {/* 금액 단축 버튼들 */}
         <ShortcutSection>
           <ShortcutButtonsGrid>
-            {shortcutAmounts.map((shortcut) => (
+            {shortcutAmounts.map(shortcut => (
               <ShortcutButton
                 key={shortcut.label}
                 $active={activeShortcut === shortcut.label}

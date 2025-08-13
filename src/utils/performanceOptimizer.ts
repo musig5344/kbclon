@@ -12,20 +12,25 @@ export function useRenderPerformance(componentName: string, enabled = false) {
 
   useEffect(() => {
     if (!enabled) return;
-    
+
     renderStartTime.current = performance.now();
     renderCount.current += 1;
   });
 
   useEffect(() => {
     if (!enabled) return;
-    
+
     const renderTime = performance.now() - renderStartTime.current;
-    
-    if (renderTime > 16) { // 60fps 기준 초과
-      console.warn(`🐌 ${componentName} 렌더링 성능 주의: ${renderTime.toFixed(2)}ms (렌더링 #${renderCount.current})`);
+
+    if (renderTime > 16) {
+      // 60fps 기준 초과
+      console.warn(
+        `🐌 ${componentName} 렌더링 성능 주의: ${renderTime.toFixed(2)}ms (렌더링 #${renderCount.current})`
+      );
     } else if (renderTime > 8) {
-      console.info(`⚡ ${componentName} 렌더링: ${renderTime.toFixed(2)}ms (렌더링 #${renderCount.current})`);
+      console.info(
+        `⚡ ${componentName} 렌더링: ${renderTime.toFixed(2)}ms (렌더링 #${renderCount.current})`
+      );
     }
   });
 }
@@ -37,18 +42,20 @@ export function useMemoryLeak(componentName: string, enabled = false) {
 
   useEffect(() => {
     if (!enabled || !(performance as any).memory) return;
-    
+
     initialMemory.current = (performance as any).memory.usedJSHeapSize;
-    
+
     const checkMemory = () => {
       const currentMemory = (performance as any).memory.usedJSHeapSize;
       const memoryDiff = currentMemory - initialMemory.current;
-      
+
       setMemoryUsage(memoryDiff);
-      
+
       // 10MB 이상 증가 시 경고
       if (memoryDiff > 10 * 1024 * 1024) {
-        console.warn(`🚨 ${componentName} 메모리 리크 의심: +${(memoryDiff / 1024 / 1024).toFixed(2)}MB`);
+        console.warn(
+          `🚨 ${componentName} 메모리 리크 의심: +${(memoryDiff / 1024 / 1024).toFixed(2)}MB`
+        );
       }
     };
 
@@ -65,16 +72,16 @@ export function useWhyDidYouUpdate(name: string, props: Record<string, any>, ena
 
   useEffect(() => {
     if (!enabled) return;
-    
+
     if (previousProps.current) {
       const allKeys = Object.keys({ ...previousProps.current, ...props });
       const changedProps: Record<string, { from: any; to: any }> = {};
 
-      allKeys.forEach((key) => {
+      allKeys.forEach(key => {
         if (previousProps.current![key] !== props[key]) {
           changedProps[key] = {
             from: previousProps.current![key],
-            to: props[key]
+            to: props[key],
           };
         }
       });
@@ -105,7 +112,7 @@ export function useInViewport(options?: IntersectionObserverInit) {
       ([entry]) => {
         const isIntersecting = entry.isIntersecting;
         setInViewport(isIntersecting);
-        
+
         if (isIntersecting && !hasBeenInViewport) {
           setHasBeenInViewport(true);
         }
@@ -113,7 +120,7 @@ export function useInViewport(options?: IntersectionObserverInit) {
       {
         threshold: 0.1,
         rootMargin: '50px',
-        ...options
+        ...options,
       }
     );
 
@@ -168,7 +175,7 @@ export class PerformanceMonitor {
       averageRenderTime: 0,
       maxRenderTime: 0,
       memoryUsage: 0,
-      lastUpdate: 0
+      lastUpdate: 0,
     };
 
     const newCount = existing.renderCount + 1;
@@ -179,19 +186,21 @@ export class PerformanceMonitor {
       averageRenderTime: newAverage,
       maxRenderTime: Math.max(existing.maxRenderTime, renderTime),
       memoryUsage: (performance as any).memory?.usedJSHeapSize || 0,
-      lastUpdate: Date.now()
+      lastUpdate: Date.now(),
     });
   }
 
   getMetrics(componentName?: string): PerformanceMetrics | Map<string, PerformanceMetrics> {
     if (componentName) {
-      return this.metrics.get(componentName) || {
-        renderCount: 0,
-        averageRenderTime: 0,
-        maxRenderTime: 0,
-        memoryUsage: 0,
-        lastUpdate: 0
-      };
+      return (
+        this.metrics.get(componentName) || {
+          renderCount: 0,
+          averageRenderTime: 0,
+          maxRenderTime: 0,
+          memoryUsage: 0,
+          lastUpdate: 0,
+        }
+      );
     }
     return this.metrics;
   }

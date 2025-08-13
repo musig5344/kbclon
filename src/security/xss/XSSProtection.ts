@@ -1,6 +1,6 @@
 /**
  * XSS Protection Utilities
- * 
+ *
  * Cross-Site Scripting (XSS) 공격 방어를 위한 유틸리티
  * - 입력값 검증 및 살균화
  * - HTML/JavaScript 이스케이프
@@ -21,7 +21,7 @@ const XSS_PATTERNS = {
   OBJECT_EMBED: /<(object|embed|applet)[^>]*>/gi,
   IFRAME: /<iframe[^>]*>/gi,
   FORM_ACTION: /<form[^>]*action\s*=/gi,
-  META_REFRESH: /<meta[^>]*http-equiv\s*=\s*["']?refresh/gi
+  META_REFRESH: /<meta[^>]*http-equiv\s*=\s*["']?refresh/gi,
 };
 
 // 뱅킹 특화 위험 패턴
@@ -30,7 +30,7 @@ const BANKING_RISK_PATTERNS = {
   CARD_NUMBERS: /\b\d{4}[\s-]?\d{4}[\s-]?\d{4}[\s-]?\d{4}\b/g,
   PASSWORDS: /password|비밀번호|pass|pwd/gi,
   FINANCIAL_KEYWORDS: /계좌|잔액|이체|송금|입금|출금|대출|카드/g,
-  PHISHING_DOMAINS: /(?:fake|phish|scam|steal).*\.com/gi
+  PHISHING_DOMAINS: /(?:fake|phish|scam|steal).*\.com/gi,
 };
 
 interface XSSValidationOptions {
@@ -61,7 +61,7 @@ class XSSProtection {
     allowedTags: ['b', 'i', 'em', 'strong', 'p', 'br'],
     allowedAttributes: ['class', 'id'],
     strictMode: true,
-    bankingMode: true
+    bankingMode: true,
   };
 
   /**
@@ -81,7 +81,7 @@ class XSSProtection {
         sanitizedLength: 0,
         threats: ['Invalid input type'],
         warnings: [],
-        riskLevel: 'medium'
+        riskLevel: 'medium',
       };
     }
 
@@ -126,7 +126,7 @@ class XSSProtection {
       sanitizedLength,
       threats,
       warnings,
-      riskLevel
+      riskLevel,
     };
   }
 
@@ -146,7 +146,7 @@ class XSSProtection {
       REMOVE_CONTENTS: ['script', 'style'],
       FORBID_TAGS: ['object', 'embed', 'applet', 'iframe'],
       FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover'],
-      SANITIZE_DOM: true
+      SANITIZE_DOM: true,
     };
 
     return DOMPurify.sanitize(input, config);
@@ -177,19 +177,19 @@ class XSSProtection {
       "'": '&#x27;',
       '/': '&#x2F;',
       '`': '&#x60;',
-      '=': '&#x3D;'
+      '=': '&#x3D;',
     };
 
-    return input.replace(/[&<>"'`=\/]/g, (match) => htmlEscapes[match] || match);
+    return input.replace(/[&<>"'`=\/]/g, match => htmlEscapes[match] || match);
   }
 
   /**
    * 위험도 계산
    */
   private calculateRiskLevel(
-    threats: string[], 
-    warnings: string[], 
-    originalLength: number, 
+    threats: string[],
+    warnings: string[],
+    originalLength: number,
     sanitizedLength: number
   ): 'low' | 'medium' | 'high' | 'critical' {
     if (threats.length >= 3) return 'critical';
@@ -204,7 +204,7 @@ class XSSProtection {
    */
   validateUrl(url: string): { isValid: boolean; sanitized: string; warnings: string[] } {
     const warnings: string[] = [];
-    
+
     if (!url || typeof url !== 'string') {
       return { isValid: false, sanitized: '', warnings: ['Invalid URL'] };
     }
@@ -212,7 +212,7 @@ class XSSProtection {
     // 위험한 프로토콜 검사
     const dangerousProtocols = ['javascript:', 'vbscript:', 'data:', 'file:'];
     const lowerUrl = url.toLowerCase();
-    
+
     for (const protocol of dangerousProtocols) {
       if (lowerUrl.startsWith(protocol)) {
         return { isValid: false, sanitized: '', warnings: [`Dangerous protocol: ${protocol}`] };
@@ -230,7 +230,7 @@ class XSSProtection {
     return {
       isValid: true,
       sanitized,
-      warnings
+      warnings,
     };
   }
 
@@ -238,7 +238,7 @@ class XSSProtection {
    * 폼 데이터 일괄 검증
    */
   validateFormData(
-    formData: Record<string, any>, 
+    formData: Record<string, any>,
     fieldOptions?: Record<string, XSSValidationOptions>
   ): {
     isValid: boolean;
@@ -254,10 +254,10 @@ class XSSProtection {
       if (typeof value === 'string') {
         const options = fieldOptions?.[field] || {};
         const result = this.validate(value, options);
-        
+
         fieldResults[field] = result;
         sanitizedData[field] = result.sanitized;
-        
+
         if (result.riskLevel === 'critical' || result.riskLevel === 'high') {
           risks.push(result.riskLevel);
         }
@@ -266,15 +266,19 @@ class XSSProtection {
       }
     });
 
-    const overallRisk = risks.includes('critical') ? 'critical' : 
-                       risks.includes('high') ? 'high' : 
-                       risks.length > 0 ? 'medium' : 'low';
+    const overallRisk = risks.includes('critical')
+      ? 'critical'
+      : risks.includes('high')
+        ? 'high'
+        : risks.length > 0
+          ? 'medium'
+          : 'low';
 
     return {
       isValid: Object.values(fieldResults).every(result => result.isValid),
       sanitizedData,
       fieldResults,
-      overallRisk
+      overallRisk,
     };
   }
 
@@ -282,7 +286,7 @@ class XSSProtection {
    * 뱅킹 특화 입력값 검증
    */
   validateBankingInput(
-    input: string, 
+    input: string,
     inputType: 'account' | 'amount' | 'memo' | 'name' | 'general'
   ): XSSValidationResult {
     const bankingOptions: Record<string, XSSValidationOptions> = {
@@ -290,32 +294,32 @@ class XSSProtection {
         allowHtml: false,
         maxLength: 50,
         strictMode: true,
-        bankingMode: true
+        bankingMode: true,
       },
       amount: {
         allowHtml: false,
         maxLength: 20,
         strictMode: true,
-        bankingMode: true
+        bankingMode: true,
       },
       memo: {
         allowHtml: false,
         maxLength: 200,
         strictMode: true,
-        bankingMode: true
+        bankingMode: true,
       },
       name: {
         allowHtml: false,
         maxLength: 100,
         strictMode: true,
-        bankingMode: true
+        bankingMode: true,
       },
       general: {
         allowHtml: false,
         maxLength: 1000,
         strictMode: true,
-        bankingMode: true
-      }
+        bankingMode: true,
+      },
     };
 
     return this.validate(input, bankingOptions[inputType]);
@@ -325,7 +329,7 @@ class XSSProtection {
    * 실시간 입력 모니터링
    */
   createInputMonitor(
-    element: HTMLElement, 
+    element: HTMLElement,
     options?: XSSValidationOptions,
     onThreat?: (result: XSSValidationResult) => void
   ): () => void {
@@ -370,17 +374,20 @@ class XSSProtection {
       total: results.length,
       valid: results.filter(r => r.isValid).length,
       threats: results.filter(r => r.threats.length > 0).length,
-      highRisk: results.filter(r => r.riskLevel === 'high' || r.riskLevel === 'critical').length
+      highRisk: results.filter(r => r.riskLevel === 'high' || r.riskLevel === 'critical').length,
     };
 
     const allThreats = results.flatMap(r => r.threats);
-    const threatCounts = allThreats.reduce((acc, threat) => {
-      acc[threat] = (acc[threat] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+    const threatCounts = allThreats.reduce(
+      (acc, threat) => {
+        acc[threat] = (acc[threat] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>
+    );
 
     const topThreats = Object.entries(threatCounts)
-      .sort(([,a], [,b]) => b - a)
+      .sort(([, a], [, b]) => b - a)
       .slice(0, 5)
       .map(([threat]) => threat);
 
@@ -389,7 +396,7 @@ class XSSProtection {
       'Use HTTPS for all communications',
       'Validate and sanitize all user inputs',
       'Implement proper authentication and authorization',
-      'Regular security audits and penetration testing'
+      'Regular security audits and penetration testing',
     ];
 
     return { summary, recommendations, topThreats };
@@ -409,7 +416,7 @@ export const escapeHtml = (input: string): string => {
 };
 
 export const validateBankingInput = (
-  input: string, 
+  input: string,
   type: 'account' | 'amount' | 'memo' | 'name' | 'general'
 ): XSSValidationResult => {
   return xssProtection.validateBankingInput(input, type);

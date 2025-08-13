@@ -49,7 +49,11 @@
       "Bash(npm run images:webp:*)",
       "Bash(npm run lint:*)",
       "Bash(git init:*)",
-      "Bash(git remote add:*)"
+      "Bash(git remote add:*)",
+      "Bash(git config:*)",
+      "Bash(git push:*)",
+      "Bash(npm run images:optimize:*)",
+      "Bash(npm run format:*)"
     ],
     "deny": []
   }

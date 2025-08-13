@@ -6,7 +6,7 @@ import {
   AccountId,
   AccountNumber,
   ISODateString,
-  Money
+  Money,
 } from '../../../shared/types/common.types';
 // 거래내역 엔티티
 export interface Transaction {
@@ -40,25 +40,25 @@ export enum TransactionType {
 }
 // 거래 카테고리
 export enum TransactionCategory {
-  SALARY = 'SALARY',              // 급여
-  TRANSFER_IN = 'TRANSFER_IN',    // 이체입금
-  TRANSFER_OUT = 'TRANSFER_OUT',  // 이체출금
-  SHOPPING = 'SHOPPING',          // 쇼핑
-  DINING = 'DINING',              // 외식
-  TRANSPORT = 'TRANSPORT',        // 교통
-  UTILITY = 'UTILITY',            // 공과금
-  HEALTHCARE = 'HEALTHCARE',      // 의료
-  EDUCATION = 'EDUCATION',        // 교육
+  SALARY = 'SALARY', // 급여
+  TRANSFER_IN = 'TRANSFER_IN', // 이체입금
+  TRANSFER_OUT = 'TRANSFER_OUT', // 이체출금
+  SHOPPING = 'SHOPPING', // 쇼핑
+  DINING = 'DINING', // 외식
+  TRANSPORT = 'TRANSPORT', // 교통
+  UTILITY = 'UTILITY', // 공과금
+  HEALTHCARE = 'HEALTHCARE', // 의료
+  EDUCATION = 'EDUCATION', // 교육
   ENTERTAINMENT = 'ENTERTAINMENT', // 엔터테인먼트
-  OTHER = 'OTHER',                // 기타
+  OTHER = 'OTHER', // 기타
 }
 // 거래 상태
 export enum TransactionStatus {
-  PENDING = 'PENDING',      // 처리중
-  COMPLETED = 'COMPLETED',  // 완료
-  FAILED = 'FAILED',        // 실패
-  CANCELLED = 'CANCELLED',  // 취소
-  REVERSED = 'REVERSED',    // 반환
+  PENDING = 'PENDING', // 처리중
+  COMPLETED = 'COMPLETED', // 완료
+  FAILED = 'FAILED', // 실패
+  CANCELLED = 'CANCELLED', // 취소
+  REVERSED = 'REVERSED', // 반환
 }
 // 거래내역 상세
 export interface TransactionDetail extends Transaction {

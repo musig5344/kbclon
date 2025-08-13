@@ -31,7 +31,7 @@ const AccountSkeletonBanner = styled.div`
   position: relative;
   min-height: 160px;
   overflow: hidden;
-  
+
   /* 미세한 border highlight */
   &::before {
     content: '';
@@ -44,7 +44,7 @@ const AccountSkeletonBanner = styled.div`
     border: 1px solid rgba(255, 255, 255, 0.8);
     pointer-events: none;
   }
-  
+
   @media (max-width: ${tokens.breakpoints.small}) {
     padding: 24px ${tokens.spacing[5]};
     min-height: 145px;
@@ -56,11 +56,11 @@ const AccountRowSkeleton = styled.div`
   flex-direction: column;
   gap: ${tokens.spacing[5]};
   min-height: 100px;
-  
+
   &:first-child {
     margin-bottom: ${tokens.spacing[5]};
   }
-  
+
   @media (max-width: ${tokens.breakpoints.small}) {
     gap: ${tokens.spacing[4]};
     min-height: 90px;
@@ -104,33 +104,17 @@ const AccountCardSkeleton: React.FC = React.memo(() => {
     <AccountRowSkeleton>
       <AccountLeftSkeleton>
         {/* KB 로고 원형 스켈레톤 */}
-        <Skeleton 
-          width={48} 
-          height={48} 
-          variant="circular"
-        />
+        <Skeleton width={48} height={48} variant='circular' />
         <AccountInfoSkeleton>
           {/* 계좌명 스켈레톤 */}
-          <Skeleton 
-            width={120} 
-            height={20} 
-            variant="text"
-          />
+          <Skeleton width={120} height={20} variant='text' />
           {/* 계좌번호 스켈레톤 */}
-          <Skeleton 
-            width={140} 
-            height={16} 
-            variant="text"
-          />
+          <Skeleton width={140} height={16} variant='text' />
         </AccountInfoSkeleton>
       </AccountLeftSkeleton>
       <AccountBalanceSkeleton>
         {/* 잔액 스켈레톤 */}
-        <Skeleton 
-          width={160} 
-          height={28} 
-          variant="text"
-        />
+        <Skeleton width={160} height={28} variant='text' />
       </AccountBalanceSkeleton>
     </AccountRowSkeleton>
   );
@@ -143,11 +127,7 @@ export const AccountSkeleton: React.FC<{
   count?: number;
   showTransferButton?: boolean;
   showPagination?: boolean;
-}> = React.memo(({ 
-  count = 2, 
-  showTransferButton = true,
-  showPagination = true 
-}) => {
+}> = React.memo(({ count = 2, showTransferButton = true, showPagination = true }) => {
   return (
     <AccountSkeletonContainer>
       <AccountSkeletonWrapper>
@@ -156,32 +136,20 @@ export const AccountSkeleton: React.FC<{
           {Array.from({ length: count }).map((_, index) => (
             <AccountCardSkeleton key={index} />
           ))}
-          
+
           {/* 이체 버튼 스켈레톤 */}
           {showTransferButton && (
             <TransferButtonSkeleton>
-              <Skeleton 
-                width="100%" 
-                height={56} 
-                variant="rectangular"
-              />
+              <Skeleton width='100%' height={56} variant='rectangular' />
             </TransferButtonSkeleton>
           )}
         </AccountSkeletonBanner>
-        
+
         {/* 페이지네이션 스켈레톤 */}
         {showPagination && (
           <PaginationSkeleton>
-            <Skeleton 
-              width={6} 
-              height={6} 
-              variant="circular"
-            />
-            <Skeleton 
-              width={6} 
-              height={6} 
-              variant="circular"
-            />
+            <Skeleton width={6} height={6} variant='circular' />
+            <Skeleton width={6} height={6} variant='circular' />
           </PaginationSkeleton>
         )}
       </AccountSkeletonWrapper>

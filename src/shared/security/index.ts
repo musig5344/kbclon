@@ -1,6 +1,6 @@
 /**
  * Security Module Index for KB StarBanking Clone
- * 
+ *
  * Exports all security-related components, utilities, and configurations
  * for comprehensive protection against XSS, CSRF, and other threats.
  */
@@ -12,12 +12,12 @@ import { initializeSecurityHeaders } from './securityHeaders';
 
 import type { Environment, SecurityLevel, SecurityConfiguration } from './securityConfig';
 // CSRF Protection
-export { 
+export {
   default as CSRFProtection,
   useCSRFProtection,
   withCSRFProtection,
   validateOrigin,
-  initializeCSRFProtection
+  initializeCSRFProtection,
 } from './csrfProtection';
 export type { CSRFConfig } from './csrfProtection';
 // Input Sanitization
@@ -28,49 +28,47 @@ export {
   sanitizeInputWithResult,
   sanitizeHtml,
   sanitizeUrl,
-  sanitizeUserInput
+  sanitizeUserInput,
 } from './inputSanitization';
 export type { SanitizationOptions, SanitizationResult } from './inputSanitization';
 // Secure API Service
 export {
   default as SecureApiService,
   createSecureApiService,
-  DEFAULT_SECURITY_CONFIG
+  DEFAULT_SECURITY_CONFIG,
 } from './secureApiService';
 export type { SecurityConfig } from './secureApiService';
 // Security Headers
 export {
   default as SecurityHeadersManager,
   securityHeaders,
-  initializeSecurityHeaders
+  initializeSecurityHeaders,
 } from './securityHeaders';
 export type { CSPConfig, SecurityHeadersConfig } from './securityHeaders';
 // Security Configuration
 export {
   default as SecurityConfigManager,
   securityConfig,
-  initializeSecurityConfig
+  initializeSecurityConfig,
 } from './securityConfig';
-export type { 
-  Environment, 
-  SecurityLevel, 
-  SecurityConfiguration 
-} from './securityConfig';
+export type { Environment, SecurityLevel, SecurityConfiguration } from './securityConfig';
 /**
  * Complete security initialization function
  * Call this once during app startup to initialize all security measures
  */
-export function initializeSecurity(options: {
-  environment?: Environment;
-  securityLevel?: SecurityLevel;
-  allowedOrigins?: string[];
-  customConfig?: Partial<SecurityConfiguration>;
-} = {}) {
+export function initializeSecurity(
+  options: {
+    environment?: Environment;
+    securityLevel?: SecurityLevel;
+    allowedOrigins?: string[];
+    customConfig?: Partial<SecurityConfiguration>;
+  } = {}
+) {
   const {
     environment = 'development',
     securityLevel = 'medium',
     allowedOrigins = [],
-    customConfig = {}
+    customConfig = {},
   } = options;
   try {
     // Initialize security configuration
@@ -79,10 +77,11 @@ export function initializeSecurity(options: {
     initializeCSRFProtection({
       allowedOrigins,
       strictMode: configManager.getConfig().csrf.strictOriginValidation,
-      autoInject: true
+      autoInject: true,
     });
     // Initialize security headers
-    const headerEnvironment = environment === 'testing' ? 'development' : environment as 'development' | 'production';
+    const headerEnvironment =
+      environment === 'testing' ? 'development' : (environment as 'development' | 'production');
     initializeSecurityHeaders(headerEnvironment);
     if (process.env.NODE_ENV === 'development') {
       console.log('Security initialized:', {
@@ -92,8 +91,8 @@ export function initializeSecurity(options: {
           csrf: configManager.getConfig().csrf.enabled,
           inputValidation: configManager.getConfig().inputValidation.enabled,
           rateLimit: configManager.getConfig().rateLimit.enabled,
-          csp: configManager.getConfig().csp.enabled
-        }
+          csp: configManager.getConfig().csp.enabled,
+        },
       });
     }
     return configManager;
@@ -122,7 +121,7 @@ export const SecurityUtils = {
       } else if (typeof value === 'number' || typeof value === 'boolean') {
         sanitized[key] = value;
       } else if (Array.isArray(value)) {
-        sanitized[key] = value.map(item => 
+        sanitized[key] = value.map(item =>
           typeof item === 'string' ? sanitizeUserInput(item) : item
         );
       } else {
@@ -139,8 +138,8 @@ export const SecurityUtils = {
       ...CSRFProtection.getHeaders(),
       'X-Requested-With': 'XMLHttpRequest',
       'Cache-Control': 'no-cache, no-store, must-revalidate',
-      'Pragma': 'no-cache',
-      'Expires': '0'
+      Pragma: 'no-cache',
+      Expires: '0',
     };
   },
   /**
@@ -196,7 +195,7 @@ export const SecurityUtils = {
       result |= a.charCodeAt(i) ^ b.charCodeAt(i);
     }
     return result === 0;
-  }
+  },
 };
 /**
  * React hook for comprehensive security
@@ -211,7 +210,7 @@ export function useSecurity() {
     csrfHiddenInput: csrfProtection.hiddenInput,
     // Configuration
     securityConfig: config,
-    isFeatureEnabled: (feature: keyof typeof config.features) => 
+    isFeatureEnabled: (feature: keyof typeof config.features) =>
       securityConfig.isFeatureEnabled(feature),
     // Utilities
     sanitizeInput: SecurityUtils.sanitizeBankingInput,
@@ -220,12 +219,12 @@ export function useSecurity() {
     validateEnvironment: SecurityUtils.validateSecureEnvironment,
     // Security status
     securityLevel: config.securityLevel,
-    environment: config.environment
+    environment: config.environment,
   };
 }
 const securityModule = {
   initializeSecurity,
   SecurityUtils,
-  useSecurity
+  useSecurity,
 };
 export default securityModule;

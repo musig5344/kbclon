@@ -4,14 +4,14 @@ import styled from 'styled-components';
 
 import { tokens } from '../../../styles/tokens';
 
-import { 
-  Skeleton, 
-  SkeletonGroup, 
+import {
+  Skeleton,
+  SkeletonGroup,
   TextSkeleton,
   AccountSkeleton,
   TransactionSkeleton,
   DashboardSkeleton,
-  MenuItemSkeleton
+  MenuItemSkeleton,
 } from './index';
 
 /**
@@ -52,41 +52,25 @@ const ProfileCardSkeleton: React.FC = () => {
     align-items: center;
     gap: ${tokens.spacing[4]};
   `;
-  
+
   const ProfileInfo = styled.div`
     flex: 1;
   `;
-  
+
   return (
     <Card>
       <ProfileContainer>
         {/* 프로필 이미지 */}
-        <Skeleton 
-          width={80} 
-          height={80} 
-          variant="circular"
-        />
+        <Skeleton width={80} height={80} variant='circular' />
         {/* 프로필 정보 */}
         <ProfileInfo>
           <SkeletonGroup $gap={12}>
             {/* 이름 */}
-            <Skeleton 
-              width={120} 
-              height={24} 
-              variant="text"
-            />
+            <Skeleton width={120} height={24} variant='text' />
             {/* 이메일 */}
-            <Skeleton 
-              width={180} 
-              height={16} 
-              variant="text"
-            />
+            <Skeleton width={180} height={16} variant='text' />
             {/* 상태 메시지 */}
-            <Skeleton 
-              width={240} 
-              height={14} 
-              variant="text"
-            />
+            <Skeleton width={240} height={14} variant='text' />
           </SkeletonGroup>
         </ProfileInfo>
       </ProfileContainer>
@@ -99,30 +83,37 @@ const PostCardSkeleton: React.FC = () => {
   return (
     <Card>
       {/* 헤더 */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: tokens.spacing[3], marginBottom: tokens.spacing[4] }}>
-        <Skeleton width={40} height={40} variant="circular" />
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: tokens.spacing[3],
+          marginBottom: tokens.spacing[4],
+        }}
+      >
+        <Skeleton width={40} height={40} variant='circular' />
         <SkeletonGroup style={{ flex: 1 }}>
-          <Skeleton width={100} height={16} variant="text" />
-          <Skeleton width={80} height={12} variant="text" />
+          <Skeleton width={100} height={16} variant='text' />
+          <Skeleton width={80} height={12} variant='text' />
         </SkeletonGroup>
       </div>
-      
+
       {/* 콘텐츠 */}
-      <TextSkeleton lines={3} lastLineWidth="80%" />
-      
+      <TextSkeleton lines={3} lastLineWidth='80%' />
+
       {/* 이미지 */}
-      <Skeleton 
-        width="100%" 
-        height={200} 
-        variant="rectangular"
+      <Skeleton
+        width='100%'
+        height={200}
+        variant='rectangular'
         style={{ marginTop: tokens.spacing[4], marginBottom: tokens.spacing[4] }}
       />
-      
+
       {/* 액션 버튼들 */}
       <div style={{ display: 'flex', gap: tokens.spacing[4] }}>
-        <Skeleton width={60} height={32} variant="rectangular" />
-        <Skeleton width={60} height={32} variant="rectangular" />
-        <Skeleton width={60} height={32} variant="rectangular" />
+        <Skeleton width={60} height={32} variant='rectangular' />
+        <Skeleton width={60} height={32} variant='rectangular' />
+        <Skeleton width={60} height={32} variant='rectangular' />
       </div>
     </Card>
   );
@@ -134,35 +125,51 @@ const TableSkeleton: React.FC<{ rows?: number }> = ({ rows = 5 }) => {
     width: 100%;
     border-collapse: collapse;
   `;
-  
+
   const Th = styled.th`
     padding: ${tokens.spacing[3]};
     text-align: left;
     border-bottom: 2px solid ${tokens.colors.border.divider};
   `;
-  
+
   const Td = styled.td`
     padding: ${tokens.spacing[3]};
     border-bottom: 1px solid ${tokens.colors.border.divider};
   `;
-  
+
   return (
     <Table>
       <thead>
         <tr>
-          <Th><Skeleton width={80} height={16} variant="text" /></Th>
-          <Th><Skeleton width={120} height={16} variant="text" /></Th>
-          <Th><Skeleton width={100} height={16} variant="text" /></Th>
-          <Th><Skeleton width={80} height={16} variant="text" /></Th>
+          <Th>
+            <Skeleton width={80} height={16} variant='text' />
+          </Th>
+          <Th>
+            <Skeleton width={120} height={16} variant='text' />
+          </Th>
+          <Th>
+            <Skeleton width={100} height={16} variant='text' />
+          </Th>
+          <Th>
+            <Skeleton width={80} height={16} variant='text' />
+          </Th>
         </tr>
       </thead>
       <tbody>
         {Array.from({ length: rows }).map((_, index) => (
           <tr key={index}>
-            <Td><Skeleton width={60} height={14} variant="text" /></Td>
-            <Td><Skeleton width={150} height={14} variant="text" /></Td>
-            <Td><Skeleton width={80} height={14} variant="text" /></Td>
-            <Td><Skeleton width={100} height={14} variant="text" /></Td>
+            <Td>
+              <Skeleton width={60} height={14} variant='text' />
+            </Td>
+            <Td>
+              <Skeleton width={150} height={14} variant='text' />
+            </Td>
+            <Td>
+              <Skeleton width={80} height={14} variant='text' />
+            </Td>
+            <Td>
+              <Skeleton width={100} height={14} variant='text' />
+            </Td>
           </tr>
         ))}
       </tbody>
@@ -175,65 +182,71 @@ export const SkeletonExample: React.FC = () => {
   return (
     <ExampleContainer>
       <Title>Skeleton UI Components 예제</Title>
-      
+
       <Section>
         <h3>기본 Skeleton 컴포넌트</h3>
         <Card>
           <SkeletonGroup $gap={16}>
             <div>
               <p>Text variant:</p>
-              <Skeleton width={200} height={16} variant="text" />
+              <Skeleton width={200} height={16} variant='text' />
             </div>
             <div>
               <p>Circular variant:</p>
-              <Skeleton width={60} height={60} variant="circular" />
+              <Skeleton width={60} height={60} variant='circular' />
             </div>
             <div>
               <p>Rectangular variant:</p>
-              <Skeleton width={200} height={100} variant="rectangular" />
+              <Skeleton width={200} height={100} variant='rectangular' />
             </div>
           </SkeletonGroup>
         </Card>
       </Section>
-      
+
       <Section>
         <h3>TextSkeleton (여러 줄)</h3>
         <Card>
-          <TextSkeleton lines={4} lastLineWidth="60%" />
+          <TextSkeleton lines={4} lastLineWidth='60%' />
         </Card>
       </Section>
-      
+
       <Section>
         <h3>프로필 카드 스켈레톤</h3>
         <ProfileCardSkeleton />
       </Section>
-      
+
       <Section>
         <h3>게시글 카드 스켈레톤</h3>
         <PostCardSkeleton />
       </Section>
-      
+
       <Section>
         <h3>테이블 스켈레톤</h3>
         <Card>
           <TableSkeleton rows={5} />
         </Card>
       </Section>
-      
+
       <Section>
         <h3>계좌 섹션 스켈레톤</h3>
         <AccountSkeleton count={2} />
       </Section>
-      
+
       <Section>
         <h3>거래내역 스켈레톤</h3>
         <TransactionSkeleton count={5} />
       </Section>
-      
+
       <Section>
         <h3>메뉴 아이템 스켈레톤</h3>
         <Card>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: tokens.spacing[3] }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(4, 1fr)',
+              gap: tokens.spacing[3],
+            }}
+          >
             {Array.from({ length: 8 }).map((_, index) => (
               <MenuItemSkeleton key={index} />
             ))}

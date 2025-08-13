@@ -27,7 +27,7 @@ const TableContainer = styled.div`
   overflow-x: auto;
   border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: 4px;
-  
+
   &:focus {
     outline: 2px solid ${({ theme }) => theme.colors.accentBlue};
     outline-offset: 2px;
@@ -61,8 +61,10 @@ const Th = styled.th<{ sortable?: boolean }>`
   color: ${({ theme }) => theme.colors.textSecondary};
   border-bottom: 2px solid ${({ theme }) => theme.colors.border};
   white-space: nowrap;
-  
-  ${({ sortable, theme }) => sortable && `
+
+  ${({ sortable, theme }) =>
+    sortable &&
+    `
     cursor: pointer;
     user-select: none;
     
@@ -81,19 +83,24 @@ const Tbody = styled.tbody``;
 
 const Tr = styled.tr<{ selectable?: boolean; selected?: boolean }>`
   border-bottom: 1px solid ${({ theme }) => theme.colors.borderLight};
-  
-  ${({ selectable, selected, theme }) => selectable && `
+
+  ${({ selectable, selected, theme }) =>
+    selectable &&
+    `
     cursor: pointer;
     
     &:hover {
       background-color: ${theme.colors.backgroundGray1};
     }
     
-    ${selected && `
+    ${
+      selected &&
+      `
       background-color: ${theme.colors.lightGray};
-    `}
+    `
+    }
   `}
-  
+
   &:focus {
     outline: 2px solid ${({ theme }) => theme.colors.accentBlue};
     outline-offset: -2px;
@@ -113,12 +120,17 @@ const SortIcon = styled.span<{ direction?: 'asc' | 'desc' }>`
   height: 0;
   border-left: 4px solid transparent;
   border-right: 4px solid transparent;
-  
-  ${({ direction }) => direction === 'asc' ? `
+
+  ${({ direction }) =>
+    direction === 'asc'
+      ? `
     border-bottom: 6px solid currentColor;
-  ` : direction === 'desc' ? `
+  `
+      : direction === 'desc'
+        ? `
     border-top: 6px solid currentColor;
-  ` : `
+  `
+        : `
     opacity: 0.3;
     border-bottom: 6px solid currentColor;
   `}
@@ -141,7 +153,7 @@ export const AccessibleTable: React.FC<Props> = ({
   selectable = false,
   onSort,
   onSelect,
-  selectedRows = []
+  selectedRows = [],
 }) => {
   const tableRef = useRef<HTMLTableElement>(null);
   const navigatorRef = useRef<KeyboardNavigator | null>(null);
@@ -151,7 +163,7 @@ export const AccessibleTable: React.FC<Props> = ({
   useEffect(() => {
     if (tableRef.current && (sortable || selectable)) {
       navigatorRef.current = new KeyboardNavigator(tableRef.current, {
-        orientation: 'both'
+        orientation: 'both',
       });
     }
 
@@ -162,11 +174,7 @@ export const AccessibleTable: React.FC<Props> = ({
 
   useEffect(() => {
     // 테이블 요약 정보 스크린 리더 공지
-    const tableSummary = generateTableSummary(
-      data.length,
-      headers.length,
-      summary
-    );
+    const tableSummary = generateTableSummary(data.length, headers.length, summary);
     announce(tableSummary);
   }, [data.length, headers.length, summary]);
 
@@ -177,13 +185,15 @@ export const AccessibleTable: React.FC<Props> = ({
     setSortColumn(column);
     setSortDirection(newDirection);
     onSort(column);
-    
-    announce(`${column} 열을 ${newDirection === 'asc' ? '오름차순' : '내림차순'}으로 정렬했습니다.`);
+
+    announce(
+      `${column} 열을 ${newDirection === 'asc' ? '오름차순' : '내림차순'}으로 정렬했습니다.`
+    );
   };
 
   const handleRowSelect = (row: TableData, index: number) => {
     if (!selectable || !onSelect) return;
-    
+
     onSelect(row);
     const isSelected = selectedRows.includes(row);
     announce(`${index + 1}번째 행이 ${isSelected ? '선택 해제' : '선택'}되었습니다.`);
@@ -197,21 +207,21 @@ export const AccessibleTable: React.FC<Props> = ({
   };
 
   return (
-    <TableContainer role="region" aria-label={caption}>
+    <TableContainer role='region' aria-label={caption}>
       <Table ref={tableRef}>
         <Caption>{caption}</Caption>
         {summary && <ScreenReaderOnly>{summary}</ScreenReaderOnly>}
-        
+
         <Thead>
           <Tr>
             {headers.map((header, index) => (
               <Th
                 key={index}
-                scope="col"
+                scope='col'
                 sortable={sortable}
                 onClick={() => sortable && handleSort(header)}
                 tabIndex={sortable ? 0 : -1}
-                onKeyDown={(e) => {
+                onKeyDown={e => {
                   if (sortable && (e.key === 'Enter' || e.key === ' ')) {
                     e.preventDefault();
                     handleSort(header);
@@ -219,7 +229,9 @@ export const AccessibleTable: React.FC<Props> = ({
                 }}
                 aria-sort={
                   sortColumn === header
-                    ? sortDirection === 'asc' ? 'ascending' : 'descending'
+                    ? sortDirection === 'asc'
+                      ? 'ascending'
+                      : 'descending'
                     : 'none'
                 }
               >
@@ -238,18 +250,18 @@ export const AccessibleTable: React.FC<Props> = ({
             ))}
           </Tr>
         </Thead>
-        
+
         <Tbody>
           {data.map((row, rowIndex) => {
             const isSelected = selectedRows.includes(row);
-            
+
             return (
               <Tr
                 key={rowIndex}
                 selectable={selectable}
                 selected={isSelected}
                 onClick={() => handleRowSelect(row, rowIndex)}
-                onKeyDown={(e) => handleKeyDown(e, row, rowIndex)}
+                onKeyDown={e => handleKeyDown(e, row, rowIndex)}
                 tabIndex={selectable ? 0 : -1}
                 role={selectable ? 'button' : undefined}
                 aria-selected={selectable ? isSelected : undefined}
@@ -257,9 +269,7 @@ export const AccessibleTable: React.FC<Props> = ({
               >
                 {headers.map((header, cellIndex) => (
                   <Td key={cellIndex}>
-                    {cellIndex === 0 && (
-                      <ScreenReaderOnly>{rowIndex + 1}번째 행:</ScreenReaderOnly>
-                    )}
+                    {cellIndex === 0 && <ScreenReaderOnly>{rowIndex + 1}번째 행:</ScreenReaderOnly>}
                     {row[header]}
                   </Td>
                 ))}

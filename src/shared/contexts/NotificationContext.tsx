@@ -10,7 +10,10 @@ import React, { createContext, useContext, useReducer, ReactNode, useEffect } fr
 
 import styled from 'styled-components';
 
-import { androidOptimizedButton, androidOptimizedAnimation } from '../../styles/android-webview-optimizations';
+import {
+  androidOptimizedButton,
+  androidOptimizedAnimation,
+} from '../../styles/android-webview-optimizations';
 import { KBDesignSystem } from '../../styles/tokens/kb-design-system';
 
 export interface NotificationItem {
@@ -38,7 +41,7 @@ type NotificationState = {
   maxVisible: number;
 };
 
-type NotificationAction_Type = 
+type NotificationAction_Type =
   | { type: 'ADD_NOTIFICATION'; notification: NotificationItem }
   | { type: 'REMOVE_NOTIFICATION'; id: string }
   | { type: 'CLEAR_ALL' }
@@ -49,13 +52,13 @@ interface NotificationContextType {
   addNotification: (notification: Omit<NotificationItem, 'id' | 'timestamp'>) => string;
   removeNotification: (id: string) => void;
   clearAllNotifications: () => void;
-  
+
   // 편의 메서드들 (백엔드 API 연동용)
   showSuccess: (message: string, options?: Partial<NotificationItem>) => string;
   showError: (message: string, options?: Partial<NotificationItem>) => string;
   showWarning: (message: string, options?: Partial<NotificationItem>) => string;
   showInfo: (message: string, options?: Partial<NotificationItem>) => string;
-  
+
   // API 에러 처리 전용
   showApiError: (error: any, context?: string) => string;
   showNetworkError: (retryCallback?: () => void) => string;
@@ -67,14 +70,14 @@ const DEFAULT_DURATIONS = {
   success: 3000,
   info: 4000,
   warning: 5000,
-  error: 6000
+  error: 6000,
 };
 
 const ANDROID_OPTIMIZED_DURATIONS = {
   success: 2500, // Android에서 더 빠르게
   info: 3500,
   warning: 4500,
-  error: 5500
+  error: 5500,
 };
 
 // 알림 컨테이너 스타일 (Android WebView 최적화)
@@ -89,11 +92,11 @@ const NotificationContainer = styled.div`
   max-width: 90vw;
   width: 400px;
   pointer-events: none;
-  
+
   /* Android WebView 최적화 */
   transform: translateZ(0);
   will-change: transform;
-  
+
   @media (max-width: 480px) {
     top: env(safe-area-inset-top, 16px);
     right: 8px;
@@ -103,13 +106,13 @@ const NotificationContainer = styled.div`
   }
 `;
 
-const NotificationCard = styled.div<{ 
-  $type: NotificationItem['type']; 
+const NotificationCard = styled.div<{
+  $type: NotificationItem['type'];
   $androidOptimized?: boolean;
   $isExiting?: boolean;
 }>`
   ${androidOptimizedAnimation}
-  
+
   background: ${KBDesignSystem.colors.background.white};
   border-radius: ${KBDesignSystem.borderRadius.lg};
   box-shadow: ${KBDesignSystem.shadows.xl};
@@ -117,28 +120,33 @@ const NotificationCard = styled.div<{
   pointer-events: auto;
   position: relative;
   overflow: hidden;
-  
+
   /* 타입별 색상 */
-  border-left: 4px solid ${props => {
-    switch (props.$type) {
-      case 'success': return KBDesignSystem.colors.status.success;
-      case 'error': return KBDesignSystem.colors.status.error;
-      case 'warning': return KBDesignSystem.colors.status.warning;
-      case 'info': return KBDesignSystem.colors.primary.yellow;
-      default: return KBDesignSystem.colors.border.medium;
-    }
-  }};
-  
+  border-left: 4px solid
+    ${props => {
+      switch (props.$type) {
+        case 'success':
+          return KBDesignSystem.colors.status.success;
+        case 'error':
+          return KBDesignSystem.colors.status.error;
+        case 'warning':
+          return KBDesignSystem.colors.status.warning;
+        case 'info':
+          return KBDesignSystem.colors.primary.yellow;
+        default:
+          return KBDesignSystem.colors.border.medium;
+      }
+    }};
+
   /* Android WebView 터치 최적화 */
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
-  
+
   /* 애니메이션 */
-  animation: ${props => props.$isExiting ? 'slideOut' : 'slideIn'} 
-             ${props => props.$androidOptimized ? '200ms' : '300ms'} 
-             cubic-bezier(0.25, 0.8, 0.25, 1);
-  
+  animation: ${props => (props.$isExiting ? 'slideOut' : 'slideIn')}
+    ${props => (props.$androidOptimized ? '200ms' : '300ms')} cubic-bezier(0.25, 0.8, 0.25, 1);
+
   @keyframes slideIn {
     from {
       transform: translateX(100%);
@@ -149,7 +157,7 @@ const NotificationCard = styled.div<{
       opacity: 1;
     }
   }
-  
+
   @keyframes slideOut {
     from {
       transform: translateX(0);
@@ -160,9 +168,11 @@ const NotificationCard = styled.div<{
       opacity: 0;
     }
   }
-  
+
   /* 호버 효과 (Android에서는 비활성화) */
-  ${props => !props.$androidOptimized && `
+  ${props =>
+    !props.$androidOptimized &&
+    `
     &:hover {
       transform: translateX(-4px);
       box-shadow: ${KBDesignSystem.shadows.xxl};
@@ -187,27 +197,37 @@ const NotificationIcon = styled.div<{ $type: NotificationItem['type'] }>`
   justify-content: center;
   font-size: 14px;
   flex-shrink: 0;
-  
+
   background: ${props => {
     switch (props.$type) {
-      case 'success': return KBDesignSystem.colors.status.success;
-      case 'error': return KBDesignSystem.colors.status.error;
-      case 'warning': return KBDesignSystem.colors.status.warning;
-      case 'info': return KBDesignSystem.colors.primary.yellow;
-      default: return KBDesignSystem.colors.border.medium;
+      case 'success':
+        return KBDesignSystem.colors.status.success;
+      case 'error':
+        return KBDesignSystem.colors.status.error;
+      case 'warning':
+        return KBDesignSystem.colors.status.warning;
+      case 'info':
+        return KBDesignSystem.colors.primary.yellow;
+      default:
+        return KBDesignSystem.colors.border.medium;
     }
   }};
-  
+
   color: ${KBDesignSystem.colors.text.inverse};
-  
+
   &::after {
     content: '${props => {
       switch (props.$type) {
-        case 'success': return '✓';
-        case 'error': return '✕';
-        case 'warning': return '!';
-        case 'info': return 'i';
-        default: return '•';
+        case 'success':
+          return '✓';
+        case 'error':
+          return '✕';
+        case 'warning':
+          return '!';
+        case 'info':
+          return 'i';
+        default:
+          return '•';
       }
     }}';
   }
@@ -245,7 +265,7 @@ const NotificationActions = styled.div`
 
 const NotificationActionButton = styled.button<{ $variant?: 'primary' | 'secondary' | 'danger' }>`
   ${androidOptimizedButton}
-  
+
   padding: 6px 12px;
   border-radius: ${KBDesignSystem.borderRadius.sm};
   font-family: ${KBDesignSystem.typography.fontFamily.primary};
@@ -254,28 +274,34 @@ const NotificationActionButton = styled.button<{ $variant?: 'primary' | 'seconda
   border: none;
   cursor: pointer;
   transition: all 150ms ease;
-  
+
   background: ${props => {
     switch (props.$variant) {
-      case 'primary': return KBDesignSystem.colors.primary.yellow;
-      case 'danger': return KBDesignSystem.colors.status.error;
-      default: return KBDesignSystem.colors.background.gray200;
+      case 'primary':
+        return KBDesignSystem.colors.primary.yellow;
+      case 'danger':
+        return KBDesignSystem.colors.status.error;
+      default:
+        return KBDesignSystem.colors.background.gray200;
     }
   }};
-  
+
   color: ${props => {
     switch (props.$variant) {
-      case 'primary': return KBDesignSystem.colors.text.primary;
-      case 'danger': return KBDesignSystem.colors.text.inverse;
-      default: return KBDesignSystem.colors.text.secondary;
+      case 'primary':
+        return KBDesignSystem.colors.text.primary;
+      case 'danger':
+        return KBDesignSystem.colors.text.inverse;
+      default:
+        return KBDesignSystem.colors.text.secondary;
     }
   }};
-  
+
   &:hover {
     opacity: 0.9;
     transform: translateY(-1px);
   }
-  
+
   &:active {
     transform: translateY(0);
   }
@@ -283,7 +309,7 @@ const NotificationActionButton = styled.button<{ $variant?: 'primary' | 'seconda
 
 const CloseButton = styled.button`
   ${androidOptimizedButton}
-  
+
   background: none;
   border: none;
   padding: 4px;
@@ -292,7 +318,7 @@ const CloseButton = styled.button`
   font-size: 16px;
   line-height: 1;
   border-radius: ${KBDesignSystem.borderRadius.sm};
-  
+
   &:hover {
     background: ${KBDesignSystem.colors.background.gray200};
     color: ${KBDesignSystem.colors.text.primary};
@@ -306,46 +332,54 @@ const ProgressBar = styled.div<{ $progress: number; $type: NotificationItem['typ
   height: 3px;
   width: ${props => props.$progress}%;
   transition: width 100ms linear;
-  
+
   background: ${props => {
     switch (props.$type) {
-      case 'success': return KBDesignSystem.colors.status.success;
-      case 'error': return KBDesignSystem.colors.status.error;
-      case 'warning': return KBDesignSystem.colors.status.warning;
-      case 'info': return KBDesignSystem.colors.primary.yellow;
-      default: return KBDesignSystem.colors.border.medium;
+      case 'success':
+        return KBDesignSystem.colors.status.success;
+      case 'error':
+        return KBDesignSystem.colors.status.error;
+      case 'warning':
+        return KBDesignSystem.colors.status.warning;
+      case 'info':
+        return KBDesignSystem.colors.primary.yellow;
+      default:
+        return KBDesignSystem.colors.border.medium;
     }
   }};
 `;
 
 // 리듀서
-const notificationReducer = (state: NotificationState, action: NotificationAction_Type): NotificationState => {
+const notificationReducer = (
+  state: NotificationState,
+  action: NotificationAction_Type
+): NotificationState => {
   switch (action.type) {
     case 'ADD_NOTIFICATION':
       return {
         ...state,
-        notifications: [action.notification, ...state.notifications].slice(0, state.maxVisible)
+        notifications: [action.notification, ...state.notifications].slice(0, state.maxVisible),
       };
-      
+
     case 'REMOVE_NOTIFICATION':
       return {
         ...state,
-        notifications: state.notifications.filter(n => n.id !== action.id)
+        notifications: state.notifications.filter(n => n.id !== action.id),
       };
-      
+
     case 'CLEAR_ALL':
       return {
         ...state,
-        notifications: []
+        notifications: [],
       };
-      
+
     case 'SET_MAX_VISIBLE':
       return {
         ...state,
         maxVisible: action.count,
-        notifications: state.notifications.slice(0, action.count)
+        notifications: state.notifications.slice(0, action.count),
       };
-      
+
     default:
       return state;
   }
@@ -355,10 +389,10 @@ const NotificationContext = createContext<NotificationContextType | null>(null);
 
 export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const isAndroid = /Android/i.test(navigator.userAgent);
-  
+
   const [state, dispatch] = useReducer(notificationReducer, {
     notifications: [],
-    maxVisible: isAndroid ? 3 : 5 // Android에서 메모리 효율성
+    maxVisible: isAndroid ? 3 : 5, // Android에서 메모리 효율성
   });
 
   // 자동 제거 관리
@@ -393,7 +427,9 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
       id,
       timestamp: Date.now(),
       androidOptimized: isAndroid,
-      duration: notification.duration ?? (isAndroid ? ANDROID_OPTIMIZED_DURATIONS : DEFAULT_DURATIONS)[notification.type]
+      duration:
+        notification.duration ??
+        (isAndroid ? ANDROID_OPTIMIZED_DURATIONS : DEFAULT_DURATIONS)[notification.type],
     };
 
     dispatch({ type: 'ADD_NOTIFICATION', notification: fullNotification });
@@ -414,7 +450,7 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
       type: 'success',
       message,
       title: '성공',
-      ...options
+      ...options,
     });
   };
 
@@ -424,7 +460,7 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
       message,
       title: '오류',
       persistent: true, // 에러는 사용자가 직접 닫도록
-      ...options
+      ...options,
     });
   };
 
@@ -433,7 +469,7 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
       type: 'warning',
       message,
       title: '주의',
-      ...options
+      ...options,
     });
   };
 
@@ -442,7 +478,7 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
       type: 'info',
       message,
       title: '안내',
-      ...options
+      ...options,
     });
   };
 
@@ -492,43 +528,47 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
   };
 
   const showNetworkError = (retryCallback?: () => void): string => {
-    const actions: NotificationAction[] = retryCallback ? [
-      {
-        label: '다시 시도',
-        action: retryCallback,
-        type: 'primary'
-      }
-    ] : [];
+    const actions: NotificationAction[] = retryCallback
+      ? [
+          {
+            label: '다시 시도',
+            action: retryCallback,
+            type: 'primary',
+          },
+        ]
+      : [];
 
     return showError('네트워크 연결을 확인해주세요.', {
       title: '연결 오류',
-      actions
+      actions,
     });
   };
 
   const showOfflineNotification = (): string => {
     return showWarning('인터넷 연결이 끊어졌습니다. 연결을 확인해주세요.', {
       title: '오프라인',
-      persistent: true
+      persistent: true,
     });
   };
 
   return (
-    <NotificationContext.Provider value={{
-      notifications: state.notifications,
-      addNotification,
-      removeNotification,
-      clearAllNotifications,
-      showSuccess,
-      showError,
-      showWarning,
-      showInfo,
-      showApiError,
-      showNetworkError,
-      showOfflineNotification
-    }}>
+    <NotificationContext.Provider
+      value={{
+        notifications: state.notifications,
+        addNotification,
+        removeNotification,
+        clearAllNotifications,
+        showSuccess,
+        showError,
+        showWarning,
+        showInfo,
+        showApiError,
+        showNetworkError,
+        showOfflineNotification,
+      }}
+    >
       {children}
-      
+
       {/* 알림 렌더링 */}
       <NotificationContainer>
         {state.notifications.map(notification => (
@@ -540,9 +580,7 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
             <NotificationHeader>
               <NotificationIcon $type={notification.type} />
               <NotificationContent>
-                {notification.title && (
-                  <NotificationTitle>{notification.title}</NotificationTitle>
-                )}
+                {notification.title && <NotificationTitle>{notification.title}</NotificationTitle>}
                 <NotificationMessage>{notification.message}</NotificationMessage>
               </NotificationContent>
               <CloseButton
@@ -554,7 +592,7 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
                 ×
               </CloseButton>
             </NotificationHeader>
-            
+
             {notification.actions && notification.actions.length > 0 && (
               <NotificationActions>
                 {notification.actions.map((action, index) => (
@@ -571,10 +609,12 @@ export const NotificationProvider: React.FC<{ children: ReactNode }> = ({ childr
                 ))}
               </NotificationActions>
             )}
-            
+
             {notification.showProgress && notification.duration && notification.duration > 0 && (
               <ProgressBar
-                $progress={100 - ((Date.now() - notification.timestamp) / notification.duration * 100)}
+                $progress={
+                  100 - ((Date.now() - notification.timestamp) / notification.duration) * 100
+                }
                 $type={notification.type}
               />
             )}

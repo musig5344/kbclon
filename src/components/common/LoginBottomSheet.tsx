@@ -33,12 +33,15 @@ const TabButton = styled.button<{ $active: boolean }>`
   letter-spacing: ${typography.letterSpacing.tight};
   cursor: pointer;
   transition: all 0.2s ease;
-  ${props => props.$active ? `
+  ${props =>
+    props.$active
+      ? `
     background-color: ${tokens.colors.background.primary};
     color: ${tokens.colors.text.primary};
     border: 1px solid ${tokens.colors.border.light};
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  ` : `
+  `
+      : `
     background-color: transparent;
     color: ${tokens.colors.text.tertiary};
   `}
@@ -156,30 +159,16 @@ const OtherLoginButton = styled.button`
     border-color: ${tokens.colors.brand.primary};
   }
 `;
-const LoginBottomSheet: React.FC<LoginBottomSheetProps> = ({
-  isOpen,
-  onClose,
-}) => {
+const LoginBottomSheet: React.FC<LoginBottomSheetProps> = ({ isOpen, onClose }) => {
   const [activeTab, setActiveTab] = useState<'simple' | 'cert'>('simple');
   return (
-    <BottomSheet 
-      isOpen={isOpen} 
-      onClose={onClose}
-      height="70vh"
-      showSlideBar={true}
-    >
+    <BottomSheet isOpen={isOpen} onClose={onClose} height='70vh' showSlideBar={true}>
       <TabContainer>
         <TabBackground>
-          <TabButton 
-            $active={activeTab === 'simple'}
-            onClick={() => setActiveTab('simple')}
-          >
+          <TabButton $active={activeTab === 'simple'} onClick={() => setActiveTab('simple')}>
             간편로그인
           </TabButton>
-          <TabButton 
-            $active={activeTab === 'cert'}
-            onClick={() => setActiveTab('cert')}
-          >
+          <TabButton $active={activeTab === 'cert'} onClick={() => setActiveTab('cert')}>
             인증서로그인
           </TabButton>
         </TabBackground>
@@ -188,9 +177,7 @@ const LoginBottomSheet: React.FC<LoginBottomSheetProps> = ({
         {activeTab === 'simple' ? (
           <>
             <SimpleSendSection>
-              <SimpleSendButton>
-                간편송금
-              </SimpleSendButton>
+              <SimpleSendButton>간편송금</SimpleSendButton>
             </SimpleSendSection>
             <AuthOptionsGrid>
               <AuthOptionButton>
@@ -211,9 +198,7 @@ const LoginBottomSheet: React.FC<LoginBottomSheetProps> = ({
               </AuthOptionButton>
             </AuthOptionsGrid>
             <NoCertSection>
-              <NoCertButton>
-                인증서 없음 →
-              </NoCertButton>
+              <NoCertButton>인증서 없음 →</NoCertButton>
             </NoCertSection>
           </>
         ) : (
@@ -229,9 +214,7 @@ const LoginBottomSheet: React.FC<LoginBottomSheetProps> = ({
               </AuthOptionButton>
             </AuthOptionsGrid>
             <NoCertSection>
-              <NoCertButton>
-                인증서 없음 →
-              </NoCertButton>
+              <NoCertButton>인증서 없음 →</NoCertButton>
             </NoCertSection>
           </>
         )}

@@ -23,11 +23,9 @@ interface UseLoadingStateReturn {
   reset: () => void;
 }
 
-export function useLoadingState(
-  options: UseLoadingStateOptions = {}
-): UseLoadingStateReturn {
+export function useLoadingState(options: UseLoadingStateOptions = {}): UseLoadingStateReturn {
   const { initialLoading = false, initialError = null } = options;
-  
+
   const [loading, setLoading] = useState(initialLoading);
   const [error, setError] = useState<string | null>(initialError);
 
@@ -44,21 +42,22 @@ export function useLoadingState(
     setError(null);
   }, []);
 
-  const execute = useCallback(async <T,>(
-    asyncFunction: () => Promise<T>
-  ): Promise<T | null> => {
-    try {
-      startLoading();
-      const result = await asyncFunction();
-      return result;
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : '오류가 발생했습니다.';
-      setError(errorMessage);
-      return null;
-    } finally {
-      stopLoading();
-    }
-  }, [startLoading, stopLoading]);
+  const execute = useCallback(
+    async <T>(asyncFunction: () => Promise<T>): Promise<T | null> => {
+      try {
+        startLoading();
+        const result = await asyncFunction();
+        return result;
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : '오류가 발생했습니다.';
+        setError(errorMessage);
+        return null;
+      } finally {
+        stopLoading();
+      }
+    },
+    [startLoading, stopLoading]
+  );
 
   const reset = useCallback(() => {
     setLoading(false);
@@ -74,7 +73,7 @@ export function useLoadingState(
     stopLoading,
     clearError,
     execute,
-    reset
+    reset,
   };
 }
 
@@ -95,7 +94,7 @@ export function useMultipleLoadingStates<T extends Record<string, boolean>>(
   const setLoading = useCallback((key: keyof T, loading: boolean) => {
     setStates(prev => ({
       ...prev,
-      [key]: loading
+      [key]: loading,
     }));
   }, []);
 
@@ -111,6 +110,6 @@ export function useMultipleLoadingStates<T extends Record<string, boolean>>(
     setLoading,
     isAnyLoading,
     areAllLoading,
-    reset
+    reset,
   };
 }

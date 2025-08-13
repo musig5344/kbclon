@@ -1,11 +1,5 @@
-import React, { 
-  useState, 
-  useRef, 
-  useEffect, 
-  useCallback, 
-  useMemo,
-  ImgHTMLAttributes 
-} from 'react';
+import React, { useState, useRef, useEffect, useCallback, useMemo, ImgHTMLAttributes } from 'react';
+
 import styled, { css, keyframes } from 'styled-components';
 
 const shimmer = keyframes`
@@ -23,27 +17,33 @@ const PlaceholderContainer = styled.div<{ aspectRatio?: number }>`
   background-size: 468px 104px;
   animation: ${shimmer} 1.2s ease-in-out infinite;
   border-radius: 4px;
-  ${props => props.aspectRatio && css`
-    aspect-ratio: ${props.aspectRatio};
-  `}
+  ${props =>
+    props.aspectRatio &&
+    css`
+      aspect-ratio: ${props.aspectRatio};
+    `}
 `;
 
-const ImageContainer = styled.div<{ 
+const ImageContainer = styled.div<{
   isLoading: boolean;
-  aspectRatio?: number; 
+  aspectRatio?: number;
 }>`
   position: relative;
   overflow: hidden;
   border-radius: 4px;
-  ${props => props.aspectRatio && css`
-    aspect-ratio: ${props.aspectRatio};
-  `}
-  
-  ${props => props.isLoading && css`
-    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-    background-size: 468px 104px;
-    animation: ${shimmer} 1.2s ease-in-out infinite;
-  `}
+  ${props =>
+    props.aspectRatio &&
+    css`
+      aspect-ratio: ${props.aspectRatio};
+    `}
+
+  ${props =>
+    props.isLoading &&
+    css`
+      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 468px 104px;
+      animation: ${shimmer} 1.2s ease-in-out infinite;
+    `}
 `;
 
 const fadeIn = keyframes`
@@ -60,11 +60,13 @@ const Image = styled.img<{ isLoaded: boolean }>`
   height: 100%;
   object-fit: cover;
   transition: opacity 0.3s ease-in-out;
-  opacity: ${props => props.isLoaded ? 1 : 0};
-  
-  ${props => props.isLoaded && css`
-    animation: ${fadeIn} 0.3s ease-in-out;
-  `}
+  opacity: ${props => (props.isLoaded ? 1 : 0)};
+
+  ${props =>
+    props.isLoaded &&
+    css`
+      animation: ${fadeIn} 0.3s ease-in-out;
+    `}
 `;
 
 const ErrorContainer = styled.div`
@@ -77,7 +79,7 @@ const ErrorContainer = styled.div`
   min-height: 60px;
   border: 1px solid #eee;
   border-radius: 4px;
-  
+
   &::before {
     content: '🖼️';
     margin-right: 8px;
@@ -85,7 +87,8 @@ const ErrorContainer = styled.div`
   }
 `;
 
-export interface OptimizedLazyImageProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, 'src' | 'srcSet' | 'sizes'> {
+export interface OptimizedLazyImageProps
+  extends Omit<ImgHTMLAttributes<HTMLImageElement>, 'src' | 'srcSet' | 'sizes'> {
   /** 기본 이미지 URL */
   src: string;
   /** WebP 이미지 URL */
@@ -142,14 +145,14 @@ const OptimizedLazyImage: React.FC<OptimizedLazyImageProps> = ({
   const [hasError, setHasError] = useState(false);
   const [isVisible, setIsVisible] = useState(loading === 'eager');
   const [currentSrc, setCurrentSrc] = useState<string>('');
-  
+
   const imgRef = useRef<HTMLImageElement>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
 
   // WebP 지원 확인
   const supportsWebP = useMemo(() => {
     if (typeof window === 'undefined') return false;
-    
+
     const canvas = document.createElement('canvas');
     canvas.width = 1;
     canvas.height = 1;
@@ -175,8 +178,8 @@ const OptimizedLazyImage: React.FC<OptimizedLazyImageProps> = ({
   useEffect(() => {
     if (loading === 'eager' || isVisible) return;
 
-    const threshold = optimizationLevel === 'high' ? 0.1 : 
-                     optimizationLevel === 'medium' ? 0.01 : 0;
+    const threshold =
+      optimizationLevel === 'high' ? 0.1 : optimizationLevel === 'medium' ? 0.01 : 0;
 
     observerRef.current = new IntersectionObserver(
       ([entry]) => {
@@ -187,7 +190,7 @@ const OptimizedLazyImage: React.FC<OptimizedLazyImageProps> = ({
       },
       {
         threshold,
-        rootMargin
+        rootMargin,
       }
     );
 
@@ -202,7 +205,7 @@ const OptimizedLazyImage: React.FC<OptimizedLazyImageProps> = ({
   useEffect(() => {
     if (!preloadHighRes || !isVisible) return;
 
-    const img = new Image();
+    const img = new (window as any).Image() as HTMLImageElement;
     img.src = optimizedSrc;
     if (optimizedSrcSet) {
       img.srcset = optimizedSrcSet;
@@ -210,27 +213,33 @@ const OptimizedLazyImage: React.FC<OptimizedLazyImageProps> = ({
   }, [preloadHighRes, isVisible, optimizedSrc, optimizedSrcSet]);
 
   // 이미지 로드 핸들러
-  const handleLoad = useCallback((event: React.SyntheticEvent<HTMLImageElement>) => {
-    setIsLoading(false);
-    setIsLoaded(true);
-    setHasError(false);
-    onLoad?.(event);
-  }, [onLoad]);
-
-  const handleError = useCallback((event: React.SyntheticEvent<HTMLImageElement>) => {
-    setIsLoading(false);
-    setHasError(true);
-    
-    // Fallback 이미지 시도
-    if (fallbackSrc && currentSrc !== fallbackSrc) {
-      setCurrentSrc(fallbackSrc);
+  const handleLoad = useCallback(
+    (event: React.SyntheticEvent<HTMLImageElement>) => {
+      setIsLoading(false);
+      setIsLoaded(true);
       setHasError(false);
-      setIsLoading(true);
-      return;
-    }
-    
-    onError?.(event);
-  }, [onError, fallbackSrc, currentSrc]);
+      onLoad?.(event);
+    },
+    [onLoad]
+  );
+
+  const handleError = useCallback(
+    (event: React.SyntheticEvent<HTMLImageElement>) => {
+      setIsLoading(false);
+      setHasError(true);
+
+      // Fallback 이미지 시도
+      if (fallbackSrc && currentSrc !== fallbackSrc) {
+        setCurrentSrc(fallbackSrc);
+        setHasError(false);
+        setIsLoading(true);
+        return;
+      }
+
+      onError?.(event);
+    },
+    [onError, fallbackSrc, currentSrc]
+  );
 
   // 현재 소스 업데이트
   useEffect(() => {
@@ -241,26 +250,16 @@ const OptimizedLazyImage: React.FC<OptimizedLazyImageProps> = ({
 
   // 에러 상태 렌더링
   if (hasError && !fallbackSrc) {
-    return (
-      <ErrorContainer className={className}>
-        이미지를 불러올 수 없습니다
-      </ErrorContainer>
-    );
+    return <ErrorContainer className={className}>이미지를 불러올 수 없습니다</ErrorContainer>;
   }
 
   // 로딩 상태이고 플레이스홀더 표시
   if (isLoading && showLoader && !isVisible) {
-    return (
-      <PlaceholderContainer 
-        className={className}
-        aspectRatio={aspectRatio}
-        ref={imgRef}
-      />
-    );
+    return <PlaceholderContainer className={className} aspectRatio={aspectRatio} ref={imgRef} />;
   }
 
   return (
-    <ImageContainer 
+    <ImageContainer
       className={className}
       isLoading={isLoading && showLoader}
       aspectRatio={aspectRatio}
@@ -272,20 +271,13 @@ const OptimizedLazyImage: React.FC<OptimizedLazyImageProps> = ({
           {supportsWebP && webpSrc && (
             <>
               {webpSrcSet ? (
-                <source 
-                  srcSet={webpSrcSet} 
-                  sizes={sizes}
-                  type="image/webp" 
-                />
+                <source srcSet={webpSrcSet} sizes={sizes} type='image/webp' />
               ) : (
-                <source 
-                  srcSet={webpSrc} 
-                  type="image/webp" 
-                />
+                <source srcSet={webpSrc} type='image/webp' />
               )}
             </>
           )}
-          
+
           {/* 폴백 이미지 */}
           <Image
             ref={imgRef}
@@ -309,20 +301,26 @@ const OptimizedLazyImage: React.FC<OptimizedLazyImageProps> = ({
 export default React.memo(OptimizedLazyImage, (prevProps, nextProps) => {
   // 중요한 props만 비교
   const importantProps = [
-    'src', 'webpSrc', 'srcSet', 'webpSrcSet', 
-    'alt', 'loading', 'aspectRatio', 'className'
+    'src',
+    'webpSrc',
+    'srcSet',
+    'webpSrcSet',
+    'alt',
+    'loading',
+    'aspectRatio',
+    'className',
   ] as const;
-  
+
   return importantProps.every(prop => prevProps[prop] === nextProps[prop]);
 });
 
 // 편의 컴포넌트들
 export const LazyImage = OptimizedLazyImage;
 
-export const EagerImage: React.FC<OptimizedLazyImageProps> = (props) => (
-  <OptimizedLazyImage {...props} loading="eager" />
+export const EagerImage: React.FC<OptimizedLazyImageProps> = props => (
+  <OptimizedLazyImage {...props} loading='eager' />
 );
 
-export const HighQualityLazyImage: React.FC<OptimizedLazyImageProps> = (props) => (
-  <OptimizedLazyImage {...props} preloadHighRes optimizationLevel="high" />
+export const HighQualityLazyImage: React.FC<OptimizedLazyImageProps> = props => (
+  <OptimizedLazyImage {...props} preloadHighRes optimizationLevel='high' />
 );

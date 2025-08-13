@@ -3,13 +3,7 @@
  * 컴포넌트에서 쉽게 사용할 수 있는 키보드 네비게이션 기능
  */
 
-import { 
-  useEffect, 
-  useRef, 
-  useCallback, 
-  useState,
-  MutableRefObject
-} from 'react';
+import { useEffect, useRef, useCallback, useState, MutableRefObject } from 'react';
 
 import { globalKeyboardNavigationManager } from '../core/KeyboardNavigationManager';
 import { globalKeyboardShortcutManager } from '../core/KeyboardShortcutManager';
@@ -17,7 +11,7 @@ import {
   KeyboardNavigationOptions,
   NavigationDirection,
   KeyboardShortcut,
-  NavigationMode
+  NavigationMode,
 } from '../types';
 
 interface UseKeyboardNavigationResult {
@@ -25,20 +19,20 @@ interface UseKeyboardNavigationResult {
   currentIndex: number;
   focusedElement: HTMLElement | null;
   isEnabled: boolean;
-  
+
   // 네비게이션 메서드
   navigateNext: () => void;
   navigatePrevious: () => void;
   navigateFirst: () => void;
   navigateLast: () => void;
   navigateTo: (index: number) => void;
-  
+
   // 제어 메서드
   enable: () => void;
   disable: () => void;
   refresh: () => void;
   setMode: (mode: NavigationMode) => void;
-  
+
   // 포커스 관리
   focusElement: (element: HTMLElement) => void;
   getCurrentElement: () => HTMLElement | null;
@@ -68,14 +62,14 @@ export const useKeyboardNavigation = (
       'textarea:not([disabled])',
       'select:not([disabled])',
       '[tabindex]:not([tabindex="-1"])',
-      '[contenteditable]:not([contenteditable="false"])'
+      '[contenteditable]:not([contenteditable="false"])',
     ].join(',');
 
     const elements = Array.from(containerRef.current.querySelectorAll(selector)) as HTMLElement[];
     const visibleElements = elements.filter(el => {
       const rect = el.getBoundingClientRect();
       const style = window.getComputedStyle(el);
-      
+
       return (
         rect.width > 0 &&
         rect.height > 0 &&
@@ -86,7 +80,7 @@ export const useKeyboardNavigation = (
     });
 
     setFocusableElements(visibleElements);
-    
+
     // 현재 포커스된 요소의 인덱스 업데이트
     const currentElement = document.activeElement as HTMLElement;
     if (currentElement && visibleElements.includes(currentElement)) {
@@ -96,42 +90,45 @@ export const useKeyboardNavigation = (
   }, [containerRef]);
 
   // 네비게이션 메서드들
-  const navigateTo = useCallback((index: number) => {
-    if (index < 0 || index >= focusableElements.length) return;
-    
-    const element = focusableElements[index];
-    element.focus();
-    setCurrentIndex(index);
-    setFocusedElement(element);
-    
-    optionsRef.current.onNavigate?.(element, 'first' as NavigationDirection);
-  }, [focusableElements]);
+  const navigateTo = useCallback(
+    (index: number) => {
+      if (index < 0 || index >= focusableElements.length) return;
+
+      const element = focusableElements[index];
+      element.focus();
+      setCurrentIndex(index);
+      setFocusedElement(element);
+
+      optionsRef.current.onNavigate?.(element, 'first' as NavigationDirection);
+    },
+    [focusableElements]
+  );
 
   const navigateNext = useCallback(() => {
     if (focusableElements.length === 0) return;
-    
+
     let nextIndex = currentIndex + 1;
-    
+
     if (optionsRef.current.wrap) {
       nextIndex = nextIndex >= focusableElements.length ? 0 : nextIndex;
     } else {
       nextIndex = Math.min(nextIndex, focusableElements.length - 1);
     }
-    
+
     navigateTo(nextIndex);
   }, [currentIndex, focusableElements.length, navigateTo]);
 
   const navigatePrevious = useCallback(() => {
     if (focusableElements.length === 0) return;
-    
+
     let prevIndex = currentIndex - 1;
-    
+
     if (optionsRef.current.wrap) {
       prevIndex = prevIndex < 0 ? focusableElements.length - 1 : prevIndex;
     } else {
       prevIndex = Math.max(prevIndex, 0);
     }
-    
+
     navigateTo(prevIndex);
   }, [currentIndex, focusableElements.length, navigateTo]);
 
@@ -144,104 +141,110 @@ export const useKeyboardNavigation = (
   }, [navigateTo, focusableElements.length]);
 
   // 키보드 이벤트 핸들러
-  const handleKeyDown = useCallback((event: KeyboardEvent) => {
-    if (!isEnabled) return;
-    
-    const { mode = 'normal' } = optionsRef.current;
-    
-    let handled = false;
-    
-    switch (event.key) {
-      case 'ArrowDown':
-        if (mode === 'normal' || mode === 'accessibility') {
-          event.preventDefault();
-          navigateNext();
-          handled = true;
-        }
-        break;
-        
-      case 'ArrowUp':
-        if (mode === 'normal' || mode === 'accessibility') {
-          event.preventDefault();
-          navigatePrevious();
-          handled = true;
-        }
-        break;
-        
-      case 'ArrowRight':
-        if (mode === 'normal' || mode === 'accessibility') {
-          event.preventDefault();
-          navigateNext();
-          handled = true;
-        }
-        break;
-        
-      case 'ArrowLeft':
-        if (mode === 'normal' || mode === 'accessibility') {
-          event.preventDefault();
-          navigatePrevious();
-          handled = true;
-        }
-        break;
-        
-      case 'Home':
-        event.preventDefault();
-        navigateFirst();
-        handled = true;
-        break;
-        
-      case 'End':
-        event.preventDefault();
-        navigateLast();
-        handled = true;
-        break;
-        
-      case 'Enter':
-      case ' ':
-        if (focusedElement) {
-          optionsRef.current.onActivate?.(focusedElement);
-        }
-        break;
-    }
-    
-    // Vim 모드 키바인딩
-    if (mode === 'vim') {
-      switch (event.key.toLowerCase()) {
-        case 'j':
-          event.preventDefault();
-          navigateNext();
-          handled = true;
-          break;
-        case 'k':
-          event.preventDefault();
-          navigatePrevious();
-          handled = true;
-          break;
-        case 'g':
-          if (event.shiftKey) {
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      if (!isEnabled) return;
+
+      const { mode = 'normal' } = optionsRef.current;
+
+      let handled = false;
+
+      switch (event.key) {
+        case 'ArrowDown':
+          if (mode === 'normal' || mode === 'accessibility') {
             event.preventDefault();
-            navigateLast();
+            navigateNext();
             handled = true;
-          } else {
-            // TODO: 'gg' 처리
+          }
+          break;
+
+        case 'ArrowUp':
+          if (mode === 'normal' || mode === 'accessibility') {
+            event.preventDefault();
+            navigatePrevious();
+            handled = true;
+          }
+          break;
+
+        case 'ArrowRight':
+          if (mode === 'normal' || mode === 'accessibility') {
+            event.preventDefault();
+            navigateNext();
+            handled = true;
+          }
+          break;
+
+        case 'ArrowLeft':
+          if (mode === 'normal' || mode === 'accessibility') {
+            event.preventDefault();
+            navigatePrevious();
+            handled = true;
+          }
+          break;
+
+        case 'Home':
+          event.preventDefault();
+          navigateFirst();
+          handled = true;
+          break;
+
+        case 'End':
+          event.preventDefault();
+          navigateLast();
+          handled = true;
+          break;
+
+        case 'Enter':
+        case ' ':
+          if (focusedElement) {
+            optionsRef.current.onActivate?.(focusedElement);
           }
           break;
       }
-    }
-  }, [isEnabled, focusedElement, navigateNext, navigatePrevious, navigateFirst, navigateLast]);
+
+      // Vim 모드 키바인딩
+      if (mode === 'vim') {
+        switch (event.key.toLowerCase()) {
+          case 'j':
+            event.preventDefault();
+            navigateNext();
+            handled = true;
+            break;
+          case 'k':
+            event.preventDefault();
+            navigatePrevious();
+            handled = true;
+            break;
+          case 'g':
+            if (event.shiftKey) {
+              event.preventDefault();
+              navigateLast();
+              handled = true;
+            } else {
+              // TODO: 'gg' 처리
+            }
+            break;
+        }
+      }
+    },
+    [isEnabled, focusedElement, navigateNext, navigatePrevious, navigateFirst, navigateLast]
+  );
 
   // 포커스 이벤트 핸들러
-  const handleFocusIn = useCallback((event: FocusEvent) => {
-    const target = event.target as HTMLElement;
-    
-    if (containerRef.current?.contains(target)) {
-      const index = focusableElements.indexOf(target);
-      if (index !== -1) {
-        setCurrentIndex(index);
-        setFocusedElement(target);
+  const handleFocusIn = useCallback(
+    (event: FocusEvent) => {
+      const target = event.target as HTMLElement;
+
+      if (containerRef.current?.contains(target)) {
+        const index = focusableElements.indexOf(target);
+        if (index !== -1) {
+          setCurrentIndex(index);
+          setFocusedElement(target);
+        }
       }
-    }
-  }, [focusableElements, containerRef]);
+    },
+    [focusableElements, containerRef]
+  );
 
   // 제어 메서드들
   const enable = useCallback(() => {
@@ -260,12 +263,15 @@ export const useKeyboardNavigation = (
     globalKeyboardNavigationManager.setMode(mode);
   }, []);
 
-  const focusElement = useCallback((element: HTMLElement) => {
-    const index = focusableElements.indexOf(element);
-    if (index !== -1) {
-      navigateTo(index);
-    }
-  }, [focusableElements, navigateTo]);
+  const focusElement = useCallback(
+    (element: HTMLElement) => {
+      const index = focusableElements.indexOf(element);
+      if (index !== -1) {
+        navigateTo(index);
+      }
+    },
+    [focusableElements, navigateTo]
+  );
 
   const getCurrentElement = useCallback(() => {
     return focusedElement;
@@ -289,7 +295,7 @@ export const useKeyboardNavigation = (
       childList: true,
       subtree: true,
       attributes: true,
-      attributeFilter: ['disabled', 'tabindex', 'aria-hidden']
+      attributeFilter: ['disabled', 'tabindex', 'aria-hidden'],
     });
 
     // 이벤트 리스너 등록
@@ -311,24 +317,24 @@ export const useKeyboardNavigation = (
     currentIndex,
     focusedElement,
     isEnabled,
-    
+
     // 네비게이션 메서드
     navigateNext,
     navigatePrevious,
     navigateFirst,
     navigateLast,
     navigateTo,
-    
+
     // 제어 메서드
     enable,
     disable,
     refresh,
     setMode,
-    
+
     // 포커스 관리
     focusElement,
     getCurrentElement,
-    getFocusableElements
+    getFocusableElements,
   };
 };
 
@@ -343,24 +349,24 @@ export const useKeyboardShortcuts = (
   options: UseKeyboardShortcutsOptions = {}
 ) => {
   const { context = ['global'], enabled = true } = options;
-  
+
   useEffect(() => {
     if (!enabled) return;
-    
+
     // 단축키 등록
     const registeredIds: string[] = [];
-    
+
     shortcuts.forEach(shortcut => {
       const shortcutWithContext = {
         ...shortcut,
         context,
-        enabled
+        enabled,
       };
-      
+
       globalKeyboardShortcutManager.register(shortcutWithContext);
       registeredIds.push(shortcut.id);
     });
-    
+
     return () => {
       // 정리
       registeredIds.forEach(id => {
@@ -368,7 +374,7 @@ export const useKeyboardShortcuts = (
       });
     };
   }, [shortcuts, context, enabled]);
-  
+
   return {
     enable: () => {
       shortcuts.forEach(shortcut => {
@@ -379,7 +385,7 @@ export const useKeyboardShortcuts = (
       shortcuts.forEach(shortcut => {
         globalKeyboardShortcutManager.disable(shortcut.id);
       });
-    }
+    },
   };
 };
 
@@ -391,23 +397,23 @@ export const useKeyboardTrap = (
   useEffect(() => {
     const element = elementRef.current;
     if (!element || !active) return;
-    
+
     globalKeyboardNavigationManager.getRovingManager().register(element);
-    
+
     return () => {
       if (element) {
         globalKeyboardNavigationManager.getRovingManager().unregister(element);
       }
     };
   }, [elementRef, active]);
-  
+
   return {
     activate: () => {
       const element = elementRef.current;
       if (element) {
         globalKeyboardNavigationManager.getRovingManager().setActive(element);
       }
-    }
+    },
   };
 };
 
@@ -417,39 +423,42 @@ export const useRovingTabIndex = (
   initialIndex: number = 0
 ) => {
   const [activeIndex, setActiveIndex] = useState(initialIndex);
-  
+
   useEffect(() => {
     const elements = elementsRef.current;
     if (!elements.length) return;
-    
+
     elements.forEach((element, index) => {
       if (element) {
         element.tabIndex = index === activeIndex ? 0 : -1;
       }
     });
   }, [elementsRef, activeIndex]);
-  
-  const setActive = useCallback((index: number) => {
-    if (index >= 0 && index < elementsRef.current.length) {
-      setActiveIndex(index);
-      elementsRef.current[index]?.focus();
-    }
-  }, [elementsRef]);
-  
+
+  const setActive = useCallback(
+    (index: number) => {
+      if (index >= 0 && index < elementsRef.current.length) {
+        setActiveIndex(index);
+        elementsRef.current[index]?.focus();
+      }
+    },
+    [elementsRef]
+  );
+
   const next = useCallback(() => {
     const nextIndex = (activeIndex + 1) % elementsRef.current.length;
     setActive(nextIndex);
   }, [activeIndex, elementsRef, setActive]);
-  
+
   const previous = useCallback(() => {
     const prevIndex = activeIndex > 0 ? activeIndex - 1 : elementsRef.current.length - 1;
     setActive(prevIndex);
   }, [activeIndex, elementsRef, setActive]);
-  
+
   return {
     activeIndex,
     setActive,
     next,
-    previous
+    previous,
   };
 };

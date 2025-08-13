@@ -36,7 +36,7 @@ const ViewMoreButton = styled.button`
   display: flex;
   align-items: center;
   gap: ${KBDesignSystem.spacing.xxs};
-  
+
   &:hover {
     color: ${KBDesignSystem.colors.text.primary};
   }
@@ -62,9 +62,7 @@ export const WeeklyCardSection: React.FC<WeeklyCardSectionProps> = ({ className 
         <SectionTitle>이번 주 카드경제</SectionTitle>
         <ViewMoreButton>??원 〉</ViewMoreButton>
       </SectionHeader>
-      <CardContent>
-        이번 주 카드 사용 내역이 없습니다.
-      </CardContent>
+      <CardContent>이번 주 카드 사용 내역이 없습니다.</CardContent>
     </CardSection>
   );
 };

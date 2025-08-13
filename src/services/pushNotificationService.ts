@@ -1,6 +1,6 @@
 /**
  * KB StarBanking Push Notification Service
- * 
+ *
  * 금융 앱을 위한 포괄적인 푸시 알림 서비스
  * - VAPID 키 기반 웹 푸시
  * - 금융 데이터 암호화
@@ -19,14 +19,14 @@ export enum NotificationType {
   PROMOTIONAL = 'promotional',
   SYSTEM_MAINTENANCE = 'system_maintenance',
   LOGIN_ATTEMPT = 'login_attempt',
-  SUSPICIOUS_ACTIVITY = 'suspicious_activity'
+  SUSPICIOUS_ACTIVITY = 'suspicious_activity',
 }
 
 export enum NotificationPriority {
   LOW = 'low',
   NORMAL = 'normal',
   HIGH = 'high',
-  CRITICAL = 'critical'
+  CRITICAL = 'critical',
 }
 
 export interface PushNotificationData {
@@ -102,7 +102,8 @@ class PushNotificationService {
 
   constructor() {
     // VAPID 공개 키 (실제 환경에서는 환경변수로 관리)
-    this.vapidPublicKey = process.env.REACT_APP_VAPID_PUBLIC_KEY || 
+    this.vapidPublicKey =
+      process.env.REACT_APP_VAPID_PUBLIC_KEY ||
       'BIl-qDyKaWqY5D7Qw_0gGpIyUkTGFzJ8ZIWu2TQfCm3gGDzF5_6vRzLWJmXQpDcF';
   }
 
@@ -141,10 +142,9 @@ class PushNotificationService {
 
     // 서비스 워커 등록
     this.serviceWorkerRegistration = await navigator.serviceWorker.register('/sw.js');
-    
+
     // 서비스 워커 준비 대기
     await navigator.serviceWorker.ready;
-
   }
 
   /**
@@ -152,7 +152,7 @@ class PushNotificationService {
    */
   private async initializeNative(): Promise<void> {
     const { PushNotifications } = await import('@capacitor/push-notifications');
-    
+
     // 권한 요청
     const permission = await PushNotifications.requestPermissions();
     if (permission.receive !== 'granted') {
@@ -164,7 +164,6 @@ class PushNotificationService {
 
     // 이벤트 리스너 설정
     this.setupNativeListeners();
-
   }
 
   /**
@@ -174,22 +173,22 @@ class PushNotificationService {
     const { PushNotifications } = await import('@capacitor/push-notifications');
 
     // 등록 성공
-    PushNotifications.addListener('registration', (token) => {
+    PushNotifications.addListener('registration', token => {
       this.handleRegistrationToken(token.value);
     });
 
     // 등록 오류
-    PushNotifications.addListener('registrationError', (error) => {
+    PushNotifications.addListener('registrationError', error => {
       console.error('[PushService] Registration error:', error);
     });
 
     // 알림 수신
-    PushNotifications.addListener('pushNotificationReceived', (notification) => {
+    PushNotifications.addListener('pushNotificationReceived', notification => {
       this.handleIncomingNotification(notification as any);
     });
 
     // 알림 클릭
-    PushNotifications.addListener('pushNotificationActionPerformed', (action) => {
+    PushNotifications.addListener('pushNotificationActionPerformed', action => {
       this.handleNotificationAction(action as any);
     });
   }
@@ -202,7 +201,7 @@ class PushNotificationService {
       this.encryptionKey = await crypto.subtle.generateKey(
         {
           name: 'AES-GCM',
-          length: 256
+          length: 256,
         },
         false, // extractable
         ['encrypt', 'decrypt']
@@ -228,7 +227,10 @@ class PushNotificationService {
   /**
    * 푸시 구독 생성
    */
-  async subscribe(userId: string, preferences: NotificationPreferences): Promise<PushSubscriptionData | null> {
+  async subscribe(
+    userId: string,
+    preferences: NotificationPreferences
+  ): Promise<PushSubscriptionData | null> {
     try {
       if (Capacitor.isNativePlatform()) {
         return await this.subscribeNative(userId, preferences);
@@ -244,7 +246,10 @@ class PushNotificationService {
   /**
    * 웹 푸시 구독
    */
-  private async subscribeWeb(userId: string, preferences: NotificationPreferences): Promise<PushSubscriptionData | null> {
+  private async subscribeWeb(
+    userId: string,
+    preferences: NotificationPreferences
+  ): Promise<PushSubscriptionData | null> {
     if (!this.serviceWorkerRegistration) {
       throw new Error('Service worker not registered');
     }
@@ -255,7 +260,7 @@ class PushNotificationService {
     // 푸시 구독 생성
     this.subscription = await this.serviceWorkerRegistration.pushManager.subscribe({
       userVisibleOnly: true,
-      applicationServerKey
+      applicationServerKey,
     });
 
     // 구독 데이터 생성
@@ -263,12 +268,12 @@ class PushNotificationService {
       endpoint: this.subscription.endpoint,
       keys: {
         p256dh: this.arrayBufferToBase64(this.subscription.getKey('p256dh')!),
-        auth: this.arrayBufferToBase64(this.subscription.getKey('auth')!)
+        auth: this.arrayBufferToBase64(this.subscription.getKey('auth')!),
       },
       platform: 'web',
       deviceId: await this.generateDeviceId(),
       userId,
-      preferences
+      preferences,
     };
 
     // 서버에 구독 정보 전송
@@ -280,20 +285,23 @@ class PushNotificationService {
   /**
    * 네이티브 푸시 구독
    */
-  private async subscribeNative(userId: string, preferences: NotificationPreferences): Promise<PushSubscriptionData | null> {
+  private async subscribeNative(
+    userId: string,
+    preferences: NotificationPreferences
+  ): Promise<PushSubscriptionData | null> {
     // 네이티브 플랫폼에서는 이미 초기화 시 등록됨
     const deviceId = await this.generateDeviceId();
-    
+
     const subscriptionData: PushSubscriptionData = {
       endpoint: '', // 네이티브에서는 토큰 사용
       keys: {
         p256dh: '',
-        auth: ''
+        auth: '',
       },
       platform: Capacitor.getPlatform() as 'android' | 'ios',
       deviceId,
       userId,
-      preferences
+      preferences,
     };
 
     return subscriptionData;
@@ -333,7 +341,10 @@ class PushNotificationService {
   /**
    * 알림 전송 (서버 사이드에서 사용)
    */
-  async sendNotification(notification: PushNotificationData, targetUsers: string[]): Promise<boolean> {
+  async sendNotification(
+    notification: PushNotificationData,
+    targetUsers: string[]
+  ): Promise<boolean> {
     try {
       // 민감한 데이터 암호화
       if (notification.encrypted && notification.data) {
@@ -345,13 +356,13 @@ class PushNotificationService {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.getAuthToken()}`
+          Authorization: `Bearer ${this.getAuthToken()}`,
         },
         body: JSON.stringify({
           notification,
           targetUsers,
-          timestamp: Date.now()
-        })
+          timestamp: Date.now(),
+        }),
       });
 
       return response.ok;
@@ -365,7 +376,6 @@ class PushNotificationService {
    * 들어오는 알림 처리
    */
   private async handleIncomingNotification(notification: any): Promise<void> {
-
     // 암호화된 데이터 복호화
     if (notification.data?.encrypted) {
       notification.data = await this.decryptData(notification.data);
@@ -406,11 +416,12 @@ class PushNotificationService {
       silent: false,
       vibrate: notification.vibrate || [200, 100, 200],
       data: notification.data,
-      actions: notification.actions?.map((action: NotificationAction) => ({
-        action: action.id,
-        title: action.title,
-        icon: action.icon
-      })) || []
+      actions:
+        notification.actions?.map((action: NotificationAction) => ({
+          action: action.id,
+          title: action.title,
+          icon: action.icon,
+        })) || [],
     };
 
     await this.serviceWorkerRegistration.showNotification(notification.title, options);
@@ -420,7 +431,6 @@ class PushNotificationService {
    * 알림 액션 처리
    */
   private async handleNotificationAction(action: any): Promise<void> {
-
     const { actionId, notification } = action;
     const notificationData = notification.data || {};
 
@@ -463,7 +473,7 @@ class PushNotificationService {
           reason: '민감한 알림을 확인하려면 인증이 필요합니다.',
           title: '생체 인증',
           subtitle: 'KB스타뱅킹',
-          description: '지문 또는 얼굴 인식으로 인증하세요.'
+          description: '지문 또는 얼굴 인식으로 인증하세요.',
         });
         return result.isAuthenticated;
       } else {
@@ -474,8 +484,8 @@ class PushNotificationService {
               publicKey: {
                 challenge: new Uint8Array(32),
                 timeout: 60000,
-                userVerification: 'required'
-              }
+                userVerification: 'required',
+              },
             });
             return true;
           } catch {
@@ -500,12 +510,12 @@ class PushNotificationService {
       const jsonString = JSON.stringify(data);
       const encoder = new TextEncoder();
       const dataBuffer = encoder.encode(jsonString);
-      
+
       const iv = crypto.getRandomValues(new Uint8Array(12));
       const encryptedBuffer = await crypto.subtle.encrypt(
         {
           name: 'AES-GCM',
-          iv: iv
+          iv: iv,
         },
         this.encryptionKey,
         dataBuffer
@@ -514,7 +524,7 @@ class PushNotificationService {
       return {
         encrypted: true,
         data: this.arrayBufferToBase64(encryptedBuffer),
-        iv: this.arrayBufferToBase64(iv)
+        iv: this.arrayBufferToBase64(iv),
       };
     } catch (error) {
       console.error('[PushService] Encryption failed:', error);
@@ -535,7 +545,7 @@ class PushNotificationService {
       const decryptedBuffer = await crypto.subtle.decrypt(
         {
           name: 'AES-GCM',
-          iv: iv
+          iv: iv,
         },
         this.encryptionKey,
         encryptedBuffer
@@ -555,18 +565,22 @@ class PushNotificationService {
    */
   private notifyApp(notification: any): void {
     // CustomEvent를 통해 앱에 알림 전달
-    window.dispatchEvent(new CustomEvent('pushNotificationReceived', {
-      detail: notification
-    }));
+    window.dispatchEvent(
+      new CustomEvent('pushNotificationReceived', {
+        detail: notification,
+      })
+    );
   }
 
   /**
    * 네비게이션 처리
    */
   private navigateToTransaction(transactionId: string): void {
-    window.dispatchEvent(new CustomEvent('navigateToTransaction', {
-      detail: { transactionId }
-    }));
+    window.dispatchEvent(
+      new CustomEvent('navigateToTransaction', {
+        detail: { transactionId },
+      })
+    );
   }
 
   private navigateToTransfer(): void {
@@ -593,10 +607,8 @@ class PushNotificationService {
    * 유틸리티 메서드들
    */
   private urlBase64ToUint8Array(base64String: string): Uint8Array {
-    const padding = '='.repeat((4 - base64String.length % 4) % 4);
-    const base64 = (base64String + padding)
-      .replace(/-/g, '+')
-      .replace(/_/g, '/');
+    const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+    const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
 
     const rawData = window.atob(base64);
     const outputArray = new Uint8Array(rawData.length);
@@ -644,9 +656,9 @@ class PushNotificationService {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.getAuthToken()}`
+          Authorization: `Bearer ${this.getAuthToken()}`,
         },
-        body: JSON.stringify(subscription)
+        body: JSON.stringify(subscription),
       });
     } catch (error) {
       console.error('[PushService] Failed to send subscription to server:', error);
@@ -659,8 +671,8 @@ class PushNotificationService {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.getAuthToken()}`
-        }
+          Authorization: `Bearer ${this.getAuthToken()}`,
+        },
       });
     } catch (error) {
       console.error('[PushService] Failed to remove subscription from server:', error);
@@ -679,10 +691,8 @@ class PushNotificationService {
     if (Capacitor.isNativePlatform()) {
       return true; // 네이티브는 항상 지원
     }
-    
-    return 'serviceWorker' in navigator && 
-           'PushManager' in window && 
-           'Notification' in window;
+
+    return 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
   }
 
   /**
@@ -693,7 +703,7 @@ class PushNotificationService {
       // 네이티브에서는 별도 확인 필요
       return 'default';
     }
-    
+
     return Notification.permission;
   }
 }

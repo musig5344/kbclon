@@ -9,7 +9,7 @@ import {
   AccountDetail,
   AccountName,
   AccountNumber,
-  AccountBalance
+  AccountBalance,
 } from '../TransferPage.styles';
 
 interface Account {
@@ -31,14 +31,14 @@ interface FromAccountSelectorProps {
  */
 const FromAccountSelector: React.FC<FromAccountSelectorProps> = ({
   selectedAccount,
-  formatAmount
+  formatAmount,
 }) => {
   return (
     <FromAccountSection>
       <SectionTitle>보내는 계좌</SectionTitle>
       <AccountInfo>
         <AccountIcon>
-          <img src={kbLogo} alt="KB" />
+          <img src={kbLogo} alt='KB' />
         </AccountIcon>
         <AccountDetail>
           <AccountName>{selectedAccount?.account_name || 'KB국민ONE통장-보통예금'}</AccountName>

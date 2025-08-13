@@ -1,16 +1,16 @@
 /**
  * High Contrast Mode System for KB StarBanking
- * 
+ *
  * Provides comprehensive high contrast theme support with WCAG AAA compliance,
  * system integration, and user customization options.
- * 
+ *
  * @example
  * ```tsx
  * import { useHighContrast, HighContrastToggle } from '../themes';
- * 
+ *
  * function App() {
  *   const { isActive, setMode } = useHighContrast();
- *   
+ *
  *   return (
  *     <div>
  *       <HighContrastToggle />
@@ -23,10 +23,7 @@
 
 // Core Manager and Types
 export { HighContrastManager } from './HighContrastManager';
-export type { 
-  HighContrastMode, 
-  HighContrastPreferences 
-} from './HighContrastManager';
+export type { HighContrastMode, HighContrastPreferences } from './HighContrastManager';
 
 // Theme Definitions
 export {
@@ -36,13 +33,10 @@ export {
   highContrastThemes,
   calculateContrastRatio,
   validateWCAGCompliance,
-  generateHighContrastCSS
+  generateHighContrastCSS,
 } from './HighContrastTheme';
 
-export type { 
-  HighContrastColors, 
-  ContrastLevel 
-} from './HighContrastTheme';
+export type { HighContrastColors, ContrastLevel } from './HighContrastTheme';
 
 // React Hooks
 export {
@@ -50,7 +44,7 @@ export {
   useSystemHighContrast,
   useHighContrastColors,
   useResponsiveHighContrast,
-  useHighContrastForm
+  useHighContrastForm,
 } from './useHighContrast';
 
 export type { UseHighContrastReturn } from './useHighContrast';
@@ -61,15 +55,17 @@ export {
   HighContrastSelector,
   HighContrastSettings,
   HighContrastButton,
-  HighContrastAlert
+  HighContrastAlert,
 } from './HighContrastComponents';
 
 // Utility Functions
 export const initializeHighContrast = () => {
+  const { HighContrastManager } = require('./HighContrastManager');
   return HighContrastManager.getInstance();
 };
 
 export const setupHighContrastForBanking = (autoDetect: boolean = true) => {
+  const { HighContrastManager } = require('./HighContrastManager');
   const manager = HighContrastManager.getInstance();
   manager.updatePreferences({
     autoDetect,
@@ -86,7 +82,7 @@ export const SUPPORTED_MODES = ['off', 'light', 'dark', 'system'] as const;
 
 // Default preferences for banking applications
 export const DEFAULT_BANKING_PREFERENCES = {
-  mode: 'off' as HighContrastMode,
+  mode: 'off' as const,
   autoDetect: true,
   announceChanges: true,
   enhancedFocus: true,
@@ -98,16 +94,21 @@ export const DEFAULT_BANKING_PREFERENCES = {
  * CSS-in-JS styled-components theme provider integration
  */
 export const createHighContrastStyledTheme = (baseTheme: any) => {
+  const { HighContrastManager } = require('./HighContrastManager');
   const manager = HighContrastManager.getInstance();
   const isActive = manager.isActive();
-  
+
   if (!isActive) return baseTheme;
-  
+
   const mode = manager.getCurrentMode();
-  const hcTheme = mode === 'dark' ? highContrastDarkTheme : 
-                  mode === 'system' ? windowsHighContrastTheme : 
-                  highContrastLightTheme;
-  
+  const { highContrastDarkTheme, windowsHighContrastTheme, highContrastLightTheme } = require('./HighContrastTheme');
+  const hcTheme =
+    mode === 'dark'
+      ? highContrastDarkTheme
+      : mode === 'system'
+        ? windowsHighContrastTheme
+        : highContrastLightTheme;
+
   return {
     ...baseTheme,
     highContrast: {
@@ -122,10 +123,11 @@ export const createHighContrastStyledTheme = (baseTheme: any) => {
  * Global CSS injection for high contrast mode
  */
 export const injectHighContrastGlobalStyles = () => {
+  const { HighContrastManager } = require('./HighContrastManager');
   const manager = HighContrastManager.getInstance();
-  
+
   if (!manager.isActive()) return;
-  
+
   const globalStyles = `
     /* High contrast global overrides */
     * {
@@ -174,24 +176,23 @@ export const injectHighContrastGlobalStyles = () => {
       min-width: 44px !important;
     }
   `;
-  
+
   const styleId = 'kb-high-contrast-global';
   let existingStyle = document.getElementById(styleId) as HTMLStyleElement;
-  
+
   if (!existingStyle) {
     existingStyle = document.createElement('style');
     existingStyle.id = styleId;
     document.head.appendChild(existingStyle);
   }
-  
+
   existingStyle.textContent = globalStyles;
 };
 
 // Re-export all types for convenience
-export type {
-  HighContrastColors as ThemeColors,
-  HighContrastMode as ThemeMode,
-} from './HighContrastTheme';
+export type { HighContrastColors as ThemeColors } from './HighContrastTheme';
+
+export type { HighContrastMode as ThemeMode } from './HighContrastManager';
 
 // Export HighContrastPreferences from the manager
 export type { HighContrastPreferences as UserPreferences } from './HighContrastManager';

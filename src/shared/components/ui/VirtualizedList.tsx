@@ -32,7 +32,7 @@ export function VirtualizedList<T>({
   containerHeight,
   renderItem,
   overscan = 5,
-  className
+  className,
 }: VirtualizedListProps<T>) {
   const [scrollTop, setScrollTop] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -55,7 +55,7 @@ export function VirtualizedList<T>({
     return items.slice(startIndex, endIndex + 1).map((item, index) => ({
       item,
       index: startIndex + index,
-      originalIndex: startIndex + index
+      originalIndex: startIndex + index,
     }));
   }, [items, visibleRange]);
 
@@ -71,9 +71,7 @@ export function VirtualizedList<T>({
     >
       <VirtualContent totalHeight={totalHeight}>
         <VisibleWindow offsetY={offsetY}>
-          {visibleItems.map(({ item, originalIndex }) =>
-            renderItem(item, originalIndex)
-          )}
+          {visibleItems.map(({ item, originalIndex }) => renderItem(item, originalIndex))}
         </VisibleWindow>
       </VirtualContent>
     </VirtualContainer>

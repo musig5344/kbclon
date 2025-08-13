@@ -85,7 +85,7 @@ export interface LoginRequest {
   deviceInfo?: DeviceInfo;
 }
 // 로그인 자격 증명 (Union Type)
-export type LoginCredentials = 
+export type LoginCredentials =
   | IdPasswordCredentials
   | CertificateCredentials
   | BiometricCredentials

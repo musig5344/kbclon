@@ -1,6 +1,6 @@
 /**
  * CSP Security Module Index
- * 
+ *
  * KB StarBanking CSP 보안 시스템의 통합 진입점
  * - 모든 CSP 관련 기능 통합
  * - 간편한 설정 및 사용 API 제공
@@ -17,10 +17,22 @@ export { CSPManager } from './CSPManager';
 export type { CSPConfig, CSPDirective } from './CSPManager';
 
 // React integration
-export { CSPProvider, useCSP, useSecureScript, useSecureStyle, CSPStatus, withCSPProtection } from './CSPProvider';
+export {
+  CSPProvider,
+  useCSP,
+  useSecureScript,
+  useSecureStyle,
+  CSPStatus,
+  withCSPProtection,
+} from './CSPProvider';
 
 // Express middleware
-export { default as CSPMiddleware, createBankingCSPMiddleware, createDevelopmentCSPMiddleware, createProductionCSPMiddleware } from './CSPMiddleware';
+export {
+  default as CSPMiddleware,
+  createBankingCSPMiddleware,
+  createDevelopmentCSPMiddleware,
+  createProductionCSPMiddleware,
+} from './CSPMiddleware';
 export type { CSPMiddlewareOptions, CSPRequest } from './CSPMiddleware';
 
 // Configuration presets
@@ -34,7 +46,7 @@ export {
   AUTHENTICATION_CSP,
   ANALYTICS_CSP,
   PWA_CSP,
-  MOBILE_APP_CSP
+  MOBILE_APP_CSP,
 } from './CSPPresets';
 
 // Testing utilities
@@ -70,7 +82,7 @@ export const setupKBStarBankingCSP = (
     authentication: true,
     analytics: environment === 'production',
     pwa: true,
-    highSecurity: environment === 'production'
+    highSecurity: environment === 'production',
   });
 };
 
@@ -80,7 +92,7 @@ export const setupKBStarBankingCSP = (
 export const setupDeveloperFriendlyCSP = (): CSPManager => {
   return setupCSPForEnvironment('development', {
     analytics: true,
-    pwa: true
+    pwa: true,
   });
 };
 
@@ -91,7 +103,7 @@ export const setupHighSecurityCSP = (): CSPManager => {
   return setupCSPForEnvironment('production', {
     payment: true,
     authentication: true,
-    highSecurity: true
+    highSecurity: true,
   });
 };
 
@@ -107,14 +119,14 @@ export const validateAndReportCSP = async (
 }> => {
   const results = await validateCSPConfig(config);
   const criticalIssues = results.reduce((count, result) => count + result.errors.length, 0);
-  
+
   const testUtils = new (await import('./CSPTestUtils')).default(config);
   const report = testUtils.generateTestReport(results);
-  
+
   return {
     isValid: criticalIssues === 0,
     report,
-    criticalIssues
+    criticalIssues,
   };
 };
 
@@ -124,7 +136,7 @@ export const validateAndReportCSP = async (
 export const setupCSPViolationMonitoring = (
   onViolation?: (violation: SecurityPolicyViolationEvent) => void
 ): void => {
-  document.addEventListener('securitypolicyviolation', (event) => {
+  document.addEventListener('securitypolicyviolation', event => {
     // 기본 위반 로깅
     console.warn('CSP Violation:', {
       blockedURI: event.blockedURI,
@@ -132,7 +144,7 @@ export const setupCSPViolationMonitoring = (
       originalPolicy: event.originalPolicy,
       sourceFile: event.sourceFile,
       lineNumber: event.lineNumber,
-      columnNumber: event.columnNumber
+      columnNumber: event.columnNumber,
     });
 
     // 커스텀 핸들러 호출
@@ -172,9 +184,8 @@ export const autoConfigureCSP = (): CSPManager => {
     analytics: isProduction,
     pwa: true,
     mobile: isMobile || isElectron,
-    highSecurity: isProduction
+    highSecurity: isProduction,
   };
-
 
   return setupCSPForEnvironment(environment, features);
 };
@@ -199,10 +210,7 @@ export const compareCSPConfigs = (
   const directives1 = config1.customDirectives || {};
   const directives2 = config2.customDirectives || {};
 
-  const allDirectives = new Set([
-    ...Object.keys(directives1),
-    ...Object.keys(directives2)
-  ]);
+  const allDirectives = new Set([...Object.keys(directives1), ...Object.keys(directives2)]);
 
   allDirectives.forEach(directive => {
     const sources1 = directives1[directive] || [];
@@ -241,7 +249,7 @@ export const checkBrowserCSPSupport = (): {
     csp: 'SecurityPolicyViolationEvent' in window,
     csp2: 'reportingObserver' in window,
     trustedTypes: 'trustedTypes' in window,
-    violations: typeof document.addEventListener === 'function'
+    violations: typeof document.addEventListener === 'function',
   };
 };
 
@@ -251,20 +259,20 @@ export default {
   CSPManager,
   CSPMiddleware,
   CSPTestUtils,
-  
+
   // Quick setup
   setupCSPForEnvironment,
   setupKBStarBankingCSP,
   setupDeveloperFriendlyCSP,
   setupHighSecurityCSP,
   autoConfigureCSP,
-  
+
   // Utilities
   validateAndReportCSP,
   setupCSPViolationMonitoring,
   compareCSPConfigs,
   checkBrowserCSPSupport,
-  
+
   // Presets
   presets: {
     BANKING_BASE_CSP,
@@ -275,6 +283,6 @@ export default {
     AUTHENTICATION_CSP,
     ANALYTICS_CSP,
     PWA_CSP,
-    MOBILE_APP_CSP
-  }
+    MOBILE_APP_CSP,
+  },
 };

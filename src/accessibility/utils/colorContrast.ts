@@ -12,11 +12,9 @@ import { ColorContrastResult } from '../types';
 function getLuminance(rgb: number[]): number {
   const [r, g, b] = rgb.map(val => {
     const sRGB = val / 255;
-    return sRGB <= 0.03928
-      ? sRGB / 12.92
-      : Math.pow((sRGB + 0.055) / 1.055, 2.4);
+    return sRGB <= 0.03928 ? sRGB / 12.92 : Math.pow((sRGB + 0.055) / 1.055, 2.4);
   });
-  
+
   return 0.2126 * r + 0.7152 * g + 0.0722 * b;
 }
 
@@ -35,9 +33,7 @@ function hexToRgb(hex: string): number[] {
  */
 function parseRgb(rgb: string): number[] {
   const match = rgb.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
-  return match
-    ? [parseInt(match[1]), parseInt(match[2]), parseInt(match[3])]
-    : [0, 0, 0];
+  return match ? [parseInt(match[1]), parseInt(match[2]), parseInt(match[3])] : [0, 0, 0];
 }
 
 /**
@@ -49,21 +45,21 @@ function colorToRgb(color: string): number[] {
   } else if (color.startsWith('rgb')) {
     return parseRgb(color);
   }
-  
+
   // 기본 색상 이름 처리
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
   if (!ctx) return [0, 0, 0];
-  
+
   ctx.fillStyle = color;
   const computedColor = ctx.fillStyle;
-  
+
   if (computedColor.startsWith('#')) {
     return hexToRgb(computedColor);
   } else if (computedColor.startsWith('rgb')) {
     return parseRgb(computedColor);
   }
-  
+
   return [0, 0, 0];
 }
 
@@ -73,13 +69,13 @@ function colorToRgb(color: string): number[] {
 export function getContrastRatio(foreground: string, background: string): number {
   const fgRgb = colorToRgb(foreground);
   const bgRgb = colorToRgb(background);
-  
+
   const fgLuminance = getLuminance(fgRgb);
   const bgLuminance = getLuminance(bgRgb);
-  
+
   const lighter = Math.max(fgLuminance, bgLuminance);
   const darker = Math.min(fgLuminance, bgLuminance);
-  
+
   return (lighter + 0.05) / (darker + 0.05);
 }
 
@@ -94,7 +90,7 @@ export function validateColorContrast(
 ): ColorContrastResult {
   const ratio = getContrastRatio(foreground, background);
   const isLargeText = (fontSize && fontSize >= 18) || (fontSize && fontSize >= 14 && isBold);
-  
+
   const result: ColorContrastResult = {
     ratio: Math.round(ratio * 100) / 100,
     passes: {
@@ -102,9 +98,9 @@ export function validateColorContrast(
       aaa: isLargeText ? ratio >= 4.5 : ratio >= 7,
       largeTextAA: ratio >= 3,
       largeTextAAA: ratio >= 4.5,
-    }
+    },
   };
-  
+
   // 권장사항 추가
   if (!result.passes.aa) {
     if (isLargeText && ratio < 3) {
@@ -113,20 +109,17 @@ export function validateColorContrast(
       result.recommendation = `대비 비율이 ${ratio.toFixed(2)}:1입니다. 일반 텍스트의 경우 최소 4.5:1이 필요합니다.`;
     }
   }
-  
+
   return result;
 }
 
 /**
  * 배경색에 대해 적절한 전경색 제안
  */
-export function suggestForegroundColor(
-  background: string,
-  preferDark: boolean = true
-): string {
+export function suggestForegroundColor(background: string, preferDark: boolean = true): string {
   const bgRgb = colorToRgb(background);
   const bgLuminance = getLuminance(bgRgb);
-  
+
   // 밝은 배경이면 어두운 색, 어두운 배경이면 밝은 색
   if (bgLuminance > 0.5) {
     return preferDark ? '#26282C' : '#000000'; // KB 다크 그레이 또는 검정
@@ -144,31 +137,30 @@ export function adjustColorForContrast(
   targetRatio: number = 4.5
 ): string {
   const currentRatio = getContrastRatio(foreground, background);
-  
+
   if (currentRatio >= targetRatio) {
     return foreground;
   }
-  
+
   const fgRgb = colorToRgb(foreground);
   const bgLuminance = getLuminance(colorToRgb(background));
-  
+
   let adjustedRgb = [...fgRgb];
   let step = bgLuminance > 0.5 ? -5 : 5; // 배경이 밝으면 어둡게, 어두우면 밝게
-  
-  for (let i = 0; i < 50; i++) { // 최대 50번 시도
+
+  for (let i = 0; i < 50; i++) {
+    // 최대 50번 시도
     adjustedRgb = adjustedRgb.map(val => Math.max(0, Math.min(255, val + step)));
-    
-    const adjustedHex = `#${adjustedRgb.map(val => 
-      val.toString(16).padStart(2, '0')
-    ).join('')}`;
-    
+
+    const adjustedHex = `#${adjustedRgb.map(val => val.toString(16).padStart(2, '0')).join('')}`;
+
     const newRatio = getContrastRatio(adjustedHex, background);
-    
+
     if (newRatio >= targetRatio) {
       return adjustedHex;
     }
   }
-  
+
   // 조정 실패 시 기본 고대비 색상 반환
   return bgLuminance > 0.5 ? '#000000' : '#FFFFFF';
 }
@@ -179,25 +171,25 @@ export function adjustColorForContrast(
 export function validateKBColorPalette(colors: Record<string, string>) {
   const results: Record<string, ColorContrastResult> = {};
   const background = colors.background || '#FFFFFF';
-  
+
   // 주요 텍스트 색상들에 대해 검증
   const textColors = [
     'textPrimary',
-    'textSecondary', 
+    'textSecondary',
     'textTertiary',
     'textHint',
     'textClickable',
     'error',
     'success',
-    'warning'
+    'warning',
   ];
-  
+
   textColors.forEach(colorKey => {
     if (colors[colorKey]) {
       results[colorKey] = validateColorContrast(colors[colorKey], background);
     }
   });
-  
+
   return results;
 }
 
@@ -210,7 +202,7 @@ export function simulateColorBlindness(
 ): string {
   const rgb = colorToRgb(color);
   let [r, g, b] = rgb;
-  
+
   switch (type) {
     case 'protanopia': // 적색맹
       r = 0.567 * r + 0.433 * g;
@@ -228,39 +220,40 @@ export function simulateColorBlindness(
       b = 0.475 * g + 0.525 * b;
       break;
   }
-  
-  const toHex = (n: number) => Math.round(Math.max(0, Math.min(255, n)))
-    .toString(16).padStart(2, '0');
-  
+
+  const toHex = (n: number) =>
+    Math.round(Math.max(0, Math.min(255, n)))
+      .toString(16)
+      .padStart(2, '0');
+
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
 
 /**
  * 고대비 모드용 색상 매핑
  */
-export function getHighContrastColor(
-  originalColor: string,
-  isDarkMode: boolean = false
-): string {
-  const highContrastMap: Record<string, string> = isDarkMode ? {
-    '#FFD338': '#FFEB3B', // 더 밝은 노란색
-    '#26282C': '#FFFFFF', // 흰색 텍스트
-    '#484B51': '#E0E0E0', // 밝은 회색
-    '#696E76': '#BDBDBD', // 중간 회색
-    '#8B8B8B': '#9E9E9E', // 연한 회색
-    '#287EFF': '#64B5F6', // 밝은 파란색
-    '#FF5858': '#FF6B6B', // 밝은 빨간색
-    '#22C55E': '#4CAF50', // 밝은 초록색
-  } : {
-    '#FFD338': '#F9A825', // 진한 노란색
-    '#26282C': '#000000', // 순수 검정
-    '#484B51': '#212121', // 진한 회색
-    '#696E76': '#424242', // 중간 진한 회색
-    '#8B8B8B': '#616161', // 진한 회색
-    '#287EFF': '#1565C0', // 진한 파란색
-    '#FF5858': '#C62828', // 진한 빨간색
-    '#22C55E': '#2E7D32', // 진한 초록색
-  };
-  
+export function getHighContrastColor(originalColor: string, isDarkMode: boolean = false): string {
+  const highContrastMap: Record<string, string> = isDarkMode
+    ? {
+        '#FFD338': '#FFEB3B', // 더 밝은 노란색
+        '#26282C': '#FFFFFF', // 흰색 텍스트
+        '#484B51': '#E0E0E0', // 밝은 회색
+        '#696E76': '#BDBDBD', // 중간 회색
+        '#8B8B8B': '#9E9E9E', // 연한 회색
+        '#287EFF': '#64B5F6', // 밝은 파란색
+        '#FF5858': '#FF6B6B', // 밝은 빨간색
+        '#22C55E': '#4CAF50', // 밝은 초록색
+      }
+    : {
+        '#FFD338': '#F9A825', // 진한 노란색
+        '#26282C': '#000000', // 순수 검정
+        '#484B51': '#212121', // 진한 회색
+        '#696E76': '#424242', // 중간 진한 회색
+        '#8B8B8B': '#616161', // 진한 회색
+        '#287EFF': '#1565C0', // 진한 파란색
+        '#FF5858': '#C62828', // 진한 빨간색
+        '#22C55E': '#2E7D32', // 진한 초록색
+      };
+
   return highContrastMap[originalColor] || originalColor;
 }

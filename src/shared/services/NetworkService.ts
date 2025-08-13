@@ -41,11 +41,11 @@ class NetworkService {
     baseDelay: 1000,
     maxDelay: 10000,
     backoffMultiplier: 2,
-    retryCondition: (error) => {
+    retryCondition: error => {
       // 5xx 서버 오류나 네트워크 오류만 재시도
       const status = error.response?.status;
       return !status || status >= 500 || error.name === 'NetworkError';
-    }
+    },
   };
 
   private constructor() {
@@ -65,16 +65,17 @@ class NetworkService {
    * 현재 네트워크 상태 가져오기
    */
   private getCurrentNetworkStatus(): NetworkStatus {
-    const connection = (navigator as any).connection || 
-                       (navigator as any).mozConnection || 
-                       (navigator as any).webkitConnection;
+    const connection =
+      (navigator as any).connection ||
+      (navigator as any).mozConnection ||
+      (navigator as any).webkitConnection;
 
     return {
       isOnline: navigator.onLine,
       connectionType: connection?.type || 'unknown',
       effectiveType: connection?.effectiveType || 'unknown',
       rtt: connection?.rtt || 0,
-      downlink: connection?.downlink || 0
+      downlink: connection?.downlink || 0,
     };
   }
 
@@ -117,13 +118,17 @@ class NetworkService {
     this.networkStatus = this.getCurrentNetworkStatus();
 
     // 상태가 실제로 변화했을 때만 리스너 호출
-    if (previousStatus.isOnline !== this.networkStatus.isOnline ||
-        previousStatus.connectionType !== this.networkStatus.connectionType) {
+    if (
+      previousStatus.isOnline !== this.networkStatus.isOnline ||
+      previousStatus.connectionType !== this.networkStatus.connectionType
+    ) {
       this.notifyListeners();
-      
+
       // Android WebView 로그
       if (this.isAndroid) {
-        console.log(`[NetworkService] 네트워크 상태 변화: ${this.networkStatus.isOnline ? '온라인' : '오프라인'} (${this.networkStatus.connectionType})`);
+        console.log(
+          `[NetworkService] 네트워크 상태 변화: ${this.networkStatus.isOnline ? '온라인' : '오프라인'} (${this.networkStatus.connectionType})`
+        );
       }
     }
   }
@@ -140,7 +145,7 @@ class NetworkService {
       const response = await fetch('/api/health', {
         method: 'GET',
         cache: 'no-cache',
-        signal: controller.signal
+        signal: controller.signal,
       });
 
       clearTimeout(timeoutId);
@@ -202,7 +207,7 @@ class NetworkService {
    */
   public getConnectionQuality(): 'poor' | 'moderate' | 'good' | 'excellent' {
     const { effectiveType, rtt, downlink } = this.networkStatus;
-    
+
     if (effectiveType === '2g' || rtt > 2000 || downlink < 0.5) {
       return 'poor';
     }
@@ -218,11 +223,13 @@ class NetworkService {
   /**
    * 재시도 로직이 포함된 안전한 fetch
    */
-  public async safeFetch(
-    url: string, 
-    options: ApiRequestOptions = {}
-  ): Promise<Response> {
-    const { retry = this.defaultRetryConfig, timeout = 30000, skipRetryOn = [], ...fetchOptions } = options;
+  public async safeFetch(url: string, options: ApiRequestOptions = {}): Promise<Response> {
+    const {
+      retry = this.defaultRetryConfig,
+      timeout = 30000,
+      skipRetryOn = [],
+      ...fetchOptions
+    } = options;
 
     return this.executeWithRetry(async () => {
       // 오프라인 상태 확인
@@ -236,21 +243,23 @@ class NetworkService {
 
       try {
         // Android WebView에서 CORS 및 캐싱 최적화
-        const androidOptimizedOptions = this.isAndroid ? {
-          ...fetchOptions,
-          signal: controller.signal,
-          cache: 'no-cache' as RequestCache,
-          mode: 'cors' as RequestMode,
-          credentials: 'same-origin' as RequestCredentials,
-          headers: {
-            'Cache-Control': 'no-cache',
-            'Pragma': 'no-cache',
-            ...fetchOptions.headers
-          }
-        } : {
-          ...fetchOptions,
-          signal: controller.signal
-        };
+        const androidOptimizedOptions = this.isAndroid
+          ? {
+              ...fetchOptions,
+              signal: controller.signal,
+              cache: 'no-cache' as RequestCache,
+              mode: 'cors' as RequestMode,
+              credentials: 'same-origin' as RequestCredentials,
+              headers: {
+                'Cache-Control': 'no-cache',
+                Pragma: 'no-cache',
+                ...fetchOptions.headers,
+              },
+            }
+          : {
+              ...fetchOptions,
+              signal: controller.signal,
+            };
 
         const response = await fetch(url, androidOptimizedOptions);
         clearTimeout(timeoutId);
@@ -281,10 +290,7 @@ class NetworkService {
   /**
    * 재시도 로직 실행
    */
-  private async executeWithRetry<T>(
-    operation: () => Promise<T>,
-    config: RetryConfig
-  ): Promise<T> {
+  private async executeWithRetry<T>(operation: () => Promise<T>, config: RetryConfig): Promise<T> {
     let lastError: any;
     let attempt = 0;
 
@@ -296,8 +302,10 @@ class NetworkService {
         attempt++;
 
         // 재시도 조건 확인
-        if (attempt > config.maxRetries || 
-            (config.retryCondition && !config.retryCondition(error))) {
+        if (
+          attempt > config.maxRetries ||
+          (config.retryCondition && !config.retryCondition(error))
+        ) {
           break;
         }
 
@@ -308,7 +316,7 @@ class NetworkService {
         );
 
         console.log(`[NetworkService] 재시도 ${attempt}/${config.maxRetries} (${delay}ms 후)`);
-        
+
         await this.delay(delay);
 
         // Android WebView에서 네트워크 상태 재확인
@@ -339,11 +347,16 @@ class NetworkService {
     const baseTimeout = 15000; // 15초 기본
 
     switch (quality) {
-      case 'poor': return baseTimeout * 3;     // 45초
-      case 'moderate': return baseTimeout * 2;  // 30초
-      case 'good': return baseTimeout * 1.5;   // 22.5초
-      case 'excellent': return baseTimeout;    // 15초
-      default: return baseTimeout;
+      case 'poor':
+        return baseTimeout * 3; // 45초
+      case 'moderate':
+        return baseTimeout * 2; // 30초
+      case 'good':
+        return baseTimeout * 1.5; // 22.5초
+      case 'excellent':
+        return baseTimeout; // 15초
+      default:
+        return baseTimeout;
     }
   }
 
@@ -355,11 +368,11 @@ class NetworkService {
 
     return {
       'Cache-Control': 'no-cache, no-store, must-revalidate',
-      'Pragma': 'no-cache',
-      'Expires': '0',
+      Pragma: 'no-cache',
+      Expires: '0',
       'X-Requested-With': 'XMLHttpRequest',
-      'Accept': 'application/json, text/plain, */*',
-      'Accept-Encoding': 'gzip, deflate'
+      Accept: 'application/json, text/plain, */*',
+      'Accept-Encoding': 'gzip, deflate',
     };
   }
 }
@@ -370,7 +383,7 @@ export const networkService = NetworkService.getInstance();
 // 편의 함수들
 export const isOnline = () => networkService.isOnline();
 export const getNetworkStatus = () => networkService.getNetworkStatus();
-export const addNetworkListener = (callback: (status: NetworkStatus) => void) => 
+export const addNetworkListener = (callback: (status: NetworkStatus) => void) =>
   networkService.addNetworkListener(callback);
-export const safeFetch = (url: string, options?: ApiRequestOptions) => 
+export const safeFetch = (url: string, options?: ApiRequestOptions) =>
   networkService.safeFetch(url, options);

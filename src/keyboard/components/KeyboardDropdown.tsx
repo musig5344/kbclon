@@ -3,14 +3,7 @@
  * 완전한 키보드 네비게이션 지원
  */
 
-import React, { 
-  useState, 
-  useRef, 
-  useEffect, 
-  useCallback,
-  KeyboardEvent,
-  MouseEvent
-} from 'react';
+import React, { useState, useRef, useEffect, useCallback, KeyboardEvent, MouseEvent } from 'react';
 
 import styled from 'styled-components';
 
@@ -52,8 +45,10 @@ const Label = styled.label<{ required?: boolean }>`
   font-weight: 500;
   color: #333;
   margin-bottom: 4px;
-  
-  ${props => props.required && `
+
+  ${props =>
+    props.required &&
+    `
     &::after {
       content: ' *';
       color: #e74c3c;
@@ -64,7 +59,7 @@ const Label = styled.label<{ required?: boolean }>`
 const TriggerButton = styled.button<{ isOpen?: boolean; hasError?: boolean }>`
   width: 100%;
   padding: 12px 16px;
-  border: 2px solid ${props => props.hasError ? '#e74c3c' : '#ddd'};
+  border: 2px solid ${props => (props.hasError ? '#e74c3c' : '#ddd')};
   border-radius: 8px;
   background: white;
   font-size: 16px;
@@ -74,24 +69,26 @@ const TriggerButton = styled.button<{ isOpen?: boolean; hasError?: boolean }>`
   justify-content: space-between;
   align-items: center;
   transition: all 0.2s ease;
-  
+
   &:hover:not(:disabled) {
     border-color: #007bff;
   }
-  
+
   &:focus {
     outline: 2px solid #007bff;
     outline-offset: 2px;
     border-color: #007bff;
   }
-  
+
   &:disabled {
     background: #f5f5f5;
     color: #999;
     cursor: not-allowed;
   }
-  
-  ${props => props.isOpen && `
+
+  ${props =>
+    props.isOpen &&
+    `
     border-color: #007bff;
     box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
   `}
@@ -99,8 +96,8 @@ const TriggerButton = styled.button<{ isOpen?: boolean; hasError?: boolean }>`
 
 const DropdownIcon = styled.span<{ isOpen?: boolean }>`
   transition: transform 0.2s ease;
-  transform: ${props => props.isOpen ? 'rotate(180deg)' : 'rotate(0deg)'};
-  
+  transform: ${props => (props.isOpen ? 'rotate(180deg)' : 'rotate(0deg)')};
+
   &::after {
     content: '▼';
     font-size: 12px;
@@ -130,7 +127,7 @@ const SearchInput = styled.input`
   border-bottom: 1px solid #eee;
   font-size: 16px;
   outline: none;
-  
+
   &:focus {
     border-bottom-color: #007bff;
   }
@@ -144,25 +141,33 @@ const OptionsList = styled.ul`
 
 const OptionItem = styled.li<{ isHighlighted?: boolean; isSelected?: boolean; disabled?: boolean }>`
   padding: 12px 16px;
-  cursor: ${props => props.disabled ? 'not-allowed' : 'pointer'};
+  cursor: ${props => (props.disabled ? 'not-allowed' : 'pointer')};
   border-bottom: 1px solid #f0f0f0;
   display: flex;
   align-items: center;
   gap: 8px;
   transition: background-color 0.1s ease;
-  
-  ${props => props.disabled && `
+
+  ${props =>
+    props.disabled &&
+    `
     color: #999;
     background: #f9f9f9;
   `}
-  
-  ${props => props.isSelected && !props.disabled && `
+
+  ${props =>
+    props.isSelected &&
+    !props.disabled &&
+    `
     background: #e3f2fd;
     color: #1976d2;
     font-weight: 500;
   `}
   
-  ${props => props.isHighlighted && !props.disabled && `
+  ${props =>
+    props.isHighlighted &&
+    !props.disabled &&
+    `
     background: #f0f8ff;
     outline: 2px solid #007bff;
     outline-offset: -2px;
@@ -171,7 +176,7 @@ const OptionItem = styled.li<{ isHighlighted?: boolean; isSelected?: boolean; di
   &:hover:not([disabled]) {
     background: #f0f8ff;
   }
-  
+
   &:last-child {
     border-bottom: none;
   }
@@ -211,15 +216,13 @@ export const KeyboardDropdown: React.FC<KeyboardDropdownProps> = ({
   onChange,
   onSearch,
   className,
-  'aria-describedby': ariaDescribedBy
+  'aria-describedby': ariaDescribedBy,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedValues, setSelectedValues] = useState<string[]>(
-    multiSelect 
-      ? (Array.isArray(value) ? value : value ? [value] : [])
-      : value ? [value] : []
+    multiSelect ? (Array.isArray(value) ? value : value ? [value] : []) : value ? [value] : []
   );
 
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -231,16 +234,17 @@ export const KeyboardDropdown: React.FC<KeyboardDropdownProps> = ({
   // 필터링된 옵션들
   const filteredOptions = React.useMemo(() => {
     if (!searchQuery) return options;
-    return options.filter(option =>
-      option.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      option.value.toLowerCase().includes(searchQuery.toLowerCase())
+    return options.filter(
+      option =>
+        option.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        option.value.toLowerCase().includes(searchQuery.toLowerCase())
     );
   }, [options, searchQuery]);
 
   // 선택된 옵션 표시 텍스트
   const displayText = React.useMemo(() => {
     if (selectedValues.length === 0) return placeholder;
-    
+
     if (multiSelect) {
       if (selectedValues.length === 1) {
         const option = options.find(opt => opt.value === selectedValues[0]);
@@ -248,7 +252,7 @@ export const KeyboardDropdown: React.FC<KeyboardDropdownProps> = ({
       }
       return `${selectedValues.length}개 선택됨`;
     }
-    
+
     const option = options.find(opt => opt.value === selectedValues[0]);
     return option?.label || selectedValues[0];
   }, [selectedValues, options, multiSelect, placeholder]);
@@ -256,7 +260,7 @@ export const KeyboardDropdown: React.FC<KeyboardDropdownProps> = ({
   // 드롭다운 열기/닫기
   const toggleDropdown = useCallback(() => {
     if (disabled) return;
-    
+
     if (isOpen) {
       closeDropdown();
     } else {
@@ -266,17 +270,18 @@ export const KeyboardDropdown: React.FC<KeyboardDropdownProps> = ({
 
   const openDropdown = useCallback(() => {
     setIsOpen(true);
-    setHighlightedIndex(selectedValues.length > 0 
-      ? filteredOptions.findIndex(opt => opt.value === selectedValues[0])
-      : 0
+    setHighlightedIndex(
+      selectedValues.length > 0
+        ? filteredOptions.findIndex(opt => opt.value === selectedValues[0])
+        : 0
     );
-    
+
     // 키보드 트랩 활성화
     if (menuRef.current) {
       globalKeyboardTrapManager.addTrap(menuRef.current, {
         autoFocus: searchable,
         escapeDeactivates: true,
-        returnFocusOnDeactivate: true
+        returnFocusOnDeactivate: true,
       });
     }
   }, [filteredOptions, selectedValues, searchable]);
@@ -285,112 +290,126 @@ export const KeyboardDropdown: React.FC<KeyboardDropdownProps> = ({
     setIsOpen(false);
     setSearchQuery('');
     setHighlightedIndex(-1);
-    
+
     // 키보드 트랩 제거
     if (menuRef.current) {
       globalKeyboardTrapManager.removeTrap(menuRef.current);
     }
-    
+
     // 포커스를 트리거로 복원
     triggerRef.current?.focus();
   }, []);
 
   // 옵션 선택
-  const selectOption = useCallback((optionValue: string) => {
-    if (multiSelect) {
-      const newSelection = selectedValues.includes(optionValue)
-        ? selectedValues.filter(v => v !== optionValue)
-        : [...selectedValues, optionValue];
-      
-      setSelectedValues(newSelection);
-      onChange(newSelection);
-    } else {
-      setSelectedValues([optionValue]);
-      onChange(optionValue);
-      closeDropdown();
-    }
-  }, [multiSelect, selectedValues, onChange, closeDropdown]);
+  const selectOption = useCallback(
+    (optionValue: string) => {
+      if (multiSelect) {
+        const newSelection = selectedValues.includes(optionValue)
+          ? selectedValues.filter(v => v !== optionValue)
+          : [...selectedValues, optionValue];
+
+        setSelectedValues(newSelection);
+        onChange(newSelection);
+      } else {
+        setSelectedValues([optionValue]);
+        onChange(optionValue);
+        closeDropdown();
+      }
+    },
+    [multiSelect, selectedValues, onChange, closeDropdown]
+  );
 
   // 키보드 네비게이션
-  const handleTriggerKeyDown = useCallback((event: KeyboardEvent) => {
-    switch (event.key) {
-      case 'Enter':
-      case ' ':
-      case 'ArrowDown':
-      case 'ArrowUp':
-        event.preventDefault();
-        if (!isOpen) {
-          openDropdown();
-        }
-        break;
-      case 'Escape':
-        if (isOpen) {
+  const handleTriggerKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      switch (event.key) {
+        case 'Enter':
+        case ' ':
+        case 'ArrowDown':
+        case 'ArrowUp':
+          event.preventDefault();
+          if (!isOpen) {
+            openDropdown();
+          }
+          break;
+        case 'Escape':
+          if (isOpen) {
+            event.preventDefault();
+            closeDropdown();
+          }
+          break;
+      }
+    },
+    [isOpen, openDropdown, closeDropdown]
+  );
+
+  const handleMenuKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      switch (event.key) {
+        case 'ArrowDown':
+          event.preventDefault();
+          setHighlightedIndex(prev => {
+            const nextIndex = prev < filteredOptions.length - 1 ? prev + 1 : 0;
+            return filteredOptions[nextIndex]?.disabled
+              ? Math.min(nextIndex + 1, filteredOptions.length - 1)
+              : nextIndex;
+          });
+          break;
+
+        case 'ArrowUp':
+          event.preventDefault();
+          setHighlightedIndex(prev => {
+            const nextIndex = prev > 0 ? prev - 1 : filteredOptions.length - 1;
+            return filteredOptions[nextIndex]?.disabled ? Math.max(nextIndex - 1, 0) : nextIndex;
+          });
+          break;
+
+        case 'Enter':
+        case ' ':
+          event.preventDefault();
+          if (highlightedIndex >= 0 && !filteredOptions[highlightedIndex]?.disabled) {
+            selectOption(filteredOptions[highlightedIndex].value);
+          }
+          break;
+
+        case 'Escape':
           event.preventDefault();
           closeDropdown();
-        }
-        break;
-    }
-  }, [isOpen, openDropdown, closeDropdown]);
+          break;
 
-  const handleMenuKeyDown = useCallback((event: KeyboardEvent) => {
-    switch (event.key) {
-      case 'ArrowDown':
-        event.preventDefault();
-        setHighlightedIndex(prev => {
-          const nextIndex = prev < filteredOptions.length - 1 ? prev + 1 : 0;
-          return filteredOptions[nextIndex]?.disabled ? 
-            Math.min(nextIndex + 1, filteredOptions.length - 1) : nextIndex;
-        });
-        break;
-        
-      case 'ArrowUp':
-        event.preventDefault();
-        setHighlightedIndex(prev => {
-          const nextIndex = prev > 0 ? prev - 1 : filteredOptions.length - 1;
-          return filteredOptions[nextIndex]?.disabled ? 
-            Math.max(nextIndex - 1, 0) : nextIndex;
-        });
-        break;
-        
-      case 'Enter':
-      case ' ':
-        event.preventDefault();
-        if (highlightedIndex >= 0 && !filteredOptions[highlightedIndex]?.disabled) {
-          selectOption(filteredOptions[highlightedIndex].value);
-        }
-        break;
-        
-      case 'Escape':
-        event.preventDefault();
-        closeDropdown();
-        break;
-        
-      case 'Home':
-        event.preventDefault();
-        setHighlightedIndex(0);
-        break;
-        
-      case 'End':
-        event.preventDefault();
-        setHighlightedIndex(filteredOptions.length - 1);
-        break;
-    }
-  }, [filteredOptions, highlightedIndex, selectOption, closeDropdown]);
+        case 'Home':
+          event.preventDefault();
+          setHighlightedIndex(0);
+          break;
+
+        case 'End':
+          event.preventDefault();
+          setHighlightedIndex(filteredOptions.length - 1);
+          break;
+      }
+    },
+    [filteredOptions, highlightedIndex, selectOption, closeDropdown]
+  );
 
   // 검색 처리
-  const handleSearch = useCallback((query: string) => {
-    setSearchQuery(query);
-    setHighlightedIndex(0);
-    onSearch?.(query);
-  }, [onSearch]);
+  const handleSearch = useCallback(
+    (query: string) => {
+      setSearchQuery(query);
+      setHighlightedIndex(0);
+      onSearch?.(query);
+    },
+    [onSearch]
+  );
 
   // 클릭 외부 영역 처리
   useEffect(() => {
     const handleClickOutside = (event: Event) => {
       const target = event.target as HTMLElement;
       if (
-        triggerRef.current && !triggerRef.current.contains(target) &&
-        menuRef.current && !menuRef.current.contains(target)
+        triggerRef.current &&
+        !triggerRef.current.contains(target) &&
+        menuRef.current &&
+        !menuRef.current.contains(target)
       ) {
         closeDropdown();
       }
@@ -407,7 +426,7 @@ export const KeyboardDropdown: React.FC<KeyboardDropdownProps> = ({
     if (isOpen && highlightedIndex >= 0 && optionRefs.current[highlightedIndex]) {
       optionRefs.current[highlightedIndex]?.scrollIntoView({
         block: 'nearest',
-        behavior: 'smooth'
+        behavior: 'smooth',
       });
     }
   }, [highlightedIndex, isOpen]);
@@ -426,18 +445,18 @@ export const KeyboardDropdown: React.FC<KeyboardDropdownProps> = ({
           {label}
         </Label>
       )}
-      
+
       <TriggerButton
         ref={triggerRef}
         id={dropdownId.current}
-        type="button"
+        type='button'
         disabled={disabled}
         isOpen={isOpen}
         hasError={!!error}
         onClick={toggleDropdown}
         onKeyDown={handleTriggerKeyDown}
         aria-expanded={isOpen}
-        aria-haspopup="listbox"
+        aria-haspopup='listbox'
         aria-describedby={ariaDescribedBy}
         aria-required={required}
         aria-invalid={!!error}
@@ -451,32 +470,30 @@ export const KeyboardDropdown: React.FC<KeyboardDropdownProps> = ({
           ref={menuRef}
           maxHeight={maxHeight}
           onKeyDown={handleMenuKeyDown}
-          role="listbox"
+          role='listbox'
           aria-multiselectable={multiSelect}
           aria-activedescendant={
-            highlightedIndex >= 0 
-              ? `${dropdownId.current}-option-${highlightedIndex}`
-              : undefined
+            highlightedIndex >= 0 ? `${dropdownId.current}-option-${highlightedIndex}` : undefined
           }
         >
           {searchable && (
             <SearchInput
               ref={searchRef}
-              type="text"
-              placeholder="검색..."
+              type='text'
+              placeholder='검색...'
               value={searchQuery}
               onChange={e => handleSearch(e.target.value)}
-              aria-label="옵션 검색"
+              aria-label='옵션 검색'
             />
           )}
-          
+
           <OptionsList>
             {filteredOptions.map((option, index) => (
               <OptionItem
                 key={option.value}
-                ref={el => optionRefs.current[index] = el}
+                ref={el => (optionRefs.current[index] = el)}
                 id={`${dropdownId.current}-option-${index}`}
-                role="option"
+                role='option'
                 isHighlighted={index === highlightedIndex}
                 isSelected={selectedValues.includes(option.value)}
                 disabled={option.disabled}
@@ -496,7 +513,7 @@ export const KeyboardDropdown: React.FC<KeyboardDropdownProps> = ({
                 )}
               </OptionItem>
             ))}
-            
+
             {filteredOptions.length === 0 && (
               <OptionItem disabled>
                 {searchQuery ? '검색 결과가 없습니다' : '옵션이 없습니다'}
@@ -507,7 +524,7 @@ export const KeyboardDropdown: React.FC<KeyboardDropdownProps> = ({
       )}
 
       {error && (
-        <ErrorMessage role="alert" aria-live="polite">
+        <ErrorMessage role='alert' aria-live='polite'>
           {error}
         </ErrorMessage>
       )}

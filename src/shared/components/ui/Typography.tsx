@@ -26,4 +26,4 @@ export const Caption = styled.span`
   font-size: ${({ theme }) => theme.typography.fontSize.body1};
   line-height: 1.5;
   color: ${({ theme }) => theme.colors.textHint};
-`; 
+`;

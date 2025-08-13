@@ -35,7 +35,8 @@ const SwitchContainer = styled.label<{ $size: string }>`
       medium: { width: 52, height: 28, padding: 3 },
       large: { width: 60, height: 32, padding: 4 },
     };
-    const { width, height, padding } = sizeMap[props.$size as keyof typeof sizeMap] || sizeMap.medium;
+    const { width, height, padding } =
+      sizeMap[props.$size as keyof typeof sizeMap] || sizeMap.medium;
     return `
       width: ${width}px;
       height: ${height}px;
@@ -59,19 +60,12 @@ const SwitchSlider = styled.span<{ $checked: boolean }>`
   bottom: 0;
   border-radius: 50px;
   transition: all 0.3s ease;
-  background-color: ${props => 
-    props.$checked 
-      ? tokens.colors.brand.primary 
-      : colors.backgroundGray2
-  };
-  border: 1px solid ${props => 
-    props.$checked 
-      ? tokens.colors.brand.primaryDark
-      : colors.border
-  };
+  background-color: ${props =>
+    props.$checked ? tokens.colors.brand.primary : colors.backgroundGray2};
+  border: 1px solid ${props => (props.$checked ? tokens.colors.brand.primaryDark : colors.border)};
   &::before {
     position: absolute;
-    content: "";
+    content: '';
     height: var(--toggle-size);
     width: var(--toggle-size);
     left: var(--toggle-padding);
@@ -80,11 +74,9 @@ const SwitchSlider = styled.span<{ $checked: boolean }>`
     border-radius: 50%;
     transition: all 0.3s ease;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transform: translateX(${props => 
-      props.$checked 
-        ? 'calc(100% + var(--toggle-padding))' 
-        : '0'
-    });
+    transform: translateX(
+      ${props => (props.$checked ? 'calc(100% + var(--toggle-padding))' : '0')}
+    );
   }
 `;
 // 버튼 스타일 토글
@@ -95,16 +87,10 @@ const ToggleButton = styled.button<{ $active: boolean; $size: string }>`
   gap: 8px;
   border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: ${dimensions.borderRadius.medium}px;
-  background-color: ${props => 
-    props.$active 
-      ? props.theme.tokens.colors.brand.primary 
-      : props.theme.colors.background
-  };
-  color: ${props => 
-    props.$active 
-      ? props.theme.colors.textPrimary 
-      : props.theme.colors.textSecondary
-  };
+  background-color: ${props =>
+    props.$active ? props.theme.tokens.colors.brand.primary : props.theme.colors.background};
+  color: ${props =>
+    props.$active ? props.theme.colors.textPrimary : props.theme.colors.textSecondary};
   font-family: ${typography.fontFamily.kbfgTextMedium};
   cursor: pointer;
   transition: all 0.2s ease;
@@ -121,11 +107,8 @@ const ToggleButton = styled.button<{ $active: boolean; $size: string }>`
     `;
   }}
   &:hover {
-    background-color: ${props => 
-      props.$active 
-        ? tokens.colors.brand.primaryLight
-        : colors.backgroundGray1
-    };
+    background-color: ${props =>
+      props.$active ? tokens.colors.brand.primaryLight : colors.backgroundGray1};
   }
   &:active {
     transform: scale(0.98);
@@ -173,12 +156,7 @@ const ThemeToggle: React.FC<ThemeToggleProps> = ({
     switch (variant) {
       case 'button':
         return (
-          <ToggleButton
-            $active={isDarkMode}
-            $size={size}
-            onClick={toggleTheme}
-            type="button"
-          >
+          <ToggleButton $active={isDarkMode} $size={size} onClick={toggleTheme} type='button'>
             {isDarkMode ? '🌙' : '☀️'}
             {showLabel && (isDarkMode ? '다크 모드' : '라이트 모드')}
           </ToggleButton>
@@ -188,7 +166,7 @@ const ThemeToggle: React.FC<ThemeToggleProps> = ({
           <IconToggle
             $size={size}
             onClick={toggleTheme}
-            type="button"
+            type='button'
             title={isDarkMode ? '라이트 모드로 전환' : '다크 모드로 전환'}
           >
             {isDarkMode ? '☀️' : '🌙'}
@@ -198,17 +176,9 @@ const ThemeToggle: React.FC<ThemeToggleProps> = ({
       default:
         return (
           <ToggleContainer>
-            {showLabel && (
-              <ToggleLabel>
-                {isDarkMode ? '다크 모드' : '라이트 모드'}
-              </ToggleLabel>
-            )}
+            {showLabel && <ToggleLabel>{isDarkMode ? '다크 모드' : '라이트 모드'}</ToggleLabel>}
             <SwitchContainer $size={size}>
-              <SwitchInput
-                type="checkbox"
-                checked={isDarkMode}
-                onChange={toggleTheme}
-              />
+              <SwitchInput type='checkbox' checked={isDarkMode} onChange={toggleTheme} />
               <SwitchSlider $checked={isDarkMode} />
             </SwitchContainer>
           </ToggleContainer>

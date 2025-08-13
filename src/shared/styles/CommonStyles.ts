@@ -22,16 +22,20 @@ export const PageContainer = styled.div`
 export const MainContent = styled.main`
   ${responsiveContent}
   flex: 1;
-  padding-bottom: calc(${tokens.sizes.navigation.height} + ${tokens.spacing.small} + env(safe-area-inset-bottom));
+  padding-bottom: calc(
+    ${tokens.sizes.navigation.height} + ${tokens.spacing.small} + env(safe-area-inset-bottom)
+  );
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 `;
 
 export const Section = styled.section<{ $noPadding?: boolean }>`
   background-color: ${tokens.colors.white};
-  ${props => !props.$noPadding && css`
-    padding: ${tokens.spacing.large};
-  `}
+  ${props =>
+    !props.$noPadding &&
+    css`
+      padding: ${tokens.spacing.large};
+    `}
   margin-bottom: ${tokens.spacing.small};
 `;
 
@@ -42,20 +46,22 @@ export const Card = styled.div<{ $clickable?: boolean }>`
   box-shadow: ${tokens.shadows.elevation1};
   margin-bottom: ${tokens.spacing.medium};
   transition: all 0.2s ease;
-  
-  ${props => props.$clickable && css`
-    cursor: pointer;
-    
-    &:hover {
-      transform: translateY(-${tokens.spacing.micro});
-      box-shadow: ${tokens.shadows.elevation2};
-    }
-    
-    &:active {
-      transform: translateY(0);
-      box-shadow: ${tokens.shadows.elevation1};
-    }
-  `}
+
+  ${props =>
+    props.$clickable &&
+    css`
+      cursor: pointer;
+
+      &:hover {
+        transform: translateY(-${tokens.spacing.micro});
+        box-shadow: ${tokens.shadows.elevation2};
+      }
+
+      &:active {
+        transform: translateY(0);
+        box-shadow: ${tokens.shadows.elevation1};
+      }
+    `}
 `;
 
 // ============ Header Styles ============
@@ -81,15 +87,15 @@ export const HeaderButton = styled.button`
   justify-content: center;
   border-radius: ${tokens.borderRadius.round};
   transition: background-color 0.2s;
-  
+
   &:hover {
     background-color: ${tokens.colors.background.secondary};
   }
-  
+
   &:active {
     background-color: ${tokens.colors.background.secondary};
   }
-  
+
   img {
     width: ${tokens.sizes.icon.medium};
     height: ${tokens.sizes.icon.medium};
@@ -114,7 +120,7 @@ const buttonBase = css`
   cursor: pointer;
   transition: all 0.2s ease;
   outline: none;
-  
+
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
@@ -131,11 +137,11 @@ export const PrimaryButton = styled.button`
   color: white;
   padding: ${tokens.spacing.medium} ${tokens.spacing.large};
   font-size: ${tokens.typography.fontSize.bodyLarge};
-  
+
   &:hover:not(:disabled) {
     background-color: ${tokens.colors.primaryDark};
   }
-  
+
   &:active:not(:disabled) {
     transform: scale(0.98);
   }
@@ -147,11 +153,11 @@ export const SecondaryButton = styled.button`
   color: ${tokens.colors.textPrimary};
   padding: ${tokens.spacing.medium} ${tokens.spacing.large};
   font-size: ${tokens.typography.fontSize.bodyLarge};
-  
+
   &:hover:not(:disabled) {
     background-color: ${tokens.colors.border.primary};
   }
-  
+
   &:active:not(:disabled) {
     transform: scale(0.98);
   }
@@ -163,7 +169,7 @@ export const TextButton = styled.button`
   color: ${tokens.colors.primary};
   padding: ${tokens.spacing.small} ${tokens.spacing.medium};
   font-size: ${tokens.typography.fontSize.bodyMedium};
-  
+
   &:hover:not(:disabled) {
     background-color: ${tokens.colors.primaryLight}20;
   }
@@ -180,13 +186,15 @@ export const Label = styled.label<{ $required?: boolean }>`
   font-weight: ${tokens.typography.fontWeight.medium};
   color: ${tokens.colors.textPrimary};
   margin-bottom: ${tokens.spacing.small};
-  
-  ${props => props.$required && css`
-    &::after {
-      content: ' *';
-      color: ${tokens.colors.error};
-    }
-  `}
+
+  ${props =>
+    props.$required &&
+    css`
+      &::after {
+        content: ' *';
+        color: ${tokens.colors.error};
+      }
+    `}
 `;
 
 export const Input = styled.input`
@@ -197,17 +205,17 @@ export const Input = styled.input`
   border-radius: ${tokens.borderRadius.large};
   background-color: ${tokens.colors.white};
   transition: border-color 0.2s;
-  
+
   &:focus {
     outline: none;
     border-color: ${tokens.colors.primary};
   }
-  
+
   &:disabled {
     background-color: ${tokens.colors.background.secondary};
     color: ${tokens.colors.textSecondary};
   }
-  
+
   &::placeholder {
     color: ${tokens.colors.textTertiary};
   }
@@ -240,23 +248,25 @@ export const ListItem = styled.li<{ $clickable?: boolean }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  
+
   &:last-child {
     border-bottom: none;
   }
-  
-  ${props => props.$clickable && css`
-    cursor: pointer;
-    transition: background-color 0.2s;
-    
-    &:hover {
-      background-color: ${tokens.colors.background.secondary};
-    }
-    
-    &:active {
-      background-color: ${tokens.colors.background.secondary};
-    }
-  `}
+
+  ${props =>
+    props.$clickable &&
+    css`
+      cursor: pointer;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background-color: ${tokens.colors.background.secondary};
+      }
+
+      &:active {
+        background-color: ${tokens.colors.background.secondary};
+      }
+    `}
 `;
 
 // ============ Text Styles ============
@@ -325,9 +335,11 @@ export const ModalOverlay = styled.div<{ $visible?: boolean }>`
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  opacity: ${props => props.$visible ? 1 : 0};
-  visibility: ${props => props.$visible ? 'visible' : 'hidden'};
-  transition: opacity 0.3s, visibility 0.3s;
+  opacity: ${props => (props.$visible ? 1 : 0)};
+  visibility: ${props => (props.$visible ? 'visible' : 'hidden')};
+  transition:
+    opacity 0.3s,
+    visibility 0.3s;
 `;
 
 export const ModalContent = styled.div`
@@ -355,7 +367,7 @@ export const Spinner = styled.div<{ $size?: number }>`
   border-radius: ${tokens.borderRadius.round};
   border-top-color: ${tokens.colors.primary};
   animation: spin 0.8s linear infinite;
-  
+
   @keyframes spin {
     to {
       transform: rotate(360deg);
@@ -370,7 +382,7 @@ export const Badge = styled.span<{ $variant?: 'primary' | 'success' | 'warning' 
   font-size: ${tokens.typography.fontSize.bodySmall};
   font-weight: ${tokens.typography.fontWeight.semibold};
   border-radius: ${tokens.borderRadius.xl};
-  
+
   ${props => {
     const variants = {
       primary: css`
@@ -388,7 +400,7 @@ export const Badge = styled.span<{ $variant?: 'primary' | 'success' | 'warning' 
       error: css`
         background-color: ${tokens.colors.errorLight};
         color: ${tokens.colors.error};
-      `
+      `,
     };
     return variants[props.$variant || 'primary'];
   }}
@@ -401,48 +413,48 @@ export default {
   MainContent,
   Section,
   Card,
-  
+
   // Headers
   Header,
   HeaderButton,
   HeaderTitle,
-  
+
   // Buttons
   PrimaryButton,
   SecondaryButton,
   TextButton,
-  
+
   // Forms
   FormGroup,
   Label,
   Input,
   ErrorText,
   HelperText,
-  
+
   // Lists
   List,
   ListItem,
-  
+
   // Text
   Title,
   Subtitle,
   Text,
   SmallText,
-  
+
   // Utilities
   Divider,
   Spacer,
   FlexRow,
   FlexColumn,
-  
+
   // Modals
   ModalOverlay,
   ModalContent,
-  
+
   // Loading
   LoadingContainer,
   Spinner,
-  
+
   // Badge
-  Badge
+  Badge,
 };

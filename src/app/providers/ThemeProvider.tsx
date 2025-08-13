@@ -39,28 +39,28 @@ const darkTheme = {
     // baseTheme.colors의 모든 속성을 먼저 포함
     ...baseTheme.colors,
     // 다크 모드 오버라이드
-    background: colors.dark.bottomSheetBackground,        // #FF26282C
-    backgroundGray1: '#FF1C1E22',                        // 더 어두운 배경
-    backgroundGray2: '#FF2A2D33',                        // 중간 배경
+    background: colors.dark.bottomSheetBackground, // #FF26282C
+    backgroundGray1: '#FF1C1E22', // 더 어두운 배경
+    backgroundGray2: '#FF2A2D33', // 중간 배경
     surface: '#FF1C1E22',
     // 텍스트 색상
-    text: colors.dark.text,                              // #FFEBEEF0
+    text: colors.dark.text, // #FFEBEEF0
     textPrimary: colors.dark.text,
-    textSecondary: '#FFAEB3BA',                          // 보조 텍스트
-    textTertiary: colors.dark.inputFieldHint,            // #FF6E747A
+    textSecondary: '#FFAEB3BA', // 보조 텍스트
+    textTertiary: colors.dark.inputFieldHint, // #FF6E747A
     textHint: colors.dark.inputFieldHint,
     // 구분선
-    border: '#FF575B61',                                 // picker_divider
-    borderLight: '#FF454850',                            // 연한 구분선
+    border: '#FF575B61', // picker_divider
+    borderLight: '#FF454850', // 연한 구분선
     // 입력 필드
     inputBackground: '#FF1C1E22',
-    inputHangulText: colors.dark.text,                   // #FFEBEEF0
+    inputHangulText: colors.dark.text, // #FFEBEEF0
     // 토스트
-    toastBackground: colors.dark.toastBackground,        // #E6696E76
-    toastText: colors.toastTextDark,                     // #FFFFFFFF
+    toastBackground: colors.dark.toastBackground, // #E6696E76
+    toastText: colors.toastTextDark, // #FFFFFFFF
     // 알림
-    notificationStepLabel: '#FFDDE1E4',                  // notification_step_label
-    notificationStepText: colors.dark.text,              // notification_step_text
+    notificationStepLabel: '#FFDDE1E4', // notification_step_label
+    notificationStepText: colors.dark.text, // notification_step_text
     // 기타 색상들은 라이트 모드와 동일하게 유지
     kbYellow: tokens.colors.brand.primary,
     kbYellowLight: tokens.colors.brand.primaryLight,
@@ -68,7 +68,7 @@ const darkTheme = {
     accentBlue: colors.accentBlue,
     errorRed: colors.errorRed,
     // Dim 배경
-    dimmedBackground: colors.dark.dimBackground,         // #BF000000
+    dimmedBackground: colors.dark.dimBackground, // #BF000000
   },
   tokens,
   mode: 'dark',
@@ -78,9 +78,9 @@ interface KBThemeProviderProps {
   children: React.ReactNode;
   initialTheme?: 'light' | 'dark' | 'system';
 }
-export const KBThemeProvider: React.FC<KBThemeProviderProps> = ({ 
-  children, 
-  initialTheme = 'system' 
+export const KBThemeProvider: React.FC<KBThemeProviderProps> = ({
+  children,
+  initialTheme = 'system',
 }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   // 시스템 테마 감지
@@ -140,15 +140,15 @@ export const KBThemeProvider: React.FC<KBThemeProviderProps> = ({
   };
   return (
     <ThemeContext.Provider value={contextValue}>
-      <StyledThemeProvider theme={theme}>
-        {children}
-      </StyledThemeProvider>
+      <StyledThemeProvider theme={theme}>{children}</StyledThemeProvider>
     </ThemeContext.Provider>
   );
 };
 // 테마 기반 스타일 헬퍼
-export const themed = (lightValue: string, darkValue: string) => 
-  ({ theme }: { theme: Theme }) => theme.mode === 'dark' ? darkValue : lightValue;
+export const themed =
+  (lightValue: string, darkValue: string) =>
+  ({ theme }: { theme: Theme }) =>
+    theme.mode === 'dark' ? darkValue : lightValue;
 // 미디어 쿼리 헬퍼
 export const prefersDarkMode = '@media (prefers-color-scheme: dark)';
 export const prefersLightMode = '@media (prefers-color-scheme: light)';

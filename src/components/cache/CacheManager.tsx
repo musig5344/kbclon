@@ -24,7 +24,7 @@ const Container = styled.div`
   max-height: 400px;
   overflow-y: auto;
   z-index: 1000;
-  
+
   &.dark {
     background: #1e1e1e;
     border-color: #444;
@@ -42,7 +42,7 @@ const Section = styled.div`
   margin-bottom: 16px;
   padding-bottom: 16px;
   border-bottom: 1px solid #e0e0e0;
-  
+
   &:last-child {
     border-bottom: none;
     margin-bottom: 0;
@@ -55,7 +55,7 @@ const SectionTitle = styled.h4`
   font-size: 14px;
   font-weight: 600;
   color: #666;
-  
+
   .dark & {
     color: #aaa;
   }
@@ -70,7 +70,7 @@ const StatItem = styled.div`
 
 const StatLabel = styled.span`
   color: #666;
-  
+
   .dark & {
     color: #999;
   }
@@ -107,7 +107,7 @@ const ToggleButton = styled.button`
   justify-content: center;
   font-size: 20px;
   z-index: 1001;
-  
+
   &:hover {
     background: #ffb700;
   }
@@ -124,7 +124,8 @@ export const CacheManager: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [stats, setStats] = useState<CacheStats | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const { clearAllCache, refreshAccount, refreshTransactions, getCacheStatus } = useCacheManagement();
+  const { clearAllCache } =
+    useCacheManagement();
 
   const loadStats = async () => {
     setIsLoading(true);
@@ -145,6 +146,7 @@ export const CacheManager: React.FC = () => {
       const interval = setInterval(loadStats, 5000);
       return () => clearInterval(interval);
     }
+    return undefined;
   }, [isOpen]);
 
   const handleClearAll = async () => {
@@ -160,7 +162,7 @@ export const CacheManager: React.FC = () => {
     if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
       navigator.serviceWorker.controller.postMessage({
         type: 'CLEAR_CACHE',
-        target: 'all'
+        target: 'all',
       });
       safeLog('info', '서비스 워커 캐시 삭제 요청 전송');
     }
@@ -176,7 +178,7 @@ export const CacheManager: React.FC = () => {
 
   if (!isOpen) {
     return (
-      <ToggleButton onClick={() => setIsOpen(true)} title="캐시 관리자 열기">
+      <ToggleButton onClick={() => setIsOpen(true)} title='캐시 관리자 열기'>
         🗄️
       </ToggleButton>
     );
@@ -206,10 +208,15 @@ export const CacheManager: React.FC = () => {
             </StatItem>
             {stats.memory.keys.length > 0 && (
               <details style={{ marginTop: '8px' }}>
-                <summary style={{ cursor: 'pointer', fontSize: '12px' }}>
-                  캐시 키 목록
-                </summary>
-                <div style={{ fontSize: '11px', marginTop: '4px', maxHeight: '100px', overflow: 'auto' }}>
+                <summary style={{ cursor: 'pointer', fontSize: '12px' }}>캐시 키 목록</summary>
+                <div
+                  style={{
+                    fontSize: '11px',
+                    marginTop: '4px',
+                    maxHeight: '100px',
+                    overflow: 'auto',
+                  }}
+                >
                   {stats.memory.keys.map((key, index) => (
                     <div key={index} style={{ marginBottom: '2px', wordBreak: 'break-all' }}>
                       {key}
@@ -255,13 +262,13 @@ export const CacheManager: React.FC = () => {
           <Section>
             <SectionTitle>작업</SectionTitle>
             <ButtonGroup>
-              <SmallButton onClick={handleClearAll} variant="secondary">
+              <SmallButton onClick={handleClearAll} variant='secondary'>
                 전체 캐시 삭제
               </SmallButton>
-              <SmallButton onClick={handleClearServiceWorkerCache} variant="secondary">
+              <SmallButton onClick={handleClearServiceWorkerCache} variant='secondary'>
                 SW 캐시 삭제
               </SmallButton>
-              <SmallButton onClick={loadStats} variant="primary">
+              <SmallButton onClick={loadStats} variant='primary'>
                 새로고침
               </SmallButton>
             </ButtonGroup>

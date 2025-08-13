@@ -45,24 +45,32 @@ const CardContainer = styled.div<{ $isPressed: boolean; $swipeDirection?: 'left'
   position: relative;
   padding: 20px;
   border-radius: 12px;
-  background: linear-gradient(135deg, #FFCC00 0%, #FFB700 100%);
+  background: linear-gradient(135deg, #ffcc00 0%, #ffb700 100%);
   color: #1a1a1a;
   cursor: pointer;
   user-select: none;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+
+  ${props =>
+    props.$isPressed &&
+    css`
+      transform: scale(0.98);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    `}
+
+  ${props =>
+    props.$swipeDirection === 'left' &&
+    css`
+      animation: ${swipeLeft} 0.3s ease;
+    `}
   
-  ${props => props.$isPressed && css`
-    transform: scale(0.98);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  `}
-  
-  ${props => props.$swipeDirection === 'left' && css`
-    animation: ${swipeLeft} 0.3s ease;
-  `}
-  
-  ${props => props.$swipeDirection === 'right' && css`
-    animation: ${swipeRight} 0.3s ease;
-  `}
+  ${props =>
+    props.$swipeDirection === 'right' &&
+    css`
+      animation: ${swipeRight} 0.3s ease;
+    `}
   
   &::before {
     content: '';
@@ -76,7 +84,7 @@ const CardContainer = styled.div<{ $isPressed: boolean; $swipeDirection?: 'left'
     opacity: 0;
     transition: opacity 0.2s ease;
   }
-  
+
   &:active::before {
     opacity: 1;
   }
@@ -121,7 +129,7 @@ const GestureHint = styled.div<{ $visible: boolean }>`
   padding: 8px 12px;
   border-radius: 4px;
   font-size: 12px;
-  opacity: ${props => props.$visible ? 1 : 0};
+  opacity: ${props => (props.$visible ? 1 : 0)};
   pointer-events: none;
   transition: opacity 0.2s ease;
 `;
@@ -163,13 +171,9 @@ export const GestureAccountCard: React.FC<GestureAccountCardProps> = ({
     onLongPress?.();
   }, [onLongPress]);
 
-  useAccountCardGestures(
-    handleSwipeLeft,
-    handleSwipeRight,
-    handleTap,
-    handleLongPress,
-    { element: cardRef.current }
-  );
+  useAccountCardGestures(handleSwipeLeft, handleSwipeRight, handleTap, handleLongPress, {
+    element: cardRef.current,
+  });
 
   return (
     <CardContainer
@@ -183,16 +187,12 @@ export const GestureAccountCard: React.FC<GestureAccountCardProps> = ({
         <AccountName>{account.name}</AccountName>
         <AccountType>{account.type}</AccountType>
       </CardHeader>
-      
+
       <AccountNumber>{account.number}</AccountNumber>
-      
-      <Balance>
-        {new Intl.NumberFormat('ko-KR').format(account.balance)}원
-      </Balance>
-      
-      <GestureHint $visible={showHint}>
-        길게 눌러서 더 많은 옵션 보기
-      </GestureHint>
+
+      <Balance>{new Intl.NumberFormat('ko-KR').format(account.balance)}원</Balance>
+
+      <GestureHint $visible={showHint}>길게 눌러서 더 많은 옵션 보기</GestureHint>
     </CardContainer>
   );
 };
@@ -213,8 +213,8 @@ interface GestureTransactionItemProps {
   className?: string;
 }
 
-const TransactionContainer = styled.div<{ 
-  $swipeOffset: number; 
+const TransactionContainer = styled.div<{
+  $swipeOffset: number;
   $isDeleting: boolean;
   $isPressed: boolean;
 }>`
@@ -225,18 +225,24 @@ const TransactionContainer = styled.div<{
   background: white;
   border-bottom: 1px solid ${tokens.colors.gray200};
   transform: translateX(${props => props.$swipeOffset}px);
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    opacity 0.3s ease;
   cursor: pointer;
   user-select: none;
-  
-  ${props => props.$isDeleting && css`
-    opacity: 0.5;
-    transform: translateX(-100%);
-  `}
-  
-  ${props => props.$isPressed && css`
-    background-color: ${tokens.colors.gray50};
-  `}
+
+  ${props =>
+    props.$isDeleting &&
+    css`
+      opacity: 0.5;
+      transform: translateX(-100%);
+    `}
+
+  ${props =>
+    props.$isPressed &&
+    css`
+      background-color: ${tokens.colors.gray50};
+    `}
 `;
 
 const ActionButton = styled.button<{ $type: 'delete' | 'category' }>`
@@ -250,16 +256,20 @@ const ActionButton = styled.button<{ $type: 'delete' | 'category' }>`
   font-weight: 600;
   cursor: pointer;
   z-index: 1;
-  
-  ${props => props.$type === 'delete' && css`
-    right: 0;
-    background-color: ${tokens.colors.error};
-  `}
-  
-  ${props => props.$type === 'category' && css`
-    left: 0;
-    background-color: ${tokens.colors.info};
-  `}
+
+  ${props =>
+    props.$type === 'delete' &&
+    css`
+      right: 0;
+      background-color: ${tokens.colors.error};
+    `}
+
+  ${props =>
+    props.$type === 'category' &&
+    css`
+      left: 0;
+      background-color: ${tokens.colors.info};
+    `}
 `;
 
 const TransactionContent = styled.div`
@@ -287,7 +297,7 @@ const TransactionDescription = styled.div`
 const TransactionAmount = styled.div<{ $type: 'debit' | 'credit' }>`
   font-size: 16px;
   font-weight: 600;
-  color: ${props => props.$type === 'credit' ? tokens.colors.success : tokens.colors.error};
+  color: ${props => (props.$type === 'credit' ? tokens.colors.success : tokens.colors.error)};
 `;
 
 export const GestureTransactionItem: React.FC<GestureTransactionItemProps> = ({
@@ -319,22 +329,22 @@ export const GestureTransactionItem: React.FC<GestureTransactionItemProps> = ({
     onTap?.(transaction.id);
   }, [onTap, transaction.id]);
 
-  useTransactionGestures(
-    handleSwipeToDelete,
-    handleSwipeToCategory,
-    handleTap,
-    { element: itemRef.current }
-  );
+  useTransactionGestures(handleSwipeToDelete, handleSwipeToCategory, handleTap, {
+    element: itemRef.current,
+  });
 
   // Pan gesture for visual feedback
-  useMultiGesture({
-    pan: (event) => {
-      const deltaX = event.data?.deltaX || 0;
-      const maxOffset = 80;
-      const clampedOffset = Math.max(-maxOffset, Math.min(maxOffset, deltaX));
-      setSwipeOffset(clampedOffset);
+  useMultiGesture(
+    {
+      pan: event => {
+        const deltaX = event.data?.deltaX || 0;
+        const maxOffset = 80;
+        const clampedOffset = Math.max(-maxOffset, Math.min(maxOffset, deltaX));
+        setSwipeOffset(clampedOffset);
+      },
     },
-  }, { element: itemRef.current });
+    { element: itemRef.current }
+  );
 
   return (
     <TransactionContainer
@@ -346,23 +356,23 @@ export const GestureTransactionItem: React.FC<GestureTransactionItemProps> = ({
       data-transaction-id={transaction.id}
     >
       {swipeOffset > 40 && (
-        <ActionButton $type="category" onClick={() => handleSwipeToCategory()}>
+        <ActionButton $type='category' onClick={() => handleSwipeToCategory()}>
           분류
         </ActionButton>
       )}
-      
+
       {swipeOffset < -40 && (
-        <ActionButton $type="delete" onClick={() => handleSwipeToDelete()}>
+        <ActionButton $type='delete' onClick={() => handleSwipeToDelete()}>
           삭제
         </ActionButton>
       )}
-      
+
       <TransactionContent>
         <TransactionInfo>
           <TransactionDate>{transaction.date}</TransactionDate>
           <TransactionDescription>{transaction.description}</TransactionDescription>
         </TransactionInfo>
-        
+
         <TransactionAmount $type={transaction.type}>
           {transaction.type === 'debit' ? '-' : '+'}
           {new Intl.NumberFormat('ko-KR').format(Math.abs(transaction.amount))}원
@@ -397,9 +407,9 @@ const PINDot = styled.div<{ $filled: boolean; $animate: boolean }>`
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  background-color: ${props => props.$filled ? tokens.colors.primary : tokens.colors.gray300};
+  background-color: ${props => (props.$filled ? tokens.colors.primary : tokens.colors.gray300)};
   transition: all 0.2s ease;
-  transform: ${props => props.$animate ? 'scale(1.3)' : 'scale(1)'};
+  transform: ${props => (props.$animate ? 'scale(1.3)' : 'scale(1)')};
 `;
 
 const PINKeypad = styled.div`
@@ -414,23 +424,25 @@ const PINKey = styled.button<{ $special?: boolean; $pressed: boolean }>`
   height: 80px;
   border: 2px solid ${tokens.colors.gray300};
   border-radius: 40px;
-  background-color: ${props => props.$pressed ? tokens.colors.gray200 : 'white'};
+  background-color: ${props => (props.$pressed ? tokens.colors.gray200 : 'white')};
   font-size: 24px;
   font-weight: 600;
   cursor: pointer;
   user-select: none;
   transition: all 0.15s ease;
-  
-  ${props => props.$special && css`
-    font-size: 20px;
-    background-color: ${props.$pressed ? tokens.colors.gray300 : tokens.colors.gray100};
-  `}
-  
+
+  ${props =>
+    props.$special &&
+    css`
+      font-size: 20px;
+      background-color: ${props.$pressed ? tokens.colors.gray300 : tokens.colors.gray100};
+    `}
+
   &:focus {
     outline: 3px solid ${tokens.colors.primary};
     outline-offset: 2px;
   }
-  
+
   &:active {
     transform: scale(0.95);
   }
@@ -447,20 +459,23 @@ export const GesturePINInput: React.FC<GesturePINInputProps> = ({
   const [animatingIndex, setAnimatingIndex] = useState<number | null>(null);
   const keypadRef = useRef<HTMLDivElement>(null);
 
-  const handleNumberInput = useCallback((number: string) => {
-    if (pin.length < length) {
-      const newPin = pin + number;
-      setPin(newPin);
-      
-      // Animate the newly filled dot
-      setAnimatingIndex(newPin.length - 1);
-      setTimeout(() => setAnimatingIndex(null), 200);
-      
-      if (newPin.length === length) {
-        setTimeout(() => onComplete(newPin), 100);
+  const handleNumberInput = useCallback(
+    (number: string) => {
+      if (pin.length < length) {
+        const newPin = pin + number;
+        setPin(newPin);
+
+        // Animate the newly filled dot
+        setAnimatingIndex(newPin.length - 1);
+        setTimeout(() => setAnimatingIndex(null), 200);
+
+        if (newPin.length === length) {
+          setTimeout(() => onComplete(newPin), 100);
+        }
       }
-    }
-  }, [pin, length, onComplete]);
+    },
+    [pin, length, onComplete]
+  );
 
   const handleDelete = useCallback(() => {
     if (pin.length > 0) {
@@ -483,30 +498,21 @@ export const GesturePINInput: React.FC<GesturePINInputProps> = ({
     { element: keypadRef.current }
   );
 
-  const keys = [
-    '1', '2', '3',
-    '4', '5', '6',
-    '7', '8', '9',
-    'clear', '0', 'delete'
-  ];
+  const keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'clear', '0', 'delete'];
 
   return (
     <PINContainer className={className}>
       <PINDisplay>
         {Array.from({ length }).map((_, index) => (
-          <PINDot
-            key={index}
-            $filled={index < pin.length}
-            $animate={animatingIndex === index}
-          />
+          <PINDot key={index} $filled={index < pin.length} $animate={animatingIndex === index} />
         ))}
       </PINDisplay>
-      
+
       <PINKeypad ref={keypadRef}>
-        {keys.map((key) => {
+        {keys.map(key => {
           const isSpecial = key === 'clear' || key === 'delete';
           const displayKey = key === 'clear' ? '전체삭제' : key === 'delete' ? '⌫' : key;
-          
+
           return (
             <PINKey
               key={key}
@@ -547,7 +553,7 @@ interface PullToRefreshProps {
 const RefreshContainer = styled.div<{ $pullDistance: number; $isRefreshing: boolean }>`
   position: relative;
   transform: translateY(${props => props.$pullDistance}px);
-  transition: ${props => props.$isRefreshing ? 'transform 0.3s ease' : 'none'};
+  transition: ${props => (props.$isRefreshing ? 'transform 0.3s ease' : 'none')};
 `;
 
 const RefreshIndicator = styled.div<{ $visible: boolean; $isRefreshing: boolean }>`
@@ -560,9 +566,9 @@ const RefreshIndicator = styled.div<{ $visible: boolean; $isRefreshing: boolean 
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: ${props => props.$visible ? 1 : 0};
+  opacity: ${props => (props.$visible ? 1 : 0)};
   transition: opacity 0.2s ease;
-  
+
   &::after {
     content: '';
     width: 24px;
@@ -570,11 +576,13 @@ const RefreshIndicator = styled.div<{ $visible: boolean; $isRefreshing: boolean 
     border: 2px solid ${tokens.colors.gray300};
     border-top-color: ${tokens.colors.primary};
     border-radius: 50%;
-    animation: ${props => props.$isRefreshing ? 'spin 1s linear infinite' : 'none'};
+    animation: ${props => (props.$isRefreshing ? 'spin 1s linear infinite' : 'none')};
   }
-  
+
   @keyframes spin {
-    to { transform: rotate(360deg); }
+    to {
+      transform: rotate(360deg);
+    }
   }
 `;
 
@@ -588,36 +596,36 @@ export const PullToRefresh: React.FC<PullToRefreshProps> = ({
   const [isRefreshing, setIsRefreshing] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  useMultiGesture({
-    'pull-to-refresh': async () => {
-      if (pullDistance >= threshold && !isRefreshing) {
-        setIsRefreshing(true);
-        try {
-          await onRefresh();
-        } finally {
-          setIsRefreshing(false);
-          setPullDistance(0);
+  useMultiGesture(
+    {
+      'pull-to-refresh': async () => {
+        if (pullDistance >= threshold && !isRefreshing) {
+          setIsRefreshing(true);
+          try {
+            await onRefresh();
+          } finally {
+            setIsRefreshing(false);
+            setPullDistance(0);
+          }
         }
-      }
+      },
+      pan: event => {
+        const deltaY = event.data?.deltaY || 0;
+        if (deltaY > 0 && window.scrollY === 0) {
+          const resistance = 1 - Math.min(deltaY / (threshold * 2), 0.8);
+          setPullDistance(deltaY * resistance);
+        }
+      },
     },
-    pan: (event) => {
-      const deltaY = event.data?.deltaY || 0;
-      if (deltaY > 0 && window.scrollY === 0) {
-        const resistance = 1 - Math.min(deltaY / (threshold * 2), 0.8);
-        setPullDistance(deltaY * resistance);
-      }
-    },
-  }, { element: containerRef.current });
+    { element: containerRef.current }
+  );
 
   return (
     <div className={className} data-pull-refresh>
-      <RefreshIndicator 
-        $visible={pullDistance > 20} 
-        $isRefreshing={isRefreshing}
-      />
-      <RefreshContainer 
+      <RefreshIndicator $visible={pullDistance > 20} $isRefreshing={isRefreshing} />
+      <RefreshContainer
         ref={containerRef}
-        $pullDistance={pullDistance} 
+        $pullDistance={pullDistance}
         $isRefreshing={isRefreshing}
       >
         {children}

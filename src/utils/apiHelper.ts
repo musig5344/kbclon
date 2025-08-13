@@ -11,7 +11,7 @@ const defaultRetryOptions: Required<RetryOptions> = {
   initialDelay: 1000,
   maxDelay: 10000,
   backoffFactor: 2,
-  retryCondition: (error) => {
+  retryCondition: error => {
     // 네트워크 에러나 5xx 서버 에러인 경우에만 재시도
     if (error.name === 'NetworkError' || error.message?.includes('fetch')) {
       return true;
@@ -20,12 +20,9 @@ const defaultRetryOptions: Required<RetryOptions> = {
       return true;
     }
     return false;
-  }
+  },
 };
-export async function withRetry<T>(
-  fn: () => Promise<T>,
-  options?: RetryOptions
-): Promise<T> {
+export async function withRetry<T>(fn: () => Promise<T>, options?: RetryOptions): Promise<T> {
   const opts = { ...defaultRetryOptions, ...options };
   let lastError: any;
   for (let attempt = 0; attempt <= opts.maxRetries; attempt++) {
@@ -68,7 +65,10 @@ export async function batchRequests<T>(
     executing.push(promise);
     if (executing.length >= maxConcurrent) {
       await Promise.race(executing);
-      executing.splice(executing.findIndex(p => p === promise), 1);
+      executing.splice(
+        executing.findIndex(p => p === promise),
+        1
+      );
     }
   }
   await Promise.all(executing);
@@ -95,7 +95,7 @@ export function throttle<T extends (...args: any[]) => any>(
     if (!inThrottle) {
       fn(...args);
       inThrottle = true;
-      setTimeout(() => inThrottle = false, limit);
+      setTimeout(() => (inThrottle = false), limit);
     }
   };
 }

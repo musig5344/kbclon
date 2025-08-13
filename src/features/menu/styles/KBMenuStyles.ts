@@ -320,13 +320,14 @@ export const CategoryItem = styled.button<{ $active: boolean }>`
   width: 100%;
   padding: ${tokens.spacing[4]} ${tokens.spacing[5]};
   border: none;
-  background: ${props => props.$active ? tokens.colors.background.primary : 'transparent'};
+  background: ${props => (props.$active ? tokens.colors.background.primary : 'transparent')};
   color: ${tokens.colors.text.primary};
   font-size: ${tokens.typography.fontSize.bodySmall};
-  font-weight: ${props => props.$active ? tokens.typography.fontWeight.semibold : tokens.typography.fontWeight.regular};
+  font-weight: ${props =>
+    props.$active ? tokens.typography.fontWeight.semibold : tokens.typography.fontWeight.regular};
   cursor: pointer;
   text-align: left;
-  border-right: ${props => props.$active ? `3px solid ${tokens.colors.text.link}` : 'none'};
+  border-right: ${props => (props.$active ? `3px solid ${tokens.colors.text.link}` : 'none')};
   transition: all ${duration.fast} ${easing.easeInOut};
   &:hover {
     background-color: ${tokens.colors.background.primary};
@@ -346,12 +347,14 @@ export const MenuDetailSection = styled.div`
 export const MenuSectionTitle = styled.h3<{ $highlighted?: boolean }>`
   font-size: ${tokens.typography.fontSize.titleSmall};
   font-weight: ${tokens.typography.fontWeight.semibold};
-  color: ${props => props.$highlighted ? tokens.colors.text.link : tokens.colors.text.primary};
+  color: ${props => (props.$highlighted ? tokens.colors.text.link : tokens.colors.text.primary)};
   margin: 0 0 ${tokens.spacing[3]} 0;
   padding: 0 ${tokens.spacing[5]};
   position: relative;
   line-height: ${tokens.typography.lineHeight.title};
-  ${props => props.$highlighted && `
+  ${props =>
+    props.$highlighted &&
+    `
     &::before {
       content: '';
       position: absolute;

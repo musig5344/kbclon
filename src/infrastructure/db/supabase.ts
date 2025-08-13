@@ -18,20 +18,20 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   auth: {
     autoRefreshToken: true,
     persistSession: true,
-    detectSessionInUrl: true
+    detectSessionInUrl: true,
   },
   realtime: {
     params: {
-      eventsPerSecond: 10
-    }
-  }
+      eventsPerSecond: 10,
+    },
+  },
 });
 // Database table names
 export const TABLES = {
   USERS: 'users',
   ACCOUNTS: 'accounts',
   TRANSACTIONS: 'transactions',
-  TRANSFER_HISTORY: 'transfer_history'
+  TRANSFER_HISTORY: 'transfer_history',
 } as const;
 // Helper function to check if Supabase is properly configured
 export const isSupabaseConfigured = (): boolean => {
@@ -108,7 +108,10 @@ class AccountService {
     if (error) throw error;
     return data;
   }
-  async getUserAccounts(userId: string, options?: { bypassCache?: boolean; _timestamp?: number }): Promise<DatabaseAccount[]> {
+  async getUserAccounts(
+    userId: string,
+    options?: { bypassCache?: boolean; _timestamp?: number }
+  ): Promise<DatabaseAccount[]> {
     // 캐시 무효화를 위한 쿼리 파라미터 추가
     let query = supabase
       .from(TABLES.ACCOUNTS)
@@ -135,7 +138,10 @@ class AccountService {
   }
 }
 class TransactionService {
-  async getAccountTransactions(accountId: string, limit: number = 50): Promise<DatabaseTransaction[]> {
+  async getAccountTransactions(
+    accountId: string,
+    limit: number = 50
+  ): Promise<DatabaseTransaction[]> {
     const { data, error } = await supabase
       .from(TABLES.TRANSACTIONS)
       .select('*')
@@ -145,12 +151,15 @@ class TransactionService {
     if (error) throw error;
     return data || [];
   }
-  async getRecentTransactions(accountId: string, limit: number = 5): Promise<DatabaseTransaction[]> {
+  async getRecentTransactions(
+    accountId: string,
+    limit: number = 5
+  ): Promise<DatabaseTransaction[]> {
     return this.getAccountTransactions(accountId, limit);
   }
   async getTransactionsByDateRange(
-    accountId: string, 
-    startDate: string, 
+    accountId: string,
+    startDate: string,
     endDate: string
   ): Promise<DatabaseTransaction[]> {
     const { data, error } = await supabase

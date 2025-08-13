@@ -26,37 +26,40 @@ export function useApiCall<T = any>(
   options: UseApiCallOptions = {}
 ): UseApiCallResult<T> {
   const { onSuccess, onError, initialLoading = false } = options;
-  
+
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(initialLoading);
   const [error, setError] = useState<string | null>(null);
 
-  const execute = useCallback(async (...args: any[]): Promise<T | null> => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      const result = await apiFunction(...args);
-      setData(result);
-      
-      if (onSuccess) {
-        onSuccess(result);
+  const execute = useCallback(
+    async (...args: any[]): Promise<T | null> => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const result = await apiFunction(...args);
+        setData(result);
+
+        if (onSuccess) {
+          onSuccess(result);
+        }
+
+        return result;
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : '오류가 발생했습니다.';
+        setError(errorMessage);
+
+        if (onError) {
+          onError(err);
+        }
+
+        return null;
+      } finally {
+        setLoading(false);
       }
-      
-      return result;
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : '오류가 발생했습니다.';
-      setError(errorMessage);
-      
-      if (onError) {
-        onError(err);
-      }
-      
-      return null;
-    } finally {
-      setLoading(false);
-    }
-  }, [apiFunction, onSuccess, onError]);
+    },
+    [apiFunction, onSuccess, onError]
+  );
 
   const reset = useCallback(() => {
     setData(null);
@@ -69,7 +72,7 @@ export function useApiCall<T = any>(
     loading,
     error,
     execute,
-    reset
+    reset,
   };
 }
 
@@ -87,7 +90,7 @@ export function useParallelApiCalls<T extends readonly unknown[]>(
   reset: () => void;
 } {
   const { onSuccess, onError, initialLoading = false } = options;
-  
+
   const [data, setData] = useState<{ [K in keyof T]: T[K] | null }>(
     {} as { [K in keyof T]: T[K] | null }
   );
@@ -98,25 +101,26 @@ export function useParallelApiCalls<T extends readonly unknown[]>(
     try {
       setLoading(true);
       setError(null);
-      
-      const results = await Promise.all(
-        apiFunctions.map(fn => fn())
+
+      const results = await Promise.all(apiFunctions.map(fn => fn()));
+
+      const dataObj = results.reduce(
+        (acc, result, index) => {
+          acc[index as keyof T] = result;
+          return acc;
+        },
+        {} as { [K in keyof T]: T[K] }
       );
-      
-      const dataObj = results.reduce((acc, result, index) => {
-        acc[index as keyof T] = result;
-        return acc;
-      }, {} as { [K in keyof T]: T[K] });
-      
+
       setData(dataObj);
-      
+
       if (onSuccess) {
         onSuccess(dataObj);
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '오류가 발생했습니다.';
       setError(errorMessage);
-      
+
       if (onError) {
         onError(err);
       }
@@ -136,7 +140,7 @@ export function useParallelApiCalls<T extends readonly unknown[]>(
     loading,
     error,
     execute,
-    reset
+    reset,
   };
 }
 
@@ -149,23 +153,26 @@ export function useApiCallWithRetry<T = any>(
   retryDelay: number = 1000,
   options: UseApiCallOptions = {}
 ): UseApiCallResult<T> {
-  const wrappedApiFunction = useCallback(async (...args: any[]): Promise<T> => {
-    let lastError: any;
-    
-    for (let i = 0; i <= maxRetries; i++) {
-      try {
-        return await apiFunction(...args);
-      } catch (error) {
-        lastError = error;
-        
-        if (i < maxRetries) {
-          await new Promise(resolve => setTimeout(resolve, retryDelay * (i + 1)));
+  const wrappedApiFunction = useCallback(
+    async (...args: any[]): Promise<T> => {
+      let lastError: any;
+
+      for (let i = 0; i <= maxRetries; i++) {
+        try {
+          return await apiFunction(...args);
+        } catch (error) {
+          lastError = error;
+
+          if (i < maxRetries) {
+            await new Promise(resolve => setTimeout(resolve, retryDelay * (i + 1)));
+          }
         }
       }
-    }
-    
-    throw lastError;
-  }, [apiFunction, maxRetries, retryDelay]);
+
+      throw lastError;
+    },
+    [apiFunction, maxRetries, retryDelay]
+  );
 
   return useApiCall(wrappedApiFunction, options);
 }

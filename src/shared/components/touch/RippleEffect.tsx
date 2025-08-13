@@ -31,7 +31,7 @@ const RippleContainer = styled.div<{ $color?: string; $duration?: number }>`
   overflow: hidden;
   border-radius: inherit;
   pointer-events: none;
-  
+
   /* Ensure ripple doesn't affect layout */
   z-index: 0;
 `;
@@ -61,7 +61,7 @@ const RippleWrapper = styled.div`
   position: relative;
   overflow: hidden;
   border-radius: inherit;
-  
+
   /* Ensure content is above ripple */
   & > *:not(${RippleContainer}) {
     position: relative;
@@ -103,78 +103,90 @@ export const RippleEffect: React.FC<RippleEffectProps> = ({
   const [ripples, setRipples] = useState<RippleInstance[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
   const nextRippleId = useRef(0);
-  
+
   // Calculate ripple color with opacity
-  const rippleColor = color === 'currentColor' 
-    ? `rgba(0, 0, 0, ${opacity})`
-    : color.startsWith('rgba')
-    ? color
-    : `${color}${Math.round(opacity * 255).toString(16).padStart(2, '0')}`;
-  
+  const rippleColor =
+    color === 'currentColor'
+      ? `rgba(0, 0, 0, ${opacity})`
+      : color.startsWith('rgba')
+        ? color
+        : `${color}${Math.round(opacity * 255)
+            .toString(16)
+            .padStart(2, '0')}`;
+
   // Create ripple effect
-  const createRipple = useCallback((event: React.MouseEvent | React.TouchEvent) => {
-    if (disabled || !containerRef.current) return;
-    
-    const container = containerRef.current;
-    const rect = container.getBoundingClientRect();
-    
-    // Get touch/click coordinates
-    let clientX: number;
-    let clientY: number;
-    
-    if ('touches' in event && event.touches.length > 0) {
-      clientX = event.touches[0].clientX;
-      clientY = event.touches[0].clientY;
-    } else if ('clientX' in event) {
-      clientX = event.clientX;
-      clientY = event.clientY;
-    } else {
-      return;
-    }
-    
-    // Calculate ripple position
-    const x = center ? rect.width / 2 : clientX - rect.left;
-    const y = center ? rect.height / 2 : clientY - rect.top;
-    
-    // Calculate ripple size
-    let rippleSize: number;
-    if (radius) {
-      rippleSize = radius * 2;
-    } else {
-      // Calculate the maximum distance from click point to container corners
-      const sizeX = Math.max(x, rect.width - x);
-      const sizeY = Math.max(y, rect.height - y);
-      rippleSize = Math.sqrt(sizeX * sizeX + sizeY * sizeY) * 2;
-    }
-    
-    // Create new ripple
-    const ripple: RippleInstance = {
-      id: nextRippleId.current++,
-      x,
-      y,
-      size: rippleSize,
-    };
-    
-    setRipples(prev => [...prev, ripple]);
-    
-    // Remove ripple after animation
-    setTimeout(() => {
-      setRipples(prev => prev.filter(r => r.id !== ripple.id));
-    }, duration);
-  }, [disabled, center, radius, duration]);
-  
+  const createRipple = useCallback(
+    (event: React.MouseEvent | React.TouchEvent) => {
+      if (disabled || !containerRef.current) return;
+
+      const container = containerRef.current;
+      const rect = container.getBoundingClientRect();
+
+      // Get touch/click coordinates
+      let clientX: number;
+      let clientY: number;
+
+      if ('touches' in event && event.touches.length > 0) {
+        clientX = event.touches[0].clientX;
+        clientY = event.touches[0].clientY;
+      } else if ('clientX' in event) {
+        clientX = event.clientX;
+        clientY = event.clientY;
+      } else {
+        return;
+      }
+
+      // Calculate ripple position
+      const x = center ? rect.width / 2 : clientX - rect.left;
+      const y = center ? rect.height / 2 : clientY - rect.top;
+
+      // Calculate ripple size
+      let rippleSize: number;
+      if (radius) {
+        rippleSize = radius * 2;
+      } else {
+        // Calculate the maximum distance from click point to container corners
+        const sizeX = Math.max(x, rect.width - x);
+        const sizeY = Math.max(y, rect.height - y);
+        rippleSize = Math.sqrt(sizeX * sizeX + sizeY * sizeY) * 2;
+      }
+
+      // Create new ripple
+      const ripple: RippleInstance = {
+        id: nextRippleId.current++,
+        x,
+        y,
+        size: rippleSize,
+      };
+
+      setRipples(prev => [...prev, ripple]);
+
+      // Remove ripple after animation
+      setTimeout(() => {
+        setRipples(prev => prev.filter(r => r.id !== ripple.id));
+      }, duration);
+    },
+    [disabled, center, radius, duration]
+  );
+
   // Handle touch/mouse events
-  const handleTouchStart = useCallback((event: React.TouchEvent) => {
-    createRipple(event);
-  }, [createRipple]);
-  
-  const handleMouseDown = useCallback((event: React.MouseEvent) => {
-    // Only handle primary mouse button
-    if (event.button === 0) {
+  const handleTouchStart = useCallback(
+    (event: React.TouchEvent) => {
       createRipple(event);
-    }
-  }, [createRipple]);
-  
+    },
+    [createRipple]
+  );
+
+  const handleMouseDown = useCallback(
+    (event: React.MouseEvent) => {
+      // Only handle primary mouse button
+      if (event.button === 0) {
+        createRipple(event);
+      }
+    },
+    [createRipple]
+  );
+
   return (
     <RippleWrapper
       ref={containerRef}
@@ -213,16 +225,22 @@ const StyledRippleButton = styled.button<{
   justify-content: center;
   padding: ${props => {
     switch (props.$size) {
-      case 'small': return '8px 16px';
-      case 'large': return '16px 32px';
-      default: return '12px 24px';
+      case 'small':
+        return '8px 16px';
+      case 'large':
+        return '16px 32px';
+      default:
+        return '12px 24px';
     }
   }};
   min-height: ${props => {
     switch (props.$size) {
-      case 'small': return '32px';
-      case 'large': return '48px';
-      default: return '40px';
+      case 'small':
+        return '32px';
+      case 'large':
+        return '48px';
+      default:
+        return '40px';
     }
   }};
   min-width: 64px;
@@ -231,9 +249,12 @@ const StyledRippleButton = styled.button<{
   font-family: ${tokens.typography.fontFamily.base};
   font-size: ${props => {
     switch (props.$size) {
-      case 'small': return '14px';
-      case 'large': return '16px';
-      default: return '15px';
+      case 'small':
+        return '14px';
+      case 'large':
+        return '16px';
+      default:
+        return '15px';
     }
   }};
   font-weight: 500;
@@ -242,11 +263,13 @@ const StyledRippleButton = styled.button<{
   transition: all 200ms ease;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
-  
-  ${props => props.$fullWidth && css`
-    width: 100%;
-  `}
-  
+
+  ${props =>
+    props.$fullWidth &&
+    css`
+      width: 100%;
+    `}
+
   ${props => {
     switch (props.$variant) {
       case 'primary':
@@ -254,39 +277,39 @@ const StyledRippleButton = styled.button<{
           background-color: ${tokens.colors.brand.primary};
           color: white;
           box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-          
+
           &:hover:not(:disabled) {
             background-color: ${tokens.colors.brand.dark};
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
           }
-          
+
           &:active:not(:disabled) {
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
           }
         `;
-        
+
       case 'secondary':
         return css`
           background-color: ${tokens.colors.background.secondary};
           color: ${tokens.colors.text.primary};
           border: 1px solid ${tokens.colors.border.primary};
-          
+
           &:hover:not(:disabled) {
             background-color: ${tokens.colors.background.tertiary};
             border-color: ${tokens.colors.border.secondary};
           }
         `;
-        
+
       case 'text':
         return css`
           background-color: transparent;
           color: ${tokens.colors.brand.primary};
-          
+
           &:hover:not(:disabled) {
             background-color: rgba(40, 126, 255, 0.08);
           }
         `;
-        
+
       default:
         return '';
     }
@@ -296,7 +319,7 @@ const StyledRippleButton = styled.button<{
     opacity: 0.6;
     cursor: not-allowed;
   }
-  
+
   &:focus-visible {
     outline: 2px solid ${tokens.colors.brand.primary};
     outline-offset: 2px;
@@ -326,19 +349,14 @@ export const RippleButton: React.FC<RippleButtonProps> = ({
   ...props
 }) => {
   const defaultRippleColor = variant === 'primary' ? 'rgba(255, 255, 255, 0.3)' : 'currentColor';
-  
+
   return (
     <RippleEffect
       color={rippleColor || defaultRippleColor}
       duration={rippleDuration}
       disabled={rippleDisabled || props.disabled}
     >
-      <StyledRippleButton
-        $variant={variant}
-        $size={size}
-        $fullWidth={fullWidth}
-        {...props}
-      >
+      <StyledRippleButton $variant={variant} $size={size} $fullWidth={fullWidth} {...props}>
         {children}
       </StyledRippleButton>
     </RippleEffect>
@@ -362,21 +380,21 @@ const StyledIconButton = styled.button<{ $size?: number }>`
   transition: background-color 200ms ease;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
-  
+
   &:hover:not(:disabled) {
     background-color: rgba(0, 0, 0, 0.04);
   }
-  
+
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
   }
-  
+
   &:focus-visible {
     outline: 2px solid ${tokens.colors.brand.primary};
     outline-offset: 2px;
   }
-  
+
   svg {
     width: 24px;
     height: 24px;

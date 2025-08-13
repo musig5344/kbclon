@@ -1,12 +1,12 @@
 /**
  * 계좌 관련 도메인 타입 정의
  */
-import { 
-  AccountId, 
-  UserId, 
-  AccountNumber, 
+import {
+  AccountId,
+  UserId,
+  AccountNumber,
   ISODateString,
-  Money 
+  Money,
 } from '../../../shared/types/common.types';
 // 계좌 엔티티
 export interface Account {
@@ -29,12 +29,12 @@ export interface Account {
 }
 // 계좌 타입
 export enum AccountType {
-  CHECKING = 'CHECKING',           // 입출금
-  SAVINGS = 'SAVINGS',            // 저축
+  CHECKING = 'CHECKING', // 입출금
+  SAVINGS = 'SAVINGS', // 저축
   FIXED_DEPOSIT = 'FIXED_DEPOSIT', // 정기예금
-  INSTALLMENT = 'INSTALLMENT',     // 적금
-  LOAN = 'LOAN',                  // 대출
-  INVESTMENT = 'INVESTMENT',       // 투자
+  INSTALLMENT = 'INSTALLMENT', // 적금
+  LOAN = 'LOAN', // 대출
+  INVESTMENT = 'INVESTMENT', // 투자
 }
 // 계좌 상태
 export enum AccountStatus {

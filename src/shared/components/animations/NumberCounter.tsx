@@ -46,8 +46,8 @@ const DigitWrapper = styled.span`
 
 const Digit = styled.span<{ $isIncreasing: boolean; $delay: number }>`
   display: inline-block;
-  animation: ${props => props.$isIncreasing ? rollUp : rollDown} 
-    0.6s cubic-bezier(0.4, 0, 0.2, 1) ${props => props.$delay}ms both;
+  animation: ${props => (props.$isIncreasing ? rollUp : rollDown)} 0.6s cubic-bezier(0.4, 0, 0.2, 1)
+    ${props => props.$delay}ms both;
 `;
 
 const StaticText = styled.span`
@@ -69,34 +69,32 @@ export const NumberCounter: React.FC<NumberCounterProps> = ({
   format = true,
   prefix = '',
   suffix = '',
-  className
+  className,
 }) => {
   const [displayValue, setDisplayValue] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const previousValueRef = useRef(0);
   const animationRef = useRef<number>();
-  
+
   useEffect(() => {
     const startValue = previousValueRef.current;
     const endValue = value;
     const isIncreasing = endValue > startValue;
     const startTime = Date.now();
-    
+
     setIsAnimating(true);
-    
+
     const animate = () => {
       const currentTime = Date.now();
       const elapsed = currentTime - startTime;
       const progress = Math.min(elapsed / duration, 1);
-      
+
       // 이징 함수 적용 (ease-out-expo)
-      const easeOutExpo = progress === 1 
-        ? 1 
-        : 1 - Math.pow(2, -10 * progress);
-      
+      const easeOutExpo = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+
       const currentValue = startValue + (endValue - startValue) * easeOutExpo;
       setDisplayValue(currentValue);
-      
+
       if (progress < 1) {
         animationRef.current = requestAnimationFrame(animate);
       } else {
@@ -104,26 +102,26 @@ export const NumberCounter: React.FC<NumberCounterProps> = ({
         previousValueRef.current = endValue;
       }
     };
-    
+
     animate();
-    
+
     return () => {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
       }
     };
   }, [value, duration]);
-  
+
   // 숫자 포맷팅 (천단위 콤마)
   const formatNumber = (num: number): string => {
     if (!format) return Math.floor(num).toString();
     return Math.floor(num).toLocaleString('ko-KR');
   };
-  
+
   const formattedValue = formatNumber(displayValue);
   const digits = formattedValue.split('');
   const isIncreasing = value > previousValueRef.current;
-  
+
   return (
     <Container className={className}>
       {prefix && <StaticText>{prefix}</StaticText>}
@@ -131,10 +129,10 @@ export const NumberCounter: React.FC<NumberCounterProps> = ({
         if (digit === ',') {
           return <StaticText key={`comma-${index}`}>,</StaticText>;
         }
-        
+
         return (
           <DigitWrapper key={`${digit}-${index}`}>
-            <Digit 
+            <Digit
               $isIncreasing={isIncreasing}
               $delay={index * 30} // 각 자리수마다 약간의 딜레이
             >
@@ -153,14 +151,22 @@ export const SimpleNumberAnimation = styled.span<{ $isChanging: boolean }>`
   ${kbFontOptimization}
   display: inline-block;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  
-  ${props => props.$isChanging && `
+
+  ${props =>
+    props.$isChanging &&
+    `
     animation: numberPulse 0.6s ease-out;
   `}
-  
+
   @keyframes numberPulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.05);
+    }
+    100% {
+      transform: scale(1);
+    }
   }
 `;

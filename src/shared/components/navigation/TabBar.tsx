@@ -34,7 +34,7 @@ interface TabBarProps {
 
 const TabContainer = styled.div<{ $fullWidth?: boolean }>`
   position: relative;
-  width: ${props => props.$fullWidth ? '100%' : 'auto'};
+  width: ${props => (props.$fullWidth ? '100%' : 'auto')};
   background: white;
   border-bottom: 1px solid #f0f0f0;
 `;
@@ -47,12 +47,14 @@ const TabList = styled.div<{ $fullWidth?: boolean }>`
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   -ms-overflow-style: none;
-  
+
   &::-webkit-scrollbar {
     display: none;
   }
-  
-  ${props => props.$fullWidth && `
+
+  ${props =>
+    props.$fullWidth &&
+    `
     justify-content: space-between;
   `}
 `;
@@ -66,20 +68,20 @@ const Tab = styled.button<{ $active: boolean; $fullWidth?: boolean }>`
   background: none;
   border: none;
   font-size: 15px;
-  font-weight: ${props => props.$active ? 600 : 500};
-  color: ${props => props.$active ? '#1e1e1e' : '#757575'};
+  font-weight: ${props => (props.$active ? 600 : 500)};
+  color: ${props => (props.$active ? '#1e1e1e' : '#757575')};
   white-space: nowrap;
   cursor: pointer;
   transition: all ${kbTimings.fast} ${kbTimings.easeOut};
   user-select: none;
   -webkit-tap-highlight-color: transparent;
-  flex: ${props => props.$fullWidth ? '1' : 'initial'};
+  flex: ${props => (props.$fullWidth ? '1' : 'initial')};
   justify-content: center;
-  
+
   &:hover {
-    color: ${props => props.$active ? '#1e1e1e' : '#424242'};
+    color: ${props => (props.$active ? '#1e1e1e' : '#424242')};
   }
-  
+
   &:active {
     transform: scale(0.98);
   }
@@ -91,7 +93,7 @@ const TabIcon = styled.span<{ $active: boolean }>`
   justify-content: center;
   width: 20px;
   height: 20px;
-  opacity: ${props => props.$active ? 1 : 0.7};
+  opacity: ${props => (props.$active ? 1 : 0.7)};
   transition: opacity ${kbTimings.fast} ${kbTimings.easeOut};
 `;
 
@@ -135,9 +137,9 @@ const SegmentedTab = styled(Tab)`
   padding: 10px 20px;
   border-radius: 8px;
   font-size: 14px;
-  
+
   &:hover {
-    background: ${props => props.$active ? 'transparent' : 'rgba(0, 0, 0, 0.02)'};
+    background: ${props => (props.$active ? 'transparent' : 'rgba(0, 0, 0, 0.02)')};
   }
 `;
 
@@ -162,7 +164,7 @@ export const TabBar: React.FC<TabBarProps> = ({
   fullWidth = false,
   className,
   touchFeedback,
-  disableTouchFeedback = false
+  disableTouchFeedback = false,
 }) => {
   const [indicatorStyle, setIndicatorStyle] = useState({ width: 0, left: 0 });
   const tabRefs = useRef<{ [key: string]: HTMLButtonElement | null }>({});
@@ -175,7 +177,7 @@ export const TabBar: React.FC<TabBarProps> = ({
     haptic: true,
     androidOptimized: true,
     color: tokens.colors.brand.primary + '20', // 20% alpha
-    duration: 200
+    duration: 200,
   };
 
   const finalTouchFeedback = { ...defaultTouchFeedback, ...touchFeedback };
@@ -188,10 +190,10 @@ export const TabBar: React.FC<TabBarProps> = ({
     if (activeTabRef && containerRef.current) {
       const containerRect = containerRef.current.getBoundingClientRect();
       const tabRect = activeTabRef.getBoundingClientRect();
-      
+
       setIndicatorStyle({
         width: tabRect.width,
-        left: tabRect.left - containerRect.left
+        left: tabRect.left - containerRect.left,
       });
     }
   }, [activeTab, tabs]);
@@ -209,28 +211,23 @@ export const TabBar: React.FC<TabBarProps> = ({
   if (variant === 'segmented') {
     return (
       <SegmentedContainer ref={containerRef} className={className}>
-        <SegmentedIndicator 
-          $width={indicatorStyle.width} 
-          $left={indicatorStyle.left} 
-        />
-        {tabs.map((tab) => (
+        <SegmentedIndicator $width={indicatorStyle.width} $left={indicatorStyle.left} />
+        {tabs.map(tab => (
           <SegmentedTab
             key={tab.id}
-            ref={(el) => { tabRefs.current[tab.id] = el; }}
+            ref={el => {
+              tabRefs.current[tab.id] = el;
+            }}
             $active={activeTab === tab.id}
             onClick={() => handleTabClick(tab.id)}
             // Enhanced touch feedback integration
             {...(disableTouchFeedback ? {} : tabTouchFeedback)}
-            style={{ 
-              zIndex: 1, 
-              ...(!disableTouchFeedback ? tabTouchFeedback.style : {})
+            style={{
+              zIndex: 1,
+              ...(!disableTouchFeedback ? tabTouchFeedback.style : {}),
             }}
           >
-            {tab.icon && (
-              <TabIcon $active={activeTab === tab.id}>
-                {tab.icon}
-              </TabIcon>
-            )}
+            {tab.icon && <TabIcon $active={activeTab === tab.id}>{tab.icon}</TabIcon>}
             {tab.label}
             {tab.badge !== undefined && tab.badge > 0 && (
               <TabBadge>{tab.badge > 99 ? '99+' : tab.badge}</TabBadge>
@@ -244,10 +241,12 @@ export const TabBar: React.FC<TabBarProps> = ({
   return (
     <TabContainer $fullWidth={fullWidth} className={className}>
       <TabList ref={containerRef} $fullWidth={fullWidth}>
-        {tabs.map((tab) => (
+        {tabs.map(tab => (
           <Tab
             key={tab.id}
-            ref={(el) => { tabRefs.current[tab.id] = el; }}
+            ref={el => {
+              tabRefs.current[tab.id] = el;
+            }}
             $active={activeTab === tab.id}
             $fullWidth={fullWidth}
             onClick={() => handleTabClick(tab.id)}
@@ -255,21 +254,14 @@ export const TabBar: React.FC<TabBarProps> = ({
             {...(disableTouchFeedback ? {} : tabTouchFeedback)}
             style={!disableTouchFeedback ? tabTouchFeedback.style : {}}
           >
-            {tab.icon && (
-              <TabIcon $active={activeTab === tab.id}>
-                {tab.icon}
-              </TabIcon>
-            )}
+            {tab.icon && <TabIcon $active={activeTab === tab.id}>{tab.icon}</TabIcon>}
             {tab.label}
             {tab.badge !== undefined && tab.badge > 0 && (
               <TabBadge>{tab.badge > 99 ? '99+' : tab.badge}</TabBadge>
             )}
           </Tab>
         ))}
-        <Underline 
-          $width={indicatorStyle.width} 
-          $left={indicatorStyle.left} 
-        />
+        <Underline $width={indicatorStyle.width} $left={indicatorStyle.left} />
       </TabList>
     </TabContainer>
   );
@@ -310,7 +302,7 @@ const BottomTab = styled.button<{ $active: boolean }>`
   user-select: none;
   -webkit-tap-highlight-color: transparent;
   position: relative;
-  
+
   &:active {
     transform: scale(0.96);
   }
@@ -318,14 +310,14 @@ const BottomTab = styled.button<{ $active: boolean }>`
 
 const BottomTabIcon = styled.span<{ $active: boolean }>`
   font-size: 24px;
-  color: ${props => props.$active ? tokens.colors.brand.primary : '#757575'};
+  color: ${props => (props.$active ? tokens.colors.brand.primary : '#757575')};
   transition: color ${kbTimings.fast} ${kbTimings.easeOut};
 `;
 
 const BottomTabLabel = styled.span<{ $active: boolean }>`
   font-size: 11px;
-  font-weight: ${props => props.$active ? 600 : 500};
-  color: ${props => props.$active ? tokens.colors.brand.primary : '#757575'};
+  font-weight: ${props => (props.$active ? 600 : 500)};
+  color: ${props => (props.$active ? tokens.colors.brand.primary : '#757575')};
   transition: all ${kbTimings.fast} ${kbTimings.easeOut};
 `;
 
@@ -362,7 +354,7 @@ export const BottomTabBar: React.FC<BottomTabBarProps> = ({
   onTabChange,
   className,
   touchFeedback,
-  disableTouchFeedback = false
+  disableTouchFeedback = false,
 }) => {
   // Enhanced touch feedback configuration for bottom tabs
   const defaultBottomTabFeedback: TouchFeedbackOptions = {
@@ -371,11 +363,13 @@ export const BottomTabBar: React.FC<BottomTabBarProps> = ({
     haptic: true,
     androidOptimized: true,
     color: tokens.colors.brand.primary + '15', // 15% alpha for bottom tabs
-    duration: 250
+    duration: 250,
   };
 
   const finalTouchFeedback = { ...defaultBottomTabFeedback, ...touchFeedback };
-  const bottomTabTouchFeedback = useTouchFeedback(disableTouchFeedback ? undefined : finalTouchFeedback);
+  const bottomTabTouchFeedback = useTouchFeedback(
+    disableTouchFeedback ? undefined : finalTouchFeedback
+  );
 
   const handleBottomTabClick = (tabId: string) => {
     // Enhanced haptic feedback for bottom tab switching
@@ -392,7 +386,7 @@ export const BottomTabBar: React.FC<BottomTabBarProps> = ({
   return (
     <BottomTabContainer className={className}>
       <BottomTabList>
-        {tabs.map((tab) => (
+        {tabs.map(tab => (
           <BottomTab
             key={tab.id}
             $active={activeTab === tab.id}
@@ -401,16 +395,10 @@ export const BottomTabBar: React.FC<BottomTabBarProps> = ({
             {...(disableTouchFeedback ? {} : bottomTabTouchFeedback)}
             style={!disableTouchFeedback ? bottomTabTouchFeedback.style : {}}
           >
-            <BottomTabIcon $active={activeTab === tab.id}>
-              {tab.icon}
-            </BottomTabIcon>
-            <BottomTabLabel $active={activeTab === tab.id}>
-              {tab.label}
-            </BottomTabLabel>
+            <BottomTabIcon $active={activeTab === tab.id}>{tab.icon}</BottomTabIcon>
+            <BottomTabLabel $active={activeTab === tab.id}>{tab.label}</BottomTabLabel>
             {tab.badge !== undefined && tab.badge > 0 && (
-              <BottomTabBadge>
-                {tab.badge > 99 ? '99+' : tab.badge}
-              </BottomTabBadge>
+              <BottomTabBadge>{tab.badge > 99 ? '99+' : tab.badge}</BottomTabBadge>
             )}
           </BottomTab>
         ))}

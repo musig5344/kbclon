@@ -16,7 +16,7 @@ const HeaderWrapper = styled.header<{ $hasScrolled: boolean }>`
   background: white;
   z-index: 100;
   transition: box-shadow ${kbTimings.fast} ${kbTimings.easeOut};
-  box-shadow: ${props => props.$hasScrolled ? kbShadows.headerScroll : 'none'};
+  box-shadow: ${props => (props.$hasScrolled ? kbShadows.headerScroll : 'none')};
 `;
 
 interface ScrollAwareHeaderProps {
@@ -28,34 +28,30 @@ interface ScrollAwareHeaderProps {
 export const ScrollAwareHeader: React.FC<ScrollAwareHeaderProps> = ({
   children,
   scrollThreshold = 10,
-  className
+  className,
 }) => {
   const [hasScrolled, setHasScrolled] = useState(false);
   const scrollContainerRef = useRef<HTMLElement | null>(null);
-  
+
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop = window.scrollY || document.documentElement.scrollTop;
       setHasScrolled(scrollTop > scrollThreshold);
     };
-    
+
     // 스크롤 이벤트에 passive 옵션 추가 (성능 최적화)
     window.addEventListener('scroll', handleScroll, { passive: true });
-    
+
     // 초기 스크롤 상태 확인
     handleScroll();
-    
+
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, [scrollThreshold]);
-  
+
   return (
-    <HeaderWrapper 
-      ref={scrollContainerRef}
-      $hasScrolled={hasScrolled}
-      className={className}
-    >
+    <HeaderWrapper ref={scrollContainerRef} $hasScrolled={hasScrolled} className={className}>
       {children}
     </HeaderWrapper>
   );
@@ -88,16 +84,16 @@ export const HeaderButton = styled.button`
   border-radius: 50%;
   cursor: pointer;
   transition: background-color ${kbTimings.fast} ${kbTimings.easeOut};
-  
+
   &:hover {
     background-color: rgba(0, 0, 0, 0.04);
   }
-  
+
   &:active {
     background-color: rgba(0, 0, 0, 0.08);
     transform: scale(0.96);
   }
-  
+
   img {
     width: 24px;
     height: 24px;

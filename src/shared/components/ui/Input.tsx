@@ -22,11 +22,11 @@ const StyledInput = styled.input<{ hasError?: boolean }>`
   font-size: ${({ theme }) => theme.typography.fontSize.subhead};
   padding: ${({ theme }) => theme.spacing.sm};
   border-radius: ${({ theme }) => theme.borderRadius.sm};
-  border: 1px solid ${({ theme, hasError }) => 
-    hasError ? theme.colors.error : theme.colors.border};
+  border: 1px solid
+    ${({ theme, hasError }) => (hasError ? theme.colors.error : theme.colors.border)};
   outline: none;
   &:focus {
-    border-color: ${({ theme, hasError }) => 
+    border-color: ${({ theme, hasError }) =>
       hasError ? theme.colors.error : theme.tokens.colors.brand.primary};
   }
   &:disabled {
@@ -39,12 +39,7 @@ const ErrorMessage = styled.span`
   color: ${({ theme }) => theme.colors.error};
   margin-top: ${({ theme }) => theme.spacing.xs};
 `;
-const Input: React.FC<InputProps> = ({ 
-  label, 
-  error, 
-  fullWidth = false, 
-  ...props 
-}) => {
+const Input: React.FC<InputProps> = ({ label, error, fullWidth = false, ...props }) => {
   return (
     <InputContainer fullWidth={fullWidth}>
       {label && <InputLabel>{label}</InputLabel>}
@@ -53,4 +48,4 @@ const Input: React.FC<InputProps> = ({
     </InputContainer>
   );
 };
-export default Input; 
+export default Input;

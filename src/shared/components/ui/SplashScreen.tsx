@@ -31,7 +31,7 @@ const SplashContainer = styled.div`
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  background-color: #FFD338; /* KB 노란색 폴백 */
+  background-color: #ffd338; /* KB 노란색 폴백 */
   /* 레이아웃 */
   position: relative;
   overflow: hidden;
@@ -56,7 +56,5 @@ const SplashContainer = styled.div`
  * - 모든 KB 캐릭터와 브랜드 요소 포함
  */
 export const SplashScreen: React.FC = () => {
-  return (
-    <SplashContainer />
-  );
+  return <SplashContainer />;
 };

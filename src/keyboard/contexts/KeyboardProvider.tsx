@@ -3,13 +3,13 @@
  * 전역 키보드 네비게이션 상태 및 설정 관리
  */
 
-import React, { 
-  createContext, 
-  useContext, 
-  useEffect, 
-  useState, 
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
   useCallback,
-  ReactNode 
+  ReactNode,
 } from 'react';
 
 import CommandPalette from '../components/CommandPalette';
@@ -25,7 +25,7 @@ import {
   NavigationHistory,
   KeyboardTrapManager,
   CommandPaletteItem,
-  BankingKeyboardShortcuts
+  BankingKeyboardShortcuts,
 } from '../types';
 
 interface KeyboardProviderProps {
@@ -61,7 +61,7 @@ const defaultSettings: KeyboardSettings = {
     previousField: ['shift+tab'],
     toggleHighContrast: ['ctrl+shift+h'],
     toggleScreenReader: ['ctrl+shift+s'],
-    toggleKeyboardHelp: ['ctrl+shift+?']
+    toggleKeyboardHelp: ['ctrl+shift+?'],
   },
   customShortcuts: [],
   macros: [],
@@ -69,7 +69,7 @@ const defaultSettings: KeyboardSettings = {
   announceChanges: true,
   showFocusRing: true,
   preventTabTraps: true,
-  enableCommandPalette: true
+  enableCommandPalette: true,
 };
 
 // 기본 명령 팔레트 아이템들
@@ -82,8 +82,8 @@ const defaultCommandPaletteItems: CommandPaletteItem[] = [
     keywords: ['홈', 'home', '메인', '대시보드'],
     category: '네비게이션',
     shortcut: ['Alt', 'H'],
-    action: () => window.location.href = '/',
-    icon: '🏠'
+    action: () => (window.location.href = '/'),
+    icon: '🏠',
   },
   {
     id: 'nav-menu',
@@ -93,9 +93,9 @@ const defaultCommandPaletteItems: CommandPaletteItem[] = [
     category: '네비게이션',
     shortcut: ['Alt', 'M'],
     action: () => document.dispatchEvent(new CustomEvent('keyboard-toggle-menu')),
-    icon: '📱'
+    icon: '📱',
   },
-  
+
   // 계좌 관련
   {
     id: 'account-inquiry',
@@ -104,8 +104,8 @@ const defaultCommandPaletteItems: CommandPaletteItem[] = [
     keywords: ['계좌', 'account', '조회', '잔액'],
     category: '계좌',
     shortcut: ['Ctrl', 'Shift', 'A'],
-    action: () => window.location.href = '/accounts',
-    icon: '💳'
+    action: () => (window.location.href = '/accounts'),
+    icon: '💳',
   },
   {
     id: 'balance-inquiry',
@@ -114,10 +114,10 @@ const defaultCommandPaletteItems: CommandPaletteItem[] = [
     keywords: ['잔액', 'balance', '조회'],
     category: '계좌',
     shortcut: ['Ctrl', 'B'],
-    action: () => window.location.href = '/balance',
-    icon: '💰'
+    action: () => (window.location.href = '/balance'),
+    icon: '💰',
   },
-  
+
   // 이체 관련
   {
     id: 'transfer',
@@ -126,8 +126,8 @@ const defaultCommandPaletteItems: CommandPaletteItem[] = [
     keywords: ['이체', 'transfer', '송금'],
     category: '이체',
     shortcut: ['Ctrl', 'T'],
-    action: () => window.location.href = '/transfer',
-    icon: '💸'
+    action: () => (window.location.href = '/transfer'),
+    icon: '💸',
   },
   {
     id: 'transfer-history',
@@ -136,10 +136,10 @@ const defaultCommandPaletteItems: CommandPaletteItem[] = [
     keywords: ['이체', '내역', 'history', '거래'],
     category: '이체',
     shortcut: ['Ctrl', 'Shift', 'H'],
-    action: () => window.location.href = '/transfer/history',
-    icon: '📋'
+    action: () => (window.location.href = '/transfer/history'),
+    icon: '📋',
   },
-  
+
   // 접근성
   {
     id: 'toggle-high-contrast',
@@ -149,7 +149,7 @@ const defaultCommandPaletteItems: CommandPaletteItem[] = [
     category: '접근성',
     shortcut: ['Ctrl', 'Shift', 'H'],
     action: () => document.dispatchEvent(new CustomEvent('keyboard-toggle-contrast')),
-    icon: '🎨'
+    icon: '🎨',
   },
   {
     id: 'keyboard-help',
@@ -159,8 +159,8 @@ const defaultCommandPaletteItems: CommandPaletteItem[] = [
     category: '도움말',
     shortcut: ['Ctrl', 'Shift', '?'],
     action: () => document.dispatchEvent(new CustomEvent('keyboard-show-help')),
-    icon: '❓'
-  }
+    icon: '❓',
+  },
 ];
 
 // 컨텍스트 생성
@@ -169,39 +169,44 @@ const KeyboardContext = createContext<KeyboardContext | null>(null);
 export const KeyboardProvider: React.FC<KeyboardProviderProps> = ({
   children,
   initialSettings,
-  onSettingsChange
+  onSettingsChange,
 }) => {
   const [settings, setSettings] = useState<KeyboardSettings>({
     ...defaultSettings,
-    ...initialSettings
+    ...initialSettings,
   });
-  
+
   const [currentFocus, setCurrentFocus] = useState<HTMLElement | null>(null);
   const [shortcuts, setShortcuts] = useState<Map<string, KeyboardShortcut>>(new Map());
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
-  const [commandPaletteItems, setCommandPaletteItems] = useState<CommandPaletteItem[]>(defaultCommandPaletteItems);
+  const [commandPaletteItems, setCommandPaletteItems] = useState<CommandPaletteItem[]>(
+    defaultCommandPaletteItems
+  );
 
   // 설정 변경 핸들러
-  const updateSettings = useCallback((newSettings: Partial<KeyboardSettings>) => {
-    const updatedSettings = { ...settings, ...newSettings };
-    setSettings(updatedSettings);
-    onSettingsChange?.(updatedSettings);
-    
-    // 글로벌 매니저들 업데이트
-    if (newSettings.mode) {
-      globalKeyboardNavigationManager.setMode(newSettings.mode);
-    }
-    
-    if (newSettings.enabled !== undefined) {
-      if (newSettings.enabled) {
-        globalKeyboardShortcutManager.enable();
-        globalKeyboardNavigationManager.enable();
-      } else {
-        globalKeyboardShortcutManager.disable();
-        globalKeyboardNavigationManager.disable();
+  const updateSettings = useCallback(
+    (newSettings: Partial<KeyboardSettings>) => {
+      const updatedSettings = { ...settings, ...newSettings };
+      setSettings(updatedSettings);
+      onSettingsChange?.(updatedSettings);
+
+      // 글로벌 매니저들 업데이트
+      if (newSettings.mode) {
+        globalKeyboardNavigationManager.setMode(newSettings.mode);
       }
-    }
-  }, [settings, onSettingsChange]);
+
+      if (newSettings.enabled !== undefined) {
+        if (newSettings.enabled) {
+          globalKeyboardShortcutManager.enable();
+          globalKeyboardNavigationManager.enable();
+        } else {
+          globalKeyboardShortcutManager.disable();
+          globalKeyboardNavigationManager.disable();
+        }
+      }
+    },
+    [settings, onSettingsChange]
+  );
 
   // 단축키 등록
   const registerShortcut = useCallback((shortcut: KeyboardShortcut) => {
@@ -220,43 +225,55 @@ export const KeyboardProvider: React.FC<KeyboardProviderProps> = ({
   }, []);
 
   // 네비게이션 모드 설정
-  const setNavigationMode = useCallback((mode: NavigationMode) => {
-    updateSettings({ mode });
-  }, [updateSettings]);
+  const setNavigationMode = useCallback(
+    (mode: NavigationMode) => {
+      updateSettings({ mode });
+    },
+    [updateSettings]
+  );
 
   // 포커스 관리
-  const focusElement = useCallback((element: HTMLElement, options: FocusOptions = {}) => {
-    const { preventScroll = false, announce = true, addToHistory = true, force = false } = options;
-    
-    if (!force && element === currentFocus) return;
-    
-    try {
-      element.focus({ preventScroll });
-      setCurrentFocus(element);
-      
-      if (addToHistory) {
-        globalKeyboardNavigationManager.getNavigationHistory().push(element);
+  const focusElement = useCallback(
+    (element: HTMLElement, options: FocusOptions = {}) => {
+      const {
+        preventScroll = false,
+        announce = true,
+        addToHistory = true,
+        force = false,
+      } = options;
+
+      if (!force && element === currentFocus) return;
+
+      try {
+        element.focus({ preventScroll });
+        setCurrentFocus(element);
+
+        if (addToHistory) {
+          globalKeyboardNavigationManager.getNavigationHistory().push(element);
+        }
+
+        if (announce && settings.announceChanges) {
+          const label =
+            element.getAttribute('aria-label') ||
+            element.textContent?.trim() ||
+            element.tagName.toLowerCase();
+
+          // 스크린 리더 공지
+          const announcement = document.createElement('div');
+          announcement.setAttribute('aria-live', 'polite');
+          announcement.style.position = 'absolute';
+          announcement.style.left = '-10000px';
+          announcement.textContent = `${label}로 이동됨`;
+
+          document.body.appendChild(announcement);
+          setTimeout(() => document.body.removeChild(announcement), 1000);
+        }
+      } catch (error) {
+        console.warn('Focus failed:', error);
       }
-      
-      if (announce && settings.announceChanges) {
-        const label = element.getAttribute('aria-label') || 
-                     element.textContent?.trim() || 
-                     element.tagName.toLowerCase();
-        
-        // 스크린 리더 공지
-        const announcement = document.createElement('div');
-        announcement.setAttribute('aria-live', 'polite');
-        announcement.style.position = 'absolute';
-        announcement.style.left = '-10000px';
-        announcement.textContent = `${label}로 이동됨`;
-        
-        document.body.appendChild(announcement);
-        setTimeout(() => document.body.removeChild(announcement), 1000);
-      }
-    } catch (error) {
-      console.warn('Focus failed:', error);
-    }
-  }, [currentFocus, settings.announceChanges]);
+    },
+    [currentFocus, settings.announceChanges]
+  );
 
   // 명령 팔레트 열기/닫기
   const openCommandPalette = useCallback(() => {
@@ -270,8 +287,7 @@ export const KeyboardProvider: React.FC<KeyboardProviderProps> = ({
   }, []);
 
   // 명령 실행
-  const executeCommand = useCallback((item: CommandPaletteItem) => {
-  }, []);
+  const executeCommand = useCallback((item: CommandPaletteItem) => {}, []);
 
   // 초기 설정
   useEffect(() => {
@@ -291,14 +307,14 @@ export const KeyboardProvider: React.FC<KeyboardProviderProps> = ({
               default:
                 document.dispatchEvent(new CustomEvent(`keyboard-${key}`));
             }
-          }
+          },
         });
       }
     });
 
     // 커스텀 단축키들 등록
     settings.customShortcuts.forEach(registerShortcut);
-    
+
     // 전역 이벤트 리스너
     const handleCommandPaletteToggle = () => {
       if (commandPaletteOpen) {
@@ -334,35 +350,35 @@ export const KeyboardProvider: React.FC<KeyboardProviderProps> = ({
   // 포커스 링 관리 함수
   const manageFocusRing = useCallback(() => {
     let hadKeyboardEvent = false;
-    
+
     const keydownHandler = () => {
       hadKeyboardEvent = true;
     };
-    
+
     const mousedownHandler = () => {
       hadKeyboardEvent = false;
     };
-    
+
     const focusHandler = (event: FocusEvent) => {
       const target = event.target as HTMLElement;
-      
+
       if (hadKeyboardEvent || target.matches(':focus-visible')) {
         target.classList.add('kb-focus-visible');
       } else {
         target.classList.remove('kb-focus-visible');
       }
     };
-    
+
     const blurHandler = (event: FocusEvent) => {
       const target = event.target as HTMLElement;
       target.classList.remove('kb-focus-visible');
     };
-    
+
     document.addEventListener('keydown', keydownHandler, true);
     document.addEventListener('mousedown', mousedownHandler, true);
     document.addEventListener('focus', focusHandler, true);
     document.addEventListener('blur', blurHandler, true);
-    
+
     // CSS 스타일 주입
     const style = document.createElement('style');
     style.textContent = `
@@ -383,7 +399,7 @@ export const KeyboardProvider: React.FC<KeyboardProviderProps> = ({
       }
     `;
     document.head.appendChild(style);
-    
+
     return () => {
       document.removeEventListener('keydown', keydownHandler, true);
       document.removeEventListener('mousedown', mousedownHandler, true);
@@ -404,25 +420,25 @@ export const KeyboardProvider: React.FC<KeyboardProviderProps> = ({
     registerShortcut,
     unregisterShortcut,
     setNavigationMode,
-    focusElement
+    focusElement,
   };
 
   return (
     <KeyboardContext.Provider value={contextValue}>
       {children}
-      
+
       {/* 명령 팔레트 */}
       <CommandPalette
         isOpen={commandPaletteOpen}
         items={commandPaletteItems}
         onClose={closeCommandPalette}
         onExecute={executeCommand}
-        placeholder="명령어를 검색하세요... (예: 이체하기, 계좌조회)"
+        placeholder='명령어를 검색하세요... (예: 이체하기, 계좌조회)'
         maxResults={20}
         enableFuzzySearch={true}
         showCategories={true}
         showShortcuts={true}
-        theme="light"
+        theme='light'
       />
     </KeyboardContext.Provider>
   );
@@ -440,7 +456,7 @@ export const useKeyboard = (): KeyboardContext => {
 // 설정 훅
 export const useKeyboardSettings = () => {
   const context = useKeyboard();
-  
+
   return {
     settings: context.settings,
     updateSettings: (newSettings: Partial<KeyboardSettings>) => {
@@ -448,7 +464,7 @@ export const useKeyboardSettings = () => {
     },
     resetSettings: () => {
       // 기본 설정으로 리셋
-    }
+    },
   };
 };
 

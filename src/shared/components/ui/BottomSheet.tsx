@@ -76,17 +76,12 @@ const Overlay = styled.div<{ $isOpen: boolean; $variant: string; $isClosing: boo
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: ${props => 
+  background-color: ${props =>
     props.$variant === 'kb' || props.$variant === 'default'
-      ? tokens.colors.dimmedBackground 
-      : KBDesignSystem.colors.overlay.black50
-  };
-  z-index: ${props => 
-    props.$variant === 'native' 
-      ? KBDesignSystem.zIndex.modalBackdrop 
-      : 1000
-  };
-  
+      ? tokens.colors.dimmedBackground
+      : KBDesignSystem.colors.overlay.black50};
+  z-index: ${props => (props.$variant === 'native' ? KBDesignSystem.zIndex.modalBackdrop : 1000)};
+
   ${props => {
     if (props.$variant === 'native') {
       return `
@@ -95,22 +90,24 @@ const Overlay = styled.div<{ $isOpen: boolean; $variant: string; $isClosing: boo
           ${KBDesignSystem.animation.easing.easeOut};
       `;
     }
-    
+
     return `
       opacity: ${props.$isOpen ? 1 : 0};
       visibility: ${props.$isOpen ? 'visible' : 'hidden'};
       transition: opacity 0.3s ease, visibility 0.3s ease;
     `;
   }}
-  
-  ${props => (props.$variant === 'kb' || props.$variant === 'default') && `
+
+  ${props =>
+    (props.$variant === 'kb' || props.$variant === 'default') &&
+    `
     max-width: 390px;
     margin: 0 auto;
   `}
 `;
 
 // BottomSheet 컨테이너
-const BottomSheetContainer = styled.div<{ 
+const BottomSheetContainer = styled.div<{
   $isOpen: boolean;
   $height?: string | number;
   $variant: string;
@@ -118,18 +115,13 @@ const BottomSheetContainer = styled.div<{
 }>`
   position: fixed;
   bottom: 0;
-  background-color: ${props => 
-    props.$variant === 'native' 
-      ? KBDesignSystem.colors.background.white 
-      : tokens.colors.background.primary
-  };
+  background-color: ${props =>
+    props.$variant === 'native'
+      ? KBDesignSystem.colors.background.white
+      : tokens.colors.background.primary};
   overflow: hidden;
-  z-index: ${props => 
-    props.$variant === 'native' 
-      ? KBDesignSystem.zIndex.modal 
-      : 1001
-  };
-  
+  z-index: ${props => (props.$variant === 'native' ? KBDesignSystem.zIndex.modal : 1001)};
+
   ${props => {
     if (props.$variant === 'native') {
       return `
@@ -146,7 +138,7 @@ const BottomSheetContainer = styled.div<{
           ${KBDesignSystem.animation.easing.decelerate};
       `;
     }
-    
+
     return `
       left: 50%;
       transform: translateX(-50%);
@@ -162,7 +154,7 @@ const BottomSheetContainer = styled.div<{
       animation-fill-mode: forwards;
     `;
   }}
-  
+
   /* 높이 설정 */
   ${props => {
     const height = props.$height;
@@ -198,18 +190,18 @@ const DragHandle = styled.div<{ $variant: string }>`
   display: flex;
   justify-content: center;
   cursor: grab;
-  
+
   &:active {
     cursor: grabbing;
   }
-  
+
   ${props => {
     if (props.$variant === 'native') {
       return `
         padding: ${KBDesignSystem.spacing.sm} 0;
       `;
     }
-    
+
     return `
       padding: ${dimensions.bottomSheet.slideBarTopMargin}px 0 0;
     `;
@@ -226,7 +218,7 @@ const HandleBar = styled.div<{ $variant: string }>`
         border-radius: ${KBDesignSystem.borderRadius.full};
       `;
     }
-    
+
     return `
       width: ${dimensions.bottomSheet.slideBarWidth}px;
       height: ${dimensions.bottomSheet.slideBarHeight}px;
@@ -248,7 +240,7 @@ const Header = styled.div<{ $variant: string }>`
         border-bottom: 1px solid ${KBDesignSystem.colors.border.light};
       `;
     }
-    
+
     return `
       padding: ${dimensions.bottomSheet.topPadding}px 24px 16px;
       border-bottom: 1px solid ${tokens.colors.backgroundGray2};
@@ -258,12 +250,9 @@ const Header = styled.div<{ $variant: string }>`
 
 const Title = styled.h2<{ $variant: string }>`
   margin: 0;
-  color: ${props => 
-    props.$variant === 'native' 
-      ? KBDesignSystem.colors.text.primary 
-      : tokens.colors.text.primary
-  };
-  
+  color: ${props =>
+    props.$variant === 'native' ? KBDesignSystem.colors.text.primary : tokens.colors.text.primary};
+
   ${props => {
     if (props.$variant === 'native') {
       return `
@@ -271,7 +260,7 @@ const Title = styled.h2<{ $variant: string }>`
         font-weight: ${KBDesignSystem.typography.fontWeight.semibold};
       `;
     }
-    
+
     return `
       font-size: 20px;
       font-family: 'KBFG-Text-Bold', sans-serif;
@@ -295,12 +284,13 @@ const CloseButton = styled.button`
   cursor: pointer;
   color: ${KBDesignSystem.colors.text.secondary};
   border-radius: ${KBDesignSystem.borderRadius.full};
-  transition: all ${KBDesignSystem.animation.duration.fast} ${KBDesignSystem.animation.easing.easeOut};
-  
+  transition: all ${KBDesignSystem.animation.duration.fast}
+    ${KBDesignSystem.animation.easing.easeOut};
+
   &:hover {
     background-color: ${KBDesignSystem.colors.background.gray200};
   }
-  
+
   &:active {
     transform: scale(0.9);
   }
@@ -311,22 +301,22 @@ const Content = styled.div<{ $hasHeader: boolean; $variant: string }>`
   flex: 1;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  
+
   ${props => {
     if (props.$variant === 'native' && props.$hasHeader) {
       return `
         max-height: calc(90vh - 60px);
       `;
     }
-    
+
     return '';
   }}
 `;
 
 // X 아이콘 컴포넌트
 const CloseIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+  <svg width='24' height='24' viewBox='0 0 24 24' fill='currentColor'>
+    <path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z' />
   </svg>
 );
 
@@ -349,47 +339,50 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
   const [dragStartY, setDragStartY] = useState(0);
   const [currentY, setCurrentY] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
-  
+
   // 실제 표시할 핸들 결정
   const shouldShowHandle = variant === 'native' ? showHandle : showSlideBar;
-  
+
   // 닫기 처리
   const handleClose = () => {
     if (variant === 'native') {
       setIsClosing(true);
-      setTimeout(() => {
-        onClose();
-        setIsClosing(false);
-      }, KBDesignSystem.animation.duration.normal as unknown as number);
+      setTimeout(
+        () => {
+          onClose();
+          setIsClosing(false);
+        },
+        KBDesignSystem.animation.duration.normal as unknown as number
+      );
     } else {
       onClose();
     }
   };
-  
+
   // 배경 클릭
   const handleOverlayClick = (e: React.MouseEvent) => {
     if (closeOnBackdrop && e.target === e.currentTarget) {
       handleClose();
     }
   };
-  
+
   // 스와이프 다운 시작
   const handleDragStart = (e: React.TouchEvent | React.MouseEvent) => {
     if (!closeOnSwipeDown || variant !== 'native') return;
-    
+
     const startY = 'touches' in e ? e.touches[0].clientY : e.clientY;
     setIsDragging(true);
     setDragStartY(startY);
     setCurrentY(0);
   };
-  
+
   // 스와이프 중
   const handleDragMove = (e: TouchEvent | MouseEvent) => {
     if (!isDragging || !closeOnSwipeDown || variant !== 'native') return;
-    
+
     const y = 'touches' in e ? e.touches[0].clientY : e.clientY;
     const deltaY = y - dragStartY;
-    
+
     if (deltaY > 0) {
       setCurrentY(deltaY);
       if (containerRef.current) {
@@ -397,13 +390,13 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
       }
     }
   };
-  
+
   // 스와이프 끝
   const handleDragEnd = () => {
     if (!isDragging || !closeOnSwipeDown || variant !== 'native') return;
-    
+
     setIsDragging(false);
-    
+
     // 100px 이상 드래그하면 닫기
     if (currentY > 100) {
       handleClose();
@@ -419,21 +412,21 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
         }, 150);
       }
     }
-    
+
     setCurrentY(0);
   };
-  
+
   // 드래그 이벤트 리스너 등록
   useEffect(() => {
     if (isDragging && variant === 'native') {
       const handleMove = (e: TouchEvent | MouseEvent) => handleDragMove(e);
       const handleEnd = () => handleDragEnd();
-      
+
       document.addEventListener('touchmove', handleMove, { passive: false });
       document.addEventListener('mousemove', handleMove);
       document.addEventListener('touchend', handleEnd);
       document.addEventListener('mouseup', handleEnd);
-      
+
       return () => {
         document.removeEventListener('touchmove', handleMove);
         document.removeEventListener('mousemove', handleMove);
@@ -443,7 +436,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
     }
     return () => {}; // Return empty cleanup function when not dragging
   }, [isDragging, dragStartY, currentY, variant]);
-  
+
   // ESC 키 이벤트
   useEffect(() => {
     const handleEscapeKey = (event: KeyboardEvent) => {
@@ -451,7 +444,7 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
         handleClose();
       }
     };
-    
+
     if (isOpen) {
       document.addEventListener('keydown', handleEscapeKey);
       // 바디 스크롤 방지
@@ -459,19 +452,19 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
     } else {
       document.body.style.overflow = 'unset';
     }
-    
+
     return () => {
       document.removeEventListener('keydown', handleEscapeKey);
       document.body.style.overflow = 'unset';
     };
   }, [isOpen]);
-  
+
   if (!isOpen && !isClosing) return null;
-  
+
   const content = (
     <>
-      <Overlay 
-        $isOpen={isOpen} 
+      <Overlay
+        $isOpen={isOpen}
         $variant={variant}
         $isClosing={isClosing}
         onClick={handleOverlayClick}
@@ -482,8 +475,8 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
         $height={height}
         $variant={variant}
         $isClosing={isClosing}
-        role="dialog"
-        aria-modal="true"
+        role='dialog'
+        aria-modal='true'
         aria-labelledby={title ? 'bottomsheet-title' : undefined}
       >
         {/* 드래그 핸들/슬라이드바 */}
@@ -496,19 +489,21 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
             <HandleBar $variant={variant} />
           </DragHandle>
         )}
-        
+
         {/* 헤더 */}
         {title && (
           <Header $variant={variant}>
-            <Title id="bottomsheet-title" $variant={variant}>{title}</Title>
+            <Title id='bottomsheet-title' $variant={variant}>
+              {title}
+            </Title>
             {variant === 'native' && (
-              <CloseButton onClick={handleClose} aria-label="닫기">
+              <CloseButton onClick={handleClose} aria-label='닫기'>
                 <CloseIcon />
               </CloseButton>
             )}
           </Header>
         )}
-        
+
         {/* 콘텐츠 */}
         <Content $hasHeader={Boolean(title)} $variant={variant}>
           {children}
@@ -516,12 +511,12 @@ const BottomSheet: React.FC<BottomSheetProps> = ({
       </BottomSheetContainer>
     </>
   );
-  
+
   // Portal 사용 여부에 따라 렌더링
   if (usePortal && variant === 'native') {
     return createPortal(content, document.body);
   }
-  
+
   return content;
 };
 

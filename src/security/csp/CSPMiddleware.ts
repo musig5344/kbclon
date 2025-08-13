@@ -1,6 +1,6 @@
 /**
  * CSP Middleware
- * 
+ *
  * Express/서버 환경에서 CSP 헤더를 자동으로 설정하는 미들웨어
  * - 동적 nonce 생성
  * - 환경별 CSP 정책 적용
@@ -33,16 +33,18 @@ class CSPMiddleware {
     this.options = {
       reportOnly: false,
       enableNonce: true,
-      ...options
+      ...options,
     };
 
     // CSP 매니저 초기화
-    this.cspManager = new CSPManager(options.config || {
-      environment: process.env.NODE_ENV === 'production' ? 'production' : 'development',
-      enableReporting: true,
-      reportUri: options.reportUri || '/api/csp-violations',
-      enableTrustedTypes: true
-    });
+    this.cspManager = new CSPManager(
+      options.config || {
+        environment: process.env.NODE_ENV === 'production' ? 'production' : 'development',
+        enableReporting: true,
+        reportUri: options.reportUri || '/api/csp-violations',
+        enableTrustedTypes: true,
+      }
+    );
 
     // 커스텀 지시어 추가
     if (options.customDirectives) {
@@ -72,10 +74,10 @@ class CSPMiddleware {
         const additionalHeaders = this.cspManager.generateAdditionalSecurityHeaders();
 
         // 헤더 설정
-        const headerName = this.options.reportOnly 
+        const headerName = this.options.reportOnly
           ? 'Content-Security-Policy-Report-Only'
           : 'Content-Security-Policy';
-        
+
         res.setHeader(headerName, cspHeader);
 
         // 추가 보안 헤더 설정
@@ -104,7 +106,7 @@ class CSPMiddleware {
     return (req: Request, res: Response) => {
       try {
         const report = req.body;
-        
+
         // 리포트 로깅
         console.warn('[CSP Violation Report]:', JSON.stringify(report, null, 2));
 
@@ -132,7 +134,6 @@ class CSPMiddleware {
   private async sendViolationToMonitoring(report: any): Promise<void> {
     try {
       // 실제 구현에서는 Sentry, DataDog 등으로 전송
-      
       // 예시: 모니터링 API 호출
       // await fetch('https://monitoring-service.com/api/csp-violations', {
       //   method: 'POST',
@@ -157,16 +158,15 @@ class CSPMiddleware {
    */
   private analyzeViolation(report: any): void {
     const violation = report['csp-report'] || report;
-    
+
     console.group('[CSP Violation Analysis]');
-    
+
     // 해결 제안
     const suggestions = this.generateViolationSuggestions(violation);
     if (suggestions.length > 0) {
-      suggestions.forEach((suggestion, index) => {
-      });
+      suggestions.forEach((suggestion, index) => {});
     }
-    
+
     console.groupEnd();
   }
 
@@ -232,7 +232,7 @@ class CSPMiddleware {
   updateCSP(updates: Partial<CSPConfig>): void {
     this.cspManager = new CSPManager({
       ...this.cspManager.getConfig(),
-      ...updates
+      ...updates,
     });
   }
 
@@ -277,34 +277,22 @@ export const createBankingCSPMiddleware = (options: Partial<CSPMiddlewareOptions
         "'self'",
         'https://apis.google.com',
         'https://www.googletagmanager.com',
-        'https://connect.facebook.net'
+        'https://connect.facebook.net',
       ],
       'style-src': [
         "'self'",
         "'unsafe-inline'", // styled-components 지원
-        'https://fonts.googleapis.com'
+        'https://fonts.googleapis.com',
       ],
-      'font-src': [
-        "'self'",
-        'https://fonts.gstatic.com'
-      ],
-      'img-src': [
-        "'self'",
-        'data:',
-        'https://*.kbstar.com',
-        'https://ssl.pstatic.net'
-      ],
-      'connect-src': [
-        "'self'",
-        'https://api.kbstar.com',
-        'https://analytics.google.com'
-      ]
-    }
+      'font-src': ["'self'", 'https://fonts.gstatic.com'],
+      'img-src': ["'self'", 'data:', 'https://*.kbstar.com', 'https://ssl.pstatic.net'],
+      'connect-src': ["'self'", 'https://api.kbstar.com', 'https://analytics.google.com'],
+    },
   };
 
   return new CSPMiddleware({
     config: bankingConfig,
-    ...options
+    ...options,
   });
 };
 
@@ -314,9 +302,9 @@ export const createDevelopmentCSPMiddleware = () => {
       environment: 'development',
       enableReporting: true,
       reportUri: '/api/csp-violations',
-      enableTrustedTypes: false // 개발 환경에서는 비활성화
+      enableTrustedTypes: false, // 개발 환경에서는 비활성화
     },
-    reportOnly: true // 개발 환경에서는 report-only 모드
+    reportOnly: true, // 개발 환경에서는 report-only 모드
   });
 };
 
@@ -326,9 +314,9 @@ export const createProductionCSPMiddleware = () => {
       environment: 'production',
       enableReporting: true,
       reportUri: '/api/csp-violations',
-      enableTrustedTypes: true
+      enableTrustedTypes: true,
     },
-    reportOnly: false
+    reportOnly: false,
   });
 };
 

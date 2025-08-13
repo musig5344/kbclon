@@ -31,26 +31,35 @@ const ErrorContainer = styled.div<{ $type: string }>`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: ${props => props.$type === 'component' ? '100px' : '300px'};
-  padding: ${props => props.$type === 'component' ? '16px' : '24px'};
+  min-height: ${props => (props.$type === 'component' ? '100px' : '300px')};
+  padding: ${props => (props.$type === 'component' ? '16px' : '24px')};
   text-align: center;
   background-color: ${tokens.colors.white};
-  border-radius: ${props => props.$type === 'component' ? '8px' : '0'};
-  ${props => props.$type === 'component' && `
+  border-radius: ${props => (props.$type === 'component' ? '8px' : '0')};
+  ${props =>
+    props.$type === 'component' &&
+    `
     border: 1px solid ${tokens.colors.backgroundGray2};
     margin: 8px 0;
   `}
 `;
 
 const ErrorIcon = styled.div<{ $type: string }>`
-  font-size: ${props => props.$type === 'component' ? '32px' : '48px'};
+  font-size: ${props => (props.$type === 'component' ? '32px' : '48px')};
   margin-bottom: 16px;
   animation: shake 0.5s ease-in-out;
-  
+
   @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-10px); }
-    75% { transform: translateX(10px); }
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    25% {
+      transform: translateX(-10px);
+    }
+    75% {
+      transform: translateX(10px);
+    }
   }
 `;
 
@@ -86,18 +95,18 @@ const ErrorDetails = styled.details`
   width: 100%;
   max-width: 500px;
   text-align: left;
-  
+
   summary {
     cursor: pointer;
     font-size: 12px;
     color: ${tokens.colors.text.tertiary};
     margin-bottom: 8px;
-    
+
     &:hover {
       color: ${tokens.colors.text.secondary};
     }
   }
-  
+
   pre {
     font-size: 11px;
     background-color: ${tokens.colors.backgroundGray1};
@@ -121,26 +130,26 @@ const ERROR_TYPE_CONFIG = {
     icon: '📄',
     title: '페이지 로딩 오류',
     message: '페이지를 불러오는 중 문제가 발생했습니다.',
-    actions: ['새로고침', '홈으로']
+    actions: ['새로고침', '홈으로'],
   },
   component: {
     icon: '🔧',
     title: '일시적인 오류',
     message: '화면 일부를 표시하는 중 문제가 발생했습니다.',
-    actions: ['다시 시도']
+    actions: ['다시 시도'],
   },
   transaction: {
     icon: '💳',
     title: '거래 처리 오류',
     message: '거래를 처리하는 중 문제가 발생했습니다.',
-    actions: ['다시 시도', '고객센터']
+    actions: ['다시 시도', '고객센터'],
   },
   auth: {
     icon: '🔒',
     title: '인증 오류',
     message: '로그인 상태를 확인할 수 없습니다.',
-    actions: ['다시 로그인', '홈으로']
-  }
+    actions: ['다시 로그인', '홈으로'],
+  },
 };
 
 // 에러 코드 생성
@@ -159,7 +168,7 @@ export class ErrorHandler extends Component<ErrorHandlerProps, ErrorHandlerState
       hasError: false,
       error: null,
       errorInfo: null,
-      errorCode: undefined
+      errorCode: undefined,
     };
   }
 
@@ -167,13 +176,13 @@ export class ErrorHandler extends Component<ErrorHandlerProps, ErrorHandlerState
     return {
       hasError: true,
       error,
-      errorCode: generateErrorCode()
+      errorCode: generateErrorCode(),
     };
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     this.setState({
-      errorInfo
+      errorInfo,
     });
 
     // 중앙화된 에러 로깅
@@ -182,7 +191,7 @@ export class ErrorHandler extends Component<ErrorHandlerProps, ErrorHandlerState
       stack: error.stack,
       componentStack: errorInfo.componentStack,
       errorCode: this.state.errorCode,
-      errorType: this.props.errorType
+      errorType: this.props.errorType,
     });
 
     // 커스텀 에러 핸들러 호출
@@ -214,7 +223,7 @@ export class ErrorHandler extends Component<ErrorHandlerProps, ErrorHandlerState
         hasError: false,
         error: null,
         errorInfo: null,
-        errorCode: undefined
+        errorCode: undefined,
       });
     }, 100);
   };
@@ -251,58 +260,36 @@ export class ErrorHandler extends Component<ErrorHandlerProps, ErrorHandlerState
         <ErrorIcon $type={errorType}>{config.icon}</ErrorIcon>
         <ErrorTitle>{config.title}</ErrorTitle>
         <ErrorMessage>{config.message}</ErrorMessage>
-        
-        {errorCode && (
-          <ErrorCode>오류 코드: {errorCode}</ErrorCode>
-        )}
+
+        {errorCode && <ErrorCode>오류 코드: {errorCode}</ErrorCode>}
 
         <ButtonGroup>
           {config.actions.includes('다시 시도') && (
-            <Button
-              variant="primary"
-              size="medium"
-              onClick={this.resetErrorBoundary}
-            >
+            <Button variant='primary' size='medium' onClick={this.resetErrorBoundary}>
               다시 시도
             </Button>
           )}
-          
+
           {config.actions.includes('새로고침') && (
-            <Button
-              variant="primary"
-              size="medium"
-              onClick={this.handleRefreshClick}
-            >
+            <Button variant='primary' size='medium' onClick={this.handleRefreshClick}>
               새로고침
             </Button>
           )}
-          
+
           {config.actions.includes('홈으로') && (
-            <Button
-              variant="secondary"
-              size="medium"
-              onClick={this.handleHomeClick}
-            >
+            <Button variant='secondary' size='medium' onClick={this.handleHomeClick}>
               홈으로
             </Button>
           )}
-          
+
           {config.actions.includes('고객센터') && (
-            <Button
-              variant="secondary"
-              size="medium"
-              onClick={this.handleCustomerServiceClick}
-            >
+            <Button variant='secondary' size='medium' onClick={this.handleCustomerServiceClick}>
               고객센터
             </Button>
           )}
-          
+
           {config.actions.includes('다시 로그인') && (
-            <Button
-              variant="primary"
-              size="medium"
-              onClick={this.handleLoginClick}
-            >
+            <Button variant='primary' size='medium' onClick={this.handleLoginClick}>
               다시 로그인
             </Button>
           )}
@@ -337,30 +324,20 @@ export class ErrorHandler extends Component<ErrorHandlerProps, ErrorHandlerState
 
 // 특수화된 에러 바운더리
 export const PageErrorHandler: React.FC<{ children: ReactNode }> = ({ children }) => (
-  <ErrorHandler errorType="page">
-    {children}
-  </ErrorHandler>
+  <ErrorHandler errorType='page'>{children}</ErrorHandler>
 );
 
-export const ComponentErrorHandler: React.FC<{ 
-  children: ReactNode; 
+export const ComponentErrorHandler: React.FC<{
+  children: ReactNode;
   componentName?: string;
-}> = ({ children, componentName }) => (
-  <ErrorHandler errorType="component">
-    {children}
-  </ErrorHandler>
-);
+}> = ({ children, componentName }) => <ErrorHandler errorType='component'>{children}</ErrorHandler>;
 
 export const TransactionErrorHandler: React.FC<{ children: ReactNode }> = ({ children }) => (
-  <ErrorHandler errorType="transaction">
-    {children}
-  </ErrorHandler>
+  <ErrorHandler errorType='transaction'>{children}</ErrorHandler>
 );
 
 export const AuthErrorHandler: React.FC<{ children: ReactNode }> = ({ children }) => (
-  <ErrorHandler errorType="auth">
-    {children}
-  </ErrorHandler>
+  <ErrorHandler errorType='auth'>{children}</ErrorHandler>
 );
 
 export default ErrorHandler;

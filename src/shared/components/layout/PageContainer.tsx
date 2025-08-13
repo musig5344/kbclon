@@ -19,9 +19,9 @@ export const MainContent = styled.main`
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 `;
-export const Section = styled.div<{ 
-  background?: string; 
-  padding?: string; 
+export const Section = styled.div<{
+  background?: string;
+  padding?: string;
   marginBottom?: string;
   noBorder?: boolean;
 }>`
@@ -36,8 +36,8 @@ export const SectionTitle = styled.h2`
   color: #26282c;
   margin: 0 0 16px 0;
 `;
-export const ContentCard = styled.div<{ 
-  padding?: string; 
+export const ContentCard = styled.div<{
+  padding?: string;
   margin?: string;
   borderRadius?: string;
 }>`
@@ -54,9 +54,9 @@ export const FormSection = styled.div<{ marginBottom?: string }>`
     margin-bottom: 0;
   }
 `;
-export const FlexRow = styled.div<{ 
-  gap?: string; 
-  justifyContent?: string; 
+export const FlexRow = styled.div<{
+  gap?: string;
+  justifyContent?: string;
   alignItems?: string;
   wrap?: boolean;
 }>`
@@ -66,9 +66,9 @@ export const FlexRow = styled.div<{
   align-items: ${props => props.alignItems || 'center'};
   ${props => props.wrap && 'flex-wrap: wrap;'}
 `;
-export const FlexColumn = styled.div<{ 
-  gap?: string; 
-  alignItems?: string; 
+export const FlexColumn = styled.div<{
+  gap?: string;
+  alignItems?: string;
   justifyContent?: string;
 }>`
   display: flex;

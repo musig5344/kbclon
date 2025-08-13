@@ -1,20 +1,20 @@
 /**
  * Screen Reader Support System for KB StarBanking
- * 
+ *
  * A comprehensive screen reader support system with Korean language optimization,
  * financial data accessibility, and WCAG 2.1 AA compliance.
- * 
+ *
  * @example
  * ```tsx
  * import { useScreenReader, AccessibleBalance } from '@/screenreader';
- * 
+ *
  * function MyComponent() {
  *   const { announce, announceBalance } = useScreenReader();
- *   
+ *
  *   const handleBalanceCheck = () => {
  *     announceBalance(1500000); // "잔액 1,500,000원"
  *   };
- *   
+ *
  *   return (
  *     <AccessibleBalance
  *       balance={1500000}
@@ -28,10 +28,7 @@
 
 // Core Manager
 export { ScreenReaderManager } from './core/ScreenReaderManager';
-export type { 
-  AnnouncementOptions, 
-  ScreenReaderConfig 
-} from './core/ScreenReaderManager';
+export type { AnnouncementOptions, ScreenReaderConfig } from './core/ScreenReaderManager';
 
 // React Hooks
 export {
@@ -42,7 +39,7 @@ export {
   useTransactionAnnouncement,
   useAuthAnnouncement,
   useNavigationAnnouncement,
-  useTableAnnouncement
+  useTableAnnouncement,
 } from './hooks/useScreenReader';
 
 export type { UseScreenReaderReturn } from './hooks/useScreenReader';
@@ -52,7 +49,7 @@ export {
   AccessibleBalance,
   AccessibleTransactionList,
   AccessibleAmountInput,
-  AccessibleTransferForm
+  AccessibleTransferForm,
 } from './components/AccessibleFinancialComponents';
 
 // Component Props Types
@@ -61,7 +58,7 @@ export type {
   AccessibleTransactionListProps,
   AccessibleAmountInputProps,
   AccessibleTransferFormProps,
-  Transaction
+  Transaction,
 } from './components/AccessibleFinancialComponents';
 
 // Utility Functions
@@ -89,17 +86,17 @@ export const DEFAULT_KOREAN_CONFIG: ScreenReaderConfig = {
 
 /**
  * Quick setup function for new applications
- * 
+ *
  * @example
  * ```tsx
  * // In your App.tsx
  * import { setupScreenReaderForBanking } from '@/screenreader';
- * 
+ *
  * function App() {
  *   useEffect(() => {
  *     setupScreenReaderForBanking();
  *   }, []);
- *   
+ *
  *   return <YourApp />;
  * }
  * ```
@@ -108,7 +105,7 @@ export const setupScreenReaderForBanking = (config?: Partial<ScreenReaderConfig>
   const manager = ScreenReaderManager.getInstance();
   manager.updateConfig({
     ...DEFAULT_KOREAN_CONFIG,
-    ...config
+    ...config,
   });
   return manager;
 };
@@ -116,5 +113,5 @@ export const setupScreenReaderForBanking = (config?: Partial<ScreenReaderConfig>
 // Re-export types for external use
 export type {
   AnnouncementOptions as ScreenReaderAnnouncementOptions,
-  ScreenReaderConfig as ScreenReaderConfiguration
+  ScreenReaderConfig as ScreenReaderConfiguration,
 } from './core/ScreenReaderManager';

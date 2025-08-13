@@ -26,7 +26,13 @@ const RippleContainer = styled.div`
   -webkit-tap-highlight-color: transparent;
 `;
 
-const RippleSpan = styled.span<{ $x: number; $y: number; $size: number; $duration: number; $color: string }>`
+const RippleSpan = styled.span<{
+  $x: number;
+  $y: number;
+  $size: number;
+  $duration: number;
+  $color: string;
+}>`
   position: absolute;
   left: ${props => props.$x}px;
   top: ${props => props.$y}px;
@@ -37,7 +43,7 @@ const RippleSpan = styled.span<{ $x: number; $y: number; $size: number; $duratio
   background-color: ${props => props.$color};
   pointer-events: none;
   animation: ripple ${props => props.$duration}ms ease-out;
-  
+
   @keyframes ripple {
     0% {
       transform: translate(-50%, -50%) scale(0);
@@ -62,50 +68,53 @@ export const RippleEffect: React.FC<RippleEffectProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const nextRippleId = useRef(0);
 
-  const createRipple = useCallback((event: React.MouseEvent | React.TouchEvent) => {
-    if (disabled || !containerRef.current) return;
+  const createRipple = useCallback(
+    (event: React.MouseEvent | React.TouchEvent) => {
+      if (disabled || !containerRef.current) return;
 
-    const container = containerRef.current;
-    const rect = container.getBoundingClientRect();
-    
-    let clientX: number;
-    let clientY: number;
-    
-    if ('touches' in event) {
-      clientX = event.touches[0].clientX;
-      clientY = event.touches[0].clientY;
-    } else {
-      clientX = event.clientX;
-      clientY = event.clientY;
-    }
-    
-    const x = clientX - rect.left;
-    const y = clientY - rect.top;
-    
-    // Calculate ripple size based on container dimensions
-    const sizeX = Math.max(x, rect.width - x);
-    const sizeY = Math.max(y, rect.height - y);
-    const size = Math.sqrt(sizeX * sizeX + sizeY * sizeY) * 2;
-    
-    const newRipple: Ripple = {
-      id: nextRippleId.current++,
-      x,
-      y,
-      size,
-    };
-    
-    setRipples(prevRipples => [...prevRipples, newRipple]);
-    
-    // Haptic feedback
-    if (enableHaptic) {
-      hapticFeedback.light();
-    }
-    
-    // Remove ripple after animation
-    setTimeout(() => {
-      setRipples(prevRipples => prevRipples.filter(r => r.id !== newRipple.id));
-    }, duration);
-  }, [disabled, duration, enableHaptic]);
+      const container = containerRef.current;
+      const rect = container.getBoundingClientRect();
+
+      let clientX: number;
+      let clientY: number;
+
+      if ('touches' in event) {
+        clientX = event.touches[0].clientX;
+        clientY = event.touches[0].clientY;
+      } else {
+        clientX = event.clientX;
+        clientY = event.clientY;
+      }
+
+      const x = clientX - rect.left;
+      const y = clientY - rect.top;
+
+      // Calculate ripple size based on container dimensions
+      const sizeX = Math.max(x, rect.width - x);
+      const sizeY = Math.max(y, rect.height - y);
+      const size = Math.sqrt(sizeX * sizeX + sizeY * sizeY) * 2;
+
+      const newRipple: Ripple = {
+        id: nextRippleId.current++,
+        x,
+        y,
+        size,
+      };
+
+      setRipples(prevRipples => [...prevRipples, newRipple]);
+
+      // Haptic feedback
+      if (enableHaptic) {
+        hapticFeedback.light();
+      }
+
+      // Remove ripple after animation
+      setTimeout(() => {
+        setRipples(prevRipples => prevRipples.filter(r => r.id !== newRipple.id));
+      }, duration);
+    },
+    [disabled, duration, enableHaptic]
+  );
 
   return (
     <RippleContainer

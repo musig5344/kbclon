@@ -4,7 +4,7 @@
  */
 
 // 타입 내보내기
-// manageFocusRing import  
+// manageFocusRing import
 import { manageFocusRing } from './utils/focusManagement';
 
 export * from './types';
@@ -17,9 +17,19 @@ export * from './utils/aria';
 
 // 컴포넌트 내보내기
 export { AccessibleFormField } from './components/AccessibleFormField';
-export { SkipNavigation, AccountPageSkipLinks, TransferPageSkipLinks, MenuPageSkipLinks } from './components/SkipNavigation';
+export {
+  SkipNavigation,
+  AccountPageSkipLinks,
+  TransferPageSkipLinks,
+  MenuPageSkipLinks,
+} from './components/SkipNavigation';
 export { AccessibleTable } from './components/AccessibleTable';
-export { AccessibleChart, AccessibleBarChart, AccessiblePieChart, AccessibleLineChart } from './components/AccessibleChart';
+export {
+  AccessibleChart,
+  AccessibleBarChart,
+  AccessiblePieChart,
+  AccessibleLineChart,
+} from './components/AccessibleChart';
 export { AccessibleAccountSelector } from './components/AccessibleAccountSelector';
 export { AccessibleAmountInput } from './components/AccessibleAmountInput';
 export { AccessibleDatePicker } from './components/AccessibleDatePicker';
@@ -40,19 +50,19 @@ export {
   useAccessibilitySettings,
   useSkipLink,
   useTimeoutWarning,
-  useAccessibleError
+  useAccessibleError,
 } from './hooks/useAccessibility';
 
 // 테스팅 유틸리티 내보내기
-export { 
-  AccessibilityValidator, 
-  validateAccessibility, 
-  validateWCAGCriteria 
+export {
+  AccessibilityValidator,
+  validateAccessibility,
+  validateWCAGCriteria,
 } from './testing/accessibilityValidator';
-export { 
-  KeyboardNavigationTester, 
-  testKeyboardNavigation, 
-  testFocusTrap 
+export {
+  KeyboardNavigationTester,
+  testKeyboardNavigation,
+  testFocusTrap,
 } from './testing/keyboardTester';
 
 // 전역 접근성 초기화 함수
@@ -164,10 +174,10 @@ export async function runAccessibilityAudit() {
   const { AccessibilityValidator } = await import('./testing/accessibilityValidator');
   const validator = new AccessibilityValidator();
   const result = await validator.validatePage();
-  
+
   if (!result.passed) {
     console.group('🔍 접근성 검증 결과');
-    
+
     if (result.errors.length > 0) {
       console.group(`❌ 오류 (${result.errors.length}개)`);
       result.errors.forEach((error: any) => {
@@ -178,7 +188,7 @@ export async function runAccessibilityAudit() {
       });
       console.groupEnd();
     }
-    
+
     if (result.warnings.length > 0) {
       console.group(`⚠️  경고 (${result.warnings.length}개)`);
       result.warnings.forEach((warning: any) => {
@@ -189,12 +199,12 @@ export async function runAccessibilityAudit() {
       });
       console.groupEnd();
     }
-    
+
     console.groupEnd();
   } else {
     console.log('✅ 모든 접근성 검증 통과');
   }
-  
+
   return result;
 }
 

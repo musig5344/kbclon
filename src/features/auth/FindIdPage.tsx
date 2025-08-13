@@ -145,34 +145,35 @@ const FindIdPage: React.FC = () => {
   };
   return (
     <Container>
-      <LoginHeader showCloseButton={true} onCloseClick={handleClose}/>
+      <LoginHeader showCloseButton={true} onCloseClick={handleClose} />
       <Content>
         <Title>아이디 찾기</Title>
         <Subtitle>
-          회원가입 시 등록한 정보를 입력하여<br />
+          회원가입 시 등록한 정보를 입력하여
+          <br />
           아이디를 찾으실 수 있습니다.
         </Subtitle>
         {!showResult ? (
           <>
             <Form onSubmit={handleFindId}>
-              <Input 
-                fullWidth 
-                placeholder="이름" 
+              <Input
+                fullWidth
+                placeholder='이름'
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={e => setName(e.target.value)}
               />
-              <Input 
-                fullWidth 
-                type="tel"
-                placeholder="휴대폰 번호 (01012345678)" 
+              <Input
+                fullWidth
+                type='tel'
+                placeholder='휴대폰 번호 (01012345678)'
                 value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                onChange={e => setPhone(e.target.value)}
               />
             </Form>
             <InfoText>
-              • 회원가입 시 등록한 이름과 휴대폰 번호를 정확히 입력해주세요.{'\n'}
-              • 개인정보 보호를 위해 아이디의 일부만 표시됩니다.{'\n'}
-              • 문의사항이 있으시면 고객센터(1588-9999)로 연락해주세요.
+              • 회원가입 시 등록한 이름과 휴대폰 번호를 정확히 입력해주세요.{'\n'}• 개인정보 보호를
+              위해 아이디의 일부만 표시됩니다.{'\n'}• 문의사항이 있으시면 고객센터(1588-9999)로
+              연락해주세요.
             </InfoText>
             <ErrorText>{error}</ErrorText>
             <Spacer />

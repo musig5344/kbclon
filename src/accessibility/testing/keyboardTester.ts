@@ -37,7 +37,7 @@ export class KeyboardNavigationTester {
       passed: this.issues.length === 0,
       issues: this.issues,
       focusableElements: this.focusableElements.length,
-      tabOrder: this.focusableElements
+      tabOrder: this.focusableElements,
     };
   }
 
@@ -56,7 +56,7 @@ export class KeyboardNavigationTester {
       'audio[controls]',
       'video[controls]',
       'details',
-      'summary'
+      'summary',
     ].join(', ');
 
     const elements = document.querySelectorAll(selector);
@@ -77,7 +77,9 @@ export class KeyboardNavigationTester {
     });
 
     if (positiveTabindexElements.length > 0) {
-      this.issues.push(`양수 tabindex를 사용하는 요소가 ${positiveTabindexElements.length}개 있습니다`);
+      this.issues.push(
+        `양수 tabindex를 사용하는 요소가 ${positiveTabindexElements.length}개 있습니다`
+      );
     }
 
     // Tab 순서가 시각적 순서와 일치하는지 확인
@@ -87,7 +89,7 @@ export class KeyboardNavigationTester {
 
     this.focusableElements.forEach(element => {
       const rect = element.getBoundingClientRect();
-      
+
       // 새로운 줄로 이동한 경우
       if (rect.top > lastTop + 50) {
         lastLeft = 0;
@@ -111,14 +113,15 @@ export class KeyboardNavigationTester {
    */
   private checkFocusTraps(): void {
     const modals = document.querySelectorAll('[role="dialog"], [role="alertdialog"], .modal');
-    
+
     modals.forEach(modal => {
-      const focusableInModal = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
-      
+      const focusableInModal = modal.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+
       if (focusableInModal.length > 0) {
-        const firstFocusable = focusableInModal[0] as HTMLElement;
-        const lastFocusable = focusableInModal[focusableInModal.length - 1] as HTMLElement;
-        
+        // Focus elements are checked for proper tab order
+
         // 포커스 트랩 로직 확인
         if (!modal.getAttribute('aria-modal')) {
           this.issues.push('모달에 aria-modal="true" 속성이 없습니다');
@@ -133,7 +136,7 @@ export class KeyboardNavigationTester {
   private checkKeyboardShortcuts(): void {
     const elementsWithAccesskey = document.querySelectorAll('[accesskey]');
     const accesskeys = new Set<string>();
-    
+
     elementsWithAccesskey.forEach(element => {
       const key = element.getAttribute('accesskey');
       if (key) {
@@ -151,15 +154,15 @@ export class KeyboardNavigationTester {
   simulateTabNavigation(startElement: HTMLElement): HTMLElement[] {
     const path: HTMLElement[] = [];
     let currentElement = startElement;
-    
+
     for (let i = 0; i < this.focusableElements.length; i++) {
       const nextIndex = this.getNextTabIndex(currentElement);
       if (nextIndex === -1) break;
-      
+
       currentElement = this.focusableElements[nextIndex];
       path.push(currentElement);
     }
-    
+
     return path;
   }
 
@@ -168,11 +171,11 @@ export class KeyboardNavigationTester {
    */
   private getNextTabIndex(currentElement: HTMLElement): number {
     const currentIndex = this.focusableElements.indexOf(currentElement);
-    
+
     if (currentIndex === -1) {
       return 0;
     }
-    
+
     return (currentIndex + 1) % this.focusableElements.length;
   }
 }
@@ -192,34 +195,34 @@ export function testFocusTrap(container: HTMLElement): boolean {
   const focusableElements = container.querySelectorAll(
     'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
   );
-  
+
   if (focusableElements.length < 2) {
     console.warn('포커스 트랩을 테스트하기에 충분한 포커스 가능 요소가 없습니다');
     return false;
   }
-  
+
   const firstElement = focusableElements[0] as HTMLElement;
   const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement;
-  
+
   // 첫 번째 요소에 포커스
   firstElement.focus();
-  
+
   // Tab 키 이벤트 시뮬레이션
   const tabEvent = new KeyboardEvent('keydown', {
     key: 'Tab',
     shiftKey: false,
     bubbles: true,
-    cancelable: true
+    cancelable: true,
   });
-  
+
   lastElement.dispatchEvent(tabEvent);
-  
+
   // 포커스가 첫 번째 요소로 돌아왔는지 확인
   const isTrapped = document.activeElement === firstElement;
-  
+
   if (!isTrapped) {
     console.warn('포커스 트랩이 제대로 작동하지 않습니다');
   }
-  
+
   return isTrapped;
 }

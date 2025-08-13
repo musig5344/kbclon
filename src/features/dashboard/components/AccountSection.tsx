@@ -9,12 +9,17 @@ import { KBCard } from '../../../components/kb-native';
 import { Account } from '../../../services/api';
 import { Button } from '../../../shared/components/ui/Button/Button';
 import { KBLoading } from '../../../shared/components/ui/UnifiedLoading';
-import { 
+import {
   androidAppContainer,
   androidOptimizedScroll,
-  androidOptimizedButton 
+  androidOptimizedButton,
 } from '../../../styles/android-webview-optimizations';
-import { fadeInUp, staggerDelay, respectMotionPreference, smoothTransition } from '../../../styles/animations';
+import {
+  fadeInUp,
+  staggerDelay,
+  respectMotionPreference,
+  smoothTransition,
+} from '../../../styles/animations';
 import { KBDesignSystem } from '../../../styles/tokens/kb-design-system';
 import { formatCurrency as formatCurrencyUtil } from '../../../utils/textFormatter';
 /**
@@ -25,16 +30,26 @@ import { formatCurrency as formatCurrencyUtil } from '../../../utils/textFormatt
  */
 const AccountBannerSection = styled.section`
   ${androidAppContainer}
-  background: ${KBDesignSystem.colors.background.white};
+  background: ${KBDesignSystem.colors.background.gray100};
   padding: 0;
-  
+
   /* Android WebView 성능 최적화 */
   transform: translateZ(0);
   will-change: scroll-position;
 `;
+
+const SectionTitle = styled.h2`
+  font-family: ${KBDesignSystem.typography.fontFamily.primary};
+  font-size: ${KBDesignSystem.typography.fontSize.lg};
+  font-weight: ${KBDesignSystem.typography.fontWeight.bold};
+  color: ${KBDesignSystem.colors.text.primary};
+  margin: 0 0 ${KBDesignSystem.spacing.md} 0;
+  padding: 0 ${KBDesignSystem.spacing.lg};
+`;
+
 const AccountBannerWrapper = styled.div`
   background: ${KBDesignSystem.colors.background.gray100};
-  padding: ${KBDesignSystem.spacing.lg} ${KBDesignSystem.spacing.lg};
+  padding: 0 ${KBDesignSystem.spacing.lg} ${KBDesignSystem.spacing.lg} ${KBDesignSystem.spacing.lg};
   position: relative;
 `;
 const AccountBanner = styled.div`
@@ -77,7 +92,8 @@ const KBLogoCircle = styled.div`
   justify-content: center;
   overflow: hidden;
   box-shadow: ${KBDesignSystem.shadows.sm};
-  transition: all ${KBDesignSystem.animation.duration.normal} ${KBDesignSystem.animation.easing.easeOut};
+  transition: all ${KBDesignSystem.animation.duration.normal}
+    ${KBDesignSystem.animation.easing.easeOut};
   position: relative;
   /* 내부 하이라이트 */
   &::before {
@@ -103,17 +119,18 @@ const AccountRow = styled.div<{ $animationIndex?: number }>`
   flex-direction: column;
   align-items: flex-start;
   cursor: pointer;
-  transition: all ${KBDesignSystem.animation.duration.normal} ${KBDesignSystem.animation.easing.easeOut};
+  transition: all ${KBDesignSystem.animation.duration.normal}
+    ${KBDesignSystem.animation.easing.easeOut};
   padding: ${KBDesignSystem.spacing.base};
   margin: -${KBDesignSystem.spacing.xs};
   border-radius: ${KBDesignSystem.borderRadius.lg};
   min-height: 100px;
   position: relative;
-  
+
   /* Android WebView 터치 최적화 */
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
-  
+
   /* 스태거 애니메이션 */
   animation: ${fadeInUp} 0.5s ease-out forwards;
   ${props => props.$animationIndex && staggerDelay(props.$animationIndex, 0.1)}
@@ -134,7 +151,8 @@ const AccountRow = styled.div<{ $animationIndex?: number }>`
   }
   &:active {
     transform: translate3d(0, 0, 0);
-    transition: all ${KBDesignSystem.animation.duration.fast} ${KBDesignSystem.animation.easing.easeOut};
+    transition: all ${KBDesignSystem.animation.duration.fast}
+      ${KBDesignSystem.animation.easing.easeOut};
   }
   /* 레스폰시브 처리 */
   @media (max-width: 480px) {
@@ -185,7 +203,7 @@ const AccountBalance = styled.div`
   bottom: ${KBDesignSystem.spacing.base};
   right: ${KBDesignSystem.spacing.base};
   text-align: right;
-  
+
   @media (max-width: 480px) {
     bottom: ${KBDesignSystem.spacing.sm};
     right: ${KBDesignSystem.spacing.sm};
@@ -293,7 +311,8 @@ const TotalAccountButton = styled.button`
   font-family: ${KBDesignSystem.typography.fontFamily.primary};
   font-size: ${KBDesignSystem.typography.fontSize.base};
   font-weight: ${KBDesignSystem.typography.fontWeight.medium};
-  transition: all ${KBDesignSystem.animation.duration.normal} ${KBDesignSystem.animation.easing.easeOut};
+  transition: all ${KBDesignSystem.animation.duration.normal}
+    ${KBDesignSystem.animation.easing.easeOut};
   margin-top: ${KBDesignSystem.spacing.md};
   letter-spacing: ${KBDesignSystem.typography.letterSpacing.tight};
   box-shadow: none;
@@ -304,7 +323,7 @@ const TotalAccountButton = styled.button`
   touch-action: manipulation;
   cursor: pointer;
   width: 100%;
-  
+
   /* Android WebView 최적화 강화 */
   will-change: transform;
   backface-visibility: hidden;
@@ -327,7 +346,8 @@ const TotalAccountButton = styled.button`
   &:active {
     transform: translateY(0) scale(0.98);
     box-shadow: ${KBDesignSystem.shadows.sm};
-    transition: all ${KBDesignSystem.animation.duration.fast} ${KBDesignSystem.animation.easing.easeOut};
+    transition: all ${KBDesignSystem.animation.duration.fast}
+      ${KBDesignSystem.animation.easing.easeOut};
   }
   &:disabled {
     opacity: 0.7;
@@ -362,7 +382,7 @@ const ViewAllButton = styled.button`
   border-radius: ${KBDesignSystem.borderRadius.sm};
   cursor: pointer;
   transition: all ${KBDesignSystem.animation.duration.fast} ease;
-  
+
   &:hover {
     background: ${KBDesignSystem.colors.background.gray100};
   }
@@ -371,86 +391,82 @@ interface AccountSectionProps {
   accounts: Account[];
   className?: string;
 }
-export const AccountSection: React.FC<AccountSectionProps> = React.memo(({ 
-  accounts, 
-  className 
-}) => {
-  const navigate = useNavigate();
-  const [isTransferLoading, setIsTransferLoading] = useState(false);
-  
-  // 최대 2개 계좌만 표시 (성능 최적화)
-  const displayedAccounts = useMemo(() => {
-    return accounts.slice(0, 2);
-  }, [accounts]);
-  // 잔액 포맷팅 함수 (메모이제이션)
-  const formatCurrency = useMemo(() => {
-    return (amount: number) => {
-      if (!amount || amount < 0) return '0';
-      return formatCurrencyUtil(amount);
-    };
-  }, []);
+export const AccountSection: React.FC<AccountSectionProps> = React.memo(
+  ({ accounts, className }) => {
+    const navigate = useNavigate();
+    const [isTransferLoading, setIsTransferLoading] = useState(false);
 
-  // 이체 버튼 클릭 핸들러 - 실제 KB 스타뱅킹과 유사한 로딩 경험
-  const handleTransferClick = () => {
-    setIsTransferLoading(true);
-    // 자연스러운 로딩 시간 (실제 뱅킹 앱과 유사)
-    setTimeout(() => {
-      navigate('/transfer');
-      setIsTransferLoading(false);
-    }, 1200);
-  };
-  return (
-    <>
-      {isTransferLoading && (
-        <KBLoading 
-          isVisible={true} 
-          type="fullscreen" 
-          variant="type1" 
-          size="large" 
-          message="이체 서비스를 준비하고 있습니다"
-        />
-      )}
-      <AccountBannerSection className={className}>
-        <AccountBannerWrapper>
-          <AccountBanner>
-          {displayedAccounts.map((account, index) => (
-            <AccountRow 
-              key={account.id} 
-              $animationIndex={index}
-              as={Link}
-              to={`/account/${account.id}`}
-            >
-              <AccountLeft>
-                <KBLogoCircle>
-                  <img src={kbLogo} alt="KB" />
-                </KBLogoCircle>
-                <AccountInfo>
-                  <AccountName>{account.account_name}</AccountName>
-                  <AccountNumber>{account.account_number}</AccountNumber>
-                </AccountInfo>
-              </AccountLeft>
-              <AccountBalance>
-                <BalanceAmount $amount={account.balance}>
-                  {formatCurrency(account.balance)}
-                  <BalanceWon $amount={account.balance}>원</BalanceWon>
-                </BalanceAmount>
-              </AccountBalance>
-            </AccountRow>
-          ))}
-          <TotalAccountButton>
-            총금계좌등록
-          </TotalAccountButton>
-        </AccountBanner>
-        <AccountPagination>
-          <PaginationText>1 / 3</PaginationText>
-          <ViewAllButton onClick={() => navigate('/account')}>
-            전체계좌 보기
-          </ViewAllButton>
-        </AccountPagination>
-      </AccountBannerWrapper>
-    </AccountBannerSection>
-    </>
-  );
-});
+    // 최대 2개 계좌만 표시 (성능 최적화)
+    const displayedAccounts = useMemo(() => {
+      return accounts.slice(0, 2);
+    }, [accounts]);
+    // 잔액 포맷팅 함수 (메모이제이션)
+    const formatCurrency = useMemo(() => {
+      return (amount: number) => {
+        if (!amount || amount < 0) return '0';
+        return formatCurrencyUtil(amount);
+      };
+    }, []);
+
+    // 이체 버튼 클릭 핸들러 - 실제 KB 스타뱅킹과 유사한 로딩 경험
+    const handleTransferClick = () => {
+      setIsTransferLoading(true);
+      // 자연스러운 로딩 시간 (실제 뱅킹 앱과 유사)
+      setTimeout(() => {
+        navigate('/transfer');
+        setIsTransferLoading(false);
+      }, 1200);
+    };
+    return (
+      <>
+        {isTransferLoading && (
+          <KBLoading
+            isVisible={true}
+            type='fullscreen'
+            variant='type1'
+            size='large'
+            message='이체 서비스를 준비하고 있습니다'
+          />
+        )}
+        <AccountBannerSection className={className}>
+          <SectionTitle>계좌</SectionTitle>
+          <AccountBannerWrapper>
+            <AccountBanner>
+              {displayedAccounts.map((account, index) => (
+                <AccountRow
+                  key={account.id}
+                  $animationIndex={index}
+                  as={Link}
+                  to={`/account/${account.id}`}
+                >
+                  <AccountLeft>
+                    <KBLogoCircle>
+                      <img src={kbLogo} alt='KB' />
+                    </KBLogoCircle>
+                    <AccountInfo>
+                      <AccountName>{account.account_name}</AccountName>
+                      <AccountNumber>{account.account_number}</AccountNumber>
+                    </AccountInfo>
+                  </AccountLeft>
+                  <AccountBalance>
+                    <BalanceAmount $amount={account.balance}>
+                      {formatCurrency(account.balance)}
+                      <BalanceWon $amount={account.balance}>원</BalanceWon>
+                    </BalanceAmount>
+                  </AccountBalance>
+                </AccountRow>
+              ))}
+              <TotalAccountButton>총금계좌등록</TotalAccountButton>
+            </AccountBanner>
+            <AccountPagination>
+              <PaginationText>1 / 3</PaginationText>
+              <ViewAllButton onClick={() => navigate('/account')}>전체계좌 보기</ViewAllButton>
+            </AccountPagination>
+          </AccountBannerWrapper>
+        </AccountBannerSection>
+      </>
+    );
+  }
+);
 AccountSection.displayName = 'AccountSection';
 export default AccountSection;

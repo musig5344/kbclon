@@ -1,6 +1,6 @@
 /**
  * Security Module Index
- * 
+ *
  * KB StarBanking 통합 보안 시스템
  * - CSP (Content Security Policy) 보호
  * - XSS (Cross-Site Scripting) 방어
@@ -18,11 +18,23 @@ export * from './csp';
 export { default as CSPSystem } from './csp';
 
 // XSS Protection
-export { default as XSSProtection, xssProtection, sanitizeInput, escapeHtml, validateBankingInput } from './xss/XSSProtection';
+export {
+  default as XSSProtection,
+  xssProtection,
+  sanitizeInput,
+  escapeHtml,
+  validateBankingInput,
+} from './xss/XSSProtection';
 export type { XSSValidationOptions, XSSValidationResult } from './xss/XSSProtection';
 
 // CSRF Protection
-export { default as CSRFProtection, csrfProtection, generateCSRFToken, validateCSRFToken, createCSRFMiddleware } from './csrf/CSRFProtection';
+export {
+  default as CSRFProtection,
+  csrfProtection,
+  generateCSRFToken,
+  validateCSRFToken,
+  createCSRFMiddleware,
+} from './csrf/CSRFProtection';
 export type { CSRFTokenOptions, CSRFValidationResult, CSRFConfig } from './csrf/CSRFProtection';
 
 // Data Masking
@@ -41,7 +53,7 @@ export {
   useCSRFProtection,
   useSecureForm,
   useBankingSecurity,
-  SecurityStatus
+  SecurityStatus,
 } from './hooks/useSecurityProtection';
 
 /**
@@ -67,7 +79,7 @@ export const setupKBStarBankingSecurity = (
     enableMasking = true,
     enableSessionManagement = true,
     sessionId = `session_${Date.now()}`,
-    onSecurityViolation
+    onSecurityViolation,
   } = options;
 
   const securityConfig = {
@@ -75,25 +87,24 @@ export const setupKBStarBankingSecurity = (
     xss: null as any,
     csrf: null as any,
     masking: null as any,
-    session: null as any
+    session: null as any,
   };
 
   // CSP 설정
   if (enableCSP) {
     securityConfig.csp = setupKBStarBankingCSP(environment);
-    
+
     // CSP 위반 모니터링 설정
-    setupCSPViolationMonitoring((violation) => {
+    setupCSPViolationMonitoring(violation => {
       console.warn('[Security] CSP Violation:', violation);
       if (onSecurityViolation) {
         onSecurityViolation({
           type: 'csp',
           details: violation,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         });
       }
     });
-
   }
 
   // XSS 보호 설정
@@ -104,7 +115,7 @@ export const setupKBStarBankingSecurity = (
   // CSRF 보호 설정
   if (enableCSRF) {
     securityConfig.csrf = csrfProtection;
-    
+
     // 초기 CSRF 토큰 생성
     const { token } = csrfProtection.generateToken(sessionId);
   }
@@ -115,7 +126,7 @@ export const setupKBStarBankingSecurity = (
     securityConfig.masking = setupBankingMasking({
       defaultAccessLevel: environment === 'production' ? 'user' : 'admin',
       enableAutoDetection: true,
-      strictMode: environment === 'production'
+      strictMode: environment === 'production',
     });
   }
 
@@ -125,7 +136,7 @@ export const setupKBStarBankingSecurity = (
     securityConfig.session = setupBankingSessionManagement({
       securityLevel: environment === 'production' ? 'maximum' : 'enhanced',
       enableSecurityMonitoring: true,
-      enablePerformanceLogging: environment === 'development'
+      enablePerformanceLogging: environment === 'development',
     });
   }
 
@@ -139,8 +150,8 @@ export const setupKBStarBankingSecurity = (
       xss: enableXSS,
       csrf: enableCSRF,
       masking: enableMasking,
-      sessionManagement: enableSessionManagement
-    }
+      sessionManagement: enableSessionManagement,
+    },
   };
 };
 
@@ -153,9 +164,9 @@ export const setupDevelopmentSecurity = (sessionId?: string) => {
     enableXSS: true,
     enableCSRF: true,
     sessionId,
-    onSecurityViolation: (violation) => {
+    onSecurityViolation: violation => {
       console.warn('[Dev Security]', violation);
-    }
+    },
   });
 };
 
@@ -168,11 +179,11 @@ export const setupProductionSecurity = (sessionId?: string) => {
     enableXSS: true,
     enableCSRF: true,
     sessionId,
-    onSecurityViolation: (violation) => {
+    onSecurityViolation: violation => {
       // 프로덕션에서는 모니터링 서비스로 전송
       console.error('[Security Violation]', violation);
       // sendToMonitoring(violation);
-    }
+    },
   });
 };
 
@@ -183,23 +194,24 @@ export const getSecurityStatus = () => {
   return {
     csp: {
       enabled: typeof window !== 'undefined' && 'SecurityPolicyViolationEvent' in window,
-      violations: document?.querySelectorAll('meta[http-equiv*="Content-Security-Policy"]').length || 0
+      violations:
+        document?.querySelectorAll('meta[http-equiv*="Content-Security-Policy"]').length || 0,
     },
     xss: {
       enabled: true,
-      protectionActive: xssProtection !== null
+      protectionActive: xssProtection !== null,
     },
     csrf: {
       enabled: true,
       protectionActive: csrfProtection !== null,
-      tokensActive: csrfProtection.getProtectionStatus().activeTokens
+      tokensActive: csrfProtection.getProtectionStatus().activeTokens,
     },
     browser: {
       supportsTrustedTypes: typeof window !== 'undefined' && 'trustedTypes' in window,
       supportsCSP: typeof window !== 'undefined' && 'SecurityPolicyViolationEvent' in window,
-      userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown'
+      userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown',
     },
-    timestamp: Date.now()
+    timestamp: Date.now(),
   };
 };
 
@@ -214,8 +226,8 @@ export const runSecurityTests = async () => {
     overall: {
       passed: 0,
       failed: 0,
-      warnings: 0
-    }
+      warnings: 0,
+    },
   };
 
   try {
@@ -223,14 +235,14 @@ export const runSecurityTests = async () => {
     const { validateCSPConfig } = await import('./csp');
     const cspConfig = autoConfigureCSP().getConfig();
     results.csp = await validateCSPConfig(cspConfig);
-    
+
     // XSS 테스트
     const xssTests = [
       '<script>alert("test")</script>',
       '<img src=x onerror="alert(1)">',
-      'javascript:alert("xss")'
+      'javascript:alert("xss")',
     ];
-    
+
     results.xss = xssTests.map(test => xssProtection.validate(test));
 
     // CSRF 테스트
@@ -238,18 +250,16 @@ export const runSecurityTests = async () => {
     results.csrf = csrfProtection.validateToken(token, 'test_session');
 
     // 전체 결과 계산
-    const allResults = [
-      ...results.csp || [],
-      ...results.xss || [],
-      results.csrf
-    ].filter(Boolean);
+    const allResults = [...(results.csp || []), ...(results.xss || []), results.csrf].filter(
+      Boolean
+    );
 
     results.overall.passed = allResults.filter((r: any) => r.isValid || r.passed).length;
     results.overall.failed = allResults.filter((r: any) => !(r.isValid || r.passed)).length;
-    results.overall.warnings = allResults.reduce((acc: number, r: any) => 
-      acc + (r.warnings?.length || 0), 0
+    results.overall.warnings = allResults.reduce(
+      (acc: number, r: any) => acc + (r.warnings?.length || 0),
+      0
     );
-
   } catch (error) {
     console.error('[Security Tests] Error running tests:', error);
   }
@@ -267,10 +277,10 @@ export const exportSecurityConfig = () => {
     xss: {
       enabled: true,
       strictMode: true,
-      bankingMode: true
+      bankingMode: true,
     },
     timestamp: Date.now(),
-    version: '1.0.0'
+    version: '1.0.0',
   };
 };
 
@@ -292,32 +302,37 @@ export const importSecurityConfig = (config: any) => {
  */
 export const enableEmergencySecurityMode = (sessionId?: string) => {
   console.warn('[Security] Emergency security mode activated!');
-  
+
   const config = setupKBStarBankingSecurity('production', {
     enableCSP: true,
     enableXSS: true,
     enableCSRF: true,
     sessionId: sessionId || `emergency_${Date.now()}`,
-    onSecurityViolation: (violation) => {
+    onSecurityViolation: violation => {
       console.error('[EMERGENCY SECURITY]', violation);
       // 긴급 상황에서는 즉시 알림
       if (typeof window !== 'undefined') {
-        window.dispatchEvent(new CustomEvent('securityEmergency', {
-          detail: violation
-        }));
+        window.dispatchEvent(
+          new CustomEvent('securityEmergency', {
+            detail: violation,
+          })
+        );
       }
-    }
+    },
   });
 
   // 추가 보안 설정
   if (typeof document !== 'undefined') {
     // 우클릭 비활성화
-    document.addEventListener('contextmenu', (e) => e.preventDefault());
-    
+    document.addEventListener('contextmenu', e => e.preventDefault());
+
     // 개발자 도구 감지 시도
     let devtools = { open: false };
     setInterval(() => {
-      if (window.outerHeight - window.innerHeight > 200 || window.outerWidth - window.innerWidth > 200) {
+      if (
+        window.outerHeight - window.innerHeight > 200 ||
+        window.outerWidth - window.innerWidth > 200
+      ) {
         if (!devtools.open) {
           devtools.open = true;
           console.warn('[Emergency Security] Development tools may be open');
@@ -337,19 +352,19 @@ export default {
   setupKBStarBankingSecurity,
   setupDevelopmentSecurity,
   setupProductionSecurity,
-  
+
   // Status & Testing
   getSecurityStatus,
   runSecurityTests,
-  
+
   // Configuration
   exportSecurityConfig,
   importSecurityConfig,
-  
+
   // Emergency
   enableEmergencySecurityMode,
-  
+
   // Core Services
   xssProtection,
-  csrfProtection
+  csrfProtection,
 };

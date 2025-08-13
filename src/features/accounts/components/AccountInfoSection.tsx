@@ -14,7 +14,7 @@ import {
   AccountNumber,
   LargeBalance,
   AvailableBalance,
-  ATMButton
+  ATMButton,
 } from '../styles/AccountPage.styles';
 
 // Props 인터페이스 정의
@@ -30,65 +30,60 @@ interface AccountInfoSectionProps {
   onATMClick?: () => void;
 }
 
-const AccountInfoSection: React.FC<AccountInfoSectionProps> = memo(({
-  account,
-  onEditClick,
-  onSettingsClick,
-  onATMClick
-}) => {
-  // 계좌 잔액 포맷팅을 메모이제이션
-  const formattedBalance = useMemo(() => {
-    const balance = account?.balance || 510000;
-    return balance.toLocaleString();
-  }, [account?.balance]);
+const AccountInfoSection: React.FC<AccountInfoSectionProps> = memo(
+  ({ account, onEditClick, onSettingsClick, onATMClick }) => {
+    // 계좌 잔액 포맷팅을 메모이제이션
+    const formattedBalance = useMemo(() => {
+      const balance = account?.balance || 510000;
+      return balance.toLocaleString();
+    }, [account?.balance]);
 
-  // 계좌 번호를 메모이제이션
-  const accountNumber = useMemo(() => 
-    account?.account_number || '110-609-756856',
-    [account?.account_number]
-  );
+    // 계좌 번호를 메모이제이션
+    const accountNumber = useMemo(
+      () => account?.account_number || '110-609-756856',
+      [account?.account_number]
+    );
 
-  // 클릭 핸들러들을 메모이제이션
-  const handleEditClick = useCallback(() => {
-    onEditClick?.();
-  }, [onEditClick]);
+    // 클릭 핸들러들을 메모이제이션
+    const handleEditClick = useCallback(() => {
+      onEditClick?.();
+    }, [onEditClick]);
 
-  const handleSettingsClick = useCallback(() => {
-    onSettingsClick?.();
-  }, [onSettingsClick]);
+    const handleSettingsClick = useCallback(() => {
+      onSettingsClick?.();
+    }, [onSettingsClick]);
 
-  const handleATMClick = useCallback(() => {
-    onATMClick?.();
-  }, [onATMClick]);
+    const handleATMClick = useCallback(() => {
+      onATMClick?.();
+    }, [onATMClick]);
 
-  return (
-    <StyledAccountInfoSection>
-      <TopRow>
-        <LeftSection>
-          <AccountName>
-            KB국민ONE통장 
-            <EditIcon onClick={handleEditClick}>✏️</EditIcon>
-          </AccountName>
-        </LeftSection>
-        <RightSection>
-          <SettingsIcon onClick={handleSettingsClick}>⚙️</SettingsIcon>
-        </RightSection>
-      </TopRow>
-      <MiddleRow>
-        <AccountNumber>
-          {accountNumber}
-        </AccountNumber>
-        <BalanceSection>
-          <LargeBalance>{formattedBalance}원</LargeBalance>
-        </BalanceSection>
-      </MiddleRow>
-      <BottomRow>
-        <AvailableBalance>출금가능금액 {formattedBalance}원</AvailableBalance>
-      </BottomRow>
-      <ATMButton onClick={handleATMClick}>ATM/창구출금</ATMButton>
-    </StyledAccountInfoSection>
-  );
-});
+    return (
+      <StyledAccountInfoSection>
+        <TopRow>
+          <LeftSection>
+            <AccountName>
+              KB국민ONE통장
+              <EditIcon onClick={handleEditClick}>✏️</EditIcon>
+            </AccountName>
+          </LeftSection>
+          <RightSection>
+            <SettingsIcon onClick={handleSettingsClick}>⚙️</SettingsIcon>
+          </RightSection>
+        </TopRow>
+        <MiddleRow>
+          <AccountNumber>{accountNumber}</AccountNumber>
+          <BalanceSection>
+            <LargeBalance>{formattedBalance}원</LargeBalance>
+          </BalanceSection>
+        </MiddleRow>
+        <BottomRow>
+          <AvailableBalance>출금가능금액 {formattedBalance}원</AvailableBalance>
+        </BottomRow>
+        <ATMButton onClick={handleATMClick}>ATM/창구출금</ATMButton>
+      </StyledAccountInfoSection>
+    );
+  }
+);
 
 AccountInfoSection.displayName = 'AccountInfoSection';
 

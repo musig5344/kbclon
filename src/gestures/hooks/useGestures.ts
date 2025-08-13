@@ -1,6 +1,11 @@
 import { useEffect, useRef, useCallback } from 'react';
 
-import { GestureRecognizer, GestureType, GestureEvent, GestureConfig } from '../core/GestureRecognizer';
+import {
+  GestureRecognizer,
+  GestureType,
+  GestureEvent,
+  GestureConfig,
+} from '../core/GestureRecognizer';
 
 export interface UseGesturesOptions {
   config?: Partial<GestureConfig>;
@@ -92,11 +97,15 @@ export const useSwipeGesture = (
   onSwipe: (direction: 'up' | 'down' | 'left' | 'right', event: GestureEvent) => void,
   options: UseGesturesOptions = {}
 ) => {
-  return useGesture('swipe', (event) => {
-    if (event.data?.direction) {
-      onSwipe(event.data.direction, event);
-    }
-  }, options);
+  return useGesture(
+    'swipe',
+    event => {
+      if (event.data?.direction) {
+        onSwipe(event.data.direction, event);
+      }
+    },
+    options
+  );
 };
 
 export const useTapGesture = (
@@ -124,22 +133,30 @@ export const usePinchGesture = (
   onPinch: (scale: number, event: GestureEvent) => void,
   options: UseGesturesOptions = {}
 ) => {
-  return useGesture('pinch', (event) => {
-    if (event.data?.scale) {
-      onPinch(event.data.scale, event);
-    }
-  }, options);
+  return useGesture(
+    'pinch',
+    event => {
+      if (event.data?.scale) {
+        onPinch(event.data.scale, event);
+      }
+    },
+    options
+  );
 };
 
 export const usePanGesture = (
   onPan: (deltaX: number, deltaY: number, event: GestureEvent) => void,
   options: UseGesturesOptions = {}
 ) => {
-  return useGesture('pan', (event) => {
-    if (event.data?.deltaX !== undefined && event.data?.deltaY !== undefined) {
-      onPan(event.data.deltaX, event.data.deltaY, event);
-    }
-  }, options);
+  return useGesture(
+    'pan',
+    event => {
+      if (event.data?.deltaX !== undefined && event.data?.deltaY !== undefined) {
+        onPan(event.data.deltaX, event.data.deltaY, event);
+      }
+    },
+    options
+  );
 };
 
 export const usePullToRefreshGesture = (
@@ -196,7 +213,7 @@ export const useSecureGestures = (
     },
     longPress: {
       minDuration: 800, // Longer for security
-      maxDistance: 5,   // More precise
+      maxDistance: 5, // More precise
       hapticFeedback: true,
     },
     doubleTap: {
@@ -206,11 +223,14 @@ export const useSecureGestures = (
     ...options.config,
   };
 
-  return useMultiGesture({
-    'double-tap': (event) => onSecureAction('confirm', event),
-    'long-press': (event) => onSecureAction('authenticate', event),
-    'force-touch': (event) => onSecureAction('force-confirm', event),
-  }, { ...options, config: secureConfig });
+  return useMultiGesture(
+    {
+      'double-tap': event => onSecureAction('confirm', event),
+      'long-press': event => onSecureAction('authenticate', event),
+      'force-touch': event => onSecureAction('force-confirm', event),
+    },
+    { ...options, config: secureConfig }
+  );
 };
 
 // Hook for account card gestures
@@ -221,17 +241,20 @@ export const useAccountCardGestures = (
   onLongPress?: () => void,
   options: UseGesturesOptions = {}
 ) => {
-  return useMultiGesture({
-    swipe: (event) => {
-      if (event.data?.direction === 'left') {
-        onSwipeLeft();
-      } else if (event.data?.direction === 'right') {
-        onSwipeRight();
-      }
+  return useMultiGesture(
+    {
+      swipe: event => {
+        if (event.data?.direction === 'left') {
+          onSwipeLeft();
+        } else if (event.data?.direction === 'right') {
+          onSwipeRight();
+        }
+      },
+      tap: onTap,
+      'long-press': onLongPress,
     },
-    tap: onTap,
-    'long-press': onLongPress,
-  }, options);
+    options
+  );
 };
 
 // Hook for transaction list gestures
@@ -241,28 +264,31 @@ export const useTransactionGestures = (
   onTap: (transactionId: string) => void,
   options: UseGesturesOptions = {}
 ) => {
-  return useMultiGesture({
-    swipe: (event) => {
-      const target = event.target as HTMLElement;
-      const transactionId = target.dataset.transactionId;
-      
-      if (!transactionId) return;
-      
-      if (event.data?.direction === 'left') {
-        onSwipeToDelete(transactionId);
-      } else if (event.data?.direction === 'right') {
-        onSwipeToCategory(transactionId);
-      }
+  return useMultiGesture(
+    {
+      swipe: event => {
+        const target = event.target as HTMLElement;
+        const transactionId = target.dataset.transactionId;
+
+        if (!transactionId) return;
+
+        if (event.data?.direction === 'left') {
+          onSwipeToDelete(transactionId);
+        } else if (event.data?.direction === 'right') {
+          onSwipeToCategory(transactionId);
+        }
+      },
+      tap: event => {
+        const target = event.target as HTMLElement;
+        const transactionId = target.dataset.transactionId;
+
+        if (transactionId) {
+          onTap(transactionId);
+        }
+      },
     },
-    tap: (event) => {
-      const target = event.target as HTMLElement;
-      const transactionId = target.dataset.transactionId;
-      
-      if (transactionId) {
-        onTap(transactionId);
-      }
-    },
-  }, options);
+    options
+  );
 };
 
 // Hook for PIN input gestures
@@ -286,27 +312,30 @@ export const usePINGestures = (
     ...options.config,
   };
 
-  return useMultiGesture({
-    tap: (event) => {
-      const target = event.target as HTMLElement;
-      
-      if (target.dataset.number) {
-        onNumberTap(target.dataset.number);
-      } else if (target.dataset.action === 'delete') {
-        onDelete();
-      } else if (target.dataset.action === 'submit') {
-        onSubmit();
-      }
+  return useMultiGesture(
+    {
+      tap: event => {
+        const target = event.target as HTMLElement;
+
+        if (target.dataset.number) {
+          onNumberTap(target.dataset.number);
+        } else if (target.dataset.action === 'delete') {
+          onDelete();
+        } else if (target.dataset.action === 'submit') {
+          onSubmit();
+        }
+      },
+      'long-press': event => {
+        const target = event.target as HTMLElement;
+
+        if (target.dataset.action === 'delete') {
+          // Long press on delete to clear all
+          onDelete();
+        }
+      },
     },
-    'long-press': (event) => {
-      const target = event.target as HTMLElement;
-      
-      if (target.dataset.action === 'delete') {
-        // Long press on delete to clear all
-        onDelete();
-      }
-    },
-  }, { ...options, config: secureConfig });
+    { ...options, config: secureConfig }
+  );
 };
 
 // Hook for navigation gestures
@@ -316,22 +345,27 @@ export const useNavigationGestures = (
   onMenu?: () => void,
   options: UseGesturesOptions = {}
 ) => {
-  return useMultiGesture({
-    'edge-swipe': (event) => {
-      const touch = event.touches[0];
-      
-      if (touch.x < 20) { // Left edge
-        onBack();
-      } else if (touch.x > window.innerWidth - 20 && onForward) { // Right edge
-        onForward();
-      }
+  return useMultiGesture(
+    {
+      'edge-swipe': event => {
+        const touch = event.touches[0];
+
+        if (touch.x < 20) {
+          // Left edge
+          onBack();
+        } else if (touch.x > window.innerWidth - 20 && onForward) {
+          // Right edge
+          onForward();
+        }
+      },
+      swipe: event => {
+        if (event.data?.direction === 'down' && touch.y < 50 && onMenu) {
+          onMenu();
+        }
+      },
     },
-    swipe: (event) => {
-      if (event.data?.direction === 'down' && touch.y < 50 && onMenu) {
-        onMenu();
-      }
-    },
-  }, options);
+    options
+  );
 };
 
 // Hook for amount input gestures
@@ -340,27 +374,30 @@ export const useAmountInputGestures = (
   onDecrease: (amount: number) => void,
   options: UseGesturesOptions = {}
 ) => {
-  return useMultiGesture({
-    swipe: (event) => {
-      const target = event.target as HTMLElement;
-      const step = parseInt(target.dataset.step || '1000', 10);
-      
-      if (event.data?.direction === 'up') {
-        onIncrease(step);
-      } else if (event.data?.direction === 'down') {
-        onDecrease(step);
-      }
+  return useMultiGesture(
+    {
+      swipe: event => {
+        const target = event.target as HTMLElement;
+        const step = parseInt(target.dataset.step || '1000', 10);
+
+        if (event.data?.direction === 'up') {
+          onIncrease(step);
+        } else if (event.data?.direction === 'down') {
+          onDecrease(step);
+        }
+      },
+      pinch: event => {
+        const target = event.target as HTMLElement;
+        const currentAmount = parseInt(target.dataset.amount || '0', 10);
+        const scale = event.data?.scale || 1;
+
+        if (scale > 1.1) {
+          onIncrease(Math.floor(currentAmount * 0.1));
+        } else if (scale < 0.9) {
+          onDecrease(Math.floor(currentAmount * 0.1));
+        }
+      },
     },
-    pinch: (event) => {
-      const target = event.target as HTMLElement;
-      const currentAmount = parseInt(target.dataset.amount || '0', 10);
-      const scale = event.data?.scale || 1;
-      
-      if (scale > 1.1) {
-        onIncrease(Math.floor(currentAmount * 0.1));
-      } else if (scale < 0.9) {
-        onDecrease(Math.floor(currentAmount * 0.1));
-      }
-    },
-  }, options);
+    options
+  );
 };

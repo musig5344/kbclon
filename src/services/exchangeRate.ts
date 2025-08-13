@@ -45,12 +45,14 @@ class ExchangeRateService {
    */
   private setCachedRates(rates: CurrencyRate[]): void {
     try {
-      localStorage.setItem(this.CACHE_KEY, JSON.stringify({
-        data: rates,
-        timestamp: Date.now()
-      }));
-    } catch (error) {
-    }
+      localStorage.setItem(
+        this.CACHE_KEY,
+        JSON.stringify({
+          data: rates,
+          timestamp: Date.now(),
+        })
+      );
+    } catch (error) {}
   }
   /**
    * KRW 기준 환율 가져오기
@@ -63,14 +65,14 @@ class ExchangeRateService {
     }
     // 가상 환율 데이터 사용 (2025년 1월 기준 근사치)
     const baseRates = [
-      { currency: 'USD', code: 'USD', rate: 1383.20, flag: '🇺🇸' },
+      { currency: 'USD', code: 'USD', rate: 1383.2, flag: '🇺🇸' },
       { currency: 'JPY', code: 'JPY', rate: 937.13, flag: '🇯🇵' },
-      { currency: 'EUR', code: 'EUR', rate: 1624.43, flag: '🇪🇺' }
+      { currency: 'EUR', code: 'EUR', rate: 1624.43, flag: '🇪🇺' },
     ];
     // 랜덤하게 약간의 변동성 추가 (±0.5%)
     const rates: CurrencyRate[] = baseRates.map(rate => ({
       ...rate,
-      rate: Number((rate.rate * (1 + (Math.random() - 0.5) * 0.01)).toFixed(2))
+      rate: Number((rate.rate * (1 + (Math.random() - 0.5) * 0.01)).toFixed(2)),
     }));
     // 캐싱
     this.setCachedRates(rates);

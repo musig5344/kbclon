@@ -3,14 +3,14 @@
  * 접근성과 키보드 네비게이션이 강화된 버튼
  */
 
-import React, { 
-  forwardRef, 
-  useCallback, 
-  useRef, 
+import React, {
+  forwardRef,
+  useCallback,
+  useRef,
   useImperativeHandle,
   KeyboardEvent,
   MouseEvent,
-  FocusEvent
+  FocusEvent,
 } from 'react';
 
 import styled from 'styled-components';
@@ -57,7 +57,7 @@ const StyledButton = styled.button<{
   position: relative;
   overflow: hidden;
   white-space: nowrap;
-  
+
   /* 크기별 스타일 */
   ${props => {
     switch (props.size) {
@@ -81,9 +81,11 @@ const StyledButton = styled.button<{
         `;
     }
   }}
-  
+
   /* 전체 너비 */
-  ${props => props.fullWidth && `
+  ${props =>
+    props.fullWidth &&
+    `
     width: 100%;
   `}
   
@@ -170,7 +172,9 @@ const StyledButton = styled.button<{
   }}
   
   /* 포커스 스타일 */
-  ${props => props.focusRing && `
+  ${props =>
+    props.focusRing &&
+    `
     &:focus {
       outline: 3px solid #007bff;
       outline-offset: 2px;
@@ -183,7 +187,9 @@ const StyledButton = styled.button<{
   `}
   
   /* 로딩 상태 */
-  ${props => props.loading && `
+  ${props =>
+    props.loading &&
+    `
     pointer-events: none;
     opacity: 0.7;
   `}
@@ -195,16 +201,22 @@ const StyledButton = styled.button<{
     transform: none !important;
     box-shadow: none !important;
   }
-  
+
   /* 키보드 활성화 애니메이션 */
   &.keyboard-activated {
     animation: keyboardPress 0.15s ease;
   }
-  
+
   @keyframes keyboardPress {
-    0% { transform: scale(1); }
-    50% { transform: scale(0.95); }
-    100% { transform: scale(1); }
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(0.95);
+    }
+    100% {
+      transform: scale(1);
+    }
   }
 `;
 
@@ -215,10 +227,14 @@ const LoadingSpinner = styled.div`
   border-top: 2px solid currentColor;
   border-radius: 50%;
   animation: spin 1s linear infinite;
-  
+
   @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
   }
 `;
 
@@ -243,7 +259,7 @@ const ShortcutHint = styled.span`
   pointer-events: none;
   transition: opacity 0.2s ease;
   z-index: 1000;
-  
+
   &.visible {
     opacity: 1;
   }
@@ -256,7 +272,7 @@ const RippleEffect = styled.span`
   transform: scale(0);
   animation: ripple 0.6s linear;
   pointer-events: none;
-  
+
   @keyframes ripple {
     to {
       transform: scale(4);
@@ -265,50 +281,55 @@ const RippleEffect = styled.span`
   }
 `;
 
-export const KeyboardButton = forwardRef<HTMLButtonElement, KeyboardButtonProps>(({
-  children,
-  variant = 'primary',
-  size = 'medium',
-  fullWidth = false,
-  loading = false,
-  leftIcon,
-  rightIcon,
-  shortcut,
-  announceAction = true,
-  enableKeyboardActivation = true,
-  rippleEffect = true,
-  focusRing = true,
-  href,
-  target,
-  rel,
-  onClick,
-  onKeyDown,
-  onFocus,
-  onBlur,
-  onMouseDown,
-  className,
-  'aria-label': ariaLabel,
-  'aria-describedby': ariaDescribedBy,
-  ...props
-}, ref) => {
-  const buttonRef = useRef<HTMLButtonElement>(null);
-  const { settings, focusElement } = useKeyboard();
-  
-  useImperativeHandle(ref, () => buttonRef.current!);
+export const KeyboardButton = forwardRef<HTMLButtonElement, KeyboardButtonProps>(
+  (
+    {
+      children,
+      variant = 'primary',
+      size = 'medium',
+      fullWidth = false,
+      loading = false,
+      leftIcon,
+      rightIcon,
+      shortcut,
+      announceAction = true,
+      enableKeyboardActivation = true,
+      rippleEffect = true,
+      focusRing = true,
+      href,
+      target,
+      rel,
+      onClick,
+      onKeyDown,
+      onFocus,
+      onBlur,
+      onMouseDown,
+      className,
+      'aria-label': ariaLabel,
+      'aria-describedby': ariaDescribedBy,
+      ...props
+    },
+    ref
+  ) => {
+    const buttonRef = useRef<HTMLButtonElement>(null);
+    const { settings, focusElement } = useKeyboard();
 
-  // 리플 효과 생성
-  const createRipple = useCallback((event: MouseEvent<HTMLButtonElement>) => {
-    if (!rippleEffect || !buttonRef.current) return;
-    
-    const button = buttonRef.current;
-    const rect = button.getBoundingClientRect();
-    const size = Math.max(rect.width, rect.height);
-    const x = event.clientX - rect.left - size / 2;
-    const y = event.clientY - rect.top - size / 2;
-    
-    const ripple = document.createElement('span');
-    ripple.className = 'ripple-effect';
-    ripple.style.cssText = `
+    useImperativeHandle(ref, () => buttonRef.current!);
+
+    // 리플 효과 생성
+    const createRipple = useCallback(
+      (event: MouseEvent<HTMLButtonElement>) => {
+        if (!rippleEffect || !buttonRef.current) return;
+
+        const button = buttonRef.current;
+        const rect = button.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        const x = event.clientX - rect.left - size / 2;
+        const y = event.clientY - rect.top - size / 2;
+
+        const ripple = document.createElement('span');
+        ripple.className = 'ripple-effect';
+        ripple.style.cssText = `
       position: absolute;
       border-radius: 50%;
       background: rgba(255, 255, 255, 0.3);
@@ -320,175 +341,190 @@ export const KeyboardButton = forwardRef<HTMLButtonElement, KeyboardButtonProps>
       left: ${x}px;
       top: ${y}px;
     `;
-    
-    button.appendChild(ripple);
-    
-    setTimeout(() => {
-      if (ripple.parentNode) {
-        ripple.parentNode.removeChild(ripple);
-      }
-    }, 600);
-  }, [rippleEffect]);
 
-  // 클릭 핸들러
-  const handleClick = useCallback((event: MouseEvent<HTMLButtonElement>) => {
-    if (loading || props.disabled) return;
-    
-    createRipple(event);
-    
-    if (announceAction) {
-      const actionText = ariaLabel || (typeof children === 'string' ? children : '버튼 클릭됨');
-      announceToScreenReader(`${actionText} 실행됨`);
-    }
-    
-    onClick?.(event);
-  }, [loading, props.disabled, createRipple, announceAction, ariaLabel, children, onClick]);
+        button.appendChild(ripple);
 
-  // 키보드 핸들러
-  const handleKeyDown = useCallback((event: KeyboardEvent<HTMLButtonElement>) => {
-    if (!enableKeyboardActivation) {
-      onKeyDown?.(event);
-      return;
-    }
-    
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      
-      if (!loading && !props.disabled) {
-        // 키보드 활성화 애니메이션
-        if (buttonRef.current) {
-          buttonRef.current.classList.add('keyboard-activated');
-          setTimeout(() => {
-            buttonRef.current?.classList.remove('keyboard-activated');
-          }, 150);
+        setTimeout(() => {
+          if (ripple.parentNode) {
+            ripple.parentNode.removeChild(ripple);
+          }
+        }, 600);
+      },
+      [rippleEffect]
+    );
+
+    // 클릭 핸들러
+    const handleClick = useCallback(
+      (event: MouseEvent<HTMLButtonElement>) => {
+        if (loading || props.disabled) return;
+
+        createRipple(event);
+
+        if (announceAction) {
+          const actionText = ariaLabel || (typeof children === 'string' ? children : '버튼 클릭됨');
+          announceToScreenReader(`${actionText} 실행됨`);
         }
-        
-        // 클릭 이벤트 시뮬레이션
-        const syntheticEvent = {
-          ...event,
-          type: 'click',
-          clientX: 0,
-          clientY: 0,
-          currentTarget: event.currentTarget,
-          target: event.target
-        } as any;
-        
-        handleClick(syntheticEvent);
-      }
+
+        onClick?.(event);
+      },
+      [loading, props.disabled, createRipple, announceAction, ariaLabel, children, onClick]
+    );
+
+    // 키보드 핸들러
+    const handleKeyDown = useCallback(
+      (event: KeyboardEvent<HTMLButtonElement>) => {
+        if (!enableKeyboardActivation) {
+          onKeyDown?.(event);
+          return;
+        }
+
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+
+          if (!loading && !props.disabled) {
+            // 키보드 활성화 애니메이션
+            if (buttonRef.current) {
+              buttonRef.current.classList.add('keyboard-activated');
+              setTimeout(() => {
+                buttonRef.current?.classList.remove('keyboard-activated');
+              }, 150);
+            }
+
+            // 클릭 이벤트 시뮬레이션
+            const syntheticEvent = {
+              ...event,
+              type: 'click',
+              clientX: 0,
+              clientY: 0,
+              currentTarget: event.currentTarget,
+              target: event.target,
+            } as any;
+
+            handleClick(syntheticEvent);
+          }
+        }
+
+        onKeyDown?.(event);
+      },
+      [enableKeyboardActivation, loading, props.disabled, handleClick, onKeyDown]
+    );
+
+    // 포커스 핸들러
+    const handleFocus = useCallback(
+      (event: FocusEvent<HTMLButtonElement>) => {
+        if (settings.announceChanges) {
+          const focusText = ariaLabel || (typeof children === 'string' ? children : '버튼');
+          announceToScreenReader(`${focusText} 포커스됨`);
+        }
+
+        onFocus?.(event);
+      },
+      [settings.announceChanges, ariaLabel, children, onFocus]
+    );
+
+    // 마우스 다운 핸들러 (리플 효과용)
+    const handleMouseDown = useCallback(
+      (event: MouseEvent<HTMLButtonElement>) => {
+        createRipple(event);
+        onMouseDown?.(event);
+      },
+      [createRipple, onMouseDown]
+    );
+
+    // 단축키 표시 텍스트
+    const shortcutText = shortcut ? shortcut.join(' + ') : '';
+
+    // 접근성 속성
+    const accessibilityProps = {
+      'aria-label': ariaLabel,
+      'aria-describedby': ariaDescribedBy,
+      'aria-disabled': loading || props.disabled,
+      'aria-busy': loading,
+      'aria-keyshortcuts': shortcutText || undefined,
+      role: href ? 'link' : 'button',
+    };
+
+    // 링크 버튼인 경우
+    if (href) {
+      return (
+        <StyledButton
+          as='a'
+          ref={buttonRef as any}
+          href={href}
+          target={target}
+          rel={rel}
+          variant={variant}
+          size={size}
+          fullWidth={fullWidth}
+          loading={loading}
+          focusRing={focusRing}
+          onKeyDown={handleKeyDown}
+          onFocus={handleFocus}
+          onMouseDown={handleMouseDown}
+          className={className}
+          {...accessibilityProps}
+          {...(props as any)}
+        >
+          {loading && <LoadingSpinner />}
+          {!loading && leftIcon && <IconWrapper>{leftIcon}</IconWrapper>}
+          {children}
+          {!loading && rightIcon && <IconWrapper>{rightIcon}</IconWrapper>}
+
+          {shortcut && <ShortcutHint>{shortcutText}</ShortcutHint>}
+        </StyledButton>
+      );
     }
-    
-    onKeyDown?.(event);
-  }, [enableKeyboardActivation, loading, props.disabled, handleClick, onKeyDown]);
 
-  // 포커스 핸들러
-  const handleFocus = useCallback((event: FocusEvent<HTMLButtonElement>) => {
-    if (settings.announceChanges) {
-      const focusText = ariaLabel || (typeof children === 'string' ? children : '버튼');
-      announceToScreenReader(`${focusText} 포커스됨`);
-    }
-    
-    onFocus?.(event);
-  }, [settings.announceChanges, ariaLabel, children, onFocus]);
-
-  // 마우스 다운 핸들러 (리플 효과용)
-  const handleMouseDown = useCallback((event: MouseEvent<HTMLButtonElement>) => {
-    createRipple(event);
-    onMouseDown?.(event);
-  }, [createRipple, onMouseDown]);
-
-  // 단축키 표시 텍스트
-  const shortcutText = shortcut ? shortcut.join(' + ') : '';
-
-  // 접근성 속성
-  const accessibilityProps = {
-    'aria-label': ariaLabel,
-    'aria-describedby': ariaDescribedBy,
-    'aria-disabled': loading || props.disabled,
-    'aria-busy': loading,
-    'aria-keyshortcuts': shortcutText || undefined,
-    role: href ? 'link' : 'button'
-  };
-
-  // 링크 버튼인 경우
-  if (href) {
     return (
       <StyledButton
-        as="a"
-        ref={buttonRef as any}
-        href={href}
-        target={target}
-        rel={rel}
+        ref={buttonRef}
+        type='button'
         variant={variant}
         size={size}
         fullWidth={fullWidth}
         loading={loading}
         focusRing={focusRing}
+        onClick={handleClick}
         onKeyDown={handleKeyDown}
         onFocus={handleFocus}
+        onBlur={onBlur}
         onMouseDown={handleMouseDown}
         className={className}
         {...accessibilityProps}
-        {...(props as any)}
+        {...props}
       >
         {loading && <LoadingSpinner />}
         {!loading && leftIcon && <IconWrapper>{leftIcon}</IconWrapper>}
         {children}
         {!loading && rightIcon && <IconWrapper>{rightIcon}</IconWrapper>}
-        
-        {shortcut && (
-          <ShortcutHint>{shortcutText}</ShortcutHint>
-        )}
+
+        {shortcut && <ShortcutHint>{shortcutText}</ShortcutHint>}
       </StyledButton>
     );
   }
-
-  return (
-    <StyledButton
-      ref={buttonRef}
-      type="button"
-      variant={variant}
-      size={size}
-      fullWidth={fullWidth}
-      loading={loading}
-      focusRing={focusRing}
-      onClick={handleClick}
-      onKeyDown={handleKeyDown}
-      onFocus={handleFocus}
-      onBlur={onBlur}
-      onMouseDown={handleMouseDown}
-      className={className}
-      {...accessibilityProps}
-      {...props}
-    >
-      {loading && <LoadingSpinner />}
-      {!loading && leftIcon && <IconWrapper>{leftIcon}</IconWrapper>}
-      {children}
-      {!loading && rightIcon && <IconWrapper>{rightIcon}</IconWrapper>}
-      
-      {shortcut && (
-        <ShortcutHint>{shortcutText}</ShortcutHint>
-      )}
-    </StyledButton>
-  );
-});
+);
 
 KeyboardButton.displayName = 'KeyboardButton';
 
 // 미리 정의된 변형들
-export const KeyboardPrimaryButton = forwardRef<HTMLButtonElement, Omit<KeyboardButtonProps, 'variant'>>(
-  (props, ref) => <KeyboardButton ref={ref} variant="primary" {...props} />
-);
+export const KeyboardPrimaryButton = forwardRef<
+  HTMLButtonElement,
+  Omit<KeyboardButtonProps, 'variant'>
+>((props, ref) => <KeyboardButton ref={ref} variant='primary' {...props} />);
 
-export const KeyboardSecondaryButton = forwardRef<HTMLButtonElement, Omit<KeyboardButtonProps, 'variant'>>(
-  (props, ref) => <KeyboardButton ref={ref} variant="secondary" {...props} />
-);
+export const KeyboardSecondaryButton = forwardRef<
+  HTMLButtonElement,
+  Omit<KeyboardButtonProps, 'variant'>
+>((props, ref) => <KeyboardButton ref={ref} variant='secondary' {...props} />);
 
-export const KeyboardDangerButton = forwardRef<HTMLButtonElement, Omit<KeyboardButtonProps, 'variant'>>(
-  (props, ref) => <KeyboardButton ref={ref} variant="danger" {...props} />
-);
+export const KeyboardDangerButton = forwardRef<
+  HTMLButtonElement,
+  Omit<KeyboardButtonProps, 'variant'>
+>((props, ref) => <KeyboardButton ref={ref} variant='danger' {...props} />);
 
-export const KeyboardTextButton = forwardRef<HTMLButtonElement, Omit<KeyboardButtonProps, 'variant'>>(
-  (props, ref) => <KeyboardButton ref={ref} variant="text" {...props} />
-);
+export const KeyboardTextButton = forwardRef<
+  HTMLButtonElement,
+  Omit<KeyboardButtonProps, 'variant'>
+>((props, ref) => <KeyboardButton ref={ref} variant='text' {...props} />);
 
 export default KeyboardButton;

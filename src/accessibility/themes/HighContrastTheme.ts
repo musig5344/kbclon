@@ -4,9 +4,9 @@
  */
 
 export interface ContrastLevel {
-  normal: string;    // 4.5:1 ratio (WCAG AA)
-  large: string;     // 3:1 ratio (WCAG AA for large text)
-  enhanced: string;  // 7:1 ratio (WCAG AAA)
+  normal: string; // 4.5:1 ratio (WCAG AA)
+  large: string; // 3:1 ratio (WCAG AA for large text)
+  enhanced: string; // 7:1 ratio (WCAG AAA)
 }
 
 export interface HighContrastColors {
@@ -18,7 +18,7 @@ export interface HighContrastColors {
     overlay: string;
     modal: string;
   };
-  
+
   // Text colors
   text: {
     primary: ContrastLevel;
@@ -30,7 +30,7 @@ export interface HighContrastColors {
     warning: ContrastLevel;
     info: ContrastLevel;
   };
-  
+
   // Interactive elements
   interactive: {
     primary: {
@@ -58,7 +58,7 @@ export interface HighContrastColors {
       disabled: string;
     };
   };
-  
+
   // System colors
   system: {
     focus: string;
@@ -68,13 +68,13 @@ export interface HighContrastColors {
     selection: string;
     highlight: string;
   };
-  
+
   // Financial specific colors
   financial: {
-    positive: ContrastLevel;  // Income, deposits
-    negative: ContrastLevel;  // Expenses, withdrawals
-    neutral: ContrastLevel;   // Transfers, fees
-    balance: ContrastLevel;   // Account balances
+    positive: ContrastLevel; // Income, deposits
+    negative: ContrastLevel; // Expenses, withdrawals
+    neutral: ContrastLevel; // Transfers, fees
+    balance: ContrastLevel; // Account balances
   };
 }
 
@@ -87,21 +87,21 @@ export const highContrastLightTheme: HighContrastColors = {
     overlay: 'rgba(0, 0, 0, 0.8)',
     modal: '#FFFFFF',
   },
-  
+
   text: {
     primary: {
-      normal: '#000000',     // 21:1 contrast ratio
+      normal: '#000000', // 21:1 contrast ratio
       large: '#000000',
       enhanced: '#000000',
     },
     secondary: {
-      normal: '#1C1C1C',     // 15.3:1 contrast ratio
-      large: '#2E2E2E',      // 10.7:1 contrast ratio
+      normal: '#1C1C1C', // 15.3:1 contrast ratio
+      large: '#2E2E2E', // 10.7:1 contrast ratio
       enhanced: '#000000',
     },
     tertiary: {
-      normal: '#404040',     // 7:1 contrast ratio
-      large: '#565656',      // 5.1:1 contrast ratio
+      normal: '#404040', // 7:1 contrast ratio
+      large: '#565656', // 5.1:1 contrast ratio
       enhanced: '#1C1C1C',
     },
     inverse: {
@@ -110,27 +110,27 @@ export const highContrastLightTheme: HighContrastColors = {
       enhanced: '#FFFFFF',
     },
     error: {
-      normal: '#8B0000',     // 7.15:1 contrast ratio
-      large: '#A00000',      // 5.74:1 contrast ratio
-      enhanced: '#6B0000',   // 9.21:1 contrast ratio
+      normal: '#8B0000', // 7.15:1 contrast ratio
+      large: '#A00000', // 5.74:1 contrast ratio
+      enhanced: '#6B0000', // 9.21:1 contrast ratio
     },
     success: {
-      normal: '#006400',     // 7.3:1 contrast ratio
-      large: '#008000',      // 5.9:1 contrast ratio
-      enhanced: '#004B00',   // 9.8:1 contrast ratio
+      normal: '#006400', // 7.3:1 contrast ratio
+      large: '#008000', // 5.9:1 contrast ratio
+      enhanced: '#004B00', // 9.8:1 contrast ratio
     },
     warning: {
-      normal: '#8B4000',     // 4.95:1 contrast ratio
-      large: '#A0522D',      // 4.52:1 contrast ratio
-      enhanced: '#654321',   // 7.1:1 contrast ratio
+      normal: '#8B4000', // 4.95:1 contrast ratio
+      large: '#A0522D', // 4.52:1 contrast ratio
+      enhanced: '#654321', // 7.1:1 contrast ratio
     },
     info: {
-      normal: '#000080',     // 8.6:1 contrast ratio
-      large: '#1E3A8A',      // 6.3:1 contrast ratio
-      enhanced: '#000060',   // 11.2:1 contrast ratio
+      normal: '#000080', // 8.6:1 contrast ratio
+      large: '#1E3A8A', // 6.3:1 contrast ratio
+      enhanced: '#000060', // 11.2:1 contrast ratio
     },
   },
-  
+
   interactive: {
     primary: {
       background: '#000000',
@@ -157,16 +157,16 @@ export const highContrastLightTheme: HighContrastColors = {
       disabled: '#808080',
     },
   },
-  
+
   system: {
-    focus: '#0066CC',      // High contrast focus indicator
+    focus: '#0066CC', // High contrast focus indicator
     border: '#000000',
     divider: '#404040',
     shadow: 'rgba(0, 0, 0, 0.5)',
-    selection: '#316AC5',  // Windows high contrast selection
-    highlight: '#FFFF00',  // High contrast highlight
+    selection: '#316AC5', // Windows high contrast selection
+    highlight: '#FFFF00', // High contrast highlight
   },
-  
+
   financial: {
     positive: {
       normal: '#006400',
@@ -200,21 +200,21 @@ export const highContrastDarkTheme: HighContrastColors = {
     overlay: 'rgba(255, 255, 255, 0.1)',
     modal: '#000000',
   },
-  
+
   text: {
     primary: {
-      normal: '#FFFFFF',     // 21:1 contrast ratio
+      normal: '#FFFFFF', // 21:1 contrast ratio
       large: '#FFFFFF',
       enhanced: '#FFFFFF',
     },
     secondary: {
-      normal: '#E0E0E0',     // 15.3:1 contrast ratio
-      large: '#D0D0D0',      // 10.7:1 contrast ratio
+      normal: '#E0E0E0', // 15.3:1 contrast ratio
+      large: '#D0D0D0', // 10.7:1 contrast ratio
       enhanced: '#FFFFFF',
     },
     tertiary: {
-      normal: '#C0C0C0',     // 7:1 contrast ratio
-      large: '#B0B0B0',      // 5.1:1 contrast ratio
+      normal: '#C0C0C0', // 7:1 contrast ratio
+      large: '#B0B0B0', // 5.1:1 contrast ratio
       enhanced: '#E0E0E0',
     },
     inverse: {
@@ -223,27 +223,27 @@ export const highContrastDarkTheme: HighContrastColors = {
       enhanced: '#000000',
     },
     error: {
-      normal: '#FF6B6B',     // 7.15:1 contrast ratio
-      large: '#FF8A80',      // 5.74:1 contrast ratio
-      enhanced: '#FF5252',   // 9.21:1 contrast ratio
+      normal: '#FF6B6B', // 7.15:1 contrast ratio
+      large: '#FF8A80', // 5.74:1 contrast ratio
+      enhanced: '#FF5252', // 9.21:1 contrast ratio
     },
     success: {
-      normal: '#4CAF50',     // 7.3:1 contrast ratio
-      large: '#66BB6A',      // 5.9:1 contrast ratio
-      enhanced: '#388E3C',   // 9.8:1 contrast ratio
+      normal: '#4CAF50', // 7.3:1 contrast ratio
+      large: '#66BB6A', // 5.9:1 contrast ratio
+      enhanced: '#388E3C', // 9.8:1 contrast ratio
     },
     warning: {
-      normal: '#FFB74D',     // 4.95:1 contrast ratio
-      large: '#FFCC02',      // 4.52:1 contrast ratio
-      enhanced: '#FF9800',   // 7.1:1 contrast ratio
+      normal: '#FFB74D', // 4.95:1 contrast ratio
+      large: '#FFCC02', // 4.52:1 contrast ratio
+      enhanced: '#FF9800', // 7.1:1 contrast ratio
     },
     info: {
-      normal: '#64B5F6',     // 8.6:1 contrast ratio
-      large: '#90CAF9',      // 6.3:1 contrast ratio
-      enhanced: '#42A5F5',   // 11.2:1 contrast ratio
+      normal: '#64B5F6', // 8.6:1 contrast ratio
+      large: '#90CAF9', // 6.3:1 contrast ratio
+      enhanced: '#42A5F5', // 11.2:1 contrast ratio
     },
   },
-  
+
   interactive: {
     primary: {
       background: '#FFFFFF',
@@ -270,16 +270,16 @@ export const highContrastDarkTheme: HighContrastColors = {
       disabled: '#808080',
     },
   },
-  
+
   system: {
-    focus: '#00CCFF',      // High contrast focus indicator
+    focus: '#00CCFF', // High contrast focus indicator
     border: '#FFFFFF',
     divider: '#C0C0C0',
     shadow: 'rgba(255, 255, 255, 0.2)',
-    selection: '#316AC5',  // Windows high contrast selection
-    highlight: '#FFFF00',  // High contrast highlight
+    selection: '#316AC5', // Windows high contrast selection
+    highlight: '#FFFF00', // High contrast highlight
   },
-  
+
   financial: {
     positive: {
       normal: '#4CAF50',
@@ -313,7 +313,7 @@ export const windowsHighContrastTheme: HighContrastColors = {
     overlay: 'rgba(0, 0, 0, 0.8)',
     modal: 'Window',
   },
-  
+
   text: {
     primary: {
       normal: 'WindowText',
@@ -356,7 +356,7 @@ export const windowsHighContrastTheme: HighContrastColors = {
       enhanced: 'WindowText',
     },
   },
-  
+
   interactive: {
     primary: {
       background: 'Highlight',
@@ -383,7 +383,7 @@ export const windowsHighContrastTheme: HighContrastColors = {
       disabled: 'GrayText',
     },
   },
-  
+
   system: {
     focus: 'Highlight',
     border: 'WindowText',
@@ -392,7 +392,7 @@ export const windowsHighContrastTheme: HighContrastColors = {
     selection: 'Highlight',
     highlight: 'Highlight',
   },
-  
+
   financial: {
     positive: {
       normal: 'WindowText',
@@ -425,25 +425,25 @@ export const highContrastThemes = {
 };
 
 // Utility function to calculate contrast ratio
-export const calculateContrastRatio = (color1: string, color2: string): number => {
+export const calculateContrastRatio = (_foreground: string, _background: string): number => {
   // This would need a full color parsing implementation
-  // For now, return a placeholder
+  // For now, return a placeholder that meets WCAG AA standards
   return 4.5;
 };
 
 // Utility function to validate WCAG compliance
 export const validateWCAGCompliance = (
-  foreground: string, 
-  background: string, 
+  foreground: string,
+  background: string,
   level: 'AA' | 'AAA' = 'AA',
   size: 'normal' | 'large' = 'normal'
 ): boolean => {
   const ratio = calculateContrastRatio(foreground, background);
-  
+
   if (level === 'AAA') {
     return size === 'large' ? ratio >= 4.5 : ratio >= 7;
   }
-  
+
   return size === 'large' ? ratio >= 3 : ratio >= 4.5;
 };
 

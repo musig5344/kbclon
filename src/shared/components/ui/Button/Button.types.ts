@@ -16,29 +16,29 @@ export interface TouchFeedbackOptions {
 /**
  * Button 컴포넌트 변형 타입 (KBButton variants 통합)
  */
-export type ButtonVariant = 
-  | 'primary'          // 주요 액션 버튼 (노란색)
-  | 'secondary'        // 보조 액션 버튼
-  | 'outline'          // 외곽선 버튼
-  | 'text'             // 텍스트 버튼
-  | 'dialog-left'      // 다이얼로그 왼쪽 버튼 (회색)
-  | 'dialog-right'     // 다이얼로그 오른쪽 버튼 (노란색)
-  | 'ghost'            // 투명 배경 버튼 (KBButton에서 추가)
-  | 'native-primary'   // KB 네이티브 스타일 주 버튼
+export type ButtonVariant =
+  | 'primary' // 주요 액션 버튼 (노란색)
+  | 'secondary' // 보조 액션 버튼
+  | 'outline' // 외곽선 버튼
+  | 'text' // 텍스트 버튼
+  | 'dialog-left' // 다이얼로그 왼쪽 버튼 (회색)
+  | 'dialog-right' // 다이얼로그 오른쪽 버튼 (노란색)
+  | 'ghost' // 투명 배경 버튼 (KBButton에서 추가)
+  | 'native-primary' // KB 네이티브 스타일 주 버튼
   | 'native-secondary' // KB 네이티브 스타일 보조 버튼
-  | 'native-ghost';    // KB 네이티브 스타일 ghost 버튼
+  | 'native-ghost'; // KB 네이티브 스타일 ghost 버튼
 /**
  * Button 컴포넌트 크기 타입 (KBButton 통합)
  */
-export type ButtonSize = 
-  | 'small'            // 작은 버튼 (40px)
-  | 'medium'           // 중간 버튼 (48px, 기본값)
-  | 'large'            // 큰 버튼 (56px)
-  | 'xl'               // 특대 버튼 (64px)
-  | 'full'             // 전체 높이 버튼 (KBButton에서 추가)
-  | 'dialog'           // 다이얼로그용 버튼
-  | 'bottomsheet'      // 바텀시트용 버튼
-  | 'keypad';          // 키패드 버튼 (원형)
+export type ButtonSize =
+  | 'small' // 작은 버튼 (40px)
+  | 'medium' // 중간 버튼 (48px, 기본값)
+  | 'large' // 큰 버튼 (56px)
+  | 'xl' // 특대 버튼 (64px)
+  | 'full' // 전체 높이 버튼 (KBButton에서 추가)
+  | 'dialog' // 다이얼로그용 버튼
+  | 'bottomsheet' // 바텀시트용 버튼
+  | 'keypad'; // 키패드 버튼 (원형)
 /**
  * Button 컴포넌트 Props (KBButton 기능 통합)
  */

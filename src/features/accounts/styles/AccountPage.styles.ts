@@ -55,7 +55,8 @@ export const HeaderButton = styled.button`
   justify-content: center;
   border-radius: ${tokens.borderRadius.medium};
   color: ${tokens.colors.text.black};
-  transition: background-color ${tokens.animation.duration.fast} ${tokens.animation.easing.easeInOut};
+  transition: background-color ${tokens.animation.duration.fast}
+    ${tokens.animation.easing.easeInOut};
   img {
     width: 24px;
     height: 24px;
@@ -70,7 +71,7 @@ export const HeaderButton = styled.button`
 export const HeaderTitle = styled(Typography).attrs({
   variant: 'titleLarge',
   weight: 'semibold',
-  align: 'center'
+  align: 'center',
 })`
   flex: 1;
   margin: 0;
@@ -84,7 +85,8 @@ export const HeaderRightButtons = styled.div`
 /* === 계좌 정보 섹션 (디자인 시스템 적용) === */
 export const AccountInfoSection = styled.div`
   background-color: ${tokens.colors.background.primary};
-  padding: ${tokens.spacing[3]} ${tokens.sizes.page.paddingHorizontal} ${tokens.sizes.page.paddingHorizontal};
+  padding: ${tokens.spacing[3]} ${tokens.sizes.page.paddingHorizontal}
+    ${tokens.sizes.page.paddingHorizontal};
   margin-top: ${tokens.sizes.header.height};
   border-bottom: 1px solid ${tokens.colors.divider.light};
   display: flex;
@@ -125,7 +127,7 @@ export const RightSection = styled.div`
 export const AccountName = styled(Typography).attrs({
   variant: 'bodyLarge',
   color: 'secondary',
-  weight: 'regular'
+  weight: 'regular',
 })`
   display: flex;
   align-items: center;
@@ -160,7 +162,7 @@ export const BalanceSection = styled.div`
 export const AccountNumber = styled(Typography).attrs({
   variant: 'bodyMedium',
   color: 'secondary',
-  weight: 'regular'
+  weight: 'regular',
 })`
   letter-spacing: 0.2px;
 `;
@@ -168,13 +170,13 @@ export const AccountNumber = styled(Typography).attrs({
 export const LargeBalance = styled(Typography).attrs({
   variant: 'displaySmall',
   color: 'black',
-  weight: 'bold'
+  weight: 'bold',
 })``;
 
 export const AvailableBalance = styled(Typography).attrs({
   variant: 'labelLarge',
   color: 'tertiary',
-  weight: 'regular'
+  weight: 'regular',
 })`
   text-align: right;
 `;
@@ -246,7 +248,8 @@ export const FilterButton = styled.button`
 export const ToggleSwitch = styled.div<{ enabled: boolean }>`
   width: 48px;
   height: 24px;
-  background: ${props => props.enabled ? tokens.colors.text.primary : tokens.colors.border.tertiary};
+  background: ${props =>
+    props.enabled ? tokens.colors.text.primary : tokens.colors.border.tertiary};
   border-radius: ${tokens.borderRadius.pill};
   position: relative;
   cursor: pointer;
@@ -255,7 +258,7 @@ export const ToggleSwitch = styled.div<{ enabled: boolean }>`
     content: '';
     position: absolute;
     top: 2px;
-    left: ${props => props.enabled ? '26px' : '2px'};
+    left: ${props => (props.enabled ? '26px' : '2px')};
     width: 20px;
     height: 20px;
     background: ${tokens.colors.background.primary};
@@ -276,7 +279,7 @@ export const DateRangeSection = styled.div`
 
 export const DateRangeText = styled(Typography).attrs({
   variant: 'bodySmall',
-  color: 'secondary'
+  color: 'secondary',
 })``;
 
 /* === 날짜별 거래내역 섹션 (디자인 시스템 적용) === */
@@ -295,7 +298,7 @@ export const TransactionSection = styled.div`
 export const DateHeader = styled(Typography).attrs({
   variant: 'bodySmall',
   color: 'tertiary',
-  weight: 'medium'
+  weight: 'medium',
 })`
   margin: ${tokens.spacing[5]} 0 ${tokens.spacing[4]} 0;
   padding-bottom: ${tokens.spacing[2]};
@@ -335,7 +338,7 @@ export const TransactionLeft = styled.div`
 
 export const TransactionTime = styled(Typography).attrs({
   variant: 'labelLarge',
-  color: 'tertiary'
+  color: 'tertiary',
 })`
   margin-bottom: 3px;
 `;
@@ -343,7 +346,7 @@ export const TransactionTime = styled(Typography).attrs({
 export const TransactionDesc = styled(Typography).attrs({
   variant: 'bodyMedium',
   color: 'primary',
-  weight: 'medium'
+  weight: 'medium',
 })`
   margin-top: 1px;
 `;
@@ -354,7 +357,7 @@ export const TransactionRight = styled.div`
 
 export const TransactionAmount = styled(Amount).attrs({
   variant: 'bodyMedium',
-  weight: 'semibold'
+  weight: 'semibold',
 })`
   margin-bottom: 2px;
   text-align: right;
@@ -362,7 +365,7 @@ export const TransactionAmount = styled(Amount).attrs({
 
 export const TransactionBalance = styled(Typography).attrs({
   variant: 'labelMedium',
-  color: 'tertiary'
+  color: 'tertiary',
 })`
   text-align: right;
 `;

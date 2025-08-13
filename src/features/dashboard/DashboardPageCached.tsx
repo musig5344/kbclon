@@ -46,7 +46,7 @@ const MainContent = styled.div`
   height: calc(100vh - ${tokens.sizes.header.height});
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
-  
+
   &::-webkit-scrollbar {
     width: 0;
     background: transparent;
@@ -69,7 +69,7 @@ const RefreshButton = styled.button`
   border-radius: 8px;
   font-size: 16px;
   cursor: pointer;
-  
+
   &:hover {
     background-color: ${tokens.colors.primaryDark};
   }
@@ -80,20 +80,17 @@ interface DashboardPageProps {}
 export const DashboardPageCached: React.FC<DashboardPageProps> = () => {
   const { isInitialized, user } = useAuth();
   const [selectedTab, setSelectedTab] = useState('home');
-  
+
   // React Query 훅 사용
-  const { 
-    data: accounts = [], 
-    isLoading: isLoadingAccounts, 
+  const {
+    data: accounts = [],
+    isLoading: isLoadingAccounts,
     error: accountsError,
-    refetch: refetchAccounts 
+    refetch: refetchAccounts,
   } = useAccounts();
-  
-  const { 
-    data: exchangeRates = [], 
-    isLoading: isLoadingRates 
-  } = useExchangeRates();
-  
+
+  const { data: exchangeRates = [], isLoading: isLoadingRates } = useExchangeRates();
+
   const { prefetchAccountDetail, prefetchTransactions } = usePrefetch();
 
   // 대시보드 진입 시 프리페칭
@@ -118,7 +115,6 @@ export const DashboardPageCached: React.FC<DashboardPageProps> = () => {
     return accounts.find(account => account.is_primary) || accounts[0];
   }, [accounts]);
 
-
   // 로딩 상태
   if (!isInitialized || isLoadingAccounts) {
     return <LoadingScreen />;
@@ -130,12 +126,8 @@ export const DashboardPageCached: React.FC<DashboardPageProps> = () => {
       <DashboardContainer>
         <DashboardHeader />
         <ErrorContainer>
-          <ErrorNotification 
-            message="데이터를 불러오는 중 오류가 발생했습니다." 
-          />
-          <RefreshButton onClick={() => refetchAccounts()}>
-            다시 시도
-          </RefreshButton>
+          <ErrorNotification message='데이터를 불러오는 중 오류가 발생했습니다.' />
+          <RefreshButton onClick={() => refetchAccounts()}>다시 시도</RefreshButton>
         </ErrorContainer>
       </DashboardContainer>
     );
@@ -149,36 +141,33 @@ export const DashboardPageCached: React.FC<DashboardPageProps> = () => {
   return (
     <DashboardContainer>
       <DashboardHeader />
-      
+
       <MainContent>
         {/* 메인 배너 - 총 자산 표시 */}
-        <MainBanner 
+        <MainBanner
           totalBalance={totalBalance}
           accountCount={accounts.length}
           lastUpdated={new Date().toLocaleTimeString('ko-KR')}
         />
-        
+
         {/* 계좌 섹션 - 주계좌 정보 */}
         {primaryAccount && (
-          <AccountSection 
+          <AccountSection
             account={primaryAccount}
             onHover={() => handleAccountHover(primaryAccount.id)}
           />
         )}
-        
+
         {/* 빠른 액세스 그리드 */}
         <QuickAccessGrid />
-        
+
         {/* 금융 상품 탭 */}
         <FinancialTabs />
-        
+
         {/* 콘텐츠 섹션들 */}
-        <ContentSections 
-          exchangeRates={exchangeRates}
-          isLoadingRates={isLoadingRates}
-        />
+        <ContentSections exchangeRates={exchangeRates} isLoadingRates={isLoadingRates} />
       </MainContent>
-      
+
       <TabBar onTabChange={setSelectedTab} activeTab={selectedTab} />
     </DashboardContainer>
   );

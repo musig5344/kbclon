@@ -1,50 +1,55 @@
 # WebP 이미지 사용 가이드
 
-> 생성일: 2025. 8. 14. 오전 3:58:55
-> 변환된 파일: 34개
-> 절약된 용량: 69.7 KB
+> 생성일: 2025. 8. 14. 오전 6:08:24 변환된 파일: 37개 절약된 용량: 241.08 KB
 
 ## 🚀 LazyImage 컴포넌트 사용법
 
 ### 기본 사용법
+
 ```tsx
 import LazyImage from '@/components/common/LazyImage';
 
 <LazyImage
-  src="/assets/images/hero.png"
-  webpSrc="/assets/images/webp/hero.webp"
-  alt="히어로 이미지"
-  loading="lazy"
-/>
+  src='/assets/images/hero.png'
+  webpSrc='/assets/images/webp/hero.webp'
+  alt='히어로 이미지'
+  loading='lazy'
+/>;
 ```
 
 ### Picture 엘리먼트 직접 사용
+
 ```tsx
 <picture>
-  <source srcSet="/assets/images/webp/hero.webp" type="image/webp" />
-  <img src="/assets/images/hero.png" alt="히어로 이미지" />
+  <source srcSet='/assets/images/webp/hero.webp' type='image/webp' />
+  <img src='/assets/images/hero.png' alt='히어로 이미지' />
 </picture>
 ```
 
 ### 반응형 이미지 사용
+
 ```tsx
 <picture>
   <source
-    media="(max-width: 480px)"
-    srcSet="/assets/images/webp/hero-small.webp"
-    type="image/webp"
+    media='(max-width: 480px)'
+    srcSet='/assets/images/webp/hero-small.webp'
+    type='image/webp'
   />
   <source
-    media="(max-width: 768px)"
-    srcSet="/assets/images/webp/hero-medium.webp"
-    type="image/webp"
+    media='(max-width: 768px)'
+    srcSet='/assets/images/webp/hero-medium.webp'
+    type='image/webp'
   />
-  <source srcSet="/assets/images/webp/hero.webp" type="image/webp" />
-  <img src="/assets/images/hero.png" alt="히어로 이미지" />
+  <source srcSet='/assets/images/webp/hero.webp' type='image/webp' />
+  <img src='/assets/images/hero.png' alt='히어로 이미지' />
 </picture>
 ```
 
 ## 📁 변환된 파일 목록
+
+- **bibi_mascot_large.png**
+  - WebP: `src\assets\images\webp\bibi_mascot_large.webp`
+  - 절약: 111.69 KB (압축률 11.8%)
 
 - **splash_background.png**
   - WebP: `src\assets\images\webp\splash_background.webp`
@@ -57,6 +62,14 @@ import LazyImage from '@/components/common/LazyImage';
 - **icons\login_finance_cert_icon.png**
   - WebP: `src\assets\images\webp\icons\login_finance_cert_icon.webp`
   - 절약: 52.45 KB (압축률 14.8%)
+
+- **bibi_s.png**
+  - WebP: `src\assets\images\webp\bibi_s.webp`
+  - 절약: 26.04 KB (압축률 16.8%)
+
+- **bibi_mascot.png**
+  - WebP: `src\assets\images\webp\bibi_mascot.webp`
+  - 절약: 26.04 KB (압축률 16.8%)
 
 - **logo_kb_kookmin.png**
   - WebP: `src\assets\images\webp\logo_kb_kookmin.webp`
@@ -77,10 +90,6 @@ import LazyImage from '@/components/common/LazyImage';
 - **menu\icon_insurance.png**
   - WebP: `src\assets\images\webp\menu\icon_insurance.webp`
   - 절약: 430 Bytes (압축률 71.5%)
-
-- **icons\login_id_icon.png**
-  - WebP: `src\assets\images\webp\icons\login_id_icon.webp`
-  - 절약: 306 Bytes (압축률 90.1%)
 
 - **menu\icon_pension.png**
   - WebP: `src\assets\images\webp\menu\icon_pension.webp`
@@ -118,12 +127,20 @@ import LazyImage from '@/components/common/LazyImage';
   - WebP: `src\assets\images\webp\menu\icon_transfer.webp`
   - 절약: NaN undefined (압축률 144.3%)
 
+- **icons\icon_transfer.png**
+  - WebP: `src\assets\images\webp\icons\icon_transfer.webp`
+  - 절약: NaN undefined (압축률 144.3%)
+
 - **icons\login_cert_icon.png**
   - WebP: `src\assets\images\webp\icons\login_cert_icon.webp`
   - 절약: NaN undefined (압축률 212.1%)
 
 - **icons\login_fingerprint_icon.png**
   - WebP: `src\assets\images\webp\icons\login_fingerprint_icon.webp`
+  - 절약: NaN undefined (압축률 156.2%)
+
+- **icons\icon_login_finger.png**
+  - WebP: `src\assets\images\webp\icons\icon_login_finger.webp`
   - 절약: NaN undefined (압축률 156.2%)
 
 - **kb_logo.png**
@@ -181,8 +198,3 @@ import LazyImage from '@/components/common/LazyImage';
 - **loading\loading_2_08.png**
   - WebP: `src\assets\images\webp\loading\loading_2_08.webp`
   - 절약: NaN undefined (압축률 177.9%)
-
-- **icons\login_look_icon.png**
-  - WebP: `src\assets\images\webp\icons\login_look_icon.webp`
-  - 절약: NaN undefined (압축률 173.1%)
-

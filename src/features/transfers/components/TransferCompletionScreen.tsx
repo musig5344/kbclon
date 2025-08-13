@@ -4,7 +4,7 @@ import {
   CompletionContainer,
   CompletionIcon,
   CompletionTitle,
-  CompletionMessage
+  CompletionMessage,
 } from '../TransferPage.styles';
 
 interface TransferCompletionScreenProps {
@@ -21,7 +21,7 @@ interface TransferCompletionScreenProps {
 const TransferCompletionScreen: React.FC<TransferCompletionScreenProps> = ({
   recipientName,
   amount,
-  formatAmount
+  formatAmount,
 }) => {
   return (
     <CompletionContainer>

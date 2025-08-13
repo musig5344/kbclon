@@ -41,10 +41,10 @@ export const PageLoader: React.FC = () => {
   const [frame2, setFrame2] = useState(0);
   useEffect(() => {
     const interval1 = setInterval(() => {
-      setFrame1((prevFrame) => (prevFrame + 1) % imagePaths_1.length);
+      setFrame1(prevFrame => (prevFrame + 1) % imagePaths_1.length);
     }, 100); // 0.1초마다 점 애니메이션 프레임 변경
     const interval2 = setInterval(() => {
-      setFrame2((prevFrame) => (prevFrame + 1) % imagePaths_2.length);
+      setFrame2(prevFrame => (prevFrame + 1) % imagePaths_2.length);
     }, 150); // 0.15초마다 곰 애니메이션 프레임 변경
     return () => {
       clearInterval(interval1);
@@ -53,8 +53,12 @@ export const PageLoader: React.FC = () => {
   }, []);
   return (
     <LoaderContainer>
-      <AnimationImage src={imagePaths_2[frame2]} alt="로딩 중..." />
-      <AnimationImage src={imagePaths_1[frame1]} style={{ width: '80px', marginTop: '-20px' }} alt="" />
+      <AnimationImage src={imagePaths_2[frame2]} alt='로딩 중...' />
+      <AnimationImage
+        src={imagePaths_1[frame1]}
+        style={{ width: '80px', marginTop: '-20px' }}
+        alt=''
+      />
     </LoaderContainer>
   );
-}; 
+};

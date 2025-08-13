@@ -9,7 +9,7 @@ export enum ErrorType {
   NETWORK_ERROR = 'NETWORK_ERROR',
   VALIDATION_ERROR = 'VALIDATION_ERROR',
   SERVER_ERROR = 'SERVER_ERROR',
-  UNKNOWN_ERROR = 'UNKNOWN_ERROR'
+  UNKNOWN_ERROR = 'UNKNOWN_ERROR',
 }
 
 interface ErrorConfig {
@@ -37,12 +37,12 @@ const PRODUCTION_ERROR_MESSAGES: Record<ErrorType, string> = {
   [ErrorType.NETWORK_ERROR]: '네트워크 연결을 확인해주세요.',
   [ErrorType.VALIDATION_ERROR]: '입력하신 정보를 확인해주세요.',
   [ErrorType.SERVER_ERROR]: '일시적인 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
-  [ErrorType.UNKNOWN_ERROR]: '예상치 못한 오류가 발생했습니다. 잠시 후 다시 시도해주세요.'
+  [ErrorType.UNKNOWN_ERROR]: '예상치 못한 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
 };
 class ErrorHandler {
   private static instance: ErrorHandler;
   private readonly isDevelopment: boolean;
-  
+
   private constructor() {
     this.isDevelopment = process.env.NODE_ENV === 'development';
   }
@@ -75,7 +75,7 @@ class ErrorHandler {
     return this.handleError(error, {
       type: ErrorType.AUTH_ERROR,
       userMessage: userMessage || '인증에 실패했습니다.',
-      logMessage: `Auth error: ${error instanceof Error ? error.message : String(error)}`
+      logMessage: `Auth error: ${error instanceof Error ? error.message : String(error)}`,
     });
   }
   /**
@@ -85,7 +85,7 @@ class ErrorHandler {
     return this.handleError(error, {
       type: ErrorType.NETWORK_ERROR,
       userMessage: userMessage || '네트워크 오류가 발생했습니다.',
-      logMessage: `Network error: ${error instanceof Error ? error.message : String(error)}`
+      logMessage: `Network error: ${error instanceof Error ? error.message : String(error)}`,
     });
   }
   /**
@@ -95,7 +95,7 @@ class ErrorHandler {
     return this.handleError(error, {
       type: ErrorType.VALIDATION_ERROR,
       userMessage: userMessage || '입력값이 올바르지 않습니다.',
-      logMessage: `Validation error: ${error instanceof Error ? error.message : String(error)}`
+      logMessage: `Validation error: ${error instanceof Error ? error.message : String(error)}`,
     });
   }
   /**
@@ -105,7 +105,7 @@ class ErrorHandler {
     return this.handleError(error, {
       type: ErrorType.SERVER_ERROR,
       userMessage: userMessage || '서버 오류가 발생했습니다.',
-      logMessage: `Server error: ${error instanceof Error ? error.message : String(error)}`
+      logMessage: `Server error: ${error instanceof Error ? error.message : String(error)}`,
     });
   }
   /**
@@ -115,7 +115,7 @@ class ErrorHandler {
     return this.handleError(error, {
       type: ErrorType.UNKNOWN_ERROR,
       userMessage: userMessage || '알 수 없는 오류가 발생했습니다.',
-      logMessage: `Unknown error: ${error instanceof Error ? error.message : String(error)}`
+      logMessage: `Unknown error: ${error instanceof Error ? error.message : String(error)}`,
     });
   }
   /**
@@ -144,15 +144,25 @@ class ErrorHandler {
       return data;
     }
     const sensitiveKeys = [
-      'password', 'token', 'access_token', 'refresh_token', 
-      'secret', 'key', 'email', 'phone', 'ssn', 'card_number',
-      'account_number', 'pin', 'otp'
+      'password',
+      'token',
+      'access_token',
+      'refresh_token',
+      'secret',
+      'key',
+      'email',
+      'phone',
+      'ssn',
+      'card_number',
+      'account_number',
+      'pin',
+      'otp',
     ];
     const sanitized = { ...data };
     for (const key in sanitized) {
-      if (sensitiveKeys.some(sensitiveKey => 
-        key.toLowerCase().includes(sensitiveKey.toLowerCase())
-      )) {
+      if (
+        sensitiveKeys.some(sensitiveKey => key.toLowerCase().includes(sensitiveKey.toLowerCase()))
+      ) {
         sanitized[key] = '***REDACTED***';
       } else if (typeof sanitized[key] === 'object') {
         sanitized[key] = this.sanitizeLogData(sanitized[key]);
@@ -178,13 +188,13 @@ class ErrorHandler {
           return this.handleError(error, {
             type: ErrorType.SERVER_ERROR,
             userMessage: '요청한 정보를 찾을 수 없습니다.',
-            logMessage
+            logMessage,
           });
         case 429:
           return this.handleError(error, {
             type: ErrorType.SERVER_ERROR,
             userMessage: '요청이 너무 많습니다. 잠시 후 다시 시도해주세요.',
-            logMessage
+            logMessage,
           });
         case 500:
         case 502:
@@ -210,17 +220,17 @@ class ErrorHandler {
 // 싱글톤 인스턴스 내보내기
 export const errorHandler = ErrorHandler.getInstance();
 // 편의 함수们
-export const handleAuthError = (error: unknown, userMessage?: string) => 
+export const handleAuthError = (error: unknown, userMessage?: string) =>
   errorHandler.handleAuthError(error, userMessage);
-export const handleNetworkError = (error: unknown, userMessage?: string) => 
+export const handleNetworkError = (error: unknown, userMessage?: string) =>
   errorHandler.handleNetworkError(error, userMessage);
-export const handleValidationError = (error: unknown, userMessage?: string) => 
+export const handleValidationError = (error: unknown, userMessage?: string) =>
   errorHandler.handleValidationError(error, userMessage);
-export const handleServerError = (error: unknown, userMessage?: string) => 
+export const handleServerError = (error: unknown, userMessage?: string) =>
   errorHandler.handleServerError(error, userMessage);
-export const handleUnknownError = (error: unknown, userMessage?: string) => 
+export const handleUnknownError = (error: unknown, userMessage?: string) =>
   errorHandler.handleUnknownError(error, userMessage);
-export const handleApiError = (error: ApiErrorResponse, context?: string) => 
+export const handleApiError = (error: ApiErrorResponse, context?: string) =>
   errorHandler.handleApiError(error, context);
-export const safeLog = (level: LogLevel, message: string, data?: unknown) => 
+export const safeLog = (level: LogLevel, message: string, data?: unknown) =>
   errorHandler.safeLog(level, message, data);

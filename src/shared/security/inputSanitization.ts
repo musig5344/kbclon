@@ -1,6 +1,6 @@
 /**
  * Advanced Input Sanitization System for KB StarBanking Clone
- * 
+ *
  * Provides comprehensive input sanitization to prevent XSS attacks,
  * injection vulnerabilities, and other security threats.
  */
@@ -21,12 +21,13 @@ const DANGEROUS_PATTERNS = {
   EMBED_TAGS: /<embed[^>]*>.*?<\/embed>/gis,
   FORM_TAGS: /<form[^>]*>.*?<\/form>/gis,
   // SQL injection patterns
-  SQL_KEYWORDS: /\b(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|EXEC|UNION|TRUNCATE|GRANT|REVOKE)\b/gi,
+  SQL_KEYWORDS:
+    /\b(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|EXEC|UNION|TRUNCATE|GRANT|REVOKE)\b/gi,
   SQL_OPERATORS: /(\b(OR|AND|WHERE|FROM|JOIN|HAVING|GROUP BY|ORDER BY)\b|['";]|--|\/\*|\*\/|#)/gi,
   // Path traversal
   PATH_TRAVERSAL: /\.\.[/\\]/g,
   // Command injection
-  COMMAND_INJECTION: /[;&|`$(){}[\]]/g
+  COMMAND_INJECTION: /[;&|`$(){}[\]]/g,
 };
 /**
  * Characters that need HTML encoding
@@ -39,7 +40,7 @@ const HTML_ENCODE_MAP: Record<string, string> = {
   "'": '&#x27;',
   '/': '&#x2F;',
   '`': '&#x60;',
-  '=': '&#x3D;'
+  '=': '&#x3D;',
 };
 /**
  * URL encoding map for special characters
@@ -49,7 +50,7 @@ const URL_ENCODE_MAP: Record<string, string> = {
   '!': '%21',
   '"': '%22',
   '#': '%23',
-  '$': '%24',
+  $: '%24',
   '%': '%25',
   '&': '%26',
   "'": '%27',
@@ -74,7 +75,7 @@ const URL_ENCODE_MAP: Record<string, string> = {
   '{': '%7B',
   '|': '%7C',
   '}': '%7D',
-  '~': '%7E'
+  '~': '%7E',
 };
 /**
  * Sanitization options
@@ -117,7 +118,7 @@ export class InputSanitizer {
       return {
         sanitized: '',
         violations: [],
-        modified: false
+        modified: false,
       };
     }
     const {
@@ -126,7 +127,7 @@ export class InputSanitizer {
       maxLength = 10000,
       stripWhitespace = false,
       logViolations = true,
-      strictMode = false
+      strictMode = false,
     } = options;
     let sanitized = stringInput;
     const violations: string[] = [];
@@ -179,13 +180,13 @@ export class InputSanitizer {
         violations,
         originalLength: stringInput.length,
         sanitizedLength: sanitized.length,
-        violationCount: this.violationCount
+        violationCount: this.violationCount,
       });
     }
     return {
       sanitized,
       violations,
-      modified
+      modified,
     };
   }
   /**
@@ -213,7 +214,11 @@ export class InputSanitizer {
   /**
    * Remove XSS vectors
    */
-  private removeXSSVectors(input: string, allowHtml: boolean, strictMode: boolean): {
+  private removeXSSVectors(
+    input: string,
+    allowHtml: boolean,
+    strictMode: boolean
+  ): {
     cleaned: string;
     violations: string[];
     modified: boolean;
@@ -246,7 +251,10 @@ export class InputSanitizer {
   /**
    * Remove SQL injection vectors
    */
-  private removeSQLInjection(input: string, strictMode: boolean): {
+  private removeSQLInjection(
+    input: string,
+    strictMode: boolean
+  ): {
     cleaned: string;
     violations: string[];
     modified: boolean;
@@ -288,7 +296,7 @@ export class InputSanitizer {
       return {
         cleaned: input.replace(urlPattern, '[URL_REMOVED]'),
         violations: [`Removed URLs: ${matches.length} instances`],
-        modified: true
+        modified: true,
       };
     }
     return { cleaned: input, violations: [], modified: false };
@@ -306,7 +314,7 @@ export class InputSanitizer {
       return {
         cleaned: input.replace(DANGEROUS_PATTERNS.PATH_TRAVERSAL, ''),
         violations: [`Removed path traversal: ${matches.length} instances`],
-        modified: true
+        modified: true,
       };
     }
     return { cleaned: input, violations: [], modified: false };
@@ -314,7 +322,10 @@ export class InputSanitizer {
   /**
    * Remove command injection vectors
    */
-  private removeCommandInjection(input: string, strictMode: boolean): {
+  private removeCommandInjection(
+    input: string,
+    strictMode: boolean
+  ): {
     cleaned: string;
     violations: string[];
     modified: boolean;
@@ -327,7 +338,7 @@ export class InputSanitizer {
       return {
         cleaned: input.replace(DANGEROUS_PATTERNS.COMMAND_INJECTION, ''),
         violations: [`Removed command injection chars: ${matches.length} instances`],
-        modified: true
+        modified: true,
       };
     }
     return { cleaned: input, violations: [], modified: false };
@@ -336,13 +347,13 @@ export class InputSanitizer {
    * HTML encode dangerous characters
    */
   private htmlEncode(input: string): string {
-    return input.replace(/[&<>"'`=/]/g, (char) => HTML_ENCODE_MAP[char] || char);
+    return input.replace(/[&<>"'`=/]/g, char => HTML_ENCODE_MAP[char] || char);
   }
   /**
    * URL encode string
    */
   urlEncode(input: string): string {
-    return input.replace(/[^A-Za-z0-9\-_.~]/g, (char) => {
+    return input.replace(/[^A-Za-z0-9\-_.~]/g, char => {
       return URL_ENCODE_MAP[char] || encodeURIComponent(char);
     });
   }
@@ -367,7 +378,10 @@ export const inputSanitizer = InputSanitizer.getInstance();
 export function sanitizeInput(input: any, options?: SanitizationOptions): string {
   return inputSanitizer.sanitize(input, options).sanitized;
 }
-export function sanitizeInputWithResult(input: any, options?: SanitizationOptions): SanitizationResult {
+export function sanitizeInputWithResult(
+  input: any,
+  options?: SanitizationOptions
+): SanitizationResult {
   return inputSanitizer.sanitize(input, options);
 }
 export function sanitizeHtml(input: string): string {
@@ -382,7 +396,7 @@ export function sanitizeUserInput(input: string): string {
     allowUrls: false,
     stripWhitespace: true,
     strictMode: true,
-    maxLength: 1000
+    maxLength: 1000,
   }).sanitized;
 }
 export default inputSanitizer;

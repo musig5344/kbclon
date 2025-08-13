@@ -30,7 +30,8 @@ const KeypadButton = styled.button<{ $type?: 'number' | 'function' }>`
   height: ${dimensions.height.keypadButton}px;
   border: none;
   border-radius: 50%;
-  background-color: ${props => props.$type === 'function' ? tokens.colors.backgroundGray2 : tokens.colors.background.primary};
+  background-color: ${props =>
+    props.$type === 'function' ? tokens.colors.backgroundGray2 : tokens.colors.background.primary};
   color: ${tokens.colors.text.primary};
   font-size: ${typography.styles.keypadButton.fontSize.replace('dp', 'px')};
   font-family: ${typography.fontFamily.robotoMedium};
@@ -42,7 +43,8 @@ const KeypadButton = styled.button<{ $type?: 'number' | 'function' }>`
   justify-content: center;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   &:hover {
-    background-color: ${props => props.$type === 'function' ? tokens.colors.backgroundGray1 : tokens.colors.backgroundGray1};
+    background-color: ${props =>
+      props.$type === 'function' ? tokens.colors.backgroundGray1 : tokens.colors.backgroundGray1};
     transform: scale(0.95);
   }
   &:active {
@@ -142,15 +144,11 @@ const KBKeypad: React.FC<KBKeypadProps> = ({
           {/* 4행: 00, 0, 삭제 */}
           <Button onClick={() => onInput('00')}>00</Button>
           <Button onClick={() => onInput('0')}>0</Button>
-          <Button $type="function" onClick={onDelete}>
+          <Button $type='function' onClick={onDelete}>
             <FunctionIcon />
           </Button>
         </KeypadGrid>
-        {showConfirmButton && (
-          <ConfirmButton onClick={onConfirm}>
-            확인
-          </ConfirmButton>
-        )}
+        {showConfirmButton && <ConfirmButton onClick={onConfirm}>확인</ConfirmButton>}
       </Container>
     );
   }
@@ -165,21 +163,15 @@ const KBKeypad: React.FC<KBKeypadProps> = ({
           </Button>
         ))}
         {/* 4행: 재배열, 0, 삭제 */}
-        <Button $type="function" onClick={handleRearrange}>
+        <Button $type='function' onClick={handleRearrange}>
           <FunctionIcon />
         </Button>
-        <Button onClick={() => onInput(shuffledNumbers[9].toString())}>
-          {shuffledNumbers[9]}
-        </Button>
-        <Button $type="function" onClick={onDelete}>
+        <Button onClick={() => onInput(shuffledNumbers[9].toString())}>{shuffledNumbers[9]}</Button>
+        <Button $type='function' onClick={onDelete}>
           <FunctionIcon />
         </Button>
       </KeypadGrid>
-      {showConfirmButton && (
-        <ConfirmButton onClick={onConfirm}>
-          확인
-        </ConfirmButton>
-      )}
+      {showConfirmButton && <ConfirmButton onClick={onConfirm}>확인</ConfirmButton>}
     </Container>
   );
 };

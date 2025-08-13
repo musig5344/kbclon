@@ -5,24 +5,24 @@ import {
   FadeTransition,
   ScaleTransition,
   TransformTransition,
-  CompoundTransition
+  CompoundTransition,
 } from './index';
 
 // Pre-configured animation components
 export const AnimationPresets = {
   // Page transitions
   PageSlideIn: ({ children, ...props }: any) => (
-    <SlideTransition direction="right" duration={400} {...props}>
+    <SlideTransition direction='right' duration={400} {...props}>
       {children}
     </SlideTransition>
   ),
-  
+
   PageFadeIn: ({ children, ...props }: any) => (
     <FadeTransition duration={300} {...props}>
       {children}
     </FadeTransition>
   ),
-  
+
   // Modal animations
   ModalSlideUp: ({ children, ...props }: any) => (
     <CompoundTransition
@@ -36,7 +36,7 @@ export const AnimationPresets = {
       {children}
     </CompoundTransition>
   ),
-  
+
   // List item animations
   ListItemStagger: ({ children, index = 0, ...props }: any) => (
     <CompoundTransition
@@ -51,19 +51,14 @@ export const AnimationPresets = {
       {children}
     </CompoundTransition>
   ),
-  
+
   // Button press animation
   ButtonPress: ({ children, ...props }: any) => (
-    <ScaleTransition
-      from={0.95}
-      to={1}
-      duration={150}
-      {...props}
-    >
+    <ScaleTransition from={0.95} to={1} duration={150} {...props}>
       {children}
     </ScaleTransition>
   ),
-  
+
   // Card hover animation
   CardHover: ({ children, isHovered, ...props }: any) => (
     <TransformTransition

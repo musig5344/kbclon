@@ -51,8 +51,8 @@ const BenefitsPage: React.FC = () => {
       <MainContent>
         <ComingSoonText>🎁 혜택 준비중</ComingSoonText>
         <DescriptionText>
-          다양한 혜택과 이벤트가<br/>
-          곧 오픈 예정입니다
+          다양한 혜택과 이벤트가
+          <br />곧 오픈 예정입니다
         </DescriptionText>
       </MainContent>
       <TabBar />

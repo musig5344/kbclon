@@ -135,7 +135,7 @@ export const AccountInfo = styled.div`
 export const AccountIcon = styled.div`
   width: 32px;
   height: 32px;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -281,7 +281,7 @@ export const BalanceToggle = styled.div`
 export const ToggleSwitch = styled.div<{ $enabled: boolean }>`
   width: 40px;
   height: 20px;
-  background: ${props => props.$enabled ? '#4CAF50' : '#CCCCCC'};
+  background: ${props => (props.$enabled ? '#4CAF50' : '#CCCCCC')};
   border-radius: 10px;
   position: relative;
   cursor: pointer;
@@ -291,7 +291,7 @@ export const ToggleSwitch = styled.div<{ $enabled: boolean }>`
     content: '';
     position: absolute;
     top: 2px;
-    left: ${props => props.$enabled ? '22px' : '2px'};
+    left: ${props => (props.$enabled ? '22px' : '2px')};
     width: 16px;
     height: 16px;
     background: white;
@@ -309,7 +309,7 @@ export const TransactionList = styled.div`
   min-height: 0;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  
+
   /* 스크롤바 숨기기 */
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -433,7 +433,7 @@ export const DetailMemoInput = styled.input`
   }
 
   &:focus {
-    border-bottom-color: #FFCC00;
+    border-bottom-color: #ffcc00;
   }
 `;
 
@@ -467,20 +467,16 @@ export const DetailInfoLabel = styled.div`
 `;
 
 export const DetailInfoValue = styled.div<{ $isAmount?: boolean; $isPositive?: boolean }>`
-  font-size: ${props => props.$isAmount ? '16px' : '15px'};
-  font-weight: ${props => props.$isAmount ? '500' : '400'};
-  color: ${props => 
-    props.$isAmount 
-      ? (props.$isPositive ? '#1976d2' : '#e53935')
-      : '#000000'
-  };
+  font-size: ${props => (props.$isAmount ? '16px' : '15px')};
+  font-weight: ${props => (props.$isAmount ? '500' : '400')};
+  color: ${props => (props.$isAmount ? (props.$isPositive ? '#1976d2' : '#e53935') : '#000000')};
   text-align: right;
 `;
 
 export const DetailConfirmButton = styled.button`
   width: 100%;
   padding: 20px;
-  background: #FFCC00;
+  background: #ffcc00;
   color: #000000;
   border: none;
   font-size: 18px;
@@ -491,6 +487,6 @@ export const DetailConfirmButton = styled.button`
   letter-spacing: -0.5px;
 
   &:active {
-    background: #FFB800;
+    background: #ffb800;
   }
 `;

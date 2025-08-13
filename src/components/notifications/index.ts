@@ -1,6 +1,6 @@
 /**
  * Notification Components Export
- * 
+ *
  * 알림 관련 모든 컴포넌트와 서비스를 내보내는 인덱스
  */
 
@@ -29,18 +29,18 @@ export type {
   GeofenceData,
   PushSubscriptionData,
   NotificationType,
-  NotificationPriority
+  NotificationPriority,
 } from '../../services/pushNotificationService';
 
 export type {
   TransactionNotificationData,
   SecurityNotificationData,
   BalanceAlertData,
-  BillReminderData
+  BillReminderData,
 } from '../../services/bankingNotifications';
 
 export type {
   ScheduledNotification,
   GeofenceNotification,
-  NotificationAnalytics
+  NotificationAnalytics,
 } from '../../services/advancedNotificationFeatures';

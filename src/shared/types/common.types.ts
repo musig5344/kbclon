@@ -7,8 +7,11 @@ export type Nullable<T> = T | null;
 export type Optional<T> = T | undefined;
 export type Maybe<T> = T | null | undefined;
 // 비동기 함수의 반환 타입 추출
-export type AsyncReturnType<T extends (...args: any) => Promise<any>> = 
-  T extends (...args: any) => Promise<infer R> ? R : never;
+export type AsyncReturnType<T extends (...args: any) => Promise<any>> = T extends (
+  ...args: any
+) => Promise<infer R>
+  ? R
+  : never;
 // 객체의 값 타입 추출
 export type ValueOf<T> = T[keyof T];
 // 읽기 전용 깊은 복사
@@ -93,7 +96,7 @@ export interface Money {
 }
 // 전화번호 타입
 export type PhoneNumber = Brand<string, 'PhoneNumber'>;
-// 이메일 타입  
+// 이메일 타입
 export type Email = Brand<string, 'Email'>;
 // 계좌번호 타입
 export type AccountNumber = Brand<string, 'AccountNumber'>;

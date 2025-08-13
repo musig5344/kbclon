@@ -39,8 +39,8 @@ const Input = styled.input<{ hasError?: boolean }>`
   width: 100%;
   height: 48px;
   padding: 0 48px 0 16px;
-  border: 1px solid ${({ theme, hasError }) => 
-    hasError ? theme.colors.error : theme.colors.border};
+  border: 1px solid
+    ${({ theme, hasError }) => (hasError ? theme.colors.error : theme.colors.border)};
   border-radius: 4px;
   font-size: 16px;
   background-color: ${({ theme }) => theme.colors.background};
@@ -92,7 +92,7 @@ const CalendarPopup = styled.div<{ isOpen: boolean }>`
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   padding: 16px;
   min-width: 280px;
-  display: ${({ isOpen }) => isOpen ? 'block' : 'none'};
+  display: ${({ isOpen }) => (isOpen ? 'block' : 'none')};
 `;
 
 const CalendarHeader = styled.div`
@@ -151,8 +151,8 @@ const DaysGrid = styled.div`
   gap: 4px;
 `;
 
-const DayButton = styled.button<{ 
-  isSelected?: boolean; 
+const DayButton = styled.button<{
+  isSelected?: boolean;
   isToday?: boolean;
   isOutsideMonth?: boolean;
   isDisabled?: boolean;
@@ -163,22 +163,26 @@ const DayButton = styled.button<{
   border-radius: 4px;
   cursor: pointer;
   font-size: 14px;
-  background-color: ${({ theme, isSelected, isToday }) => 
-    isSelected ? theme.colors.accentBlue : 
-    isToday ? theme.colors.backgroundGray1 : 
-    'transparent'};
-  color: ${({ theme, isSelected, isOutsideMonth, isDisabled }) => 
-    isDisabled ? theme.colors.textTertiary :
-    isSelected ? theme.colors.white :
-    isOutsideMonth ? theme.colors.textTertiary :
-    theme.colors.textPrimary};
-  
-  ${({ isToday, isSelected, theme }) => isToday && !isSelected && `
+  background-color: ${({ theme, isSelected, isToday }) =>
+    isSelected ? theme.colors.accentBlue : isToday ? theme.colors.backgroundGray1 : 'transparent'};
+  color: ${({ theme, isSelected, isOutsideMonth, isDisabled }) =>
+    isDisabled
+      ? theme.colors.textTertiary
+      : isSelected
+        ? theme.colors.white
+        : isOutsideMonth
+          ? theme.colors.textTertiary
+          : theme.colors.textPrimary};
+
+  ${({ isToday, isSelected, theme }) =>
+    isToday &&
+    !isSelected &&
+    `
     border: 1px solid ${theme.colors.accentBlue};
   `}
 
   &:hover:not(:disabled) {
-    background-color: ${({ theme, isSelected }) => 
+    background-color: ${({ theme, isSelected }) =>
       isSelected ? theme.colors.accentBlue : theme.colors.backgroundGray1};
   }
 
@@ -201,7 +205,20 @@ const ErrorMessage = styled.div`
 `;
 
 const weekDays = ['일', '월', '화', '수', '목', '금', '토'];
-const months = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
+const months = [
+  '1월',
+  '2월',
+  '3월',
+  '4월',
+  '5월',
+  '6월',
+  '7월',
+  '8월',
+  '9월',
+  '10월',
+  '11월',
+  '12월',
+];
 
 export const AccessibleDatePicker: React.FC<Props> = ({
   label,
@@ -211,7 +228,7 @@ export const AccessibleDatePicker: React.FC<Props> = ({
   minDate,
   maxDate,
   error,
-  className
+  className,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(value || new Date());
@@ -225,7 +242,7 @@ export const AccessibleDatePicker: React.FC<Props> = ({
     if (isOpen && calendarRef.current) {
       focusTrapRef.current = new FocusTrap(calendarRef.current, {
         initialFocus: '.selected-day, .today-day, [role="gridcell"] button',
-        escapeDeactivates: true
+        escapeDeactivates: true,
       });
       focusTrapRef.current.activate();
     } else {
@@ -241,11 +258,8 @@ export const AccessibleDatePicker: React.FC<Props> = ({
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
-    
-    return format
-      .replace('YYYY', String(year))
-      .replace('MM', month)
-      .replace('DD', day);
+
+    return format.replace('YYYY', String(year)).replace('MM', month).replace('DD', day);
   };
 
   const getDaysInMonth = (date: Date): Date[] => {
@@ -283,10 +297,10 @@ export const AccessibleDatePicker: React.FC<Props> = ({
 
   const handleDateSelect = (date: Date) => {
     if (isDateDisabled(date)) return;
-    
+
     onChange(date);
     setIsOpen(false);
-    
+
     const dateText = formatDateForScreenReader(date);
     announce(`${dateText}이 선택되었습니다.`);
   };
@@ -295,7 +309,7 @@ export const AccessibleDatePicker: React.FC<Props> = ({
     const newMonth = new Date(currentMonth);
     newMonth.setMonth(newMonth.getMonth() + direction);
     setCurrentMonth(newMonth);
-    
+
     const monthYear = `${newMonth.getFullYear()}년 ${months[newMonth.getMonth()]}`;
     announce(`${monthYear}로 이동했습니다.`);
   };
@@ -341,15 +355,17 @@ export const AccessibleDatePicker: React.FC<Props> = ({
 
     if (newDate) {
       e.preventDefault();
-      
+
       // 월이 변경되면 캘린더도 변경
       if (newDate.getMonth() !== currentMonth.getMonth()) {
         setCurrentMonth(newDate);
       }
-      
+
       // 포커스 이동
       const newDateString = formatDate(newDate);
-      const button = calendarRef.current?.querySelector(`[data-date="${newDateString}"]`) as HTMLElement;
+      const button = calendarRef.current?.querySelector(
+        `[data-date="${newDateString}"]`
+      ) as HTMLElement;
       button?.focus();
     }
   };
@@ -360,61 +376,51 @@ export const AccessibleDatePicker: React.FC<Props> = ({
 
   return (
     <Container ref={containerRef} className={className}>
-      <Label htmlFor={inputId}>
-        {label}
-      </Label>
+      <Label htmlFor={inputId}>{label}</Label>
 
       <InputWrapper>
         <Input
           id={inputId}
-          type="text"
+          type='text'
           value={value ? formatDate(value) : ''}
           onClick={() => setIsOpen(!isOpen)}
           readOnly
           hasError={!!error}
           aria-invalid={!!error}
           aria-errormessage={error ? errorId : undefined}
-          aria-haspopup="dialog"
+          aria-haspopup='dialog'
           aria-expanded={isOpen}
           aria-describedby={value ? `${inputId}-description` : undefined}
         />
-        <CalendarIcon
-          type="button"
-          onClick={() => setIsOpen(!isOpen)}
-          aria-label="날짜 선택 열기"
-        >
+        <CalendarIcon type='button' onClick={() => setIsOpen(!isOpen)} aria-label='날짜 선택 열기'>
           📅
         </CalendarIcon>
         {value && (
-          <span id={`${inputId}-description`} className="sr-only">
+          <span id={`${inputId}-description`} className='sr-only'>
             선택된 날짜: {formatDateForScreenReader(value)}
           </span>
         )}
       </InputWrapper>
 
-      <CalendarPopup 
+      <CalendarPopup
         ref={calendarRef}
         isOpen={isOpen}
-        role="dialog"
-        aria-label="날짜 선택"
-        aria-modal="true"
+        role='dialog'
+        aria-label='날짜 선택'
+        aria-modal='true'
       >
         <CalendarHeader>
           <NavigationButton
-            type="button"
+            type='button'
             onClick={() => handleMonthChange(-1)}
-            aria-label="이전 달"
+            aria-label='이전 달'
           >
             ←
           </NavigationButton>
           <MonthYear>
             {currentMonth.getFullYear()}년 {months[currentMonth.getMonth()]}
           </MonthYear>
-          <NavigationButton
-            type="button"
-            onClick={() => handleMonthChange(1)}
-            aria-label="다음 달"
-          >
+          <NavigationButton type='button' onClick={() => handleMonthChange(1)} aria-label='다음 달'>
             →
           </NavigationButton>
         </CalendarHeader>
@@ -427,21 +433,20 @@ export const AccessibleDatePicker: React.FC<Props> = ({
           ))}
         </WeekDays>
 
-        <DaysGrid role="grid" aria-label="날짜 선택">
+        <DaysGrid role='grid' aria-label='날짜 선택'>
           {days.map((date, index) => {
-            const isSelected = value && 
-              date.toDateString() === value.toDateString();
+            const isSelected = value && date.toDateString() === value.toDateString();
             const isToday = date.toDateString() === today.toDateString();
             const isOutsideMonth = date.getMonth() !== currentMonth.getMonth();
             const isDisabled = isDateDisabled(date);
             const dateString = formatDate(date);
 
             return (
-              <div key={index} role="gridcell">
+              <div key={index} role='gridcell'>
                 <DayButton
-                  type="button"
+                  type='button'
                   onClick={() => handleDateSelect(date)}
-                  onKeyDown={(e) => handleKeyDown(e, date)}
+                  onKeyDown={e => handleKeyDown(e, date)}
                   isSelected={isSelected}
                   isToday={isToday}
                   isOutsideMonth={isOutsideMonth}
@@ -462,7 +467,7 @@ export const AccessibleDatePicker: React.FC<Props> = ({
       </CalendarPopup>
 
       {error && (
-        <ErrorMessage id={errorId} role="alert">
+        <ErrorMessage id={errorId} role='alert'>
           {error}
         </ErrorMessage>
       )}

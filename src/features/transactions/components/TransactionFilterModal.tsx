@@ -8,14 +8,14 @@ const ModalBackdrop = styled.div<{ show: boolean }>`
   right: 0;
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);
-  display: ${props => props.show ? 'block' : 'none'};
+  display: ${props => (props.show ? 'block' : 'none')};
   z-index: 9999;
 `;
 const ModalContainer = styled.div<{ show: boolean }>`
   position: fixed;
   bottom: 0;
   left: 50%;
-  transform: translateX(-50%) translateY(${props => props.show ? '0' : '100%'});
+  transform: translateX(-50%) translateY(${props => (props.show ? '0' : '100%')});
   background: white;
   border-radius: 16px 16px 0 0;
   width: 100%;
@@ -81,12 +81,12 @@ const ButtonGrid = styled.div`
 `;
 const FilterButton = styled.button<{ $active: boolean }>`
   padding: 8px 12px;
-  border: 1px solid ${props => props.$active ? '#26282c' : '#ddd'};
+  border: 1px solid ${props => (props.$active ? '#26282c' : '#ddd')};
   background: white;
   color: #26282c;
   border-radius: 4px;
   font-size: 13px;
-  font-weight: ${props => props.$active ? '600' : '400'};
+  font-weight: ${props => (props.$active ? '600' : '400')};
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: 'KBFGText', sans-serif;
@@ -121,7 +121,7 @@ const AmountInput = styled.input`
   }
   &:focus {
     outline: none;
-    border-bottom-color: #FFD338;
+    border-bottom-color: #ffd338;
   }
 `;
 const AmountLabel = styled.span`
@@ -138,7 +138,7 @@ const Divider = styled.span`
 const ApplyButton = styled.button`
   width: 100%;
   height: 44px;
-  background: #FFD338;
+  background: #ffd338;
   border: none;
   border-radius: 6px;
   font-size: 14px;
@@ -179,13 +179,13 @@ export const TransactionFilterModal: React.FC<TransactionFilterModalProps> = ({
   onClose,
   filters: initialFilters,
   onApply,
-  showDateInputs: _showDateInputs = false
+  showDateInputs: _showDateInputs = false,
 }) => {
   const [filters, setFilters] = useState<FilterState>(initialFilters);
   const handleFilterChange = <K extends keyof FilterState>(key: K, value: FilterState[K]) => {
     setFilters(prev => ({
       ...prev,
-      [key]: value
+      [key]: value,
     }));
   };
   const handleAmountChange = (key: 'min' | 'max', value: string) => {
@@ -193,8 +193,8 @@ export const TransactionFilterModal: React.FC<TransactionFilterModalProps> = ({
       ...prev,
       amount: {
         ...prev.amount,
-        [key]: value
-      }
+        [key]: value,
+      },
     }));
   };
   const handleApply = () => {
@@ -203,7 +203,7 @@ export const TransactionFilterModal: React.FC<TransactionFilterModalProps> = ({
   };
   return (
     <ModalBackdrop show={show} onClick={onClose}>
-      <ModalContainer show={show} onClick={(e) => e.stopPropagation()}>
+      <ModalContainer show={show} onClick={e => e.stopPropagation()}>
         <Header>
           <Title>조회기간 설정</Title>
           <CloseButton onClick={onClose}>×</CloseButton>
@@ -212,7 +212,7 @@ export const TransactionFilterModal: React.FC<TransactionFilterModalProps> = ({
           <FilterLabel>기간선택</FilterLabel>
           <ButtonGrid>
             {['오늘', '1개월', '3개월', '6개월', '직접입력'].map(period => (
-              <FilterButton 
+              <FilterButton
                 key={period}
                 $active={filters.period === period}
                 onClick={() => handleFilterChange('period', period)}
@@ -226,7 +226,7 @@ export const TransactionFilterModal: React.FC<TransactionFilterModalProps> = ({
           <FilterLabel>거래유형</FilterLabel>
           <ButtonGrid>
             {['전체', '입금', '출금'].map(type => (
-              <FilterButton 
+              <FilterButton
                 key={type}
                 $active={filters.type === type}
                 onClick={() => handleFilterChange('type', type)}
@@ -240,7 +240,7 @@ export const TransactionFilterModal: React.FC<TransactionFilterModalProps> = ({
           <FilterLabel>정렬순서</FilterLabel>
           <ButtonGrid>
             {['최신순', '과거순'].map(sort => (
-              <FilterButton 
+              <FilterButton
                 key={sort}
                 $active={filters.sort === sort}
                 onClick={() => handleFilterChange('sort', sort)}
@@ -254,29 +254,27 @@ export const TransactionFilterModal: React.FC<TransactionFilterModalProps> = ({
           <FilterLabel>조회금액</FilterLabel>
           <AmountSection>
             <AmountGroup>
-              <AmountInput 
-                placeholder="최소"
-                type="number"
+              <AmountInput
+                placeholder='최소'
+                type='number'
                 value={filters.amount.min}
-                onChange={(e) => handleAmountChange('min', e.target.value)}
+                onChange={e => handleAmountChange('min', e.target.value)}
               />
               <AmountLabel>원</AmountLabel>
             </AmountGroup>
             <Divider>-</Divider>
             <AmountGroup>
-              <AmountInput 
-                placeholder="최대"
-                type="number"
+              <AmountInput
+                placeholder='최대'
+                type='number'
                 value={filters.amount.max}
-                onChange={(e) => handleAmountChange('max', e.target.value)}
+                onChange={e => handleAmountChange('max', e.target.value)}
               />
               <AmountLabel>원</AmountLabel>
             </AmountGroup>
           </AmountSection>
         </FilterSection>
-        <ApplyButton onClick={handleApply}>
-          조회
-        </ApplyButton>
+        <ApplyButton onClick={handleApply}>조회</ApplyButton>
       </ModalContainer>
     </ModalBackdrop>
   );

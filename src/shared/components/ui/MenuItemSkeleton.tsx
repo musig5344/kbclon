@@ -25,11 +25,11 @@ const MenuGridSkeleton = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: ${tokens.spacing[4]};
-  
+
   @media (max-width: ${tokens.breakpoints.medium}) {
     grid-template-columns: repeat(3, 1fr);
   }
-  
+
   @media (max-width: ${tokens.breakpoints.small}) {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -48,17 +48,9 @@ export const MenuItemSkeleton: React.FC = React.memo(() => {
   return (
     <MenuItemCard>
       {/* 아이콘 스켈레톤 */}
-      <Skeleton 
-        width={48} 
-        height={48} 
-        variant="circular"
-      />
+      <Skeleton width={48} height={48} variant='circular' />
       {/* 메뉴명 스켈레톤 */}
-      <Skeleton 
-        width={60} 
-        height={14} 
-        variant="text"
-      />
+      <Skeleton width={60} height={14} variant='text' />
     </MenuItemCard>
   );
 });
@@ -69,22 +61,19 @@ MenuItemSkeleton.displayName = 'MenuItemSkeleton';
 export const MenuSectionSkeleton: React.FC<{
   itemCount?: number;
   showTitle?: boolean;
-}> = React.memo(({ 
-  itemCount = 8, 
-  showTitle = true 
-}) => {
+}> = React.memo(({ itemCount = 8, showTitle = true }) => {
   return (
     <MenuSectionSkeleton>
       {/* 섹션 타이틀 스켈레톤 */}
       {showTitle && (
-        <Skeleton 
-          width={100} 
-          height={20} 
-          variant="text"
+        <Skeleton
+          width={100}
+          height={20}
+          variant='text'
           style={{ marginBottom: tokens.spacing[4] }}
         />
       )}
-      
+
       {/* 메뉴 그리드 스켈레톤 */}
       <MenuGridSkeleton>
         {Array.from({ length: itemCount }).map((_, index) => (
@@ -101,13 +90,13 @@ export const MenuPageSkeleton: React.FC = React.memo(() => {
     <MenuSkeletonContainer>
       {/* 주요 메뉴 섹션 */}
       <MenuSectionSkeleton itemCount={8} />
-      
+
       {/* 자산관리 섹션 */}
       <MenuSectionSkeleton itemCount={6} />
-      
+
       {/* 대출 섹션 */}
       <MenuSectionSkeleton itemCount={4} />
-      
+
       {/* 카드 섹션 */}
       <MenuSectionSkeleton itemCount={4} />
     </MenuSkeletonContainer>

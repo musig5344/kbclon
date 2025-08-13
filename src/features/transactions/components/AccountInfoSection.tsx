@@ -16,7 +16,7 @@ import {
   BalanceAmount,
   BalanceLabel,
   ActionButtons,
-  ActionButton
+  ActionButton,
 } from '../AccountTransactionPage.styles';
 
 interface AccountInfoSectionProps {
@@ -34,14 +34,14 @@ interface AccountInfoSectionProps {
 const AccountInfoSection: React.FC<AccountInfoSectionProps> = ({
   account,
   showBalance,
-  onToggleBalance
+  onToggleBalance,
 }) => {
   return (
     <AccountSection>
       <AccountDropdown>
         <AccountInfo>
           <AccountIcon>
-            <img src={kbLogo} alt="KB" />
+            <img src={kbLogo} alt='KB' />
           </AccountIcon>
           <AccountDetails>
             <AccountName>{account.account_name}</AccountName>
@@ -50,16 +50,14 @@ const AccountInfoSection: React.FC<AccountInfoSectionProps> = ({
         </AccountInfo>
         <DropdownIcon>⚙️</DropdownIcon>
       </AccountDropdown>
-      
+
       <Balance>
-        <BalanceAmount>
-          {showBalance ? formatCurrency(account.balance) : '•••••••'}원
-        </BalanceAmount>
+        <BalanceAmount>{showBalance ? formatCurrency(account.balance) : '•••••••'}원</BalanceAmount>
         <BalanceLabel>
           출금가능금액 {showBalance ? formatCurrency(account.balance) : '•••••••'}원
         </BalanceLabel>
       </Balance>
-      
+
       <ActionButtons>
         <ActionButton>ATM/창구출금</ActionButton>
       </ActionButtons>

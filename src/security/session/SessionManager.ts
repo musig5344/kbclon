@@ -1,6 +1,6 @@
 /**
  * Secure Session Manager
- * 
+ *
  * 뱅킹 애플리케이션을 위한 안전한 세션 관리
  * - 세션 생성, 검증, 무효화
  * - 다중 디바이스 세션 관리
@@ -88,7 +88,7 @@ class SessionManager {
       requireSecureTransport: true,
       ipBindingEnabled: true,
       enableSessionFixationProtection: true,
-      ...config
+      ...config,
     };
 
     this.SECRET_KEY = this.generateSecretKey();
@@ -113,7 +113,8 @@ class SessionManager {
     const now = Date.now();
 
     // 디바이스 ID 생성 또는 검증
-    const deviceId = loginData.deviceId || this.generateDeviceId(loginData.userAgent, loginData.ipAddress);
+    const deviceId =
+      loginData.deviceId || this.generateDeviceId(loginData.userAgent, loginData.ipAddress);
 
     // 기존 세션 정리
     const existingSessions = this.getUserSessions(userId);
@@ -148,13 +149,13 @@ class SessionManager {
       metadata: {
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         language: navigator?.language || 'ko-KR',
-        ...loginData.metadata
-      }
+        ...loginData.metadata,
+      },
     };
 
     // 세션 저장
     this.sessions.set(sessionId, session);
-    
+
     // 사용자별 세션 추가
     if (!this.userSessions.has(userId)) {
       this.userSessions.set(userId, new Set());
@@ -170,9 +171,9 @@ class SessionManager {
       details: {
         deviceId,
         ipAddress: loginData.ipAddress,
-        loginMethod: loginData.loginMethod
+        loginMethod: loginData.loginMethod,
       },
-      riskLevel: this.calculateRiskLevel(suspiciousActivity.riskScore)
+      riskLevel: this.calculateRiskLevel(suspiciousActivity.riskScore),
     });
 
     return { session, warnings };
@@ -210,7 +211,7 @@ class SessionManager {
         userId: session.userId,
         timestamp: now,
         details: { reason: 'Session expired' },
-        riskLevel: 'low'
+        riskLevel: 'low',
       });
       return { isValid: false, reason: 'Session expired' };
     }
@@ -224,7 +225,7 @@ class SessionManager {
         userId: session.userId,
         timestamp: now,
         details: { reason: 'Idle timeout' },
-        riskLevel: 'low'
+        riskLevel: 'low',
       });
       return { isValid: false, reason: 'Idle timeout' };
     }
@@ -236,14 +237,14 @@ class SessionManager {
         sessionId,
         userId: session.userId,
         timestamp: now,
-        details: { 
+        details: {
           reason: 'IP address mismatch',
           originalIP: session.ipAddress,
-          currentIP: currentRequest.ipAddress
+          currentIP: currentRequest.ipAddress,
         },
-        riskLevel: 'high'
+        riskLevel: 'high',
       });
-      
+
       if (this.config.securityLevel === 'maximum') {
         session.status = 'suspended';
         return { isValid: false, reason: 'IP address mismatch' };
@@ -257,12 +258,12 @@ class SessionManager {
         sessionId,
         userId: session.userId,
         timestamp: now,
-        details: { 
+        details: {
           reason: 'User agent mismatch',
           originalUA: session.userAgent,
-          currentUA: currentRequest.userAgent
+          currentUA: currentRequest.userAgent,
         },
-        riskLevel: 'medium'
+        riskLevel: 'medium',
       });
     }
 
@@ -286,26 +287,26 @@ class SessionManager {
     // 갱신 임계값 확인
     if (session.expiresAt - now < this.config.refreshThreshold) {
       session.expiresAt = now + this.config.maxAge;
-      
+
       this.recordEvent({
         type: 'refreshed',
         sessionId,
         userId: session.userId,
         timestamp: now,
         details: { newExpiresAt: session.expiresAt },
-        riskLevel: 'low'
+        riskLevel: 'low',
       });
     }
 
     session.lastAccessedAt = now;
-    
+
     this.recordEvent({
       type: 'accessed',
       sessionId,
       userId: session.userId,
       timestamp: now,
       details: {},
-      riskLevel: 'low'
+      riskLevel: 'low',
     });
 
     return true;
@@ -314,15 +315,18 @@ class SessionManager {
   /**
    * 세션 무효화
    */
-  async invalidateSession(sessionId: string, reason: string = 'Manual invalidation'): Promise<boolean> {
+  async invalidateSession(
+    sessionId: string,
+    reason: string = 'Manual invalidation'
+  ): Promise<boolean> {
     const session = this.sessions.get(sessionId);
-    
+
     if (!session) {
       return false;
     }
 
     session.status = 'invalidated';
-    
+
     // 사용자별 세션에서 제거
     const userSessions = this.userSessions.get(session.userId);
     if (userSessions) {
@@ -335,7 +339,7 @@ class SessionManager {
       userId: session.userId,
       timestamp: Date.now(),
       details: { reason },
-      riskLevel: 'low'
+      riskLevel: 'low',
     });
 
     return true;
@@ -381,7 +385,7 @@ class SessionManager {
 
     // 기존 세션들과 비교
     const existingSessions = this.getUserSessions(userId);
-    
+
     // 새로운 디바이스 감지
     const knownDevices = existingSessions.map(s => s.deviceId);
     if (loginData.deviceId && !knownDevices.includes(loginData.deviceId)) {
@@ -399,12 +403,13 @@ class SessionManager {
     }
 
     // 짧은 시간 내 다중 로그인 시도
-    const recentLogins = this.sessionEvents.filter(event => 
-      event.userId === userId && 
-      event.type === 'created' && 
-      Date.now() - event.timestamp < 5 * 60 * 1000 // 5분
+    const recentLogins = this.sessionEvents.filter(
+      event =>
+        event.userId === userId &&
+        event.type === 'created' &&
+        Date.now() - event.timestamp < 5 * 60 * 1000 // 5분
     );
-    
+
     if (recentLogins.length > 3) {
       reasons.push('Multiple login attempts in short time');
       riskScore += 40;
@@ -429,7 +434,7 @@ class SessionManager {
       detected: reasons.length > 0,
       reasons,
       riskScore: Math.min(riskScore, 100),
-      recommendedActions
+      recommendedActions,
     };
   }
 
@@ -442,9 +447,9 @@ class SessionManager {
     const highRiskPatterns = [
       /^10\./, // 내부 네트워크
       /^192\.168\./, // 사설 네트워크
-      /^172\./ // 사설 네트워크
+      /^172\./, // 사설 네트워크
     ];
-    
+
     // 실제로는 지역 기반 위험도 데이터베이스 사용
     return false;
   }
@@ -466,7 +471,7 @@ class SessionManager {
     const timestamp = Date.now().toString();
     const randomBytes = CryptoJS.lib.WordArray.random(32).toString();
     const data = `${timestamp}-${randomBytes}`;
-    
+
     return CryptoJS.SHA256(data + this.SECRET_KEY).toString();
   }
 
@@ -490,7 +495,7 @@ class SessionManager {
     const randomData = [
       Date.now().toString(),
       Math.random().toString(),
-      typeof window !== 'undefined' ? window.location.hostname : 'server'
+      typeof window !== 'undefined' ? window.location.hostname : 'server',
     ].join('|');
 
     return CryptoJS.SHA256(randomData).toString();
@@ -528,7 +533,7 @@ class SessionManager {
       expired: 0,
       byStatus: {} as Record<SessionStatus, number>,
       averageSessionDuration: 0,
-      highRiskSessions: 0
+      highRiskSessions: 0,
     };
 
     let totalDuration = 0;
@@ -536,7 +541,7 @@ class SessionManager {
 
     for (const session of this.sessions.values()) {
       stats.byStatus[session.status] = (stats.byStatus[session.status] || 0) + 1;
-      
+
       if (session.status === 'active') {
         stats.active++;
       } else if (session.status === 'expired') {
@@ -560,7 +565,7 @@ class SessionManager {
    */
   private recordEvent(event: SessionEvent): void {
     this.sessionEvents.push(event);
-    
+
     // 이벤트 로그 크기 제한
     if (this.sessionEvents.length > 10000) {
       this.sessionEvents = this.sessionEvents.slice(-5000);
@@ -591,12 +596,13 @@ class SessionManager {
     let cleanedCount = 0;
 
     for (const [sessionId, session] of this.sessions.entries()) {
-      if (now > session.expiresAt || 
-          (session.status !== 'active' && now - session.lastAccessedAt > 24 * 60 * 60 * 1000)) {
-        
+      if (
+        now > session.expiresAt ||
+        (session.status !== 'active' && now - session.lastAccessedAt > 24 * 60 * 60 * 1000)
+      ) {
         // 세션 제거
         this.sessions.delete(sessionId);
-        
+
         // 사용자별 세션에서도 제거
         const userSessions = this.userSessions.get(session.userId);
         if (userSessions) {
@@ -605,7 +611,7 @@ class SessionManager {
             this.userSessions.delete(session.userId);
           }
         }
-        
+
         cleanedCount++;
       }
     }
@@ -618,9 +624,12 @@ class SessionManager {
    * 정리 타이머 시작
    */
   private startCleanupTimer(): void {
-    setInterval(() => {
-      this.cleanupExpiredSessions();
-    }, 5 * 60 * 1000); // 5분마다 정리
+    setInterval(
+      () => {
+        this.cleanupExpiredSessions();
+      },
+      5 * 60 * 1000
+    ); // 5분마다 정리
   }
 
   /**
@@ -651,26 +660,26 @@ class SessionManager {
       sessions: Array.from(this.sessions.entries()),
       userSessions: Array.from(this.userSessions.entries()).map(([userId, sessions]) => [
         userId,
-        Array.from(sessions)
+        Array.from(sessions),
       ]),
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
-    
+
     return JSON.stringify(data);
   }
 
   importSessions(data: string): boolean {
     try {
       const parsed = JSON.parse(data);
-      
+
       this.sessions = new Map(parsed.sessions);
       this.userSessions = new Map(
         parsed.userSessions.map(([userId, sessions]: [string, string[]]) => [
           userId,
-          new Set(sessions)
+          new Set(sessions),
         ])
       );
-      
+
       return true;
     } catch (error) {
       console.error('[Session] Failed to import sessions:', error);

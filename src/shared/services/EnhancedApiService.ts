@@ -8,7 +8,14 @@
  * - 백엔드 연동 완전 자동화
  */
 
-import { apiService, Account, Transaction, TransactionFilter, TransactionResponse, TransferRequest } from '../../services/api';
+import {
+  apiService,
+  Account,
+  Transaction,
+  TransactionFilter,
+  TransactionResponse,
+  TransferRequest,
+} from '../../services/api';
 import { handleApiError, safeLog, ErrorType } from '../utils/errorHandler';
 
 import { networkService, NetworkStatus, RetryConfig } from './NetworkService';
@@ -43,7 +50,7 @@ class LoadingNotificationManager {
     stop: (key: string) => void;
     update: (key: string, message: string) => void;
   } | null = null;
-  
+
   private notificationCallbacks: {
     showSuccess: (message: string) => void;
     showError: (message: string) => void;
@@ -100,21 +107,21 @@ class EnhancedApiService {
   private static instance: EnhancedApiService;
   private manager = LoadingNotificationManager.getInstance();
   private isAndroid: boolean;
-  
+
   // API 호출 통계 (Android WebView 성능 모니터링)
   private callStats = {
     total: 0,
     success: 0,
     failed: 0,
     cached: 0,
-    retried: 0
+    retried: 0,
   };
 
   private constructor() {
     this.isAndroid = /Android/i.test(navigator.userAgent);
-    
+
     // 네트워크 상태 변화 감지
-    networkService.addNetworkListener((status) => {
+    networkService.addNetworkListener(status => {
       if (!status.isOnline) {
         this.handleOfflineMode();
       } else {
@@ -159,7 +166,7 @@ class EnhancedApiService {
   private handleOnlineMode() {
     safeLog('info', '[EnhancedApiService] 온라인 모드 복구');
     this.hasShownOfflineNotification = false;
-    
+
     if (this.isAndroid) {
       // Android WebView에서 복구 시 성공 메시지
       this.manager.showSuccess('네트워크 연결이 복구되었습니다.');
@@ -182,7 +189,7 @@ class EnhancedApiService {
       skipNetworkCheck = false,
       retryConfig,
       silentMode = false,
-      cacheStrategy = 'network-first'
+      cacheStrategy = 'network-first',
     } = options;
 
     let retryCount = 0;
@@ -209,22 +216,23 @@ class EnhancedApiService {
         try {
           const result = await Promise.race([
             apiCall(),
-            new Promise<never>((_, reject) => 
+            new Promise<never>((_, reject) =>
               setTimeout(() => reject(new Error('요청 시간이 초과되었습니다.')), timeout)
-            )
+            ),
           ]);
           return result;
         } catch (error) {
           retryCount++;
-          
+
           // 재시도 조건 확인
-          const shouldRetry = retryConfig && 
-                             retryCount <= (retryConfig.maxRetries || 3) &&
-                             this.shouldRetryOnError(error);
-          
+          const shouldRetry =
+            retryConfig &&
+            retryCount <= (retryConfig.maxRetries || 3) &&
+            this.shouldRetryOnError(error);
+
           if (shouldRetry) {
             this.callStats.retried++;
-            
+
             // 재시도 알림 (Android에서만)
             if (this.isAndroid && !silentMode) {
               this.manager.updateLoading(
@@ -235,10 +243,11 @@ class EnhancedApiService {
 
             // 지수 백오프 딜레이
             const delay = Math.min(
-              (retryConfig.baseDelay || 1000) * Math.pow(retryConfig.backoffMultiplier || 2, retryCount - 1),
+              (retryConfig.baseDelay || 1000) *
+                Math.pow(retryConfig.backoffMultiplier || 2, retryCount - 1),
               retryConfig.maxDelay || 10000
             );
-            
+
             await new Promise(resolve => setTimeout(resolve, delay));
             return executeCall(); // 재귀 호출
           }
@@ -248,12 +257,15 @@ class EnhancedApiService {
       };
 
       const result = await executeCall();
-      
+
       // 성공 처리
       this.callStats.success++;
       const endTime = Date.now();
-      
-      safeLog('info', `[EnhancedApiService] API 호출 성공 (${endTime - startTime}ms, 재시도: ${retryCount}회)`);
+
+      safeLog(
+        'info',
+        `[EnhancedApiService] API 호출 성공 (${endTime - startTime}ms, 재시도: ${retryCount}회)`
+      );
 
       // 성공 메시지 표시
       if (showSuccessMessage && !silentMode) {
@@ -264,14 +276,13 @@ class EnhancedApiService {
         success: true,
         data: result,
         networkStatus: networkService.getNetworkStatus(),
-        retryCount
+        retryCount,
       };
-
     } catch (error) {
       // 실패 처리
       this.callStats.failed++;
       const endTime = Date.now();
-      
+
       safeLog('error', `[EnhancedApiService] API 호출 실패 (${endTime - startTime}ms)`, error);
 
       // 에러 알림 표시
@@ -290,9 +301,8 @@ class EnhancedApiService {
         success: false,
         error: error instanceof Error ? error.message : String(error),
         networkStatus: networkService.getNetworkStatus(),
-        retryCount
+        retryCount,
       };
-
     } finally {
       // 로딩 종료
       if (loadingKey && !silentMode) {
@@ -315,56 +325,53 @@ class EnhancedApiService {
    * 계좌 목록 조회 (강화)
    */
   async getAccounts(options: ApiCallOptions = {}): Promise<ApiResponse<Account[]>> {
-    return this.executeApiCall(
-      () => apiService.getAccounts(),
-      {
-        loadingKey: 'accounts',
-        loadingMessage: '',
-        ...options
-      }
-    );
+    return this.executeApiCall(() => apiService.getAccounts(), {
+      loadingKey: 'accounts',
+      loadingMessage: '',
+      ...options,
+    });
   }
 
   /**
    * 계좌 상세 조회 (강화)
    */
-  async getAccountById(accountId: string, options: ApiCallOptions = {}): Promise<ApiResponse<Account>> {
-    return this.executeApiCall(
-      () => apiService.getAccountById(accountId),
-      {
-        loadingKey: 'account-detail',
-        loadingMessage: '',
-        ...options
-      }
-    );
+  async getAccountById(
+    accountId: string,
+    options: ApiCallOptions = {}
+  ): Promise<ApiResponse<Account>> {
+    return this.executeApiCall(() => apiService.getAccountById(accountId), {
+      loadingKey: 'account-detail',
+      loadingMessage: '',
+      ...options,
+    });
   }
 
   /**
    * 잔액 조회 (강화)
    */
-  async getAccountBalance(accountId: string, options: ApiCallOptions = {}): Promise<ApiResponse<{ balance: number; last_updated: string }>> {
-    return this.executeApiCall(
-      () => apiService.getAccountBalance(accountId),
-      {
-        loadingKey: 'account-balance',
-        loadingMessage: '',
-        ...options
-      }
-    );
+  async getAccountBalance(
+    accountId: string,
+    options: ApiCallOptions = {}
+  ): Promise<ApiResponse<{ balance: number; last_updated: string }>> {
+    return this.executeApiCall(() => apiService.getAccountBalance(accountId), {
+      loadingKey: 'account-balance',
+      loadingMessage: '',
+      ...options,
+    });
   }
 
   /**
    * 거래내역 조회 (강화)
    */
-  async getTransactions(filter: TransactionFilter = {}, options: ApiCallOptions = {}): Promise<ApiResponse<TransactionResponse>> {
-    return this.executeApiCall(
-      () => apiService.getTransactions(filter),
-      {
-        loadingKey: 'transactions',
-        loadingMessage: '',
-        ...options
-      }
-    );
+  async getTransactions(
+    filter: TransactionFilter = {},
+    options: ApiCallOptions = {}
+  ): Promise<ApiResponse<TransactionResponse>> {
+    return this.executeApiCall(() => apiService.getTransactions(filter), {
+      loadingKey: 'transactions',
+      loadingMessage: '',
+      ...options,
+    });
   }
 
   /**
@@ -375,50 +382,44 @@ class EnhancedApiService {
     period?: 'today' | 'week' | 'month' | '3months' | '6months',
     options: ApiCallOptions = {}
   ) {
-    return this.executeApiCall(
-      () => apiService.getTransactionStatistics(accountId, period),
-      {
-        loadingKey: 'transaction-statistics',
-        loadingMessage: '',
-        ...options
-      }
-    );
+    return this.executeApiCall(() => apiService.getTransactionStatistics(accountId, period), {
+      loadingKey: 'transaction-statistics',
+      loadingMessage: '',
+      ...options,
+    });
   }
 
   /**
    * 이체 실행 (강화)
    */
-  async executeTransfer(transferRequest: TransferRequest, options: ApiCallOptions = {}): Promise<ApiResponse<any>> {
-    return this.executeApiCall(
-      () => apiService.executeTransfer(transferRequest),
-      {
-        loadingKey: 'transfer',
-        loadingMessage: '',
-        showSuccessMessage: true,
-        successMessage: '이체가 완료되었습니다.',
-        retryConfig: {
-          maxRetries: 2, // 이체는 신중하게 재시도
-          baseDelay: 2000,
-          maxDelay: 5000,
-          backoffMultiplier: 2
-        },
-        ...options
-      }
-    );
+  async executeTransfer(
+    transferRequest: TransferRequest,
+    options: ApiCallOptions = {}
+  ): Promise<ApiResponse<any>> {
+    return this.executeApiCall(() => apiService.executeTransfer(transferRequest), {
+      loadingKey: 'transfer',
+      loadingMessage: '',
+      showSuccessMessage: true,
+      successMessage: '이체가 완료되었습니다.',
+      retryConfig: {
+        maxRetries: 2, // 이체는 신중하게 재시도
+        baseDelay: 2000,
+        maxDelay: 5000,
+        backoffMultiplier: 2,
+      },
+      ...options,
+    });
   }
 
   /**
    * 이체 내역 조회 (강화)
    */
   async getTransferHistory(accountId?: string, page = 1, limit = 20, options: ApiCallOptions = {}) {
-    return this.executeApiCall(
-      () => apiService.getTransferHistory(accountId, page, limit),
-      {
-        loadingKey: 'transfer-history',
-        loadingMessage: '',
-        ...options
-      }
-    );
+    return this.executeApiCall(() => apiService.getTransferHistory(accountId, page, limit), {
+      loadingKey: 'transfer-history',
+      loadingMessage: '',
+      ...options,
+    });
   }
 
   /**
@@ -443,7 +444,7 @@ class EnhancedApiService {
         });
 
         const settled = await Promise.allSettled(promises);
-        
+
         for (const settled_result of settled) {
           if (settled_result.status === 'fulfilled') {
             const { key, result, success } = settled_result.value;
@@ -460,7 +461,7 @@ class EnhancedApiService {
       {
         loadingKey: 'batch-api',
         loadingMessage: '',
-        ...options
+        ...options,
       }
     );
   }
@@ -471,8 +472,14 @@ class EnhancedApiService {
   getPerformanceStats() {
     return {
       ...this.callStats,
-      successRate: this.callStats.total > 0 ? (this.callStats.success / this.callStats.total * 100).toFixed(1) + '%' : '0%',
-      cacheHitRate: this.callStats.total > 0 ? (this.callStats.cached / this.callStats.total * 100).toFixed(1) + '%' : '0%'
+      successRate:
+        this.callStats.total > 0
+          ? ((this.callStats.success / this.callStats.total) * 100).toFixed(1) + '%'
+          : '0%',
+      cacheHitRate:
+        this.callStats.total > 0
+          ? ((this.callStats.cached / this.callStats.total) * 100).toFixed(1) + '%'
+          : '0%',
     };
   }
 
@@ -485,7 +492,7 @@ class EnhancedApiService {
       isOnline: networkService.isOnline(),
       networkQuality: networkService.getConnectionQuality(),
       networkStatus: networkService.getNetworkStatus(),
-      performanceStats: this.getPerformanceStats()
+      performanceStats: this.getPerformanceStats(),
     };
   }
 
@@ -499,9 +506,9 @@ class EnhancedApiService {
       success: 0,
       failed: 0,
       cached: 0,
-      retried: 0
+      retried: 0,
     };
-    
+
     if (this.isAndroid) {
       safeLog('info', '[EnhancedApiService] Android WebView 캐시 정리 완료');
     }
@@ -512,9 +519,6 @@ class EnhancedApiService {
 export const enhancedApiService = EnhancedApiService.getInstance();
 
 // React Hook 연동용 설정 함수
-export const configureEnhancedApiService = (
-  loadingCallbacks: any,
-  notificationCallbacks: any
-) => {
+export const configureEnhancedApiService = (loadingCallbacks: any, notificationCallbacks: any) => {
   enhancedApiService.setCallbacks(loadingCallbacks, notificationCallbacks);
 };

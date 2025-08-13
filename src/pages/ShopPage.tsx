@@ -51,8 +51,8 @@ const ShopPage: React.FC = () => {
       <MainContent>
         <ComingSoonText>🏪 상점 준비중</ComingSoonText>
         <DescriptionText>
-          KB 상점 서비스가<br/>
-          곧 오픈 예정입니다
+          KB 상점 서비스가
+          <br />곧 오픈 예정입니다
         </DescriptionText>
       </MainContent>
       <TabBar />

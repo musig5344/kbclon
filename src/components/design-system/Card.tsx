@@ -1,8 +1,10 @@
 import React from 'react';
+
 import styled, { css } from 'styled-components';
-import { tokens } from '../../styles/tokens';
+
 import { MEDIA_QUERIES } from '../../styles/breakpoints';
 import { createResponsiveCard, KB_DESIGN_TOKENS } from '../../styles/responsive-system';
+import { tokens } from '../../styles/tokens';
 // Card 컴포넌트 Props 타입
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: 'basic' | 'elevated' | 'outlined' | 'account';
@@ -40,7 +42,11 @@ const cardVariants = {
     box-shadow: none;
   `,
   account: css`
-    background: linear-gradient(135deg, ${KB_DESIGN_TOKENS.colors.background} 0%, ${KB_DESIGN_TOKENS.colors.surface} 100%);
+    background: linear-gradient(
+      135deg,
+      ${KB_DESIGN_TOKENS.colors.background} 0%,
+      ${KB_DESIGN_TOKENS.colors.surface} 100%
+    );
     border: 1px solid ${KB_DESIGN_TOKENS.colors.surfaceVariant};
     box-shadow: ${KB_DESIGN_TOKENS.shadows.card};
   `,
@@ -66,46 +72,50 @@ const StyledCard = styled.div<CardProps>`
   ${createResponsiveCard('low')}
   border-radius: ${KB_DESIGN_TOKENS.borderRadius.large};
   transition: all 0.2s ease;
-  
+
   /* 크기 스타일 적용 */
   ${({ size = 'medium' }) => cardSizes[size]}
   /* 변형 스타일 적용 */
   ${({ variant = 'basic' }) => cardVariants[variant]}
   
   /* 전체 너비 옵션 */
-  ${({ fullWidth }) => fullWidth && css`
-    width: 100%;
-  `}
+  ${({ fullWidth }) =>
+    fullWidth &&
+    css`
+      width: 100%;
+    `}
   
   /* 반응형 인터랙티브 옵션 */
-  ${({ interactive }) => interactive && css`
-    cursor: pointer;
-    touch-action: manipulation;
-    -webkit-tap-highlight-color: transparent;
-    
-    /* 마우스 디바이스에서만 호버 효과 */
-    ${MEDIA_QUERIES.mouse} {
-      &:hover {
-        transform: translateY(-2px);
-        box-shadow: ${KB_DESIGN_TOKENS.shadows.button};
+  ${({ interactive }) =>
+    interactive &&
+    css`
+      cursor: pointer;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+
+      /* 마우스 디바이스에서만 호버 효과 */
+      ${MEDIA_QUERIES.mouse} {
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: ${KB_DESIGN_TOKENS.shadows.button};
+        }
       }
-    }
-    
-    /* 터치 디바이스에서 터치 피드백 */
-    ${MEDIA_QUERIES.touch} {
-      &:active {
-        transform: scale(0.98);
-        transition-duration: 0.1s;
+
+      /* 터치 디바이스에서 터치 피드백 */
+      ${MEDIA_QUERIES.touch} {
+        &:active {
+          transform: scale(0.98);
+          transition-duration: 0.1s;
+        }
       }
-    }
-  `}
+    `}
   
   /* 폴더블 기기 최적화 */
   ${MEDIA_QUERIES.foldableClosed} {
     margin: ${KB_DESIGN_TOKENS.spacing.xs} ${KB_DESIGN_TOKENS.spacing.sm};
     padding: ${KB_DESIGN_TOKENS.spacing.sm};
   }
-  
+
   /* 태블릿에서 중앙 정렬 */
   ${MEDIA_QUERIES.tablet} {
     max-width: 100%;
@@ -276,12 +286,13 @@ export const AccountCard: React.FC<AccountCardProps> = ({
   ...props
 }) => {
   return (
-    <Card variant="account" {...props}>
+    <Card variant='account' {...props}>
       {accountType && <AccountCardType>{accountType}</AccountCardType>}
       {accountNumber && <AccountCardNumber>{accountNumber}</AccountCardNumber>}
       {balance !== undefined && (
         <AccountCardBalance>
-          {balance.toLocaleString()}{currency}
+          {balance.toLocaleString()}
+          {currency}
         </AccountCardBalance>
       )}
       {children}
@@ -289,13 +300,13 @@ export const AccountCard: React.FC<AccountCardProps> = ({
   );
 };
 // 미리 정의된 카드 변형들
-export const BasicCard: React.FC<Omit<CardProps, 'variant'>> = (props) => (
-  <Card variant="basic" {...props} />
+export const BasicCard: React.FC<Omit<CardProps, 'variant'>> = props => (
+  <Card variant='basic' {...props} />
 );
-export const ElevatedCard: React.FC<Omit<CardProps, 'variant'>> = (props) => (
-  <Card variant="elevated" {...props} />
+export const ElevatedCard: React.FC<Omit<CardProps, 'variant'>> = props => (
+  <Card variant='elevated' {...props} />
 );
-export const OutlinedCard: React.FC<Omit<CardProps, 'variant'>> = (props) => (
-  <Card variant="outlined" {...props} />
+export const OutlinedCard: React.FC<Omit<CardProps, 'variant'>> = props => (
+  <Card variant='outlined' {...props} />
 );
 export default Card;

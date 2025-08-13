@@ -11,16 +11,8 @@ interface RetryOptions {
  * @param options 재시도 옵션
  * @returns 재시도 로직이 추가된 함수
  */
-export async function withRetry<T>(
-  fn: () => Promise<T>,
-  options: RetryOptions = {}
-): Promise<T> {
-  const {
-    maxAttempts = 3,
-    delayMs = 1000,
-    backoff = true,
-    onRetry
-  } = options;
+export async function withRetry<T>(fn: () => Promise<T>, options: RetryOptions = {}): Promise<T> {
+  const { maxAttempts = 3, delayMs = 1000, backoff = true, onRetry } = options;
   let lastError: Error | null = null;
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
@@ -85,25 +77,16 @@ export async function batchWithRetry<T>(
   fns: Array<() => Promise<T>>,
   options: RetryOptions = {}
 ): Promise<T[]> {
-  return Promise.all(
-    fns.map(fn => withRetry(fn, options))
-  );
+  return Promise.all(fns.map(fn => withRetry(fn, options)));
 }
 /**
  * 데코레이터 패턴으로 재시도 로직 적용
  */
 export function retryable(options: RetryOptions = {}) {
-  return function (
-    _target: any,
-    _propertyKey: string,
-    descriptor: PropertyDescriptor
-  ) {
+  return function (_target: any, _propertyKey: string, descriptor: PropertyDescriptor) {
     const originalMethod = descriptor.value;
     descriptor.value = async function (...args: any[]) {
-      return withRetry(
-        () => originalMethod.apply(this, args),
-        options
-      );
+      return withRetry(() => originalMethod.apply(this, args), options);
     };
     return descriptor;
   };

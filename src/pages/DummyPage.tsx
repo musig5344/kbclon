@@ -27,16 +27,16 @@ interface DummyPageProps {
   title?: string;
   message?: string;
 }
-const DummyPage: React.FC<DummyPageProps> = ({ 
-  title = "서비스 준비중", 
-  message = "이용에 불편을 드려 죄송합니다. 빠른 시일 내에 더 좋은 모습으로 찾아뵙겠습니다." 
+const DummyPage: React.FC<DummyPageProps> = ({
+  title = '서비스 준비중',
+  message = '이용에 불편을 드려 죄송합니다. 빠른 시일 내에 더 좋은 모습으로 찾아뵙겠습니다.',
 }) => {
   const navigate = useNavigate();
   return (
     <DummyPageContainer>
       <Header />
       <MainContent>
-        <ToolsIcon size={48} color="#9E9E9E" />
+        <ToolsIcon size={48} color='#9E9E9E' />
         <Title>{title}</Title>
         <Body>{message}</Body>
         <Button onClick={() => navigate(-1)} style={{ marginTop: '24px' }}>
@@ -46,4 +46,4 @@ const DummyPage: React.FC<DummyPageProps> = ({
     </DummyPageContainer>
   );
 };
-export default DummyPage; 
+export default DummyPage;

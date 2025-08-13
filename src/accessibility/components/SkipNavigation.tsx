@@ -64,13 +64,10 @@ const defaultTargets: SkipLinkTarget[] = [
   { id: 'main-content', label: '본문 바로가기' },
   { id: 'navigation', label: '주 메뉴 바로가기' },
   { id: 'search', label: '검색 바로가기' },
-  { id: 'footer', label: '하단 정보 바로가기' }
+  { id: 'footer', label: '하단 정보 바로가기' },
 ];
 
-export const SkipNavigation: React.FC<Props> = ({ 
-  targets = defaultTargets,
-  className 
-}) => {
+export const SkipNavigation: React.FC<Props> = ({ targets = defaultTargets, className }) => {
   const [visibleTargets, setVisibleTargets] = useState<SkipLinkTarget[]>([]);
 
   useEffect(() => {
@@ -79,35 +76,35 @@ export const SkipNavigation: React.FC<Props> = ({
       const element = document.getElementById(target.id);
       return element !== null;
     });
-    
+
     setVisibleTargets(existingTargets);
   }, [targets]);
 
   const handleSkipLink = (e: React.MouseEvent<HTMLAnchorElement>, target: SkipLinkTarget) => {
     e.preventDefault();
-    
+
     const element = document.getElementById(target.id);
     if (element) {
       // tabindex 설정하여 포커스 가능하게 만들기
       const originalTabIndex = element.getAttribute('tabindex');
       element.setAttribute('tabindex', '-1');
-      
+
       // 포커스 이동
       setFocus(element, { preventScroll: false });
-      
+
       // 스크롤
-      element.scrollIntoView({ 
-        behavior: 'smooth', 
-        block: 'start' 
+      element.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
       });
-      
+
       // 원래 tabindex로 복원
       if (originalTabIndex) {
         element.setAttribute('tabindex', originalTabIndex);
       } else {
         element.removeAttribute('tabindex');
       }
-      
+
       // 스크린 리더 공지
       announce(`${target.label} 영역으로 이동했습니다.`);
     }
@@ -123,7 +120,7 @@ export const SkipNavigation: React.FC<Props> = ({
         <SkipLink
           key={target.id}
           href={`#${target.id}`}
-          onClick={(e) => handleSkipLink(e, target)}
+          onClick={e => handleSkipLink(e, target)}
           style={{ top: index * 50 }}
         >
           {target.label}
@@ -137,18 +134,18 @@ export const SkipNavigation: React.FC<Props> = ({
 export const AccountPageSkipLinks: SkipLinkTarget[] = [
   { id: 'account-info', label: '계좌 정보 바로가기' },
   { id: 'transaction-list', label: '거래 내역 바로가기' },
-  { id: 'quick-actions', label: '빠른 작업 바로가기' }
+  { id: 'quick-actions', label: '빠른 작업 바로가기' },
 ];
 
 export const TransferPageSkipLinks: SkipLinkTarget[] = [
   { id: 'from-account', label: '출금 계좌 선택 바로가기' },
   { id: 'to-account', label: '입금 계좌 입력 바로가기' },
   { id: 'amount-input', label: '금액 입력 바로가기' },
-  { id: 'transfer-confirm', label: '이체 확인 바로가기' }
+  { id: 'transfer-confirm', label: '이체 확인 바로가기' },
 ];
 
 export const MenuPageSkipLinks: SkipLinkTarget[] = [
   { id: 'menu-search', label: '메뉴 검색 바로가기' },
   { id: 'quick-menu', label: '자주 찾는 메뉴 바로가기' },
-  { id: 'all-menu', label: '전체 메뉴 바로가기' }
+  { id: 'all-menu', label: '전체 메뉴 바로가기' },
 ];

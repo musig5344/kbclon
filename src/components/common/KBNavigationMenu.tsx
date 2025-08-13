@@ -26,7 +26,7 @@ const menuData: MenuItem[] = [
       { id: 'account-inquiry', title: '계좌조회' },
       { id: 'transaction-history', title: '거래내역조회' },
       { id: 'balance-certificate', title: '잔액증명서' },
-    ]
+    ],
   },
   {
     id: 'transfer',
@@ -35,7 +35,7 @@ const menuData: MenuItem[] = [
       { id: 'transfer-account', title: '계좌이체' },
       { id: 'transfer-quick', title: '빠른이체' },
       { id: 'transfer-schedule', title: '예약이체' },
-    ]
+    ],
   },
   {
     id: 'card',
@@ -44,7 +44,7 @@ const menuData: MenuItem[] = [
       { id: 'card-inquiry', title: '카드조회' },
       { id: 'card-payment', title: '카드결제' },
       { id: 'card-limit', title: '한도조회/변경' },
-    ]
+    ],
   },
   {
     id: 'loan',
@@ -53,7 +53,7 @@ const menuData: MenuItem[] = [
       { id: 'loan-inquiry', title: '대출조회' },
       { id: 'loan-apply', title: '대출신청' },
       { id: 'loan-repay', title: '대출상환' },
-    ]
+    ],
   },
 ];
 // 메뉴 오버레이
@@ -64,8 +64,8 @@ const MenuOverlay = styled.div<{ $isOpen: boolean }>`
   right: 0;
   bottom: 0;
   background-color: ${tokens.colors.dimmedBackground};
-  opacity: ${props => props.$isOpen ? 1 : 0};
-  visibility: ${props => props.$isOpen ? 'visible' : 'hidden'};
+  opacity: ${props => (props.$isOpen ? 1 : 0)};
+  visibility: ${props => (props.$isOpen ? 'visible' : 'hidden')};
   transition: all 0.3s ease;
   z-index: 1000;
   max-width: 390px;
@@ -79,7 +79,7 @@ const MenuContainer = styled.div<{ $isOpen: boolean }>`
   width: 280px;
   height: 100vh;
   background-color: ${tokens.colors.background.primary};
-  transform: translateX(${props => props.$isOpen ? '0' : '100%'});
+  transform: translateX(${props => (props.$isOpen ? '0' : '100%')});
   transition: transform 0.3s ease;
   z-index: 1001;
   display: flex;
@@ -127,14 +127,16 @@ const TabButton = styled.button<{ $active: boolean }>`
   flex: 1;
   height: 100%;
   border: none;
-  background-color: ${props => props.$active ? tokens.colors.background.primary : 'transparent'};
-  color: ${props => props.$active ? tokens.colors.text.primary : tokens.colors.text.tertiary};
+  background-color: ${props => (props.$active ? tokens.colors.background.primary : 'transparent')};
+  color: ${props => (props.$active ? tokens.colors.text.primary : tokens.colors.text.tertiary)};
   font-size: 16px;
   font-family: ${typography.fontFamily.kbfgTextMedium};
   cursor: pointer;
   transition: all 0.2s ease;
   position: relative;
-  ${props => props.$active && `
+  ${props =>
+    props.$active &&
+    `
     &::after {
       content: '';
       position: absolute;
@@ -161,7 +163,8 @@ const OneMenuItem = styled.button<{ $selected: boolean }>`
   min-height: ${dimensions.height.oneMenuMin + 24}px; // 최소 높이 + 패딩
   padding: 12px 24px;
   border: none;
-  background-color: ${props => props.$selected ? tokens.colors.background.primary : tokens.colors.backgroundGray1};
+  background-color: ${props =>
+    props.$selected ? tokens.colors.background.primary : tokens.colors.backgroundGray1};
   color: ${tokens.colors.text.primary};
   font-size: 15px;
   font-family: ${typography.fontFamily.kbfgTextLight};
@@ -280,10 +283,7 @@ const MyMenuItem = styled.button`
     border-color: ${tokens.colors.brand.primary};
   }
 `;
-const KBNavigationMenu: React.FC<KBNavigationMenuProps> = ({
-  isOpen,
-  onClose,
-}) => {
+const KBNavigationMenu: React.FC<KBNavigationMenuProps> = ({ isOpen, onClose }) => {
   const [activeTab, setActiveTab] = useState<'menu' | 'recent' | 'my'>('menu');
   const [selectedOneMenu, setSelectedOneMenu] = useState<string>('account');
   const [recentMenus] = useState(['계좌조회', '이체', '카드조회']);
@@ -306,22 +306,13 @@ const KBNavigationMenu: React.FC<KBNavigationMenuProps> = ({
         </MenuHeader>
         {/* 탭 메뉴 (Zero Menu) */}
         <TabContainer>
-          <TabButton 
-            $active={activeTab === 'menu'}
-            onClick={() => setActiveTab('menu')}
-          >
+          <TabButton $active={activeTab === 'menu'} onClick={() => setActiveTab('menu')}>
             메뉴
           </TabButton>
-          <TabButton 
-            $active={activeTab === 'recent'}
-            onClick={() => setActiveTab('recent')}
-          >
+          <TabButton $active={activeTab === 'recent'} onClick={() => setActiveTab('recent')}>
             최근
           </TabButton>
-          <TabButton 
-            $active={activeTab === 'my'}
-            onClick={() => setActiveTab('my')}
-          >
+          <TabButton $active={activeTab === 'my'} onClick={() => setActiveTab('my')}>
             MY
           </TabButton>
         </TabContainer>
@@ -330,7 +321,9 @@ const KBNavigationMenu: React.FC<KBNavigationMenuProps> = ({
           {activeTab === 'menu' && (
             <div style={{ display: 'flex', height: '100%' }}>
               {/* One Menu (1차 메뉴) */}
-              <OneMenuList style={{ width: '40%', borderRight: `1px solid ${tokens.colors.backgroundGray2}` }}>
+              <OneMenuList
+                style={{ width: '40%', borderRight: `1px solid ${tokens.colors.backgroundGray2}` }}
+              >
                 {menuData.map(menu => (
                   <OneMenuItem
                     key={menu.id}
@@ -344,9 +337,7 @@ const KBNavigationMenu: React.FC<KBNavigationMenuProps> = ({
               {/* Two Menu (2차 메뉴) */}
               <TwoMenuContainer style={{ width: '60%' }}>
                 {selectedMenuData?.children?.map(childMenu => (
-                  <TwoChildMenu key={childMenu.id}>
-                    {childMenu.title}
-                  </TwoChildMenu>
+                  <TwoChildMenu key={childMenu.id}>{childMenu.title}</TwoChildMenu>
                 ))}
               </TwoMenuContainer>
             </div>
@@ -356,9 +347,7 @@ const KBNavigationMenu: React.FC<KBNavigationMenuProps> = ({
               <RecentMenuTitle>최근 사용 메뉴</RecentMenuTitle>
               <RecentMenuList>
                 {recentMenus.map((menu, index) => (
-                  <RecentMenuItem key={index}>
-                    {menu}
-                  </RecentMenuItem>
+                  <RecentMenuItem key={index}>{menu}</RecentMenuItem>
                 ))}
               </RecentMenuList>
             </RecentMenuSection>
@@ -368,9 +357,7 @@ const KBNavigationMenu: React.FC<KBNavigationMenuProps> = ({
               <MyMenuTitle>즐겨찾는 메뉴</MyMenuTitle>
               <MyMenuList>
                 {myMenus.map((menu, index) => (
-                  <MyMenuItem key={index}>
-                    {menu}
-                  </MyMenuItem>
+                  <MyMenuItem key={index}>{menu}</MyMenuItem>
                 ))}
               </MyMenuList>
             </MyMenuSection>

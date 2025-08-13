@@ -6,15 +6,13 @@
 export { tokens } from '../../styles/tokens';
 // Button 컴포넌트 - shared/components/ui/Button에서 import
 export { Button } from '../../shared/components/ui/Button';
-export type { ButtonProps, ButtonVariant, ButtonSize } from '../../shared/components/ui/Button/Button.types';
+export type {
+  ButtonProps,
+  ButtonVariant,
+  ButtonSize,
+} from '../../shared/components/ui/Button/Button.types';
 // Input 컴포넌트
-export {
-  Input,
-  BasicInput,
-  OutlinedInput,
-  SearchInput,
-  type InputProps,
-} from './Input';
+export { Input, BasicInput, OutlinedInput, SearchInput, type InputProps } from './Input';
 // Card 컴포넌트
 export {
   Card,

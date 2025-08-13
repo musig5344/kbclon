@@ -33,7 +33,7 @@ export const calculateDateRange = (period: string) => {
     start: startDate.toISOString().split('T')[0].replace(/-/g, '.'),
     end: endDate.toISOString().split('T')[0].replace(/-/g, '.'),
     startISO: startDate.toISOString(),
-    endISO: endDate.toISOString()
+    endISO: endDate.toISOString(),
   };
 };
 
@@ -51,19 +51,21 @@ export const getSearchPlaceholder = (appliedFilters: FilterModalState): string =
  * @param transactions - 거래내역 배열
  * @returns 월별로 그룹핑된 거래내역 객체
  */
-export const groupTransactionsByMonth = (transactions: Transaction[]): { [key: string]: Transaction[] } => {
+export const groupTransactionsByMonth = (
+  transactions: Transaction[]
+): { [key: string]: Transaction[] } => {
   const groups: { [key: string]: Transaction[] } = {};
-  
+
   transactions.forEach(transaction => {
     const date = new Date(transaction.transaction_date);
     const monthKey = `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}`;
-    
+
     if (!groups[monthKey]) {
       groups[monthKey] = [];
     }
     groups[monthKey].push(transaction);
   });
-  
+
   return groups;
 };
 
@@ -74,8 +76,8 @@ export const groupTransactionsByMonth = (transactions: Transaction[]): { [key: s
  */
 export const isFilterModified = (filters: FilterModalState): boolean => {
   return (
-    filters.period !== '3개월' || 
-    filters.type !== '전체' || 
+    filters.period !== '3개월' ||
+    filters.type !== '전체' ||
     filters.sort !== '최신순' ||
     filters.amount.min !== '' ||
     filters.amount.max !== ''
@@ -91,7 +93,7 @@ export const getDefaultFilters = (): FilterModalState => {
     period: '3개월',
     type: '전체',
     sort: '최신순',
-    amount: { min: '', max: '' }
+    amount: { min: '', max: '' },
   };
 };
 

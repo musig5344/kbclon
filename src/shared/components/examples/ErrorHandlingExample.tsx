@@ -39,7 +39,7 @@ import {
   FeeNoticeAlert,
   SessionHandler,
   ErrorMessageFormatter,
-  ErrorCode
+  ErrorCode,
 } from '../feedback';
 import Button from '../ui/Button';
 
@@ -95,7 +95,7 @@ const Input = styled.input`
   border-radius: 4px;
   font-size: 16px;
   font-family: ${typography.fontFamily.kbfgTextMedium};
-  
+
   &:focus {
     outline: none;
     border-color: ${tokens.colors.brand.primary};
@@ -106,28 +106,28 @@ const Input = styled.input`
 export const ErrorHandlingExample: React.FC = () => {
   // Toast
   const toast = useToast();
-  
+
   // Snackbar
   const { snackbarState, showSnackbar, hideSnackbar } = useSnackbar();
-  
+
   // Alerts
   const [showAlerts, setShowAlerts] = useState({
     error: false,
     warning: false,
     info: false,
-    success: false
+    success: false,
   });
-  
+
   // Progress
   const [progress, setProgress] = useState(0);
   const [showProgress, setShowProgress] = useState(false);
-  
+
   // Success Animation
   const [showSuccessAnimation, setShowSuccessAnimation] = useState(false);
-  
+
   // Network Error
   const [showNetworkError, setShowNetworkError] = useState(false);
-  
+
   // Validation
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -135,18 +135,18 @@ export const ErrorHandlingExample: React.FC = () => {
   const [touched, setTouched] = useState({
     email: false,
     password: false,
-    amount: false
+    amount: false,
   });
-  
+
   // Financial Alerts
   const [showFinancialAlerts, setShowFinancialAlerts] = useState({
     insufficientBalance: false,
     limitExceeded: false,
     security: false,
     maintenance: false,
-    feeNotice: false
+    feeNotice: false,
   });
-  
+
   // Error Boundary Test
   const [throwError, setThrowError] = useState(false);
 
@@ -174,38 +174,28 @@ export const ErrorHandlingExample: React.FC = () => {
       {/* Toast Messages */}
       <Section>
         <SectionTitle>Toast Messages</SectionTitle>
-        
+
         <SubSection>
           <SubTitle>Different Types</SubTitle>
           <ButtonGroup>
-            <Button onClick={() => toast.success('작업이 완료되었습니다!')}>
-              Success Toast
-            </Button>
-            <Button onClick={() => toast.error('오류가 발생했습니다.')}>
-              Error Toast
-            </Button>
-            <Button onClick={() => toast.warning('주의가 필요합니다.')}>
-              Warning Toast
-            </Button>
-            <Button onClick={() => toast.info('알림 메시지입니다.')}>
-              Info Toast
-            </Button>
-            <Button onClick={() => toast.loading('처리 중입니다...')}>
-              Loading Toast
-            </Button>
+            <Button onClick={() => toast.success('작업이 완료되었습니다!')}>Success Toast</Button>
+            <Button onClick={() => toast.error('오류가 발생했습니다.')}>Error Toast</Button>
+            <Button onClick={() => toast.warning('주의가 필요합니다.')}>Warning Toast</Button>
+            <Button onClick={() => toast.info('알림 메시지입니다.')}>Info Toast</Button>
+            <Button onClick={() => toast.loading('처리 중입니다...')}>Loading Toast</Button>
           </ButtonGroup>
         </SubSection>
 
         <SubSection>
           <SubTitle>Toast with Actions</SubTitle>
           <Button
-            onClick={() => 
+            onClick={() =>
               toast.showToast({
                 message: '변경사항이 있습니다.',
                 type: 'warning',
                 action: {
                   label: '저장',
-                }
+                },
               })
             }
           >
@@ -217,19 +207,13 @@ export const ErrorHandlingExample: React.FC = () => {
       {/* Snackbar */}
       <Section>
         <SectionTitle>Snackbar</SectionTitle>
-        
+
         <ButtonGroup>
-          <Button onClick={() => showSnackbar('기본 스낵바 메시지')}>
-            Default Snackbar
-          </Button>
-          <Button onClick={() => showSnackbar('성공!', 'success')}>
-            Success Snackbar
-          </Button>
-          <Button onClick={() => showSnackbar('오류 발생', 'error')}>
-            Error Snackbar
-          </Button>
-          <Button 
-            onClick={() => 
+          <Button onClick={() => showSnackbar('기본 스낵바 메시지')}>Default Snackbar</Button>
+          <Button onClick={() => showSnackbar('성공!', 'success')}>Success Snackbar</Button>
+          <Button onClick={() => showSnackbar('오류 발생', 'error')}>Error Snackbar</Button>
+          <Button
+            onClick={() =>
               showSnackbar('실행 취소하시겠습니까?', 'warning', {
                 label: '취소',
               })
@@ -251,34 +235,34 @@ export const ErrorHandlingExample: React.FC = () => {
       {/* Alerts */}
       <Section>
         <SectionTitle>Alert Components</SectionTitle>
-        
+
         {showAlerts.error && (
           <ErrorAlert onClose={() => setShowAlerts(prev => ({ ...prev, error: false }))}>
             이것은 에러 알림입니다. 중요한 문제가 발생했습니다.
           </ErrorAlert>
         )}
-        
+
         {showAlerts.warning && (
-          <WarningAlert 
-            title="주의 필요"
+          <WarningAlert
+            title='주의 필요'
             onClose={() => setShowAlerts(prev => ({ ...prev, warning: false }))}
           >
             이체 한도가 거의 찼습니다. 남은 한도: 100,000원
           </WarningAlert>
         )}
-        
+
         {showAlerts.info && (
           <InfoAlert onClose={() => setShowAlerts(prev => ({ ...prev, info: false }))}>
             시스템 점검이 예정되어 있습니다. 내일 00:00 ~ 00:30
           </InfoAlert>
         )}
-        
+
         {showAlerts.success && (
           <SuccessAlert onClose={() => setShowAlerts(prev => ({ ...prev, success: false }))}>
             이체가 성공적으로 완료되었습니다!
           </SuccessAlert>
         )}
-        
+
         <ButtonGroup>
           <Button onClick={() => setShowAlerts(prev => ({ ...prev, error: true }))}>
             Show Error Alert
@@ -298,14 +282,19 @@ export const ErrorHandlingExample: React.FC = () => {
       {/* Progress Indicators */}
       <Section>
         <SectionTitle>Progress Indicators</SectionTitle>
-        
+
         <SubSection>
           <SubTitle>Linear Progress</SubTitle>
           <LinearProgress indeterminate />
           <br />
-          <LinearProgress value={progress} indeterminate={false} showLabel label="파일 업로드" />
+          <LinearProgress value={progress} indeterminate={false} showLabel label='파일 업로드' />
           <br />
-          <Button onClick={() => { setShowProgress(true); setProgress(0); }}>
+          <Button
+            onClick={() => {
+              setShowProgress(true);
+              setProgress(0);
+            }}
+          >
             Start Progress
           </Button>
         </SubSection>
@@ -313,10 +302,10 @@ export const ErrorHandlingExample: React.FC = () => {
         <SubSection>
           <SubTitle>Circular Progress</SubTitle>
           <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-            <CircularProgress size="small" />
-            <CircularProgress size="medium" />
-            <CircularProgress size="large" />
-            <CircularProgress value={75} indeterminate={false} size="large" />
+            <CircularProgress size='small' />
+            <CircularProgress size='medium' />
+            <CircularProgress size='large' />
+            <CircularProgress value={75} indeterminate={false} size='large' />
           </div>
         </SubSection>
 
@@ -327,29 +316,25 @@ export const ErrorHandlingExample: React.FC = () => {
 
         <SubSection>
           <SubTitle>Transaction Progress</SubTitle>
-          <TransactionProgress step={3} totalSteps={5} currentStepLabel="본인 인증" />
+          <TransactionProgress step={3} totalSteps={5} currentStepLabel='본인 인증' />
         </SubSection>
       </Section>
 
       {/* Success Animations */}
       <Section>
         <SectionTitle>Success Animations</SectionTitle>
-        
+
         <ButtonGroup>
-          <Button onClick={() => setShowSuccessAnimation(true)}>
-            Show Success Animation
-          </Button>
-          <Button onClick={() => setShowSuccessAnimation(true)}>
-            Transfer Success
-          </Button>
+          <Button onClick={() => setShowSuccessAnimation(true)}>Show Success Animation</Button>
+          <Button onClick={() => setShowSuccessAnimation(true)}>Transfer Success</Button>
         </ButtonGroup>
 
         <SuccessAnimation
           show={showSuccessAnimation}
-          type="checkmark"
-          title="이체 완료!"
-          message="100,000원이 성공적으로 이체되었습니다"
-          amount="100,000원"
+          type='checkmark'
+          title='이체 완료!'
+          message='100,000원이 성공적으로 이체되었습니다'
+          amount='100,000원'
           onComplete={() => setShowSuccessAnimation(false)}
         />
       </Section>
@@ -357,50 +342,62 @@ export const ErrorHandlingExample: React.FC = () => {
       {/* Form Validation */}
       <Section>
         <SectionTitle>Form Validation</SectionTitle>
-        
+
         <FieldValidation
-          label="이메일"
+          label='이메일'
           required
-          error={touched.email && !validateEmail(email).isValid ? validateEmail(email).errors[0] : undefined}
-          helper="example@email.com"
+          error={
+            touched.email && !validateEmail(email).isValid
+              ? validateEmail(email).errors[0]
+              : undefined
+          }
+          helper='example@email.com'
         >
           <Input
-            type="email"
+            type='email'
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={e => setEmail(e.target.value)}
             onBlur={() => setTouched(prev => ({ ...prev, email: true }))}
-            placeholder="이메일을 입력하세요"
+            placeholder='이메일을 입력하세요'
           />
         </FieldValidation>
 
         <FieldValidation
-          label="비밀번호"
+          label='비밀번호'
           required
-          error={touched.password && !validatePassword(password).isValid ? validatePassword(password).errors[0] : undefined}
+          error={
+            touched.password && !validatePassword(password).isValid
+              ? validatePassword(password).errors[0]
+              : undefined
+          }
         >
           <Input
-            type="password"
+            type='password'
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={e => setPassword(e.target.value)}
             onBlur={() => setTouched(prev => ({ ...prev, password: true }))}
-            placeholder="비밀번호를 입력하세요"
+            placeholder='비밀번호를 입력하세요'
           />
         </FieldValidation>
-        
+
         {password && <PasswordStrength password={password} show={true} />}
 
         <FieldValidation
-          label="이체 금액"
+          label='이체 금액'
           required
-          error={touched.amount && !validateAmount(amount).isValid ? validateAmount(amount).errors[0] : undefined}
-          helper="최대 1억원까지 가능합니다"
+          error={
+            touched.amount && !validateAmount(amount).isValid
+              ? validateAmount(amount).errors[0]
+              : undefined
+          }
+          helper='최대 1억원까지 가능합니다'
         >
           <Input
-            type="text"
+            type='text'
             value={amount}
-            onChange={(e) => setAmount(e.target.value)}
+            onChange={e => setAmount(e.target.value)}
             onBlur={() => setTouched(prev => ({ ...prev, amount: true }))}
-            placeholder="금액을 입력하세요"
+            placeholder='금액을 입력하세요'
           />
         </FieldValidation>
       </Section>
@@ -408,12 +405,16 @@ export const ErrorHandlingExample: React.FC = () => {
       {/* Financial Alerts */}
       <Section>
         <SectionTitle>Financial Alerts</SectionTitle>
-        
+
         <ButtonGroup>
-          <Button onClick={() => setShowFinancialAlerts(prev => ({ ...prev, insufficientBalance: true }))}>
+          <Button
+            onClick={() => setShowFinancialAlerts(prev => ({ ...prev, insufficientBalance: true }))}
+          >
             Insufficient Balance
           </Button>
-          <Button onClick={() => setShowFinancialAlerts(prev => ({ ...prev, limitExceeded: true }))}>
+          <Button
+            onClick={() => setShowFinancialAlerts(prev => ({ ...prev, limitExceeded: true }))}
+          >
             Limit Exceeded
           </Button>
           <Button onClick={() => setShowFinancialAlerts(prev => ({ ...prev, security: true }))}>
@@ -431,7 +432,9 @@ export const ErrorHandlingExample: React.FC = () => {
           <InsufficientBalanceAlert
             currentBalance={50000}
             requiredAmount={100000}
-            onConfirm={() => setShowFinancialAlerts(prev => ({ ...prev, insufficientBalance: false }))}
+            onConfirm={() =>
+              setShowFinancialAlerts(prev => ({ ...prev, insufficientBalance: false }))
+            }
           />
         )}
 
@@ -445,14 +448,14 @@ export const ErrorHandlingExample: React.FC = () => {
 
         {showFinancialAlerts.security && (
           <SecurityAlert
-            message="해외에서 로그인 시도가 감지되었습니다."
+            message='해외에서 로그인 시도가 감지되었습니다.'
             onConfirm={() => setShowFinancialAlerts(prev => ({ ...prev, security: false }))}
           />
         )}
 
         {showFinancialAlerts.maintenance && (
           <MaintenanceAlert
-            maintenanceTime="2024-01-01 00:00 ~ 00:30"
+            maintenanceTime='2024-01-01 00:00 ~ 00:30'
             onConfirm={() => setShowFinancialAlerts(prev => ({ ...prev, maintenance: false }))}
           />
         )}
@@ -469,7 +472,7 @@ export const ErrorHandlingExample: React.FC = () => {
       {/* Error Boundary */}
       <Section>
         <SectionTitle>Error Boundary</SectionTitle>
-        
+
         <ComponentErrorHandler>
           <SubSection>
             <SubTitle>Component with Error Boundary</SubTitle>
@@ -485,7 +488,7 @@ export const ErrorHandlingExample: React.FC = () => {
       {/* Network Error Handler */}
       <Section>
         <SectionTitle>Network Error Handler</SectionTitle>
-        
+
         <Button onClick={() => setShowNetworkError(!showNetworkError)}>
           {showNetworkError ? 'Hide' : 'Show'} Network Error
         </Button>
@@ -500,7 +503,7 @@ export const ErrorHandlingExample: React.FC = () => {
       {/* Error Messages */}
       <Section>
         <SectionTitle>Error Message Mapping</SectionTitle>
-        
+
         <SubSection>
           <SubTitle>Error Code Examples</SubTitle>
           {(['AUTH_FAILED', 'INSUFFICIENT_BALANCE', 'NETWORK_ERROR'] as ErrorCode[]).map(code => {

@@ -160,13 +160,13 @@ const CategoryItem = styled.button<{ active: boolean }>`
   width: 100%;
   padding: 16px 12px;
   border: none;
-  background: ${props => props.active ? '#ffffff' : 'transparent'};
-  color: ${props => props.active ? '#ff26282c' : '#ff484b51'};
+  background: ${props => (props.active ? '#ffffff' : 'transparent')};
+  color: ${props => (props.active ? '#ff26282c' : '#ff484b51')};
   font-size: 14px;
-  font-weight: ${props => props.active ? '600' : '400'};
+  font-weight: ${props => (props.active ? '600' : '400')};
   cursor: pointer;
   text-align: left;
-  border-right: ${props => props.active ? '3px solid #ffffd338' : 'none'};
+  border-right: ${props => (props.active ? '3px solid #ffffd338' : 'none')};
   position: relative;
   &:hover {
     background-color: #ffffff;
@@ -228,10 +228,10 @@ const ExpandIcon = styled.span<{ expanded?: boolean }>`
   font-size: 12px;
   color: #ff696e76;
   transition: transform 0.2s ease;
-  transform: ${props => props.expanded ? 'rotate(180deg)' : 'rotate(0deg)'};
+  transform: ${props => (props.expanded ? 'rotate(180deg)' : 'rotate(0deg)')};
 `;
 const SubMenuList = styled.div<{ expanded: boolean }>`
-  display: ${props => props.expanded ? 'block' : 'none'};
+  display: ${props => (props.expanded ? 'block' : 'none')};
   padding-left: 16px;
   margin-top: 8px;
 `;
@@ -264,156 +264,148 @@ interface MenuData {
 }
 const menuData: MenuData = {
   recent: {
-    title: "최근 이용 메뉴",
-    items: [
-      { name: "로그인 후 이용할 수 있습니다." }
-    ]
+    title: '최근 이용 메뉴',
+    items: [{ name: '로그인 후 이용할 수 있습니다.' }],
   },
   myMenu: {
-    title: "My메뉴",
-    items: [
-      { name: "로그인 후 이용할 수 있습니다." }
-    ]
+    title: 'My메뉴',
+    items: [{ name: '로그인 후 이용할 수 있습니다.' }],
   },
   inquiry: {
-    title: "조회",
+    title: '조회',
     items: [
-      { name: "전체계좌조회" },
-      { name: "통합거래내역조회" },
-      { name: "해지계좌조회" },
-      { name: "휴면예금·보험금 찾기" },
-      { name: "수수료 납부내역조회" },
-      { name: "ID모아보기 계좌조회" },
-      { name: "계좌통합관리서비스(어카운팅포)" }
-    ]
+      { name: '전체계좌조회' },
+      { name: '통합거래내역조회' },
+      { name: '해지계좌조회' },
+      { name: '휴면예금·보험금 찾기' },
+      { name: '수수료 납부내역조회' },
+      { name: 'ID모아보기 계좌조회' },
+      { name: '계좌통합관리서비스(어카운팅포)' },
+    ],
   },
   transfer: {
-    title: "이체",
+    title: '이체',
     items: [
-      { name: "이체" },
-      { name: "이체결과조회(이체확인증)" },
-      { 
-        name: "자동이체", 
-        subItems: ["자동이체 신청", "자동이체 조회/해지"] 
+      { name: '이체' },
+      { name: '이체결과조회(이체확인증)' },
+      {
+        name: '자동이체',
+        subItems: ['자동이체 신청', '자동이체 조회/해지'],
       },
-      { name: "이체한도 조회/변경" },
-      { 
-        name: "이체관리", 
-        subItems: ["이체관리 신청", "이체관리 조회/해지"] 
+      { name: '이체한도 조회/변경' },
+      {
+        name: '이체관리',
+        subItems: ['이체관리 신청', '이체관리 조회/해지'],
       },
-      { name: "잔액모으기" },
-      { 
-        name: "ID모아보기", 
-        subItems: ["ID모아보기 신청", "ID모아보기 조회/해지"] 
+      { name: '잔액모으기' },
+      {
+        name: 'ID모아보기',
+        subItems: ['ID모아보기 신청', 'ID모아보기 조회/해지'],
       },
-      { name: "계좌이동서비스(자동이체통합관리)" }
-    ]
+      { name: '계좌이동서비스(자동이체통합관리)' },
+    ],
   },
   products: {
-    title: "상품가입",
+    title: '상품가입',
     items: [
-      { name: "금융상품" },
-      { name: "입출금+카드" },
-      { name: "적금" },
-      { name: "정기예금" },
-      { name: "외화예적금" },
-      { name: "대출" },
-      { name: "퇴직연금" },
-      { name: "펀드" },
-      { name: "신탁" },
-      { name: "ISA" },
-      { name: "청약/채권" },
-      { name: "골드/실버" }
-    ]
+      { name: '금융상품' },
+      { name: '입출금+카드' },
+      { name: '적금' },
+      { name: '정기예금' },
+      { name: '외화예적금' },
+      { name: '대출' },
+      { name: '퇴직연금' },
+      { name: '펀드' },
+      { name: '신탁' },
+      { name: 'ISA' },
+      { name: '청약/채권' },
+      { name: '골드/실버' },
+    ],
   },
   businessProducts: {
-    title: "가업상품관리",
+    title: '가업상품관리',
     items: [
-      { name: "계좌설정" },
-      { name: "입출금" },
-      { name: "예적금" },
-      { name: "외화예적금" },
-      { name: "대출" },
-      { name: "퇴직연금" },
-      { name: "펀드" },
-      { name: "신탁" },
-      { name: "ISA" },
-      { name: "청약/채권" },
-      { name: "골드투자통장" },
-      { name: "보험" }
-    ]
+      { name: '계좌설정' },
+      { name: '입출금' },
+      { name: '예적금' },
+      { name: '외화예적금' },
+      { name: '대출' },
+      { name: '퇴직연금' },
+      { name: '펀드' },
+      { name: '신탁' },
+      { name: 'ISA' },
+      { name: '청약/채권' },
+      { name: '골드투자통장' },
+      { name: '보험' },
+    ],
   },
   assetManagement: {
-    title: "자산관리",
+    title: '자산관리',
     items: [
-      { 
-        name: "한번에", 
-        subItems: ["한번에 조회", "한번에 이체"] 
+      {
+        name: '한번에',
+        subItems: ['한번에 조회', '한번에 이체'],
       },
-      { 
-        name: "지출", 
-        subItems: ["지출 관리", "지출 분석"] 
+      {
+        name: '지출',
+        subItems: ['지출 관리', '지출 분석'],
       },
-      { 
-        name: "투자", 
-        subItems: ["투자 포트폴리오", "투자 성과"] 
+      {
+        name: '투자',
+        subItems: ['투자 포트폴리오', '투자 성과'],
       },
-      { 
-        name: "연금/절세", 
-        subItems: ["연금 관리", "절세 상품"] 
+      {
+        name: '연금/절세',
+        subItems: ['연금 관리', '절세 상품'],
       },
-      { 
-        name: "금융팁", 
-        subItems: ["금융 상식", "투자 가이드"] 
-      }
-    ]
+      {
+        name: '금융팁',
+        subItems: ['금융 상식', '투자 가이드'],
+      },
+    ],
   },
   bills: {
-    title: "공과금",
-    items: [
-      { name: "공과금 납부하기" },
-      { name: "공과금 납부조회/취소" },
-      { name: "법원업무" }
-    ]
+    title: '공과금',
+    items: [{ name: '공과금 납부하기' }, { name: '공과금 납부조회/취소' }, { name: '법원업무' }],
   },
   fx: {
-    title: "외환",
+    title: '외환',
     items: [
-      { 
-        name: "환율", 
-        subItems: ["실시간 환율", "환율 알림"] 
+      {
+        name: '환율',
+        subItems: ['실시간 환율', '환율 알림'],
       },
-      { 
-        name: "환전", 
-        subItems: ["외화 환전", "환전 내역"] 
+      {
+        name: '환전',
+        subItems: ['외화 환전', '환전 내역'],
       },
-      { 
-        name: "해외송금", 
-        subItems: ["해외송금 신청", "송금 조회"] 
+      {
+        name: '해외송금',
+        subItems: ['해외송금 신청', '송금 조회'],
       },
-      { 
-        name: "국내외환이체/예금입출금", 
-        subItems: ["외환이체", "예금입출금"] 
+      {
+        name: '국내외환이체/예금입출금',
+        subItems: ['외환이체', '예금입출금'],
       },
-      { 
-        name: "외환정보관리", 
-        subItems: ["환율 정보", "외환 뉴스"] 
+      {
+        name: '외환정보관리',
+        subItems: ['환율 정보', '외환 뉴스'],
       },
-      { name: "외환수수료납부/조회" }
-    ]
+      { name: '외환수수료납부/조회' },
+    ],
   },
   convenience: {
-    title: "금융편의",
+    title: '금융편의',
     items: [
-      { name: "ATM/창구출금" },
-      { name: "미성년자계좌신규미리작성" },
-      { 
-        name: "증명서,통장/보안매체", 
-        subItems: ["잔액증명서", "거래내역증명서", "통장재발급", "보안카드 재발급"] 
+      { name: 'ATM/창구출금' },
+      { name: '미성년자계좌신규미리작성' },
+      {
+        name: '증명서,통장/보안매체',
+        subItems: ['잔액증명서', '거래내역증명서', '통장재발급', '보안카드 재발급'],
       },
-      { name: "발급(배송)" }
-    ]
-  }
+      { name: '발급(배송)' },
+    ],
+  },
 };
 export const MenuPage: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState('recent');
@@ -441,23 +433,21 @@ export const MenuPage: React.FC = () => {
     }
     setExpandedItems(newExpanded);
   };
-  const currentMenuData = menuData[activeCategory] || { title: "선택된 메뉴", items: [] };
+  const currentMenuData = menuData[activeCategory] || { title: '선택된 메뉴', items: [] };
   return (
     <MenuContainer>
       <MenuHeader>
         <LoginButton>로그인</LoginButton>
         <HeaderActions>
-          <LanguageButton>
-            🌐 Language
-          </LanguageButton>
-          <CloseButton as={Link} to="/dashboard">×</CloseButton>
+          <LanguageButton>🌐 Language</LanguageButton>
+          <CloseButton as={Link} to='/dashboard'>
+            ×
+          </CloseButton>
         </HeaderActions>
       </MenuHeader>
-      <WelcomeText>
-        KB스타뱅킹에 오신 것을 환영합니다.
-      </WelcomeText>
+      <WelcomeText>KB스타뱅킹에 오신 것을 환영합니다.</WelcomeText>
       <SearchSection>
-        <SearchInput placeholder="메뉴를 검색해보세요." />
+        <SearchInput placeholder='메뉴를 검색해보세요.' />
       </SearchSection>
       <QuickActions>
         <QuickActionItem>
@@ -486,28 +476,20 @@ export const MenuPage: React.FC = () => {
           ))}
         </CategorySidebar>
         <MenuDetailSection>
-          <MenuDetailTitle>
-            {currentMenuData.title}
-          </MenuDetailTitle>
+          <MenuDetailTitle>{currentMenuData.title}</MenuDetailTitle>
           <MenuDetailList>
             {currentMenuData.items.map((item, index) => (
               <div key={index}>
-                <MenuDetailItem
-                  onClick={() => item.subItems && toggleExpanded(item.name)}
-                >
+                <MenuDetailItem onClick={() => item.subItems && toggleExpanded(item.name)}>
                   <span>{item.name}</span>
                   {item.subItems && (
-                    <ExpandIcon expanded={expandedItems.has(item.name)}>
-                      ▼
-                    </ExpandIcon>
+                    <ExpandIcon expanded={expandedItems.has(item.name)}>▼</ExpandIcon>
                   )}
                 </MenuDetailItem>
                 {item.subItems && (
                   <SubMenuList expanded={expandedItems.has(item.name)}>
                     {item.subItems.map((subItem, subIndex) => (
-                      <SubMenuItem key={subIndex}>
-                        {subItem}
-                      </SubMenuItem>
+                      <SubMenuItem key={subIndex}>{subItem}</SubMenuItem>
                     ))}
                   </SubMenuList>
                 )}

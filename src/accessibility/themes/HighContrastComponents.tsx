@@ -15,29 +15,36 @@ interface HighContrastToggleProps {
 const ToggleButton = styled.button<{ $isActive: boolean; $compact: boolean }>`
   display: flex;
   align-items: center;
-  gap: ${props => props.$compact ? '4px' : '8px'};
-  padding: ${props => props.$compact ? '8px 12px' : '12px 16px'};
+  gap: ${props => (props.$compact ? '4px' : '8px')};
+  padding: ${props => (props.$compact ? '8px 12px' : '12px 16px')};
   border: 2px solid currentColor;
   border-radius: 4px;
-  background-color: ${props => props.$isActive ? 'var(--hc-interactive-primary-bg, #000)' : 'transparent'};
-  color: ${props => props.$isActive ? 'var(--hc-interactive-primary-text, #fff)' : 'currentColor'};
-  font-size: ${props => props.$compact ? '14px' : '16px'};
+  background-color: ${props =>
+    props.$isActive ? 'var(--hc-interactive-primary-bg, #000)' : 'transparent'};
+  color: ${props =>
+    props.$isActive ? 'var(--hc-interactive-primary-text, #fff)' : 'currentColor'};
+  font-size: ${props => (props.$compact ? '14px' : '16px')};
   font-weight: 600;
   cursor: pointer;
   transition: none; /* Disabled in high contrast mode */
-  
+
   &:focus {
     outline: 3px solid var(--hc-focus, #0066cc);
     outline-offset: 2px;
   }
-  
+
   &:hover {
-    background-color: ${props => props.$isActive ? 'var(--hc-interactive-primary-hover, #333)' : 'var(--hc-interactive-secondary-hover, #f0f0f0)'};
+    background-color: ${props =>
+      props.$isActive
+        ? 'var(--hc-interactive-primary-hover, #333)'
+        : 'var(--hc-interactive-secondary-hover, #f0f0f0)'};
   }
-  
-  ${props => props.$isActive && css`
-    border-color: var(--hc-interactive-primary-border, #000);
-  `}
+
+  ${props =>
+    props.$isActive &&
+    css`
+      border-color: var(--hc-interactive-primary-border, #000);
+    `}
 `;
 
 const ToggleIcon = styled.span<{ $isActive: boolean }>`
@@ -47,18 +54,19 @@ const ToggleIcon = styled.span<{ $isActive: boolean }>`
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background-color: ${props => props.$isActive ? 'currentColor' : 'transparent'};
+  background-color: ${props => (props.$isActive ? 'currentColor' : 'transparent')};
   border: 2px solid currentColor;
   position: relative;
-  
+
   &::after {
     content: '';
     position: absolute;
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background-color: ${props => props.$isActive ? 'var(--hc-interactive-primary-bg, #000)' : 'currentColor'};
-    transform: ${props => props.$isActive ? 'translateX(0)' : 'translateX(-2px)'};
+    background-color: ${props =>
+      props.$isActive ? 'var(--hc-interactive-primary-bg, #000)' : 'currentColor'};
+    transform: ${props => (props.$isActive ? 'translateX(0)' : 'translateX(-2px)')};
   }
 `;
 
@@ -71,10 +79,14 @@ export const HighContrastToggle: React.FC<HighContrastToggleProps> = ({
 
   const getModeLabel = (currentMode: HighContrastMode): string => {
     switch (currentMode) {
-      case 'light': return '고대비 밝은 모드';
-      case 'dark': return '고대비 어두운 모드';
-      case 'system': return '시스템 고대비 모드';
-      default: return '일반 모드';
+      case 'light':
+        return '고대비 밝은 모드';
+      case 'dark':
+        return '고대비 어두운 모드';
+      case 'system':
+        return '시스템 고대비 모드';
+      default:
+        return '일반 모드';
     }
   };
 
@@ -88,10 +100,8 @@ export const HighContrastToggle: React.FC<HighContrastToggleProps> = ({
       aria-pressed={isActive}
       title={getModeLabel(mode)}
     >
-      <ToggleIcon $isActive={isActive} aria-hidden="true" />
-      {showLabel && (
-        <span>{compact ? (isActive ? 'ON' : 'OFF') : getModeLabel(mode)}</span>
-      )}
+      <ToggleIcon $isActive={isActive} aria-hidden='true' />
+      {showLabel && <span>{compact ? (isActive ? 'ON' : 'OFF') : getModeLabel(mode)}</span>}
     </ToggleButton>
   );
 };
@@ -104,7 +114,7 @@ interface HighContrastSelectorProps {
 
 const SelectorContainer = styled.div<{ $orientation: 'horizontal' | 'vertical' }>`
   display: flex;
-  flex-direction: ${props => props.$orientation === 'vertical' ? 'column' : 'row'};
+  flex-direction: ${props => (props.$orientation === 'vertical' ? 'column' : 'row')};
   gap: 8px;
   padding: 16px;
   border: 2px solid var(--hc-border, currentColor);
@@ -124,17 +134,21 @@ const ModeOption = styled.label<{ $isSelected: boolean }>`
   align-items: center;
   gap: 8px;
   padding: 12px;
-  border: 2px solid ${props => props.$isSelected ? 'var(--hc-focus, #0066cc)' : 'var(--hc-border, currentColor)'};
+  border: 2px solid
+    ${props => (props.$isSelected ? 'var(--hc-focus, #0066cc)' : 'var(--hc-border, currentColor)')};
   border-radius: 4px;
-  background-color: ${props => props.$isSelected ? 'var(--hc-selection, #316ac5)' : 'transparent'};
-  color: ${props => props.$isSelected ? 'var(--hc-text-inverse, white)' : 'var(--hc-text-primary, currentColor)'};
+  background-color: ${props =>
+    props.$isSelected ? 'var(--hc-selection, #316ac5)' : 'transparent'};
+  color: ${props =>
+    props.$isSelected ? 'var(--hc-text-inverse, white)' : 'var(--hc-text-primary, currentColor)'};
   cursor: pointer;
-  font-weight: ${props => props.$isSelected ? '600' : '400'};
-  
+  font-weight: ${props => (props.$isSelected ? '600' : '400')};
+
   &:hover {
-    background-color: ${props => props.$isSelected ? 'var(--hc-selection, #316ac5)' : 'var(--hc-bg-tertiary, #f0f0f0)'};
+    background-color: ${props =>
+      props.$isSelected ? 'var(--hc-selection, #316ac5)' : 'var(--hc-bg-tertiary, #f0f0f0)'};
   }
-  
+
   &:focus-within {
     outline: 3px solid var(--hc-focus, #0066cc);
     outline-offset: 2px;
@@ -155,15 +169,20 @@ export const HighContrastSelector: React.FC<HighContrastSelectorProps> = ({
   const { mode, setMode } = useHighContrast();
   const { isSystemSupported } = useSystemHighContrast();
 
-  const modes: Array<{ value: HighContrastMode; label: string; description: string; disabled?: boolean }> = [
+  const modes: Array<{
+    value: HighContrastMode;
+    label: string;
+    description: string;
+    disabled?: boolean;
+  }> = [
     { value: 'off', label: '일반 모드', description: '기본 색상 테마 사용' },
     { value: 'light', label: '고대비 밝은 모드', description: '흰 배경에 검은 텍스트' },
     { value: 'dark', label: '고대비 어두운 모드', description: '검은 배경에 흰 텍스트' },
-    { 
-      value: 'system', 
-      label: '시스템 고대비 모드', 
+    {
+      value: 'system',
+      label: '시스템 고대비 모드',
       description: '운영체제 고대비 설정 사용',
-      disabled: !isSystemSupported 
+      disabled: !isSystemSupported,
     },
   ];
 
@@ -171,13 +190,10 @@ export const HighContrastSelector: React.FC<HighContrastSelectorProps> = ({
     <SelectorContainer className={className} $orientation={orientation}>
       <SelectorTitle>화면 모드 선택</SelectorTitle>
       {modes.map(({ value, label, description, disabled }) => (
-        <ModeOption 
-          key={value} 
-          $isSelected={mode === value}
-        >
+        <ModeOption key={value} $isSelected={mode === value}>
           <RadioInput
-            type="radio"
-            name="high-contrast-mode"
+            type='radio'
+            name='high-contrast-mode'
             value={value}
             checked={mode === value}
             disabled={disabled}
@@ -186,10 +202,7 @@ export const HighContrastSelector: React.FC<HighContrastSelectorProps> = ({
           />
           <div>
             <div>{label}</div>
-            <div 
-              id={`mode-${value}-desc`}
-              style={{ fontSize: '12px', opacity: 0.8 }}
-            >
+            <div id={`mode-${value}-desc`} style={{ fontSize: '12px', opacity: 0.8 }}>
               {description}
             </div>
           </div>
@@ -232,7 +245,7 @@ const SettingLabel = styled.label`
   margin-bottom: 8px;
   font-weight: 500;
   cursor: pointer;
-  
+
   &:focus-within {
     outline: 2px solid var(--hc-focus, #0066cc);
     outline-offset: 1px;
@@ -258,12 +271,12 @@ const CloseButton = styled.button`
   color: currentColor;
   font-size: 18px;
   cursor: pointer;
-  
+
   &:focus {
     outline: 3px solid var(--hc-focus, #0066cc);
     outline-offset: 2px;
   }
-  
+
   &:hover {
     background-color: var(--hc-bg-tertiary, #f0f0f0);
   }
@@ -275,32 +288,31 @@ export const HighContrastSettings: React.FC<HighContrastSettingsProps> = ({
 }) => {
   const { preferences, updatePreferences } = useHighContrast();
 
-  const handlePreferenceChange = useCallback((key: keyof typeof preferences, value: any) => {
-    updatePreferences({ [key]: value });
-  }, [updatePreferences]);
+  const handlePreferenceChange = useCallback(
+    (key: keyof typeof preferences, value: any) => {
+      updatePreferences({ [key]: value });
+    },
+    [updatePreferences]
+  );
 
   return (
     <SettingsPanel className={className} style={{ position: 'relative' }}>
       {onClose && (
-        <CloseButton
-          onClick={onClose}
-          aria-label="설정 닫기"
-          title="설정 닫기"
-        >
+        <CloseButton onClick={onClose} aria-label='설정 닫기' title='설정 닫기'>
           ×
         </CloseButton>
       )}
-      
+
       <SettingsTitle>고대비 모드 설정</SettingsTitle>
-      
+
       <HighContrastSelector />
-      
+
       <SettingGroup>
         <SettingLabel>
           <Checkbox
-            type="checkbox"
+            type='checkbox'
             checked={preferences.autoDetect}
-            onChange={(e) => handlePreferenceChange('autoDetect', e.target.checked)}
+            onChange={e => handlePreferenceChange('autoDetect', e.target.checked)}
           />
           시스템 설정 자동 감지
         </SettingLabel>
@@ -312,9 +324,9 @@ export const HighContrastSettings: React.FC<HighContrastSettingsProps> = ({
       <SettingGroup>
         <SettingLabel>
           <Checkbox
-            type="checkbox"
+            type='checkbox'
             checked={preferences.announceChanges}
-            onChange={(e) => handlePreferenceChange('announceChanges', e.target.checked)}
+            onChange={e => handlePreferenceChange('announceChanges', e.target.checked)}
           />
           모드 변경 시 음성 안내
         </SettingLabel>
@@ -326,9 +338,9 @@ export const HighContrastSettings: React.FC<HighContrastSettingsProps> = ({
       <SettingGroup>
         <SettingLabel>
           <Checkbox
-            type="checkbox"
+            type='checkbox'
             checked={preferences.enhancedFocus}
-            onChange={(e) => handlePreferenceChange('enhancedFocus', e.target.checked)}
+            onChange={e => handlePreferenceChange('enhancedFocus', e.target.checked)}
           />
           강화된 포커스 표시
         </SettingLabel>
@@ -340,9 +352,9 @@ export const HighContrastSettings: React.FC<HighContrastSettingsProps> = ({
       <SettingGroup>
         <SettingLabel>
           <Checkbox
-            type="checkbox"
+            type='checkbox'
             checked={preferences.boldText}
-            onChange={(e) => handlePreferenceChange('boldText', e.target.checked)}
+            onChange={e => handlePreferenceChange('boldText', e.target.checked)}
           />
           굵은 글씨 사용
         </SettingLabel>
@@ -354,9 +366,9 @@ export const HighContrastSettings: React.FC<HighContrastSettingsProps> = ({
       <SettingGroup>
         <SettingLabel>
           <Checkbox
-            type="checkbox"
+            type='checkbox'
             checked={preferences.largerText}
-            onChange={(e) => handlePreferenceChange('largerText', e.target.checked)}
+            onChange={e => handlePreferenceChange('largerText', e.target.checked)}
           />
           큰 글씨 사용
         </SettingLabel>
@@ -390,77 +402,91 @@ const Button = styled.button<{
   border: 2px solid;
   border-radius: 4px;
   font-weight: 600;
-  cursor: ${props => props.$disabled ? 'not-allowed' : 'pointer'};
+  cursor: ${props => (props.$disabled ? 'not-allowed' : 'pointer')};
   transition: none; /* Disabled in high contrast mode */
-  
+
   /* Size variants */
-  ${props => props.$size === 'small' && css`
-    padding: 8px 16px;
-    font-size: 14px;
-    min-height: 32px;
-  `}
+  ${props =>
+    props.$size === 'small' &&
+    css`
+      padding: 8px 16px;
+      font-size: 14px;
+      min-height: 32px;
+    `}
+
+  ${props =>
+    props.$size === 'medium' &&
+    css`
+      padding: 12px 24px;
+      font-size: 16px;
+      min-height: 44px;
+    `}
   
-  ${props => props.$size === 'medium' && css`
-    padding: 12px 24px;
-    font-size: 16px;
-    min-height: 44px;
-  `}
-  
-  ${props => props.$size === 'large' && css`
-    padding: 16px 32px;
-    font-size: 18px;
-    min-height: 56px;
-  `}
+  ${props =>
+    props.$size === 'large' &&
+    css`
+      padding: 16px 32px;
+      font-size: 18px;
+      min-height: 56px;
+    `}
   
   /* Color variants */
-  ${props => props.$variant === 'primary' && css`
-    background-color: var(--hc-interactive-primary-bg, #000);
-    color: var(--hc-interactive-primary-text, #fff);
-    border-color: var(--hc-interactive-primary-border, #000);
-    
-    &:hover:not(:disabled) {
-      background-color: var(--hc-interactive-primary-hover, #333);
-    }
-    
-    &:active:not(:disabled) {
-      background-color: var(--hc-interactive-primary-active, #1a1a1a);
-    }
-  `}
+  ${props =>
+    props.$variant === 'primary' &&
+    css`
+      background-color: var(--hc-interactive-primary-bg, #000);
+      color: var(--hc-interactive-primary-text, #fff);
+      border-color: var(--hc-interactive-primary-border, #000);
+
+      &:hover:not(:disabled) {
+        background-color: var(--hc-interactive-primary-hover, #333);
+      }
+
+      &:active:not(:disabled) {
+        background-color: var(--hc-interactive-primary-active, #1a1a1a);
+      }
+    `}
   
-  ${props => props.$variant === 'secondary' && css`
-    background-color: var(--hc-interactive-secondary-bg, transparent);
-    color: var(--hc-interactive-secondary-text, #000);
-    border-color: var(--hc-interactive-secondary-border, #000);
-    
-    &:hover:not(:disabled) {
-      background-color: var(--hc-interactive-secondary-hover, #f0f0f0);
-    }
-    
-    &:active:not(:disabled) {
-      background-color: var(--hc-interactive-secondary-active, #e8e8e8);
-    }
-  `}
+  ${props =>
+    props.$variant === 'secondary' &&
+    css`
+      background-color: var(--hc-interactive-secondary-bg, transparent);
+      color: var(--hc-interactive-secondary-text, #000);
+      border-color: var(--hc-interactive-secondary-border, #000);
+
+      &:hover:not(:disabled) {
+        background-color: var(--hc-interactive-secondary-hover, #f0f0f0);
+      }
+
+      &:active:not(:disabled) {
+        background-color: var(--hc-interactive-secondary-active, #e8e8e8);
+      }
+    `}
   
-  ${props => props.$variant === 'danger' && css`
-    background-color: var(--hc-interactive-danger-bg, #8b0000);
-    color: var(--hc-interactive-danger-text, #fff);
-    border-color: var(--hc-interactive-danger-border, #8b0000);
-    
-    &:hover:not(:disabled) {
-      background-color: var(--hc-interactive-danger-hover, #a00000);
-    }
-    
-    &:active:not(:disabled) {
-      background-color: var(--hc-interactive-danger-active, #6b0000);
-    }
-  `}
+  ${props =>
+    props.$variant === 'danger' &&
+    css`
+      background-color: var(--hc-interactive-danger-bg, #8b0000);
+      color: var(--hc-interactive-danger-text, #fff);
+      border-color: var(--hc-interactive-danger-border, #8b0000);
+
+      &:hover:not(:disabled) {
+        background-color: var(--hc-interactive-danger-hover, #a00000);
+      }
+
+      &:active:not(:disabled) {
+        background-color: var(--hc-interactive-danger-active, #6b0000);
+      }
+    `}
   
   /* Disabled state */
-  ${props => props.$disabled && css`
-    background-color: var(--hc-interactive-primary-disabled, #808080);
-    color: var(--hc-text-tertiary, #404040);
-    border-color: var(--hc-interactive-primary-disabled, #808080);
-  `}
+  ${props =>
+    props.$disabled &&
+    css`
+      background-color: var(--hc-interactive-primary-disabled, #808080);
+      color: var(--hc-text-tertiary, #404040);
+      border-color: var(--hc-interactive-primary-disabled, #808080);
+    `}
   
   /* Focus state */
   &:focus {
@@ -508,30 +534,38 @@ const Alert = styled.div<{ $type: 'info' | 'success' | 'warning' | 'error' }>`
   border: 2px solid;
   border-radius: 4px;
   font-weight: 500;
+
+  ${props =>
+    props.$type === 'info' &&
+    css`
+      background-color: var(--hc-bg-secondary, #f0f8ff);
+      color: var(--hc-text-info, #000080);
+      border-color: var(--hc-text-info, #000080);
+    `}
+
+  ${props =>
+    props.$type === 'success' &&
+    css`
+      background-color: var(--hc-bg-secondary, #f0fff0);
+      color: var(--hc-text-success, #006400);
+      border-color: var(--hc-text-success, #006400);
+    `}
   
-  ${props => props.$type === 'info' && css`
-    background-color: var(--hc-bg-secondary, #f0f8ff);
-    color: var(--hc-text-info, #000080);
-    border-color: var(--hc-text-info, #000080);
-  `}
+  ${props =>
+    props.$type === 'warning' &&
+    css`
+      background-color: var(--hc-bg-secondary, #fffaf0);
+      color: var(--hc-text-warning, #8b4000);
+      border-color: var(--hc-text-warning, #8b4000);
+    `}
   
-  ${props => props.$type === 'success' && css`
-    background-color: var(--hc-bg-secondary, #f0fff0);
-    color: var(--hc-text-success, #006400);
-    border-color: var(--hc-text-success, #006400);
-  `}
-  
-  ${props => props.$type === 'warning' && css`
-    background-color: var(--hc-bg-secondary, #fffaf0);
-    color: var(--hc-text-warning, #8b4000);
-    border-color: var(--hc-text-warning, #8b4000);
-  `}
-  
-  ${props => props.$type === 'error' && css`
-    background-color: var(--hc-bg-secondary, #fff0f0);
-    color: var(--hc-text-error, #8b0000);
-    border-color: var(--hc-text-error, #8b0000);
-  `}
+  ${props =>
+    props.$type === 'error' &&
+    css`
+      background-color: var(--hc-bg-secondary, #fff0f0);
+      color: var(--hc-text-error, #8b0000);
+      border-color: var(--hc-text-error, #8b0000);
+    `}
 `;
 
 const AlertTitle = styled.div`
@@ -551,7 +585,7 @@ const AlertClose = styled.button`
   color: currentColor;
   font-size: 16px;
   cursor: pointer;
-  
+
   &:focus {
     outline: 2px solid var(--hc-focus, #0066cc);
     outline-offset: 1px;
@@ -566,13 +600,9 @@ export const HighContrastAlert: React.FC<HighContrastAlertProps> = ({
   className,
 }) => {
   return (
-    <Alert className={className} $type={type} role="alert">
+    <Alert className={className} $type={type} role='alert'>
       {onClose && (
-        <AlertClose
-          onClick={onClose}
-          aria-label="알림 닫기"
-          title="알림 닫기"
-        >
+        <AlertClose onClick={onClose} aria-label='알림 닫기' title='알림 닫기'>
           ×
         </AlertClose>
       )}

@@ -14,22 +14,23 @@ import {
   androidAppContainer,
   androidOptimizedScroll,
   androidOptimizedList,
-  androidOptimizedButton
+  androidOptimizedButton,
 } from '../../styles/android-webview-optimizations';
 import { responsiveContainer, responsiveContent } from '../../styles/responsive';
-import { 
-  responsiveAppContainer, 
-  responsiveMainContent, 
+import {
+  responsiveAppContainer,
+  responsiveMainContent,
   responsiveHeader,
   responsiveFontSizes,
-  responsiveSpacing
+  responsiveSpacing,
 } from '../../styles/responsive-overhaul';
 import { tokens } from '../../styles/tokens';
 
-import TransactionFilterModal, { FilterState as FilterModalState } from './components/TransactionFilterModal';
+import TransactionFilterModal, {
+  FilterState as FilterModalState,
+} from './components/TransactionFilterModal';
 import TransactionGroup from './components/TransactionGroup';
 import { useTransactions } from './hooks/useTransactions';
-
 
 // Import icons
 /**
@@ -56,11 +57,11 @@ const HeaderButton = styled.button`
   border: none;
   color: ${tokens.colors.text.primary};
   border-radius: ${tokens.borderRadius.medium};
-  
+
   &:hover {
     background-color: ${tokens.colors.action.hover};
   }
-  
+
   img {
     width: ${tokens.sizes.icon.medium};
     height: ${tokens.sizes.icon.medium};
@@ -86,32 +87,32 @@ const MonthDivider = styled.div`
   margin: ${responsiveSpacing.lg} 0 ${responsiveSpacing.md} 0;
   padding: 0 ${responsiveSpacing.lg};
   box-sizing: border-box;
-  
+
   span {
     font-size: ${responsiveFontSizes.titleSmall};
     font-weight: 600;
-    color: #1C1C1E;
+    color: #1c1c1e;
     background-color: ${tokens.colors.background.primary};
     padding: 0 ${responsiveSpacing.sm};
     white-space: nowrap;
   }
-  
+
   &::before {
     content: '';
     flex: 1;
     height: 1px;
-    background-color: #E5E5EA;
+    background-color: #e5e5ea;
     margin-right: ${responsiveSpacing.sm};
   }
-  
+
   &::after {
     content: '';
     flex: 1;
     height: 1px;
-    background-color: #E5E5EA;
+    background-color: #e5e5ea;
     margin-left: ${responsiveSpacing.sm};
   }
-  
+
   /* 작은 화면에서 조정 */
   @media (max-width: 360px) {
     margin: ${responsiveSpacing.md} 0 ${responsiveSpacing.sm} 0;
@@ -137,7 +138,7 @@ const TransactionItem = styled.div`
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-  
+
   /* 작은 화면에서 패딩 조정 */
   @media (max-width: 360px) {
     padding: ${responsiveSpacing.sm} ${responsiveSpacing.md};
@@ -152,10 +153,9 @@ const TransactionHeader = styled.div`
   width: 100%;
 `;
 
-
 const TransactionDate = styled.div`
   font-size: ${responsiveFontSizes.labelSmall};
-  color: #8E8E93;
+  color: #8e8e93;
   font-weight: 400;
   line-height: 1.2;
   grid-row: 1;
@@ -172,13 +172,13 @@ const TransactionName = styled.div`
   grid-column: 1;
   letter-spacing: -0.02em;
   align-self: start;
-  
+
   /* 긴 거래명 말줄임 처리 */
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: calc(100vw - 200px);
-  
+
   @media (max-width: 360px) {
     max-width: calc(100vw - 160px);
   }
@@ -187,7 +187,7 @@ const TransactionName = styled.div`
 const TransactionAmount = styled.div<{ $type: 'income' | 'expense' }>`
   font-size: ${responsiveFontSizes.bodyLarge};
   font-weight: 600;
-  color: ${props => props.$type === 'income' ? '#007AFF' : '#FF3B30'};
+  color: ${props => (props.$type === 'income' ? '#007AFF' : '#FF3B30')};
   line-height: 1.2;
   grid-row: 1;
   grid-column: 2;
@@ -199,7 +199,7 @@ const TransactionAmount = styled.div<{ $type: 'income' | 'expense' }>`
 
 const TransactionBalance = styled.div`
   font-size: ${responsiveFontSizes.labelSmall};
-  color: #8E8E93;
+  color: #8e8e93;
   font-weight: 400;
   line-height: 1.2;
   grid-row: 2;
@@ -224,12 +224,12 @@ const ScrollToTopButton = styled.button`
   justify-content: center;
   z-index: 100;
   transition: all 0.2s ease;
-  
+
   img {
     width: ${tokens.sizes.icon.small};
     height: ${tokens.sizes.icon.small};
   }
-  
+
   &:hover {
     transform: translateY(-2px);
     box-shadow: ${tokens.shadows.elevation3};
@@ -246,8 +246,8 @@ const TransactionHistoryPage: React.FC = () => {
     sort: '최신순',
     amount: {
       min: '',
-      max: ''
-    }
+      max: '',
+    },
   });
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   // 무한 스크롤을 위한 ref
@@ -261,14 +261,14 @@ const TransactionHistoryPage: React.FC = () => {
     pagination,
     filters: currentFilters,
     loadMore,
-    refresh
+    refresh,
   } = useTransactions({
     accountId: accountId || 'mock-account-1',
     initialFilters: {
       limit: 50,
-      sort_by: 'date_desc'
+      sort_by: 'date_desc',
     },
-    autoLoad: true
+    autoLoad: true,
   });
   // 계좌 정보 로드
   useEffect(() => {
@@ -284,7 +284,7 @@ const TransactionHistoryPage: React.FC = () => {
             id: 'mock-account-1',
             account_number: '705601-01-500920',
             account_name: 'KB국민ONE통장-보통예금',
-            balance: 102418
+            balance: 102418,
           });
         }
       } catch (error) {
@@ -293,7 +293,7 @@ const TransactionHistoryPage: React.FC = () => {
           id: 'mock-account-1',
           account_number: '705601-01-500920',
           account_name: 'KB국민ONE통장-보통예금',
-          balance: 102418
+          balance: 102418,
         });
       }
     };
@@ -317,7 +317,7 @@ const TransactionHistoryPage: React.FC = () => {
       return;
     }
     const observer = new IntersectionObserver(
-      (entries) => {
+      entries => {
         if (entries[0].isIntersecting) {
           if (!loading) {
             loadMore();
@@ -327,7 +327,7 @@ const TransactionHistoryPage: React.FC = () => {
       {
         root: null,
         rootMargin: '200px',
-        threshold: 0
+        threshold: 0,
       }
     );
     observerRef.current = observer;
@@ -345,12 +345,16 @@ const TransactionHistoryPage: React.FC = () => {
     return (
       <TransactionHistoryContainer>
         <Header>
-          <HeaderButton as={Link} to="/dashboard">
-            <img src="/assets/images/icons/icon_arrow_20.png" alt="뒤로가기" style={{transform: 'rotate(180deg)'}} />
+          <HeaderButton as={Link} to='/dashboard'>
+            <img
+              src='/assets/images/icons/icon_arrow_20.png'
+              alt='뒤로가기'
+              style={{ transform: 'rotate(180deg)' }}
+            />
           </HeaderButton>
           <HeaderTitle>통합거래내역조회</HeaderTitle>
           <HeaderButton>
-            <img src="/assets/images/icons/icon_appbar_menu.png" alt="메뉴" />
+            <img src='/assets/images/icons/icon_appbar_menu.png' alt='메뉴' />
           </HeaderButton>
         </Header>
         <MainContent>
@@ -363,26 +367,32 @@ const TransactionHistoryPage: React.FC = () => {
   return (
     <TransactionHistoryContainer>
       <Header>
-        <HeaderButton as={Link} to="/dashboard">
-          <img src="/assets/images/icons/icon_arrow_20.png" alt="뒤로가기" style={{transform: 'rotate(180deg)'}} />
+        <HeaderButton as={Link} to='/dashboard'>
+          <img
+            src='/assets/images/icons/icon_arrow_20.png'
+            alt='뒤로가기'
+            style={{ transform: 'rotate(180deg)' }}
+          />
         </HeaderButton>
         <HeaderTitle>통합거래내역조회</HeaderTitle>
         <HeaderButton>
-          <img src="/assets/images/icons/icon_appbar_menu.png" alt="메뉴" />
+          <img src='/assets/images/icons/icon_appbar_menu.png' alt='메뉴' />
         </HeaderButton>
       </Header>
       <MainContent>
         {/* 거래내역 */}
         <TransactionListContainer>
           {error && (
-            <div style={{ 
-              color: '#ff4444', 
-              textAlign: 'center', 
-              padding: '20px',
-              fontSize: '14px' 
-            }}>
+            <div
+              style={{
+                color: '#ff4444',
+                textAlign: 'center',
+                padding: '20px',
+                fontSize: '14px',
+              }}
+            >
               {error}
-              <button 
+              <button
                 onClick={refresh}
                 style={{
                   display: 'block',
@@ -391,7 +401,7 @@ const TransactionHistoryPage: React.FC = () => {
                   backgroundColor: '#ffd338',
                   border: 'none',
                   borderRadius: '4px',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
                 }}
               >
                 다시 시도
@@ -404,49 +414,59 @@ const TransactionHistoryPage: React.FC = () => {
             <TransactionList>
               {(() => {
                 // 월별로 거래내역 그룹화
-                const groupedByMonth = transactions.reduce((groups, transaction) => {
-                  const transactionDate = new Date(transaction.transaction_date);
-                  const monthKey = `${transactionDate.getFullYear()}.${String(transactionDate.getMonth() + 1).padStart(2, '0')}`;
-                  
-                  if (!groups[monthKey]) {
-                    groups[monthKey] = [];
-                  }
-                  groups[monthKey].push(transaction);
-                  return groups;
-                }, {} as Record<string, typeof transactions>);
-                
+                const groupedByMonth = transactions.reduce(
+                  (groups, transaction) => {
+                    const transactionDate = new Date(transaction.transaction_date);
+                    const monthKey = `${transactionDate.getFullYear()}.${String(transactionDate.getMonth() + 1).padStart(2, '0')}`;
+
+                    if (!groups[monthKey]) {
+                      groups[monthKey] = [];
+                    }
+                    groups[monthKey].push(transaction);
+                    return groups;
+                  },
+                  {} as Record<string, typeof transactions>
+                );
+
                 return Object.entries(groupedByMonth).map(([monthKey, monthTransactions]) => (
                   <React.Fragment key={monthKey}>
                     <MonthDivider>
                       <span>{monthKey}</span>
                     </MonthDivider>
-                    {monthTransactions.map((transaction) => {
+                    {monthTransactions.map(transaction => {
                       const transactionDate = new Date(transaction.transaction_date);
-                      const dateStr = transactionDate.toLocaleDateString('ko-KR', {
-                        year: 'numeric',
-                        month: '2-digit', 
-                        day: '2-digit'
-                      }).replace(/\./g, '.').replace(/ /g, '');
+                      const dateStr = transactionDate
+                        .toLocaleDateString('ko-KR', {
+                          year: 'numeric',
+                          month: '2-digit',
+                          day: '2-digit',
+                        })
+                        .replace(/\./g, '.')
+                        .replace(/ /g, '');
                       const timeStr = transactionDate.toLocaleTimeString('ko-KR', {
                         hour12: false,
                         hour: '2-digit',
                         minute: '2-digit',
-                        second: '2-digit'
+                        second: '2-digit',
                       });
-                      
+
                       const isIncome = transaction.amount > 0;
                       const amountText = isIncome ? '입금' : '출금';
                       const displayAmount = Math.abs(transaction.amount).toLocaleString();
-                      
+
                       return (
                         <TransactionItem key={transaction.id}>
                           <TransactionHeader>
-                            <TransactionDate>{dateStr} {timeStr}</TransactionDate>
+                            <TransactionDate>
+                              {dateStr} {timeStr}
+                            </TransactionDate>
                             <TransactionAmount $type={isIncome ? 'income' : 'expense'}>
                               {amountText} {displayAmount}원
                             </TransactionAmount>
                             <TransactionName>{transaction.description}</TransactionName>
-                            <TransactionBalance>잔액 {transaction.balance_after?.toLocaleString() || '0'}원</TransactionBalance>
+                            <TransactionBalance>
+                              잔액 {transaction.balance_after?.toLocaleString() || '0'}원
+                            </TransactionBalance>
                           </TransactionHeader>
                         </TransactionItem>
                       );
@@ -456,16 +476,16 @@ const TransactionHistoryPage: React.FC = () => {
               })()}
               {/* 무한 스크롤 트리거 */}
               {pagination?.has_next && (
-                <div 
-                  ref={loadMoreRef} 
-                  style={{ 
-                    height: '50px', 
+                <div
+                  ref={loadMoreRef}
+                  style={{
+                    height: '50px',
                     marginTop: '20px',
                     backgroundColor: 'red', // 디버깅을 위해 빨간색으로 표시
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    color: 'white'
+                    color: 'white',
                   }}
                 >
                   스크롤 트리거 (디버깅용)
@@ -478,11 +498,13 @@ const TransactionHistoryPage: React.FC = () => {
                 </div>
               )}
               {transactions.length === 0 && !loading && (
-                <div style={{ 
-                  textAlign: 'center', 
-                  padding: '40px',
-                  color: '#696e76' 
-                }}>
+                <div
+                  style={{
+                    textAlign: 'center',
+                    padding: '40px',
+                    color: '#696e76',
+                  }}
+                >
                   거래내역이 없습니다.
                 </div>
               )}

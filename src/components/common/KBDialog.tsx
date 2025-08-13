@@ -33,10 +33,11 @@ const DialogOverlay = styled.div<{ $isOpen: boolean }>`
   justify-content: center;
   z-index: 9999;
   padding: 20px;
-  opacity: ${props => props.$isOpen ? 1 : 0};
-  visibility: ${props => props.$isOpen ? 'visible' : 'hidden'};
-  transition: opacity ${duration.normal} ${easing.easeOut},
-              visibility ${duration.normal} ${easing.easeOut};
+  opacity: ${props => (props.$isOpen ? 1 : 0)};
+  visibility: ${props => (props.$isOpen ? 'visible' : 'hidden')};
+  transition:
+    opacity ${duration.normal} ${easing.easeOut},
+    visibility ${duration.normal} ${easing.easeOut};
   // 터치 시 닫기 방지
   touch-action: none;
 `;
@@ -49,10 +50,11 @@ const DialogContainer = styled.div<{ $isOpen: boolean }>`
   width: 100%;
   max-height: 80vh;
   overflow: hidden;
-  transform: ${props => props.$isOpen ? 'scale(1) translateY(0)' : 'scale(0.8) translateY(20px)'};
-  opacity: ${props => props.$isOpen ? 1 : 0};
-  transition: transform ${duration.normal} ${easing.easeOut},
-              opacity ${duration.normal} ${easing.easeOut};
+  transform: ${props => (props.$isOpen ? 'scale(1) translateY(0)' : 'scale(0.8) translateY(20px)')};
+  opacity: ${props => (props.$isOpen ? 1 : 0)};
+  transition:
+    transform ${duration.normal} ${easing.easeOut},
+    opacity ${duration.normal} ${easing.easeOut};
 `;
 // 다이얼로그 헤더
 const DialogHeader = styled.div`
@@ -114,7 +116,9 @@ const DialogButtons = styled.div`
 `;
 const DialogButtonWrapper = styled.div<{ $isLeft?: boolean }>`
   flex: 1;
-  ${props => !props.$isLeft && `
+  ${props =>
+    !props.$isLeft &&
+    `
     border-left: 1px solid ${tokens.colors.backgroundGray2};
   `}
 `;
@@ -203,48 +207,30 @@ const KBDialog: React.FC<KBDialogProps> = ({
         {title && (
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>
-            {showCloseButton && (
-              <CloseButton onClick={onClose} />
-            )}
+            {showCloseButton && <CloseButton onClick={onClose} />}
           </DialogHeader>
         )}
         <DialogContent>
-          {type !== 'alert' && (
-            <IconContainer $type={type}>
-              {getIcon()}
-            </IconContainer>
-          )}
+          {type !== 'alert' && <IconContainer $type={type}>{getIcon()}</IconContainer>}
           <DialogText>{content}</DialogText>
         </DialogContent>
         <DialogButtons>
           {showTwoButtons ? (
             <>
               <DialogButtonWrapper $isLeft>
-                <Button
-                  variant="dialog-left"
-                  onClick={handleLeftClick}
-                  fullWidth
-                >
+                <Button variant='dialog-left' onClick={handleLeftClick} fullWidth>
                   {leftButtonText}
                 </Button>
               </DialogButtonWrapper>
               <DialogButtonWrapper>
-                <Button
-                  variant="dialog-right"
-                  onClick={handleRightClick}
-                  fullWidth
-                >
+                <Button variant='dialog-right' onClick={handleRightClick} fullWidth>
                   {rightButtonText}
                 </Button>
               </DialogButtonWrapper>
             </>
           ) : (
             <DialogButtonWrapper>
-              <Button
-                variant="dialog-right"
-                onClick={handleRightClick}
-                fullWidth
-              >
+              <Button variant='dialog-right' onClick={handleRightClick} fullWidth>
                 {rightButtonText}
               </Button>
             </DialogButtonWrapper>

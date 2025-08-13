@@ -102,14 +102,14 @@ const OfflineIndicator = styled.div<{ $isOnline: boolean }>`
   top: 0;
   left: 0;
   right: 0;
-  background-color: ${props => props.$isOnline ? '#22c55e' : '#ef4444'};
+  background-color: ${props => (props.$isOnline ? '#22c55e' : '#ef4444')};
   color: white;
   padding: 8px;
   text-align: center;
   font-family: ${typography.fontFamily.kbfgTextMedium};
   font-size: 14px;
   z-index: 9999;
-  transform: translateY(${props => props.$isOnline ? '-100%' : '0'});
+  transform: translateY(${props => (props.$isOnline ? '-100%' : '0')});
   transition: transform ${duration.normal} ${easing.easeOut};
 `;
 
@@ -119,7 +119,7 @@ export const NetworkErrorHandler: React.FC<NetworkErrorHandlerProps> = ({
   retryDelay = 5000,
   maxRetries = 3,
   children,
-  showOfflineIndicator = true
+  showOfflineIndicator = true,
 }) => {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [retryCount, setRetryCount] = useState(0);
@@ -142,7 +142,7 @@ export const NetworkErrorHandler: React.FC<NetworkErrorHandlerProps> = ({
   useEffect(() => {
     if (!isOnline && retryCount < maxRetries) {
       setCountdown(Math.floor(retryDelay / 1000));
-      
+
       const countdownInterval = setInterval(() => {
         setCountdown(prev => {
           if (prev <= 1) {
@@ -185,20 +185,18 @@ export const NetworkErrorHandler: React.FC<NetworkErrorHandlerProps> = ({
     return (
       <>
         {showOfflineIndicator && (
-          <OfflineIndicator $isOnline={false}>
-            인터넷 연결이 끊어졌습니다
-          </OfflineIndicator>
+          <OfflineIndicator $isOnline={false}>인터넷 연결이 끊어졌습니다</OfflineIndicator>
         )}
-        
+
         <ErrorContainer>
           <ErrorIcon>
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="#dc2626">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+            <svg width='48' height='48' viewBox='0 0 24 24' fill='#dc2626'>
+              <path d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z' />
             </svg>
           </ErrorIcon>
-          
+
           <ErrorTitle>네트워크 연결 오류</ErrorTitle>
-          
+
           <ErrorMessage>
             인터넷 연결을 확인할 수 없습니다.
             <br />
@@ -207,32 +205,22 @@ export const NetworkErrorHandler: React.FC<NetworkErrorHandlerProps> = ({
 
           {isRetrying ? (
             <RetryInfo>
-              <CircularProgress size="medium" />
+              <CircularProgress size='medium' />
               <RetryCountdown>재시도 중...</RetryCountdown>
             </RetryInfo>
           ) : (
             <>
               {countdown > 0 && retryCount < maxRetries && (
                 <RetryInfo>
-                  <RetryCountdown>
-                    {countdown}초 후 자동으로 재시도합니다
-                  </RetryCountdown>
-                  <Button
-                    variant="secondary"
-                    size="small"
-                    onClick={handleManualRetry}
-                  >
+                  <RetryCountdown>{countdown}초 후 자동으로 재시도합니다</RetryCountdown>
+                  <Button variant='secondary' size='small' onClick={handleManualRetry}>
                     지금 재시도
                   </Button>
                 </RetryInfo>
               )}
 
               {(countdown === 0 || retryCount >= maxRetries) && (
-                <Button
-                  variant="primary"
-                  size="medium"
-                  onClick={handleManualRetry}
-                >
+                <Button variant='primary' size='medium' onClick={handleManualRetry}>
                   다시 시도
                 </Button>
               )}
@@ -256,12 +244,10 @@ export const NetworkErrorHandler: React.FC<NetworkErrorHandlerProps> = ({
   if (showOfflineIndicator && isOnline && retryCount > 0) {
     // 재연결 성공 메시지 표시
     setTimeout(() => setRetryCount(0), 3000);
-    
+
     return (
       <>
-        <OfflineIndicator $isOnline={true}>
-          인터넷에 다시 연결되었습니다
-        </OfflineIndicator>
+        <OfflineIndicator $isOnline={true}>인터넷에 다시 연결되었습니다</OfflineIndicator>
         {children}
       </>
     );
@@ -300,6 +286,6 @@ export const useNetworkStatus = () => {
   return {
     isOnline,
     wasOffline,
-    isReconnected: isOnline && wasOffline
+    isReconnected: isOnline && wasOffline,
   };
 };

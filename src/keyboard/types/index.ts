@@ -141,7 +141,7 @@ export interface MacroAction {
 }
 
 // 뱅킹 단축키 카테고리
-export type BankingShortcutCategory = 
+export type BankingShortcutCategory =
   | 'navigation'
   | 'accounts'
   | 'transfer'
@@ -158,33 +158,33 @@ export interface BankingKeyboardShortcuts {
   menu: string[];
   back: string[];
   search: string[];
-  
+
   // 계좌 관련
   accountInquiry: string[];
   accountDetail: string[];
   transactionHistory: string[];
-  
+
   // 이체 관련
   transfer: string[];
   favoriteTransfer: string[];
   transferHistory: string[];
-  
+
   // 조회 관련
   balanceInquiry: string[];
   cardInquiry: string[];
   loanInquiry: string[];
-  
+
   // 모달/다이얼로그
   closeModal: string[];
   confirmAction: string[];
   cancelAction: string[];
-  
+
   // 폼 관련
   submitForm: string[];
   resetForm: string[];
   nextField: string[];
   previousField: string[];
-  
+
   // 접근성
   toggleHighContrast: string[];
   toggleScreenReader: string[];

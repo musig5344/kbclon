@@ -6,7 +6,7 @@ import {
   ConfirmRow,
   ConfirmLabel,
   ConfirmValue,
-  TotalAmountDisplay
+  TotalAmountDisplay,
 } from '../TransferPage.styles';
 
 interface TransferConfirmSectionProps {
@@ -26,7 +26,7 @@ const TransferConfirmSection: React.FC<TransferConfirmSectionProps> = ({
   recipientName,
   amount,
   memo,
-  formatAmount
+  formatAmount,
 }) => {
   return (
     <ConfirmSection>
@@ -61,9 +61,7 @@ const TransferConfirmSection: React.FC<TransferConfirmSectionProps> = ({
           <ConfirmValue>{memo}</ConfirmValue>
         </ConfirmRow>
       )}
-      <TotalAmountDisplay>
-        총 {formatAmount(amount)}
-      </TotalAmountDisplay>
+      <TotalAmountDisplay>총 {formatAmount(amount)}</TotalAmountDisplay>
     </ConfirmSection>
   );
 };

@@ -11,7 +11,9 @@ import { AccessibleFormFieldProps } from '../types';
 import { setAriaInvalid } from '../utils/aria';
 import { announceFormValidation } from '../utils/screenReader';
 
-interface Props extends Omit<InputHTMLAttributes<HTMLInputElement>, 'id'>, AccessibleFormFieldProps {
+interface Props
+  extends Omit<InputHTMLAttributes<HTMLInputElement>, 'id'>,
+    AccessibleFormFieldProps {
   type?: string;
   value?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -28,7 +30,9 @@ const Label = styled.label<{ required?: boolean }>`
   font-weight: 500;
   color: ${({ theme }) => theme.colors.textPrimary};
 
-  ${({ required, theme }) => required && `
+  ${({ required, theme }) =>
+    required &&
+    `
     &::after {
       content: ' *';
       color: ${theme.colors.error};
@@ -40,8 +44,8 @@ const Input = styled.input<{ hasError?: boolean }>`
   width: 100%;
   height: 48px;
   padding: 0 16px;
-  border: 1px solid ${({ theme, hasError }) => 
-    hasError ? theme.colors.error : theme.colors.border};
+  border: 1px solid
+    ${({ theme, hasError }) => (hasError ? theme.colors.error : theme.colors.border)};
   border-radius: 4px;
   font-size: 16px;
   background-color: ${({ theme }) => theme.colors.background};
@@ -93,28 +97,29 @@ const VisuallyHidden = styled.span`
 `;
 
 export const AccessibleFormField = forwardRef<HTMLInputElement, Props>(
-  ({ 
-    id,
-    label, 
-    error, 
-    helperText, 
-    required, 
-    ariaDescribedBy,
-    type = 'text',
-    value,
-    onChange,
-    ...inputProps 
-  }, ref) => {
+  (
+    {
+      id,
+      label,
+      error,
+      helperText,
+      required,
+      ariaDescribedBy,
+      type = 'text',
+      value,
+      onChange,
+      ...inputProps
+    },
+    ref
+  ) => {
     const generatedId = useId();
     const fieldId = id || generatedId;
     const errorId = `${fieldId}-error`;
     const helperId = `${fieldId}-helper`;
-    
-    const describedBy = [
-      error && errorId,
-      helperText && helperId,
-      ariaDescribedBy
-    ].filter(Boolean).join(' ');
+
+    const describedBy = [error && errorId, helperText && helperId, ariaDescribedBy]
+      .filter(Boolean)
+      .join(' ');
 
     React.useEffect(() => {
       if (error) {
@@ -126,7 +131,7 @@ export const AccessibleFormField = forwardRef<HTMLInputElement, Props>(
       if (onChange) {
         onChange(e);
       }
-      
+
       // 실시간 검증 피드백
       const input = e.target;
       if (input.validity.valid) {
@@ -140,7 +145,7 @@ export const AccessibleFormField = forwardRef<HTMLInputElement, Props>(
           {label}
           {required && <VisuallyHidden> (필수)</VisuallyHidden>}
         </Label>
-        
+
         <Input
           ref={ref}
           id={fieldId}
@@ -154,18 +159,14 @@ export const AccessibleFormField = forwardRef<HTMLInputElement, Props>(
           aria-required={required}
           {...inputProps}
         />
-        
+
         {error && (
-          <ErrorMessage id={errorId} role="alert">
+          <ErrorMessage id={errorId} role='alert'>
             {error}
           </ErrorMessage>
         )}
-        
-        {helperText && !error && (
-          <HelperText id={helperId}>
-            {helperText}
-          </HelperText>
-        )}
+
+        {helperText && !error && <HelperText id={helperId}>{helperText}</HelperText>}
       </FormFieldContainer>
     );
   }

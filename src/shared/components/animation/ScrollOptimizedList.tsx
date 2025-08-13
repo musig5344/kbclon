@@ -46,15 +46,15 @@ const ScrollContainer = styled.div`
   &::-webkit-scrollbar {
     width: 6px;
   }
-  
+
   &::-webkit-scrollbar-track {
     background: transparent;
   }
-  
+
   &::-webkit-scrollbar-thumb {
     background: rgba(0, 0, 0, 0.2);
     border-radius: 3px;
-    
+
     &:hover {
       background: rgba(0, 0, 0, 0.3);
     }
@@ -96,39 +96,44 @@ function ScrollOptimizedList<T>({
   const [isScrolling, setIsScrolling] = useState(false);
   const scrollTimeoutRef = useRef<NodeJS.Timeout>();
   const animationIdRef = useRef<string>('');
-  
+
   // Calculate item heights and positions
-  const getItemHeight = useCallback((index: number): number => {
-    return typeof itemHeight === 'function' ? itemHeight(index) : itemHeight;
-  }, [itemHeight]);
-  
+  const getItemHeight = useCallback(
+    (index: number): number => {
+      return typeof itemHeight === 'function' ? itemHeight(index) : itemHeight;
+    },
+    [itemHeight]
+  );
+
   // Calculate total height and item offsets
   const { totalHeight, itemOffsets } = React.useMemo(() => {
     let total = 0;
     const offsets: number[] = [];
-    
+
     for (let i = 0; i < items.length; i++) {
       offsets.push(total);
       total += getItemHeight(i);
     }
-    
+
     return { totalHeight: total, itemOffsets: offsets };
   }, [items.length, getItemHeight]);
-  
+
   // Calculate visible items
   const visibleItems = React.useMemo((): VirtualizedItem[] => {
     const startIndex = Math.max(
       0,
-      itemOffsets.findIndex(offset => offset + getItemHeight(itemOffsets.indexOf(offset)) > scrollTop) - overscan
+      itemOffsets.findIndex(
+        offset => offset + getItemHeight(itemOffsets.indexOf(offset)) > scrollTop
+      ) - overscan
     );
-    
+
     const endIndex = Math.min(
       items.length - 1,
       itemOffsets.findIndex(offset => offset > scrollTop + containerHeight) + overscan
     );
-    
+
     const visible: VirtualizedItem[] = [];
-    
+
     for (let i = startIndex; i <= endIndex && i < items.length; i++) {
       visible.push({
         index: i,
@@ -136,28 +141,28 @@ function ScrollOptimizedList<T>({
         height: getItemHeight(i),
       });
     }
-    
+
     return visible;
   }, [scrollTop, containerHeight, itemOffsets, items.length, overscan, getItemHeight]);
-  
+
   // Optimized scroll handler
   const handleScroll = useCallback(
     raf.throttle((event: React.UIEvent<HTMLDivElement>) => {
       const target = event.target as HTMLDivElement;
       const newScrollTop = target.scrollTop;
-      
+
       setScrollTop(newScrollTop);
       setIsScrolling(true);
-      
+
       // Clear existing timeout
       if (scrollTimeoutRef.current) {
         clearTimeout(scrollTimeoutRef.current);
       }
-      
+
       // Set scrolling to false after scroll ends
       scrollTimeoutRef.current = setTimeout(() => {
         setIsScrolling(false);
-        
+
         // End performance monitoring
         if (animationIdRef.current) {
           const metrics = animationMonitor.endAnimation(animationIdRef.current);
@@ -167,18 +172,18 @@ function ScrollOptimizedList<T>({
           animationIdRef.current = '';
         }
       }, 150);
-      
+
       // Start performance monitoring for new scroll
       if (!animationIdRef.current) {
         animationIdRef.current = `scroll-${Date.now()}`;
         animationMonitor.startAnimation(animationIdRef.current);
       }
-      
+
       onScroll?.(newScrollTop);
     }),
     [onScroll]
   );
-  
+
   // Cleanup
   useEffect(() => {
     return () => {
@@ -187,7 +192,7 @@ function ScrollOptimizedList<T>({
       }
     };
   }, []);
-  
+
   return (
     <ScrollContainer
       ref={scrollContainerRef}
@@ -197,11 +202,7 @@ function ScrollOptimizedList<T>({
     >
       <ScrollContent $height={totalHeight}>
         {visibleItems.map(({ index, offset, height }) => (
-          <VirtualItem
-            key={index}
-            $offset={offset}
-            $height={height}
-          >
+          <VirtualItem key={index} $offset={offset} $height={height}>
             {enableAnimations ? (
               <AnimatedListItem
                 index={index}
@@ -241,12 +242,12 @@ const AnimatedListItem: React.FC<AnimatedListItemProps> = ({
     duration: 400,
     delay: Math.min(index * 50, 200), // Stagger effect
   });
-  
+
   const parallax = useParallax(itemRef, {
     speed: 0.1,
     disabled: !enableParallax || performanceHelpers.prefersReducedMotion(),
   });
-  
+
   return (
     <AnimatedItem
       ref={itemRef}
@@ -274,15 +275,15 @@ export const useInfiniteScroll = (
 ) => {
   const { threshold = 0.8, rootMargin = '100px', onLoadMore, hasMore } = options;
   const [isLoading, setIsLoading] = useState(false);
-  
+
   useEffect(() => {
     if (!ref.current || !hasMore || isLoading) return;
-    
+
     const observer = new IntersectionObserver(
       async ([entry]) => {
         if (entry.isIntersecting && hasMore && !isLoading) {
           setIsLoading(true);
-          
+
           try {
             await onLoadMore();
           } finally {
@@ -295,18 +296,18 @@ export const useInfiniteScroll = (
         rootMargin,
       }
     );
-    
+
     const sentinel = document.createElement('div');
     sentinel.style.height = '1px';
     ref.current.appendChild(sentinel);
     observer.observe(sentinel);
-    
+
     return () => {
       observer.disconnect();
       sentinel.remove();
     };
   }, [ref, threshold, rootMargin, onLoadMore, hasMore, isLoading]);
-  
+
   return { isLoading };
 };
 
@@ -330,35 +331,35 @@ export function SortableList<T>({
     duration: 300,
     stagger: 50,
   });
-  
+
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [targetIndex, setTargetIndex] = useState<number | null>(null);
-  
+
   const handleDragStart = (index: number) => {
     setDraggedIndex(index);
   };
-  
+
   const handleDragOver = (index: number) => {
     if (draggedIndex !== null && draggedIndex !== index) {
       setTargetIndex(index);
     }
   };
-  
+
   const handleDragEnd = () => {
     if (draggedIndex !== null && targetIndex !== null) {
       const newItems = [...items];
       const [draggedItem] = newItems.splice(draggedIndex, 1);
       newItems.splice(targetIndex, 0, draggedItem);
-      
+
       flip(() => {
         onReorder(newItems);
       });
     }
-    
+
     setDraggedIndex(null);
     setTargetIndex(null);
   };
-  
+
   return (
     <ScrollOptimizedList
       items={items}

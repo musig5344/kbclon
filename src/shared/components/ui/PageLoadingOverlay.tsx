@@ -21,8 +21,10 @@ const ContentWrapper = styled.div<{ $isLoading: boolean }>`
   height: 100%;
   transition: all 0.3s ease-out;
   transform-origin: top center;
-  
-  ${props => props.$isLoading && `
+
+  ${props =>
+    props.$isLoading &&
+    `
     transform: scale(0.92) translateY(20px);
     opacity: 0.6;
     filter: blur(2px);
@@ -36,23 +38,16 @@ const LoadingOverlay = styled.div<{ $isVisible: boolean }>`
   left: 0;
   right: 0;
   bottom: 0;
-  display: ${props => props.$isVisible ? 'flex' : 'none'};
+  display: ${props => (props.$isVisible ? 'flex' : 'none')};
   z-index: 10000;
 `;
 
 export const PageLoadingOverlay: React.FC<PageLoadingOverlayProps> = ({ isLoading, children }) => {
   return (
     <OverlayContainer>
-      <ContentWrapper $isLoading={isLoading}>
-        {children}
-      </ContentWrapper>
+      <ContentWrapper $isLoading={isLoading}>{children}</ContentWrapper>
       <LoadingOverlay $isVisible={isLoading}>
-        <UnifiedLoading
-          isVisible={isLoading}
-          type="overlay"
-          variant="type1"
-          size="medium"
-        />
+        <UnifiedLoading isVisible={isLoading} type='overlay' variant='type1' size='medium' />
       </LoadingOverlay>
     </OverlayContainer>
   );

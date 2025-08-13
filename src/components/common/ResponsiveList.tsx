@@ -5,7 +5,9 @@
  */
 
 import React, { memo } from 'react';
+
 import styled from 'styled-components';
+
 import { MEDIA_QUERIES } from '../../styles/breakpoints';
 import { createResponsiveListItem, KB_DESIGN_TOKENS } from '../../styles/responsive-system';
 
@@ -36,11 +38,16 @@ export interface ResponsiveListProps {
 }
 
 // KB 앱 완전 반응형 List Container
-const ListContainer = styled.div<{ spacing?: 'none' | 'small' | 'medium' | 'large'; padding?: boolean }>`
+const ListContainer = styled.div<{
+  spacing?: 'none' | 'small' | 'medium' | 'large';
+  padding?: boolean;
+}>`
   width: 100%;
   background: ${KB_DESIGN_TOKENS.colors.background};
-  
-  ${({ padding }) => padding && `
+
+  ${({ padding }) =>
+    padding &&
+    `
     padding: 0 ${KB_DESIGN_TOKENS.spacing.md};
     
     ${MEDIA_QUERIES.phoneSmall} {
@@ -51,15 +58,15 @@ const ListContainer = styled.div<{ spacing?: 'none' | 'small' | 'medium' | 'larg
       padding: 0 ${KB_DESIGN_TOKENS.spacing.lg};
     }
   `}
-  
+
   ${({ spacing = 'medium' }) => {
     const spacingMap = {
       none: '0',
       small: KB_DESIGN_TOKENS.spacing.xs,
       medium: KB_DESIGN_TOKENS.spacing.sm,
-      large: KB_DESIGN_TOKENS.spacing.md
+      large: KB_DESIGN_TOKENS.spacing.md,
     };
-    
+
     return `
       & > * + * {
         margin-top: ${spacingMap[spacing]};
@@ -69,16 +76,18 @@ const ListContainer = styled.div<{ spacing?: 'none' | 'small' | 'medium' | 'larg
 `;
 
 // KB 앱 완전 반응형 List Item
-const ListItem = styled.div<{ 
-  disabled?: boolean; 
-  highlighted?: boolean; 
+const ListItem = styled.div<{
+  disabled?: boolean;
+  highlighted?: boolean;
   clickable?: boolean;
   compact?: boolean;
 }>`
   ${createResponsiveListItem()}
-  
+
   /* 컴팩트 모드 */
-  ${({ compact }) => compact && `
+  ${({ compact }) =>
+    compact &&
+    `
     min-height: 44px;
     padding: ${KB_DESIGN_TOKENS.spacing.xs} ${KB_DESIGN_TOKENS.spacing.md};
     
@@ -94,20 +103,26 @@ const ListItem = styled.div<{
   `}
   
   /* 하이라이트 상태 */
-  ${({ highlighted }) => highlighted && `
+  ${({ highlighted }) =>
+    highlighted &&
+    `
     background: ${KB_DESIGN_TOKENS.colors.primaryLight}08;
     border-left: 4px solid ${KB_DESIGN_TOKENS.colors.primary};
   `}
   
   /* 비활성화 상태 */
-  ${({ disabled }) => disabled && `
+  ${({ disabled }) =>
+    disabled &&
+    `
     opacity: 0.5;
     cursor: not-allowed;
     pointer-events: none;
   `}
   
   /* 클릭 가능한 아이템 스타일 */
-  ${({ clickable }) => clickable && `
+  ${({ clickable }) =>
+    clickable &&
+    `
     cursor: pointer;
     transition: all 0.2s ease;
     
@@ -133,7 +148,7 @@ const LeftContent = styled.div`
   align-items: center;
   gap: ${KB_DESIGN_TOKENS.spacing.md};
   flex: 0 0 auto;
-  
+
   ${MEDIA_QUERIES.phoneSmall} {
     gap: ${KB_DESIGN_TOKENS.spacing.sm};
   }
@@ -145,12 +160,12 @@ const ItemImage = styled.img`
   height: 40px;
   border-radius: ${KB_DESIGN_TOKENS.borderRadius.medium};
   object-fit: cover;
-  
+
   ${MEDIA_QUERIES.phoneSmall} {
     width: 36px;
     height: 36px;
   }
-  
+
   ${MEDIA_QUERIES.tablet} {
     width: 48px;
     height: 48px;
@@ -167,26 +182,26 @@ const IconWrapper = styled.div`
   border-radius: ${KB_DESIGN_TOKENS.borderRadius.medium};
   background: ${KB_DESIGN_TOKENS.colors.surface};
   color: ${KB_DESIGN_TOKENS.colors.onSurface};
-  
+
   ${MEDIA_QUERIES.phoneSmall} {
     width: 36px;
     height: 36px;
   }
-  
+
   ${MEDIA_QUERIES.tablet} {
     width: 48px;
     height: 48px;
   }
-  
+
   svg {
     width: 24px;
     height: 24px;
-    
+
     ${MEDIA_QUERIES.phoneSmall} {
       width: 20px;
       height: 20px;
     }
-    
+
     ${MEDIA_QUERIES.tablet} {
       width: 28px;
       height: 28px;
@@ -214,11 +229,11 @@ const ItemTitle = styled.h3`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  
+
   ${MEDIA_QUERIES.phoneSmall} {
     font-size: 14px;
   }
-  
+
   ${MEDIA_QUERIES.tablet} {
     font-size: 18px;
   }
@@ -234,11 +249,11 @@ const ItemSubtitle = styled.p`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  
+
   ${MEDIA_QUERIES.phoneSmall} {
     font-size: 12px;
   }
-  
+
   ${MEDIA_QUERIES.tablet} {
     font-size: 16px;
   }
@@ -255,11 +270,11 @@ const ItemDescription = styled.p`
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  
+
   ${MEDIA_QUERIES.phoneSmall} {
     font-size: 11px;
   }
-  
+
   ${MEDIA_QUERIES.tablet} {
     font-size: 14px;
   }
@@ -279,16 +294,16 @@ const RightIconWrapper = styled.div`
   align-items: center;
   justify-content: center;
   color: ${KB_DESIGN_TOKENS.colors.onSurfaceVariant};
-  
+
   svg {
     width: 20px;
     height: 20px;
-    
+
     ${MEDIA_QUERIES.phoneSmall} {
       width: 18px;
       height: 18px;
     }
-    
+
     ${MEDIA_QUERIES.tablet} {
       width: 24px;
       height: 24px;
@@ -307,80 +322,83 @@ const Divider = styled.hr`
 /**
  * KB 스타뱅킹 완전 반응형 List Item 컴포넌트
  */
-const ResponsiveListItemComponent: React.FC<ResponsiveListItemProps> = memo(({
-  id,
-  title,
-  subtitle,
-  description,
-  leftIcon,
-  rightIcon,
-  leftImage,
-  rightContent,
-  onClick,
-  disabled = false,
-  highlighted = false,
-  divider = false,
-  compact = false,
-  className
-}) => {
-  // 기본 우측 화살표 아이콘
-  const defaultRightIcon = onClick && !rightIcon && !rightContent ? (
-    <svg viewBox="0 0 24 24" fill="none">
-      <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  ) : null;
+const ResponsiveListItemComponent: React.FC<ResponsiveListItemProps> = memo(
+  ({
+    id,
+    title,
+    subtitle,
+    description,
+    leftIcon,
+    rightIcon,
+    leftImage,
+    rightContent,
+    onClick,
+    disabled = false,
+    highlighted = false,
+    divider = false,
+    compact = false,
+    className,
+  }) => {
+    // 기본 우측 화살표 아이콘
+    const defaultRightIcon =
+      onClick && !rightIcon && !rightContent ? (
+        <svg viewBox='0 0 24 24' fill='none'>
+          <path
+            d='M9 18l6-6-6-6'
+            stroke='currentColor'
+            strokeWidth='2'
+            strokeLinecap='round'
+            strokeLinejoin='round'
+          />
+        </svg>
+      ) : null;
 
-  return (
-    <>
-      <ListItem
-        id={id}
-        disabled={disabled}
-        highlighted={highlighted}
-        clickable={!!onClick}
-        compact={compact}
-        onClick={disabled ? undefined : onClick}
-        className={className}
-        role={onClick ? 'button' : undefined}
-        tabIndex={onClick && !disabled ? 0 : undefined}
-        onKeyDown={(e) => {
-          if (onClick && !disabled && (e.key === 'Enter' || e.key === ' ')) {
-            e.preventDefault();
-            onClick();
-          }
-        }}
-      >
-        {(leftIcon || leftImage) && (
-          <LeftContent>
-            {leftImage ? (
-              <ItemImage src={leftImage} alt={title} />
-            ) : leftIcon ? (
-              <IconWrapper>
-                {leftIcon}
-              </IconWrapper>
-            ) : null}
-          </LeftContent>
-        )}
+    return (
+      <>
+        <ListItem
+          id={id}
+          disabled={disabled}
+          highlighted={highlighted}
+          clickable={!!onClick}
+          compact={compact}
+          onClick={disabled ? undefined : onClick}
+          className={className}
+          role={onClick ? 'button' : undefined}
+          tabIndex={onClick && !disabled ? 0 : undefined}
+          onKeyDown={e => {
+            if (onClick && !disabled && (e.key === 'Enter' || e.key === ' ')) {
+              e.preventDefault();
+              onClick();
+            }
+          }}
+        >
+          {(leftIcon || leftImage) && (
+            <LeftContent>
+              {leftImage ? (
+                <ItemImage src={leftImage} alt={title} />
+              ) : leftIcon ? (
+                <IconWrapper>{leftIcon}</IconWrapper>
+              ) : null}
+            </LeftContent>
+          )}
 
-        <CenterContent>
-          <ItemTitle>{title}</ItemTitle>
-          {subtitle && <ItemSubtitle>{subtitle}</ItemSubtitle>}
-          {description && <ItemDescription>{description}</ItemDescription>}
-        </CenterContent>
+          <CenterContent>
+            <ItemTitle>{title}</ItemTitle>
+            {subtitle && <ItemSubtitle>{subtitle}</ItemSubtitle>}
+            {description && <ItemDescription>{description}</ItemDescription>}
+          </CenterContent>
 
-        {(rightIcon || rightContent || defaultRightIcon) && (
-          <RightContent>
-            {rightContent || (
-              <RightIconWrapper>
-                {rightIcon || defaultRightIcon}
-              </RightIconWrapper>
-            )}
-          </RightContent>
-        )}
-      </ListItem>
-      {divider && <Divider />}
-    </>
-  );
-});
+          {(rightIcon || rightContent || defaultRightIcon) && (
+            <RightContent>
+              {rightContent || <RightIconWrapper>{rightIcon || defaultRightIcon}</RightIconWrapper>}
+            </RightContent>
+          )}
+        </ListItem>
+        {divider && <Divider />}
+      </>
+    );
+  }
+);
 
 ResponsiveListItemComponent.displayName = 'ResponsiveListItem';
 
@@ -391,7 +409,7 @@ export const ResponsiveList: React.FC<ResponsiveListProps> = ({
   children,
   spacing = 'medium',
   padding = false,
-  className
+  className,
 }) => {
   return (
     <ListContainer spacing={spacing} padding={padding} className={className}>
@@ -403,28 +421,27 @@ export const ResponsiveList: React.FC<ResponsiveListProps> = ({
 export const ResponsiveListItem = ResponsiveListItemComponent;
 
 // 미리 정의된 List Item 변형들
-export const AccountListItem: React.FC<ResponsiveListItemProps & { 
-  accountType?: string; 
-  balance?: string; 
-  accountNumber?: string; 
-}> = ({ 
-  accountType, 
-  balance, 
-  accountNumber, 
-  ...props 
-}) => (
+export const AccountListItem: React.FC<
+  ResponsiveListItemProps & {
+    accountType?: string;
+    balance?: string;
+    accountNumber?: string;
+  }
+> = ({ accountType, balance, accountNumber, ...props }) => (
   <ResponsiveListItem
     {...props}
     subtitle={accountType}
     description={accountNumber}
     rightContent={
       balance ? (
-        <div style={{ 
-          textAlign: 'right',
-          fontSize: '16px',
-          fontWeight: '600',
-          color: KB_DESIGN_TOKENS.colors.onSurface
-        }}>
+        <div
+          style={{
+            textAlign: 'right',
+            fontSize: '16px',
+            fontWeight: '600',
+            color: KB_DESIGN_TOKENS.colors.onSurface,
+          }}
+        >
           {balance}
         </div>
       ) : undefined
@@ -432,35 +449,35 @@ export const AccountListItem: React.FC<ResponsiveListItemProps & {
   />
 );
 
-export const TransactionListItem: React.FC<ResponsiveListItemProps & {
-  amount?: string;
-  date?: string;
-  isIncome?: boolean;
-}> = ({ 
-  amount, 
-  date, 
-  isIncome,
-  ...props 
-}) => (
+export const TransactionListItem: React.FC<
+  ResponsiveListItemProps & {
+    amount?: string;
+    date?: string;
+    isIncome?: boolean;
+  }
+> = ({ amount, date, isIncome, ...props }) => (
   <ResponsiveListItem
     {...props}
     subtitle={date}
     rightContent={
       amount ? (
-        <div style={{ 
-          textAlign: 'right',
-          fontSize: '16px',
-          fontWeight: '600',
-          color: isIncome ? KB_DESIGN_TOKENS.colors.success : KB_DESIGN_TOKENS.colors.error
-        }}>
-          {isIncome ? '+' : '-'}{amount}
+        <div
+          style={{
+            textAlign: 'right',
+            fontSize: '16px',
+            fontWeight: '600',
+            color: isIncome ? KB_DESIGN_TOKENS.colors.success : KB_DESIGN_TOKENS.colors.error,
+          }}
+        >
+          {isIncome ? '+' : '-'}
+          {amount}
         </div>
       ) : undefined
     }
   />
 );
 
-export const MenuListItem: React.FC<ResponsiveListItemProps> = (props) => (
+export const MenuListItem: React.FC<ResponsiveListItemProps> = props => (
   <ResponsiveListItem {...props} compact />
 );
 

@@ -1,6 +1,6 @@
 /**
  * PWA 관련 TypeScript 타입 선언
- * 
+ *
  * 브라우저에서 기본 제공하지 않는 PWA API들의 타입을 정의합니다.
  */
 // Background Sync API 타입 정의
@@ -23,7 +23,16 @@ interface NetworkInformation extends EventTarget {
   readonly effectiveType: '2g' | '3g' | '4g' | 'slow-2g';
   readonly rtt: number;
   readonly saveData: boolean;
-  readonly type: 'bluetooth' | 'cellular' | 'ethernet' | 'mixed' | 'none' | 'other' | 'unknown' | 'wifi' | 'wimax';
+  readonly type:
+    | 'bluetooth'
+    | 'cellular'
+    | 'ethernet'
+    | 'mixed'
+    | 'none'
+    | 'other'
+    | 'unknown'
+    | 'wifi'
+    | 'wimax';
   addEventListener(type: 'change', listener: EventListener): void;
   removeEventListener(type: 'change', listener: EventListener): void;
 }
@@ -59,10 +68,7 @@ interface Navigator {
 }
 // Web Locks API 타입
 interface LockManager {
-  request<T>(
-    name: string,
-    callback: () => Promise<T> | T
-  ): Promise<T>;
+  request<T>(name: string, callback: () => Promise<T> | T): Promise<T>;
   request<T>(
     name: string,
     options: {
@@ -102,7 +108,7 @@ interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>;
 }
 interface WindowEventMap {
-  'beforeinstallprompt': BeforeInstallPromptEvent;
+  beforeinstallprompt: BeforeInstallPromptEvent;
 }
 // Contact Picker API 타입
 interface ContactAddress {
@@ -151,11 +157,7 @@ interface FileSystemWritableFileStream extends WritableStream {
   seek(position: number): Promise<void>;
   truncate(size: number): Promise<void>;
 }
-type FileSystemWriteChunkType = 
-  | BufferSource 
-  | Blob 
-  | string 
-  | WriteParams;
+type FileSystemWriteChunkType = BufferSource | Blob | string | WriteParams;
 interface WriteParams {
   type: 'write' | 'seek' | 'truncate';
   data?: BufferSource | Blob | string;
@@ -235,15 +237,15 @@ interface MediaSession {
   setActionHandler(action: MediaSessionAction, handler: MediaSessionActionHandler | null): void;
   setPositionState(state?: MediaPositionState): void;
 }
-type MediaSessionAction = 
-  | 'play' 
-  | 'pause' 
-  | 'stop' 
-  | 'seekbackward' 
-  | 'seekforward' 
-  | 'seekto' 
-  | 'skipad' 
-  | 'previoustrack' 
+type MediaSessionAction =
+  | 'play'
+  | 'pause'
+  | 'stop'
+  | 'seekbackward'
+  | 'seekforward'
+  | 'seekto'
+  | 'skipad'
+  | 'previoustrack'
   | 'nexttrack';
 interface MediaSessionActionHandler {
   (details: MediaSessionActionDetails): void;

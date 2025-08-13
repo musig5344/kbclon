@@ -35,14 +35,14 @@ class AnimationPerformanceMonitor {
   // Start monitoring
   start(): void {
     if (this.isMonitoring) return;
-    
+
     this.isMonitoring = true;
     this.frameCount = 0;
     this.lastTime = performance.now();
     this.fpsHistory = [];
     this.droppedFrames = 0;
     this.jankCount = 0;
-    
+
     this.tick();
   }
 
@@ -61,45 +61,46 @@ class AnimationPerformanceMonitor {
 
     const currentTime = performance.now();
     const deltaTime = currentTime - this.lastTime;
-    
+
     // Calculate FPS
     if (deltaTime > 0) {
       this.fps = Math.round(1000 / deltaTime);
       this.fpsHistory.push(this.fps);
-      
+
       // Keep only last 60 frames for history
       if (this.fpsHistory.length > 60) {
         this.fpsHistory.shift();
       }
-      
+
       // Detect dropped frames (below 55 FPS)
       if (this.fps < 55) {
         this.droppedFrames++;
       }
-      
+
       // Detect jank (frame time > 50ms)
       if (deltaTime > 50) {
         this.jankCount++;
       }
     }
-    
+
     this.frameCount++;
     this.lastTime = currentTime;
-    
+
     // Notify callbacks every 10 frames
     if (this.frameCount % 10 === 0) {
       this.notifyCallbacks();
     }
-    
+
     this.rafId = requestAnimationFrame(this.tick);
   };
 
   // Get current metrics
   getMetrics(): PerformanceMetrics {
-    const avgFps = this.fpsHistory.length > 0
-      ? Math.round(this.fpsHistory.reduce((a, b) => a + b, 0) / this.fpsHistory.length)
-      : 60;
-    
+    const avgFps =
+      this.fpsHistory.length > 0
+        ? Math.round(this.fpsHistory.reduce((a, b) => a + b, 0) / this.fpsHistory.length)
+        : 60;
+
     return {
       fps: this.fps,
       frameTime: Math.round(1000 / this.fps),
@@ -111,7 +112,7 @@ class AnimationPerformanceMonitor {
   // Subscribe to metrics updates
   subscribe(callback: (metrics: PerformanceMetrics) => void): () => void {
     this.callbacks.push(callback);
-    
+
     // Return unsubscribe function
     return () => {
       const index = this.callbacks.indexOf(callback);
@@ -138,7 +139,7 @@ class AnimationPerformanceMonitor {
       maxFps: 0,
       droppedFrames: 0,
     };
-    
+
     this.animationMetrics.set(animationId, startMetrics);
   }
 
@@ -146,22 +147,20 @@ class AnimationPerformanceMonitor {
   endAnimation(animationId: string): AnimationMetrics | null {
     const metrics = this.animationMetrics.get(animationId);
     if (!metrics) return null;
-    
+
     metrics.endTime = performance.now();
     metrics.duration = metrics.endTime - metrics.startTime;
-    
+
     // Calculate FPS metrics from history during animation
     const relevantFps = this.fpsHistory.slice(-Math.ceil(metrics.duration / 16.67));
-    
+
     if (relevantFps.length > 0) {
-      metrics.averageFps = Math.round(
-        relevantFps.reduce((a, b) => a + b, 0) / relevantFps.length
-      );
+      metrics.averageFps = Math.round(relevantFps.reduce((a, b) => a + b, 0) / relevantFps.length);
       metrics.minFps = Math.min(...relevantFps);
       metrics.maxFps = Math.max(...relevantFps);
       metrics.droppedFrames = relevantFps.filter(fps => fps < 55).length;
     }
-    
+
     return metrics;
   }
 
@@ -169,7 +168,7 @@ class AnimationPerformanceMonitor {
   getAnimationReport(animationId: string): string {
     const metrics = this.animationMetrics.get(animationId);
     if (!metrics) return 'No metrics found for animation';
-    
+
     return `
 Animation Performance Report (${animationId}):
 - Duration: ${metrics.duration.toFixed(2)}ms
@@ -214,7 +213,7 @@ export const performanceHelpers = {
     // Check for various indicators of low-end devices
     const memory = (navigator as any).deviceMemory;
     const cores = navigator.hardwareConcurrency;
-    
+
     return (
       (memory && memory < 4) || // Less than 4GB RAM
       (cores && cores < 4) || // Less than 4 CPU cores
@@ -234,16 +233,13 @@ export const performanceHelpers = {
   },
 
   // Debounce animations
-  debounceAnimation(
-    func: (...args: any[]) => void,
-    wait: number
-  ): (...args: any[]) => void {
+  debounceAnimation(func: (...args: any[]) => void, wait: number): (...args: any[]) => void {
     let rafId: number | null = null;
     let lastArgs: any[] | null = null;
-    
+
     return (...args: any[]) => {
       lastArgs = args;
-      
+
       if (rafId === null) {
         rafId = requestAnimationFrame(() => {
           func(...(lastArgs as any[]));
@@ -255,17 +251,14 @@ export const performanceHelpers = {
   },
 
   // Throttle animations
-  throttleAnimation(
-    func: (...args: any[]) => void,
-    limit: number
-  ): (...args: any[]) => void {
+  throttleAnimation(func: (...args: any[]) => void, limit: number): (...args: any[]) => void {
     let inThrottle = false;
-    
+
     return (...args: any[]) => {
       if (!inThrottle) {
         func(...args);
         inThrottle = true;
-        
+
         requestAnimationFrame(() => {
           setTimeout(() => {
             inThrottle = false;

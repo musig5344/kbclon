@@ -3,9 +3,9 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import styled from 'styled-components';
 
 import { exchangeRateService, CurrencyRate } from '../../../services/exchangeRate';
-import { 
+import {
   androidAppContainer,
-  androidOptimizedButton 
+  androidOptimizedButton,
 } from '../../../styles/android-webview-optimizations';
 import { pulse, fadeIn } from '../../../styles/animations';
 import { KBDesignSystem } from '../../../styles/tokens/kb-design-system';
@@ -22,7 +22,7 @@ const TabSection = styled.section`
   background: ${KBDesignSystem.colors.background.white};
   padding: 0;
   border-top: 1px solid ${KBDesignSystem.colors.border.light};
-  
+
   /* Android WebView 성능 최적화 */
   transform: translateZ(0);
   will-change: scroll-position;
@@ -36,19 +36,28 @@ const TabButton = styled.button<{ $active: boolean }>`
   ${androidOptimizedButton}
   flex: 1;
   padding: ${KBDesignSystem.spacing.md} ${KBDesignSystem.spacing.base};
-  background: ${props => props.$active ? KBDesignSystem.colors.background.white : KBDesignSystem.colors.background.gray200};
+  background: ${props =>
+    props.$active
+      ? KBDesignSystem.colors.background.white
+      : KBDesignSystem.colors.background.gray200};
   border: none;
-  border-bottom: ${props => props.$active ? `3px solid ${KBDesignSystem.colors.primary.yellow}` : '3px solid transparent'};
+  border-bottom: ${props =>
+    props.$active ? `3px solid ${KBDesignSystem.colors.primary.yellow}` : '3px solid transparent'};
   font-family: ${KBDesignSystem.typography.fontFamily.primary};
   font-size: ${KBDesignSystem.typography.fontSize.base};
-  font-weight: ${props => props.$active ? KBDesignSystem.typography.fontWeight.bold : KBDesignSystem.typography.fontWeight.medium};
-  color: ${props => props.$active ? KBDesignSystem.colors.text.primary : KBDesignSystem.colors.text.tertiary};
+  font-weight: ${props =>
+    props.$active
+      ? KBDesignSystem.typography.fontWeight.bold
+      : KBDesignSystem.typography.fontWeight.medium};
+  color: ${props =>
+    props.$active ? KBDesignSystem.colors.text.primary : KBDesignSystem.colors.text.tertiary};
   cursor: pointer;
-  transition: all ${KBDesignSystem.animation.duration.normal} ${KBDesignSystem.animation.easing.easeOut};
+  transition: all ${KBDesignSystem.animation.duration.normal}
+    ${KBDesignSystem.animation.easing.easeOut};
   position: relative;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
-  
+
   /* Android WebView 터치 최적화 */
   touch-action: manipulation;
   &:hover {
@@ -59,7 +68,9 @@ const TabButton = styled.button<{ $active: boolean }>`
     transform: scale(0.98);
   }
   /* 활성 탭 하이라이트 */
-  ${props => props.$active && `
+  ${props =>
+    props.$active &&
+    `
     &::before {
       content: '';
       position: absolute;
@@ -87,7 +98,8 @@ const CurrencyItem = styled.div`
   padding: ${KBDesignSystem.spacing.md};
   background: ${KBDesignSystem.colors.background.gray100};
   border-radius: ${KBDesignSystem.borderRadius.lg};
-  transition: all ${KBDesignSystem.animation.duration.normal} ${KBDesignSystem.animation.easing.easeOut};
+  transition: all ${KBDesignSystem.animation.duration.normal}
+    ${KBDesignSystem.animation.easing.easeOut};
   &:hover {
     background: ${KBDesignSystem.colors.background.gray200};
     transform: translateY(-1px);
@@ -122,7 +134,8 @@ const StockItem = styled.div`
   padding: ${KBDesignSystem.spacing.base};
   background: ${KBDesignSystem.colors.background.gray100};
   border-radius: ${KBDesignSystem.borderRadius.lg};
-  transition: all ${KBDesignSystem.animation.duration.normal} ${KBDesignSystem.animation.easing.easeOut};
+  transition: all ${KBDesignSystem.animation.duration.normal}
+    ${KBDesignSystem.animation.easing.easeOut};
   &:hover {
     background: ${KBDesignSystem.colors.background.gray200};
     transform: translateY(-1px);
@@ -148,7 +161,8 @@ const StockChange = styled.div<{ $isUp: boolean }>`
   font-family: ${KBDesignSystem.typography.fontFamily.primary};
   font-size: ${KBDesignSystem.typography.fontSize.sm};
   font-weight: ${KBDesignSystem.typography.fontWeight.medium};
-  color: ${props => props.$isUp ? KBDesignSystem.colors.status.error : KBDesignSystem.colors.status.success};
+  color: ${props =>
+    props.$isUp ? KBDesignSystem.colors.status.error : KBDesignSystem.colors.status.success};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -198,10 +212,11 @@ const RefreshButton = styled.button<{ $isLoading?: boolean }>`
   font-weight: ${KBDesignSystem.typography.fontWeight.medium};
   color: ${KBDesignSystem.colors.text.secondary};
   cursor: pointer;
-  transition: all ${KBDesignSystem.animation.duration.fast} ${KBDesignSystem.animation.easing.easeOut};
+  transition: all ${KBDesignSystem.animation.duration.fast}
+    ${KBDesignSystem.animation.easing.easeOut};
   user-select: none;
   -webkit-tap-highlight-color: transparent;
-  
+
   /* Android WebView 터치 최적화 */
   touch-action: manipulation;
   will-change: transform;
@@ -223,8 +238,8 @@ const RefreshButton = styled.button<{ $isLoading?: boolean }>`
     width: 16px;
     height: 16px;
     transition: transform ${KBDesignSystem.animation.duration.normal} ease;
-    transform: ${props => props.$isLoading ? 'rotate(360deg)' : 'rotate(0)'};
-    animation: ${props => props.$isLoading ? 'spin 1s linear infinite' : 'none'};
+    transform: ${props => (props.$isLoading ? 'rotate(360deg)' : 'rotate(0)')};
+    animation: ${props => (props.$isLoading ? 'spin 1s linear infinite' : 'none')};
   }
   @keyframes spin {
     from {
@@ -269,7 +284,7 @@ export const FinancialTabs: React.FC<FinancialTabsProps> = ({ className }) => {
   const [lastUpdateTime, setLastUpdateTime] = useState<string>('');
   const [stockData, setStockData] = useState<StockData[]>([
     { name: 'KOSPI', price: 3196.05, change: 5.6, percent: 0.18, isUp: true },
-    { name: 'KOSDAQ', price: 806.95, change: -2.94, percent: -0.36, isUp: false }
+    { name: 'KOSDAQ', price: 806.95, change: -2.94, percent: -0.36, isUp: false },
   ]);
   const [isLoadingStock, setIsLoadingStock] = useState(false);
   const [lastStockUpdateTime, setLastStockUpdateTime] = useState<string>('');
@@ -295,27 +310,29 @@ export const FinancialTabs: React.FC<FinancialTabsProps> = ({ className }) => {
       day: '2-digit',
       hour: '2-digit',
       minute: '2-digit',
-      second: '2-digit'
+      second: '2-digit',
     });
   }, []);
   // 증시 데이터 업데이트 (가상)
   const updateStockData = useCallback(() => {
     setIsLoadingStock(true);
     setTimeout(() => {
-      setStockData(prevData => prevData.map(stock => {
-        // 랜덤 변동률 (-0.5% ~ +0.5%)
-        const changePercent = (Math.random() - 0.5) * 0.01;
-        const newPrice = stock.price * (1 + changePercent);
-        const priceChange = newPrice - stock.price;
-        const isUp = priceChange >= 0;
-        return {
-          name: stock.name,
-          price: Number(newPrice.toFixed(2)),
-          change: Number(Math.abs(priceChange).toFixed(2)),
-          percent: Number((Math.abs(changePercent) * 100).toFixed(2)),
-          isUp
-        };
-      }));
+      setStockData(prevData =>
+        prevData.map(stock => {
+          // 랜덤 변동률 (-0.5% ~ +0.5%)
+          const changePercent = (Math.random() - 0.5) * 0.01;
+          const newPrice = stock.price * (1 + changePercent);
+          const priceChange = newPrice - stock.price;
+          const isUp = priceChange >= 0;
+          return {
+            name: stock.name,
+            price: Number(newPrice.toFixed(2)),
+            change: Number(Math.abs(priceChange).toFixed(2)),
+            percent: Number((Math.abs(changePercent) * 100).toFixed(2)),
+            isUp,
+          };
+        })
+      );
       setLastStockUpdateTime(getCurrentTime());
       setIsLoadingStock(false);
     }, 500);
@@ -334,24 +351,21 @@ export const FinancialTabs: React.FC<FinancialTabsProps> = ({ className }) => {
     };
   }, [loadExchangeRates, updateStockData, getCurrentTime]);
   // 기본 환율 데이터 (로딩 중일 때)
-  const defaultRates = useMemo(() => [
-    { flag: '🇺🇸', code: 'USD', rate: 1383.20 },
-    { flag: '🇯🇵', code: 'JPY', rate: 937.13 },
-    { flag: '🇪🇺', code: 'EUR', rate: 1624.43 }
-  ], []);
+  const defaultRates = useMemo(
+    () => [
+      { flag: '🇺🇸', code: 'USD', rate: 1383.2 },
+      { flag: '🇯🇵', code: 'JPY', rate: 937.13 },
+      { flag: '🇪🇺', code: 'EUR', rate: 1624.43 },
+    ],
+    []
+  );
   return (
     <TabSection className={className}>
       <TabContainer>
-        <TabButton 
-          $active={activeTab === '환율'}
-          onClick={() => setActiveTab('환율')}
-        >
+        <TabButton $active={activeTab === '환율'} onClick={() => setActiveTab('환율')}>
           환율
         </TabButton>
-        <TabButton 
-          $active={activeTab === '증시'}
-          onClick={() => setActiveTab('증시')}
-        >
+        <TabButton $active={activeTab === '증시'} onClick={() => setActiveTab('증시')}>
           증시
         </TabButton>
       </TabContainer>
@@ -364,13 +378,23 @@ export const FinancialTabs: React.FC<FinancialTabsProps> = ({ className }) => {
                 <UpdateDateTime>{lastUpdateTime || getCurrentTime()}</UpdateDateTime>
                 <AutoUpdateIndicator>5분마다 자동 업데이트</AutoUpdateIndicator>
               </UpdateLabel>
-              <RefreshButton 
+              <RefreshButton
                 onClick={() => !isLoadingRates && loadExchangeRates()}
                 $isLoading={isLoadingRates}
                 disabled={isLoadingRates}
               >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  fill='none'
+                  viewBox='0 0 24 24'
+                  stroke='currentColor'
+                >
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={2}
+                    d='M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15'
+                  />
                 </svg>
                 {isLoadingRates ? '업데이트 중' : '새로고침'}
               </RefreshButton>
@@ -378,7 +402,9 @@ export const FinancialTabs: React.FC<FinancialTabsProps> = ({ className }) => {
             <CurrencyGrid>
               {(exchangeRates.length > 0 ? exchangeRates : defaultRates).map((currency, index) => (
                 <CurrencyItem key={index}>
-                  <CurrencyFlag>{currency.flag} {currency.code}</CurrencyFlag>
+                  <CurrencyFlag>
+                    {currency.flag} {currency.code}
+                  </CurrencyFlag>
                   <CurrencyRateText>{formatCurrency(currency.rate)}</CurrencyRateText>
                 </CurrencyItem>
               ))}
@@ -392,13 +418,23 @@ export const FinancialTabs: React.FC<FinancialTabsProps> = ({ className }) => {
                 <UpdateDateTime>{lastStockUpdateTime || getCurrentTime()}</UpdateDateTime>
                 <AutoUpdateIndicator>30초마다 자동 업데이트</AutoUpdateIndicator>
               </UpdateLabel>
-              <RefreshButton 
+              <RefreshButton
                 onClick={updateStockData}
                 $isLoading={isLoadingStock}
                 disabled={isLoadingStock}
               >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                <svg
+                  xmlns='http://www.w3.org/2000/svg'
+                  fill='none'
+                  viewBox='0 0 24 24'
+                  stroke='currentColor'
+                >
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth={2}
+                    d='M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15'
+                  />
                 </svg>
                 {isLoadingStock ? '업데이트 중' : '새로고침'}
               </RefreshButton>

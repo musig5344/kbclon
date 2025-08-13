@@ -44,10 +44,10 @@ export class HapticFeedback {
    */
   async vibrate(pattern: number | number[] = 10): Promise<void> {
     if (!this.isEnabled) return;
-    
+
     const now = Date.now();
     if (now - this.lastHapticTime < this.hapticThrottle) return;
-    
+
     this.lastHapticTime = now;
 
     try {
@@ -69,7 +69,6 @@ export class HapticFeedback {
         (window as any).AndroidInterface.vibrate(Array.isArray(pattern) ? pattern[0] : pattern);
         return;
       }
-
     } catch (error) {
       console.warn('[HapticFeedback] 햅틱 피드백 실패:', error);
     }
@@ -78,7 +77,9 @@ export class HapticFeedback {
   /**
    * 터치 타입별 햅틱 패턴
    */
-  async touchFeedback(type: 'light' | 'medium' | 'strong' | 'success' | 'error' | 'warning'): Promise<void> {
+  async touchFeedback(
+    type: 'light' | 'medium' | 'strong' | 'success' | 'error' | 'warning'
+  ): Promise<void> {
     switch (type) {
       case 'light':
         await this.vibrate(5);
@@ -115,18 +116,18 @@ export const hapticFeedback = HapticFeedback.getInstance();
 
 // 리플 이팩트 생성 함수
 export const createRippleEffect = (
-  element: HTMLElement, 
+  element: HTMLElement,
   event: MouseEvent | TouchEvent,
   options: TouchFeedbackOptions = {}
 ): void => {
   const { color = KBDesignSystem.colors.primary.yellowAlpha20, duration = 600 } = options;
-  
+
   // 이미 리플이 진행 중이면 무시 (Android 성능 최적화)
   if (element.classList.contains('ripple-active') && isAndroid) return;
-  
+
   const rect = element.getBoundingClientRect();
   const ripple = document.createElement('div');
-  
+
   // 터치 포인트 또는 마우스 포인트 계산
   let x, y;
   if ('touches' in event) {
@@ -137,15 +138,16 @@ export const createRippleEffect = (
     x = event.clientX - rect.left;
     y = event.clientY - rect.top;
   }
-  
+
   // 리플 크기 계산 (요소 대각선 길이)
-  const diameter = Math.max(
-    Math.sqrt(x * x + y * y),
-    Math.sqrt((rect.width - x) * (rect.width - x) + y * y),
-    Math.sqrt(x * x + (rect.height - y) * (rect.height - y)),
-    Math.sqrt((rect.width - x) * (rect.width - x) + (rect.height - y) * (rect.height - y))
-  ) * 2;
-  
+  const diameter =
+    Math.max(
+      Math.sqrt(x * x + y * y),
+      Math.sqrt((rect.width - x) * (rect.width - x) + y * y),
+      Math.sqrt(x * x + (rect.height - y) * (rect.height - y)),
+      Math.sqrt((rect.width - x) * (rect.width - x) + (rect.height - y) * (rect.height - y))
+    ) * 2;
+
   // 리플 요소 스타일링
   ripple.style.cssText = `
     position: absolute;
@@ -162,16 +164,16 @@ export const createRippleEffect = (
     transition: transform ${duration}ms cubic-bezier(0.25, 0.8, 0.25, 1),
                 opacity ${duration}ms cubic-bezier(0.25, 0.8, 0.25, 1);
   `;
-  
+
   element.appendChild(ripple);
   element.classList.add('ripple-active');
-  
+
   // Android WebView 최적화: requestAnimationFrame 사용
   requestAnimationFrame(() => {
     ripple.style.transform = 'scale(1)';
     ripple.style.opacity = '0';
   });
-  
+
   // 리플 제거
   setTimeout(() => {
     try {
@@ -191,25 +193,25 @@ export const createScaleFeedback = (
   options: TouchFeedbackOptions = {}
 ): void => {
   const { intensity = 'medium', duration = 150 } = options;
-  
+
   const scaleValues = {
     light: 0.98,
     medium: 0.95,
-    strong: 0.92
+    strong: 0.92,
   };
-  
+
   const scale = scaleValues[intensity];
   const originalTransform = element.style.transform;
   const originalTransition = element.style.transition;
-  
+
   // 스케일 다운
   element.style.transition = `transform ${duration}ms cubic-bezier(0.25, 0.8, 0.25, 1)`;
   element.style.transform = `${originalTransform} scale(${scale})`;
-  
+
   // 스케일 업 (원래 크기로)
   setTimeout(() => {
     element.style.transform = originalTransform;
-    
+
     // 애니메이션 완료 후 원래 스타일 복구
     setTimeout(() => {
       element.style.transition = originalTransition;
@@ -223,13 +225,13 @@ export const createGlowEffect = (
   options: TouchFeedbackOptions = {}
 ): void => {
   const { color = KBDesignSystem.colors.primary.yellow, duration = 300 } = options;
-  
+
   const originalBoxShadow = element.style.boxShadow;
   const glowShadow = `0 0 20px ${color}`;
-  
+
   element.style.transition = `box-shadow ${duration}ms ease`;
   element.style.boxShadow = `${originalBoxShadow}, ${glowShadow}`;
-  
+
   setTimeout(() => {
     element.style.boxShadow = originalBoxShadow;
     setTimeout(() => {
@@ -244,12 +246,7 @@ export const applyTouchFeedback = (
   event: MouseEvent | TouchEvent,
   options: TouchFeedbackOptions = {}
 ): void => {
-  const {
-    type = 'ripple',
-    intensity = 'medium',
-    haptic = true,
-    androidOptimized = true
-  } = options;
+  const { type = 'ripple', intensity = 'medium', haptic = true, androidOptimized = true } = options;
 
   // Android WebView에서 성능 최적화
   if (androidOptimized && isAndroid) {
@@ -288,44 +285,49 @@ export const applyTouchFeedback = (
 // CSS-in-JS 터치 피드백 믹스인
 export const touchFeedbackMixin = (options: TouchFeedbackOptions = {}) => {
   const { type = 'ripple', androidOptimized = true } = options;
-  
+
   return css`
     position: relative;
     overflow: hidden;
     cursor: pointer;
-    
+
     /* Android WebView 최적화 */
-    ${androidOptimized && isAndroid && css`
+    ${androidOptimized &&
+    isAndroid &&
+    css`
       -webkit-tap-highlight-color: transparent;
       touch-action: manipulation;
       user-select: none;
       -webkit-user-select: none;
       -webkit-touch-callout: none;
     `}
-    
+
     /* 기본 터치 스타일 */
     &:active {
-      ${type === 'scale' && css`
+      ${type === 'scale' &&
+      css`
         transform: scale(0.95);
         transition: transform 150ms cubic-bezier(0.25, 0.8, 0.25, 1);
       `}
-      
-      ${type === 'glow' && css`
+
+      ${type === 'glow' &&
+      css`
         box-shadow: 0 0 20px ${options.color || KBDesignSystem.colors.primary.yellowAlpha20};
         transition: box-shadow 200ms ease;
       `}
     }
-    
+
     /* 포커스 상태 */
     &:focus-visible {
       outline: 2px solid ${KBDesignSystem.colors.primary.yellow};
       outline-offset: 2px;
     }
-    
+
     /* 호버 상태 (비터치 디바이스에서만) */
     @media (hover: hover) and (pointer: fine) {
       &:hover {
-        ${type !== 'ripple' && css`
+        ${type !== 'ripple' &&
+        css`
           transform: translateY(-1px);
           box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
           transition: all 200ms cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -341,21 +343,21 @@ export const useTouchFeedback = (options: TouchFeedbackOptions = {}) => {
     onTouchStart: (event: React.TouchEvent<HTMLElement>) => {
       applyTouchFeedback(event.currentTarget, event.nativeEvent, options);
     },
-    
+
     onMouseDown: (event: React.MouseEvent<HTMLElement>) => {
       // 터치 디바이스에서는 마우스 이벤트 무시
-      if (('ontouchstart' in window)) return;
+      if ('ontouchstart' in window) return;
       applyTouchFeedback(event.currentTarget, event.nativeEvent, options);
     },
-    
+
     style: {
       position: 'relative' as const,
       overflow: 'hidden' as const,
       cursor: 'pointer' as const,
       WebkitTapHighlightColor: 'transparent',
       touchAction: 'manipulation' as const,
-      userSelect: 'none' as const
-    }
+      userSelect: 'none' as const,
+    },
   };
 };
 
@@ -367,7 +369,7 @@ export class TouchFeedbackManager {
     type: 'ripple',
     intensity: 'medium',
     haptic: isAndroid || isCapacitor,
-    androidOptimized: true
+    androidOptimized: true,
   };
 
   static getInstance(): TouchFeedbackManager {
@@ -402,18 +404,22 @@ export class TouchFeedbackManager {
 
     const addTouchFeedbackToElement = (element: HTMLElement) => {
       if (element.dataset.touchFeedback === 'disabled') return;
-      
+
       const options = {
         ...this.defaultOptions,
-        ...JSON.parse(element.dataset.touchFeedbackOptions || '{}')
+        ...JSON.parse(element.dataset.touchFeedbackOptions || '{}'),
       };
 
-      element.addEventListener('touchstart', (event) => {
-        applyTouchFeedback(element, event, options);
-      }, { passive: true });
+      element.addEventListener(
+        'touchstart',
+        event => {
+          applyTouchFeedback(element, event, options);
+        },
+        { passive: true }
+      );
 
       if (!('ontouchstart' in window)) {
-        element.addEventListener('mousedown', (event) => {
+        element.addEventListener('mousedown', event => {
           applyTouchFeedback(element, event, options);
         });
       }
@@ -429,12 +435,16 @@ export class TouchFeedbackManager {
         mutation.addedNodes.forEach(node => {
           if (node.nodeType === Node.ELEMENT_NODE) {
             const element = node as HTMLElement;
-            
+
             // 버튼 요소 자체인 경우
-            if (element.tagName === 'BUTTON' || element.getAttribute('role') === 'button' || element.classList.contains('touchable')) {
+            if (
+              element.tagName === 'BUTTON' ||
+              element.getAttribute('role') === 'button' ||
+              element.classList.contains('touchable')
+            ) {
               addTouchFeedbackToElement(element);
             }
-            
+
             // 자식 요소 중 버튼이 있는 경우
             const childButtons = element.querySelectorAll('button, [role="button"], .touchable');
             childButtons.forEach(button => addTouchFeedbackToElement(button as HTMLElement));
@@ -445,7 +455,7 @@ export class TouchFeedbackManager {
 
     observer.observe(document.body, {
       childList: true,
-      subtree: true
+      subtree: true,
     });
   }
 }

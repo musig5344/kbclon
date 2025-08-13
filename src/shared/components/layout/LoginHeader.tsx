@@ -7,6 +7,7 @@ import KBBankLogo from '../../../assets/images/logo_kb_kookmin.png';
 import { colors } from '../../../styles/colors';
 import { tokens } from '../../../styles/tokens';
 interface LoginHeaderProps {
+  title?: string;
   onSearchClick?: () => void;
   onMenuClick?: () => void;
   onHomeClick?: () => void;
@@ -18,7 +19,11 @@ interface LoginHeaderProps {
 const HeaderContainer = styled.div`
   width: 100%;
   height: 58px; // 약간 높이 증가로 더 자연스러운 비율
-  background: linear-gradient(180deg, ${tokens.colors.headerBackground} 0%, ${tokens.colors.backgroundGray1} 100%);
+  background: linear-gradient(
+    180deg,
+    ${tokens.colors.headerBackground} 0%,
+    ${tokens.colors.backgroundGray1} 100%
+  );
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -58,7 +63,7 @@ const IconButton = styled.button<{ $visible?: boolean }>`
   border-radius: 50%;
   width: 42px; // 헤더 높이 증가에 맞춰 약간 확대
   height: 42px;
-  display: ${props => props.$visible === false ? 'none' : 'flex'};
+  display: ${props => (props.$visible === false ? 'none' : 'flex')};
   align-items: center;
   justify-content: center;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); // 부드러운 전환 효과
@@ -79,55 +84,66 @@ const IconButton = styled.button<{ $visible?: boolean }>`
 `;
 // 닫기 아이콘
 const CloseIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-    <path d="M18 6L6 18M6 6l12 12" stroke={colors.textSecondary} strokeWidth="2" strokeLinecap="round"/>
+  <svg width='24' height='24' viewBox='0 0 24 24' fill='none'>
+    <path
+      d='M18 6L6 18M6 6l12 12'
+      stroke={colors.textSecondary}
+      strokeWidth='2'
+      strokeLinecap='round'
+    />
   </svg>
 );
+
+const CenterTitle = styled.div`
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-family: ${tokens.typography.fontFamily.primary};
+  font-size: 18px;
+  font-weight: ${tokens.typography.fontWeight.medium};
+  color: ${colors.textPrimary};
+  white-space: nowrap;
+`;
 export const LoginHeader: React.FC<LoginHeaderProps> = ({
+  title,
   onSearchClick,
   onMenuClick,
   onHomeClick,
   onClose,
   showHomeButton = false,
-  showCloseButton = false
+  showCloseButton = false,
 }) => {
   return (
     <HeaderContainer>
       <LeftSection>
         <LogoContainer>
-          <LogoImage src={KBBankLogo} alt="KB국민은행 로고" />
+          <LogoImage src={KBBankLogo} alt='KB국민은행 로고' />
         </LogoContainer>
       </LeftSection>
-                <RightSection>
-            {/* 검색 버튼 */}
-            <IconButton onClick={onSearchClick} aria-label="검색">
-              <SearchIcon color={colors.textSecondary} />
-            </IconButton>
-            {/* 메뉴 버튼 */}
-            <IconButton 
-              onClick={onMenuClick} 
-              aria-label="전체메뉴"
-              $visible={!showHomeButton && !showCloseButton}
-            >
-              <MenuIcon color={colors.textSecondary} />
-            </IconButton>
-            {/* 홈 버튼 (조건부 표시) */}
-            <IconButton 
-              onClick={onHomeClick} 
-              aria-label="홈"
-              $visible={showHomeButton}
-            >
-              <HomeIcon color={colors.textSecondary} />
-            </IconButton>
-            {/* 닫기 버튼 (조건부 표시) */}
-            <IconButton 
-              onClick={onClose} 
-              aria-label="닫기"
-              $visible={showCloseButton}
-            >
-              <CloseIcon />
-            </IconButton>
-          </RightSection>
+      {title && <CenterTitle>{title}</CenterTitle>}
+      <RightSection>
+        {/* 검색 버튼 */}
+        <IconButton onClick={onSearchClick} aria-label='검색'>
+          <SearchIcon color={colors.textSecondary} />
+        </IconButton>
+        {/* 메뉴 버튼 */}
+        <IconButton
+          onClick={onMenuClick}
+          aria-label='전체메뉴'
+          $visible={!showHomeButton && !showCloseButton}
+        >
+          <MenuIcon color={colors.textSecondary} />
+        </IconButton>
+        {/* 홈 버튼 (조건부 표시) */}
+        <IconButton onClick={onHomeClick} aria-label='홈' $visible={showHomeButton}>
+          <HomeIcon color={colors.textSecondary} />
+        </IconButton>
+        {/* 닫기 버튼 (조건부 표시) */}
+        <IconButton onClick={onClose} aria-label='닫기' $visible={showCloseButton}>
+          <CloseIcon />
+        </IconButton>
+      </RightSection>
     </HeaderContainer>
   );
-}; 
+};

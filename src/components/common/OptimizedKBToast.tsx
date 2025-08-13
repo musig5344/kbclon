@@ -7,7 +7,11 @@ import React, { useEffect, useState, useRef } from 'react';
 
 import styled from 'styled-components';
 
-import { ScaleTransition, FadeTransition, CompoundTransition } from '../../shared/components/animation/OptimizedTransition';
+import {
+  ScaleTransition,
+  FadeTransition,
+  CompoundTransition,
+} from '../../shared/components/animation/OptimizedTransition';
 import { gpuAcceleration, containment } from '../../shared/utils/animationHelpers';
 import { animationMonitor, performanceHelpers } from '../../shared/utils/animationPerformance';
 import { dimensions } from '../../styles/dimensions';
@@ -65,7 +69,7 @@ const ToastMessage = styled.div<{ $type: string }>`
   word-break: keep-all;
   white-space: pre-wrap;
   ${containment.paint}
-  
+
   ${props => {
     switch (props.$type) {
       case 'success':
@@ -101,7 +105,7 @@ const ToastIcon = styled.span<{ $type: string }>`
   display: inline-block;
   margin-right: 8px;
   font-size: 16px;
-  
+
   ${props => {
     switch (props.$type) {
       case 'success':
@@ -134,16 +138,16 @@ const OptimizedKBToast: React.FC<OptimizedKBToastProps> = ({
   useEffect(() => {
     if (isVisible) {
       setShouldRender(true);
-      
+
       // Start performance monitoring
       animationIdRef.current = `toast-${Date.now()}`;
       animationMonitor.startAnimation(animationIdRef.current);
-      
+
       // Auto close timer
       autoCloseTimerRef.current = setTimeout(() => {
         onClose();
       }, duration);
-      
+
       return () => {
         if (autoCloseTimerRef.current) {
           clearTimeout(autoCloseTimerRef.current);
@@ -157,12 +161,12 @@ const OptimizedKBToast: React.FC<OptimizedKBToastProps> = ({
           console.warn('Toast animation performance below 60fps:', metrics);
         }
       }
-      
+
       // Delay unmount for exit animation
       const unmountTimer = setTimeout(() => {
         setShouldRender(false);
       }, 300); // Animation duration
-      
+
       return () => clearTimeout(unmountTimer);
     }
   }, [isVisible, duration, onClose]);
@@ -210,17 +214,8 @@ const OptimizedKBToast: React.FC<OptimizedKBToastProps> = ({
   // Default optimized animation
   return (
     <ToastWrapper $position={position}>
-      <FadeTransition
-        in={isVisible}
-        duration={300}
-        unmountOnExit
-      >
-        <ScaleTransition
-          in={isVisible}
-          from={0.9}
-          to={1}
-          duration={300}
-        >
+      <FadeTransition in={isVisible} duration={300} unmountOnExit>
+        <ScaleTransition in={isVisible} from={0.9} to={1} duration={300}>
           {toastContent}
         </ScaleTransition>
       </FadeTransition>
@@ -230,14 +225,16 @@ const OptimizedKBToast: React.FC<OptimizedKBToastProps> = ({
 
 // Enhanced toast hook with performance monitoring
 export const useOptimizedToast = () => {
-  const [toasts, setToasts] = useState<Array<{
-    id: string;
-    message: string;
-    type: 'info' | 'success' | 'warning' | 'error';
-    duration?: number;
-    position?: 'top' | 'center' | 'bottom';
-    useSpringAnimation?: boolean;
-  }>>([]);
+  const [toasts, setToasts] = useState<
+    Array<{
+      id: string;
+      message: string;
+      type: 'info' | 'success' | 'warning' | 'error';
+      duration?: number;
+      position?: 'top' | 'center' | 'bottom';
+      useSpringAnimation?: boolean;
+    }>
+  >([]);
 
   const showToast = (
     message: string,
@@ -253,9 +250,9 @@ export const useOptimizedToast = () => {
 
     const id = `toast-${Date.now()}`;
     const newToast = { id, message, type, duration, position, useSpringAnimation };
-    
+
     setToasts(prev => [...prev, newToast]);
-    
+
     // Schedule removal
     performanceHelpers.scheduleAnimation(() => {
       setTimeout(() => {
@@ -273,14 +270,10 @@ export const useOptimizedToast = () => {
     showToast,
     removeToast,
     // Convenience methods
-    showSuccess: (message: string, duration?: number) => 
-      showToast(message, 'success', duration),
-    showError: (message: string, duration?: number) => 
-      showToast(message, 'error', duration),
-    showWarning: (message: string, duration?: number) => 
-      showToast(message, 'warning', duration),
-    showInfo: (message: string, duration?: number) => 
-      showToast(message, 'info', duration),
+    showSuccess: (message: string, duration?: number) => showToast(message, 'success', duration),
+    showError: (message: string, duration?: number) => showToast(message, 'error', duration),
+    showWarning: (message: string, duration?: number) => showToast(message, 'warning', duration),
+    showInfo: (message: string, duration?: number) => showToast(message, 'info', duration),
   };
 };
 
@@ -313,7 +306,7 @@ interface ToastProviderProps {
   enablePerformanceMonitoring?: boolean;
 }
 
-export const OptimizedToastProvider: React.FC<ToastProviderProps> = ({ 
+export const OptimizedToastProvider: React.FC<ToastProviderProps> = ({
   children,
   enablePerformanceMonitoring = false,
 }) => {
@@ -322,7 +315,7 @@ export const OptimizedToastProvider: React.FC<ToastProviderProps> = ({
   useEffect(() => {
     if (enablePerformanceMonitoring) {
       animationMonitor.start();
-      
+
       return () => {
         animationMonitor.stop();
       };

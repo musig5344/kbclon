@@ -9,19 +9,19 @@ import { css, keyframes } from 'styled-components';
 export const kbShadows = {
   // 카드 컴포넌트 기본 그림자 (매우 연한)
   card: '0 2px 8px rgba(0, 0, 0, 0.04)',
-  
+
   // 호버/포커스 시 그림자
   cardHover: '0 4px 16px rgba(0, 0, 0, 0.08)',
-  
+
   // 바텀시트/모달 그림자
   bottomSheet: '0 -4px 20px rgba(0, 0, 0, 0.12)',
-  
+
   // 플로팅 버튼 그림자
   floating: '0 4px 12px rgba(0, 0, 0, 0.15)',
-  
+
   // 헤더 스크롤 시 그림자
   headerScroll: '0 2px 4px rgba(0, 0, 0, 0.06)',
-  
+
   // 입력 필드 포커스 그림자
   inputFocus: '0 0 0 4px rgba(255, 211, 56, 0.2)', // KB 노란색 글로우
 };
@@ -99,11 +99,11 @@ export const kbButtonStyle = css`
   overflow: hidden;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   -webkit-tap-highlight-color: transparent;
-  
+
   &:active {
     animation: ${kbButtonPress} 0.3s ease-out;
   }
-  
+
   /* 터치 시 리플 효과 */
   &::after {
     content: '';
@@ -115,9 +115,11 @@ export const kbButtonStyle = css`
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.5);
     transform: translate(-50%, -50%);
-    transition: width 0.6s, height 0.6s;
+    transition:
+      width 0.6s,
+      height 0.6s;
   }
-  
+
   &:active::after {
     width: 300px;
     height: 300px;
@@ -127,12 +129,12 @@ export const kbButtonStyle = css`
 // KB 입력 필드 스타일
 export const kbInputStyle = css`
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  
+
   &:focus {
     box-shadow: ${kbShadows.inputFocus};
-    border-color: #FFD338;
+    border-color: #ffd338;
   }
-  
+
   /* 입력 시 미세한 진동 효과 */
   &:focus:valid {
     animation: kbMicroShake 0.2s ease-out;
@@ -154,7 +156,7 @@ export const kbFontOptimization = css`
   font-feature-settings: 'kern' 1;
   font-kerning: normal;
   letter-spacing: -0.3px;
-  
+
   /* 숫자에 대한 특별한 처리 */
   &.number {
     font-variant-numeric: tabular-nums;
@@ -166,16 +168,16 @@ export const kbFontOptimization = css`
 export const kbSmoothScroll = css`
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
-  
+
   /* 스크롤바 스타일링 */
   &::-webkit-scrollbar {
     width: 4px;
   }
-  
+
   &::-webkit-scrollbar-track {
     background: transparent;
   }
-  
+
   &::-webkit-scrollbar-thumb {
     background: rgba(0, 0, 0, 0.2);
     border-radius: 2px;
@@ -223,7 +225,7 @@ export const kbBalanceHighlight = keyframes`
 // 메뉴 아이템 터치 효과
 export const kbMenuItemTouch = css`
   position: relative;
-  
+
   &::before {
     content: '';
     position: absolute;
@@ -236,7 +238,7 @@ export const kbMenuItemTouch = css`
     transform-origin: left;
     transition: transform 0.3s ease-out;
   }
-  
+
   &:active::before {
     transform: scaleX(1);
   }
@@ -253,12 +255,7 @@ export const kbSkeletonPulse = keyframes`
 `;
 
 export const kbSkeletonStyle = css`
-  background: linear-gradient(
-    90deg,
-    #f0f0f0 25%,
-    #e0e0e0 50%,
-    #f0f0f0 75%
-  );
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
   background-size: 200% 100%;
   animation: ${kbSkeletonPulse} 1.5s ease-in-out infinite;
 `;
@@ -270,7 +267,7 @@ export const kbTimings = {
   normal: '0.3s',
   slow: '0.5s',
   verySlow: '0.8s',
-  
+
   // 이징 함수들
   easeOut: 'cubic-bezier(0.4, 0, 0.2, 1)',
   easeIn: 'cubic-bezier(0.0, 0, 0.2, 1)',
@@ -281,7 +278,7 @@ export const kbTimings = {
 // 반응형 터치 영역 확대
 export const kbTouchTarget = css`
   position: relative;
-  
+
   /* 최소 44px 터치 영역 보장 */
   &::before {
     content: '';

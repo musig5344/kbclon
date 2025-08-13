@@ -1,6 +1,6 @@
 /**
  * Session Management React Provider
- * 
+ *
  * React 애플리케이션을 위한 세션 관리 컨텍스트 및 Hook
  * - 자동 세션 검증 및 갱신
  * - 세션 상태 관리
@@ -8,7 +8,14 @@
  * - 다중 탭 세션 동기화
  */
 
-import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  ReactNode,
+} from 'react';
 
 import { sessionManager, SessionData, SessionEvent, SessionConfig } from './SessionManager';
 
@@ -20,18 +27,18 @@ interface SessionContextValue {
   sessionEvents: SessionEvent[];
   lastActivity: number;
   riskLevel: 'low' | 'medium' | 'high' | 'critical';
-  
+
   // 액션들
   login: (loginData: LoginData) => Promise<LoginResult>;
   logout: (reason?: string) => Promise<void>;
   refreshSession: () => Promise<boolean>;
   checkSessionStatus: () => Promise<boolean>;
-  
+
   // 보안 관련
   getUserSessions: () => SessionData[];
   terminateSession: (sessionId: string) => Promise<boolean>;
   terminateAllOtherSessions: () => Promise<number>;
-  
+
   // 설정
   updateSessionConfig: (config: Partial<SessionConfig>) => void;
 }
@@ -76,7 +83,7 @@ export const SessionProvider: React.FC<SessionProviderProps> = ({
   onSecurityEvent,
   onRiskLevelChange,
   enableActivityTracking = true,
-  enableMultiTabSync = true
+  enableMultiTabSync = true,
 }) => {
   const [session, setSession] = useState<SessionData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -158,7 +165,7 @@ export const SessionProvider: React.FC<SessionProviderProps> = ({
   // 세션 초기화
   const initializeSession = async () => {
     setIsLoading(true);
-    
+
     try {
       if (sessionToken) {
         await loadSessionFromToken(sessionToken);
@@ -181,7 +188,7 @@ export const SessionProvider: React.FC<SessionProviderProps> = ({
 
       const validation = await sessionManager.validateSession(sessionId, {
         ipAddress: await getCurrentIP(),
-        userAgent: navigator.userAgent
+        userAgent: navigator.userAgent,
       });
 
       if (validation.isValid && validation.session) {
@@ -208,10 +215,9 @@ export const SessionProvider: React.FC<SessionProviderProps> = ({
 
   // 위험 레벨 업데이트
   const updateRiskLevel = (riskScore: number) => {
-    const newRiskLevel = riskScore >= 80 ? 'critical' :
-                        riskScore >= 60 ? 'high' :
-                        riskScore >= 30 ? 'medium' : 'low';
-    
+    const newRiskLevel =
+      riskScore >= 80 ? 'critical' : riskScore >= 60 ? 'high' : riskScore >= 30 ? 'medium' : 'low';
+
     if (newRiskLevel !== riskLevel) {
       setRiskLevel(newRiskLevel);
       if (onRiskLevelChange) {
@@ -223,7 +229,7 @@ export const SessionProvider: React.FC<SessionProviderProps> = ({
   // 로그인
   const login = useCallback(async (loginData: LoginData): Promise<LoginResult> => {
     setIsLoading(true);
-    
+
     try {
       const currentIP = await getCurrentIP();
       const result = await sessionManager.createSession(loginData.userId, {
@@ -234,35 +240,33 @@ export const SessionProvider: React.FC<SessionProviderProps> = ({
         permissions: loginData.permissions,
         metadata: {
           ...loginData.metadata,
-          loginTimestamp: Date.now()
-        }
+          loginTimestamp: Date.now(),
+        },
       });
 
       const token = sessionManager.encryptSessionToken(result.session.sessionId);
-      
+
       setSession(result.session);
       setSessionToken(token);
       updateRiskLevel(result.session.riskScore);
-      
+
       // 토큰 저장
       if (typeof window !== 'undefined') {
         localStorage.setItem('sessionToken', token);
       }
 
-      
       return {
         success: true,
         session: result.session,
         token,
-        warnings: result.warnings
+        warnings: result.warnings,
       };
-
     } catch (error) {
       console.error('[Session] Login failed:', error);
       return {
         success: false,
         warnings: [],
-        error: error instanceof Error ? error.message : 'Login failed'
+        error: error instanceof Error ? error.message : 'Login failed',
       };
     } finally {
       setIsLoading(false);
@@ -270,20 +274,23 @@ export const SessionProvider: React.FC<SessionProviderProps> = ({
   }, []);
 
   // 로그아웃
-  const logout = useCallback(async (reason: string = 'User logout') => {
-    if (session) {
-      await sessionManager.invalidateSession(session.sessionId, reason);
-    }
-    
-    clearSession();
-  }, [session]);
+  const logout = useCallback(
+    async (reason: string = 'User logout') => {
+      if (session) {
+        await sessionManager.invalidateSession(session.sessionId, reason);
+      }
+
+      clearSession();
+    },
+    [session]
+  );
 
   // 세션 정리
   const clearSession = () => {
     setSession(null);
     setSessionToken(null);
     setRiskLevel('low');
-    
+
     if (typeof window !== 'undefined') {
       localStorage.removeItem('sessionToken');
     }
@@ -299,9 +306,9 @@ export const SessionProvider: React.FC<SessionProviderProps> = ({
         // 갱신된 세션 데이터 다시 로드
         const validation = await sessionManager.validateSession(session.sessionId, {
           ipAddress: await getCurrentIP(),
-          userAgent: navigator.userAgent
+          userAgent: navigator.userAgent,
         });
-        
+
         if (validation.isValid && validation.session) {
           setSession(validation.session);
           return true;
@@ -321,7 +328,7 @@ export const SessionProvider: React.FC<SessionProviderProps> = ({
     try {
       const validation = await sessionManager.validateSession(session.sessionId, {
         ipAddress: await getCurrentIP(),
-        userAgent: navigator.userAgent
+        userAgent: navigator.userAgent,
       });
 
       if (validation.isValid && validation.session) {
@@ -383,14 +390,10 @@ export const SessionProvider: React.FC<SessionProviderProps> = ({
     getUserSessions,
     terminateSession,
     terminateAllOtherSessions,
-    updateSessionConfig
+    updateSessionConfig,
   };
 
-  return (
-    <SessionContext.Provider value={contextValue}>
-      {children}
-    </SessionContext.Provider>
-  );
+  return <SessionContext.Provider value={contextValue}>{children}</SessionContext.Provider>;
 };
 
 // 세션 Hook
@@ -412,8 +415,8 @@ export const useAuthGuard = (
   missingPermissions: string[];
 } => {
   const { session, isAuthenticated, isLoading } = useSession();
-  
-  const missingPermissions = requiredPermissions 
+
+  const missingPermissions = requiredPermissions
     ? requiredPermissions.filter(perm => !session?.permissions.includes(perm))
     : [];
 
@@ -428,7 +431,7 @@ export const useAuthGuard = (
   return {
     isAuthorized,
     isLoading,
-    missingPermissions
+    missingPermissions,
   };
 };
 
@@ -446,9 +449,8 @@ export const useSessionMonitoring = () => {
     }
 
     // 의심스러운 이벤트 알림
-    const suspiciousEvents = sessionEvents.filter(event => 
-      event.type === 'suspicious' && 
-      Date.now() - event.timestamp < 5 * 60 * 1000 // 5분 이내
+    const suspiciousEvents = sessionEvents.filter(
+      event => event.type === 'suspicious' && Date.now() - event.timestamp < 5 * 60 * 1000 // 5분 이내
     );
 
     if (suspiciousEvents.length > 0) {
@@ -462,7 +464,7 @@ export const useSessionMonitoring = () => {
     alerts,
     clearAlerts,
     riskLevel,
-    sessionEvents: sessionEvents.slice(-10) // 최근 10개 이벤트
+    sessionEvents: sessionEvents.slice(-10), // 최근 10개 이벤트
   };
 };
 
@@ -502,7 +504,7 @@ export const useAutoLogout = (
   return {
     showWarning,
     timeRemaining: Math.ceil(timeRemaining / 1000), // 초 단위
-    extendSession
+    extendSession,
   };
 };
 
@@ -511,5 +513,5 @@ export default {
   useSession,
   useAuthGuard,
   useSessionMonitoring,
-  useAutoLogout
+  useAutoLogout,
 };

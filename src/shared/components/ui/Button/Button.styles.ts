@@ -31,11 +31,11 @@ export const buttonVariants: Record<ButtonVariant, ReturnType<typeof css>> = {
     border: none;
     box-shadow: ${tokens.shadows.elevation1};
     &:hover:not(:disabled) {
-      background-color: ${tokens.colors.brand.dark};
+      background-color: ${tokens.colors.brand.hover};
       box-shadow: ${tokens.shadows.elevation2};
     }
     &:active:not(:disabled) {
-      background-color: ${tokens.colors.brand.variant};
+      background-color: ${tokens.colors.brand.pressed};
       box-shadow: ${tokens.shadows.elevation1};
     }
   `,
@@ -93,10 +93,10 @@ export const buttonVariants: Record<ButtonVariant, ReturnType<typeof css>> = {
     color: ${tokens.colors.text.primary};
     border: none;
     &:hover:not(:disabled) {
-      background-color: ${tokens.colors.brand.dark};
+      background-color: ${tokens.colors.brand.hover};
     }
     &:active:not(:disabled) {
-      background-color: ${tokens.colors.brand.dark};
+      background-color: ${tokens.colors.brand.pressed};
       opacity: 0.9;
     }
   `,
@@ -105,11 +105,11 @@ export const buttonVariants: Record<ButtonVariant, ReturnType<typeof css>> = {
     background-color: ${KBDesignSystem.colors.primary.yellowAlpha10};
     color: ${KBDesignSystem.colors.text.primary};
     border: none;
-    
+
     &:hover:not(:disabled) {
       background-color: ${KBDesignSystem.colors.primary.yellowAlpha20};
     }
-    
+
     &:active:not(:disabled) {
       background-color: ${KBDesignSystem.colors.primary.yellowAlpha20};
       transform: scale(0.96);
@@ -120,11 +120,11 @@ export const buttonVariants: Record<ButtonVariant, ReturnType<typeof css>> = {
     color: ${KBDesignSystem.colors.text.primary};
     border: none;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    
+
     &:hover:not(:disabled) {
       background-color: ${KBDesignSystem.colors.primary.yellowDark};
     }
-    
+
     &:active:not(:disabled) {
       background-color: ${KBDesignSystem.colors.primary.yellowDark};
       transform: scale(0.96);
@@ -135,11 +135,11 @@ export const buttonVariants: Record<ButtonVariant, ReturnType<typeof css>> = {
     background-color: ${KBDesignSystem.colors.background.white};
     color: ${KBDesignSystem.colors.text.primary};
     border: 1px solid ${KBDesignSystem.colors.border.medium};
-    
+
     &:hover:not(:disabled) {
       background-color: ${KBDesignSystem.colors.background.gray200};
     }
-    
+
     &:active:not(:disabled) {
       background-color: ${KBDesignSystem.colors.background.gray300};
       transform: scale(0.96);
@@ -149,11 +149,11 @@ export const buttonVariants: Record<ButtonVariant, ReturnType<typeof css>> = {
     background-color: ${KBDesignSystem.colors.primary.yellowAlpha10};
     color: ${KBDesignSystem.colors.text.primary};
     border: none;
-    
+
     &:hover:not(:disabled) {
       background-color: ${KBDesignSystem.colors.primary.yellowAlpha20};
     }
-    
+
     &:active:not(:disabled) {
       background-color: ${KBDesignSystem.colors.primary.yellowAlpha20};
       transform: scale(0.96);
@@ -235,7 +235,7 @@ export const nativeTouchFeedback = css`
   -webkit-touch-callout: none;
   user-select: none;
   -webkit-user-select: none;
-  
+
   /* Android WebView 성능 최적화 */
   transform: translateZ(0);
   will-change: transform, opacity;
@@ -278,20 +278,26 @@ export const StyledButton = styled.button<ButtonProps>`
   /* 변형 스타일 적용 */
   ${({ variant = 'primary' }) => buttonVariants[variant]}
   /* 전체 너비 옵션 */
-  ${({ fullWidth }) => fullWidth && css`
-    width: 100%;
-    min-width: auto;
-  `}
+  ${({ fullWidth }) =>
+    fullWidth &&
+    css`
+      width: 100%;
+      min-width: auto;
+    `}
   /* 눌린 상태 */
-  ${({ pressed }) => pressed && css`
-    opacity: 0.9;
-    transform: scale(0.98);
-  `}
+  ${({ pressed }) =>
+    pressed &&
+    css`
+      opacity: 0.9;
+      transform: scale(0.98);
+    `}
   /* 로딩 상태 */
-  ${({ loading }) => loading && css`
-    pointer-events: none;
-    opacity: 0.7;
-  `}
+  ${({ loading }) =>
+    loading &&
+    css`
+      pointer-events: none;
+      opacity: 0.7;
+    `}
   /* 비활성화 상태 */
   &:disabled {
     background-color: ${tokens.colors.background.surfaceDark};
@@ -324,21 +330,23 @@ export const StyledButton = styled.button<ButtonProps>`
     return '';
   }}
   /* Ripple 효과 */
-  ${({ ripple }) => ripple && css`
-    &::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 0;
-      height: 0;
-      border-radius: 50%;
-      background-color: rgba(255, 255, 255, 0.3);
-      transform: translate(-50%, -50%);
-      pointer-events: none;
-    }
-    /* Ripple effect disabled for now */
-  `}
+  ${({ ripple }) =>
+    ripple &&
+    css`
+      &::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.3);
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+      }
+      /* Ripple effect disabled for now */
+    `}
 `;
 /**
  * 로딩 스피너 컴포넌트
@@ -381,13 +389,15 @@ export const ButtonGroup = styled.div<{
   fullWidth?: boolean;
 }>`
   display: flex;
-  flex-direction: ${({ direction = 'horizontal' }) => 
+  flex-direction: ${({ direction = 'horizontal' }) =>
     direction === 'horizontal' ? 'row' : 'column'};
   gap: ${({ gap = 8 }) => gap}px;
-  ${({ fullWidth }) => fullWidth && css`
-    width: 100%;
-    > * {
-      flex: 1;
-    }
-  `}
+  ${({ fullWidth }) =>
+    fullWidth &&
+    css`
+      width: 100%;
+      > * {
+        flex: 1;
+      }
+    `}
 `;

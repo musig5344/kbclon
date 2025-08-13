@@ -112,13 +112,18 @@ const Step = styled.div<{ active: boolean; completed: boolean }>`
   justify-content: center;
   font-size: 14px;
   font-weight: 600;
-  ${props => props.completed ? `
+  ${props =>
+    props.completed
+      ? `
     background-color: ${tokens.colors.success || '#28a745'};
     color: white;
-  ` : props.active ? `
+  `
+      : props.active
+        ? `
     background-color: ${tokens.colors.brand.primary};
     color: ${tokens.colors.kbBlack};
-  ` : `
+  `
+        : `
     background-color: ${tokens.colors.lightGray};
     color: ${tokens.colors.text.secondary};
   `}
@@ -126,7 +131,7 @@ const Step = styled.div<{ active: boolean; completed: boolean }>`
 const StepLine = styled.div<{ completed: boolean }>`
   width: 40px;
   height: 2px;
-  background-color: ${props => props.completed ? colors.success || '#28a745' : colors.lightGray};
+  background-color: ${props => (props.completed ? colors.success || '#28a745' : colors.lightGray)};
 `;
 const ResetPasswordPage: React.FC = () => {
   const navigate = useNavigate();
@@ -168,34 +173,38 @@ const ResetPasswordPage: React.FC = () => {
   };
   return (
     <Container>
-      <LoginHeader showCloseButton={true} onCloseClick={handleClose}/>
+      <LoginHeader showCloseButton={true} onCloseClick={handleClose} />
       <Content>
         <Title>비밀번호 재설정</Title>
         <Subtitle>
-          등록된 이메일 주소로<br />
+          등록된 이메일 주소로
+          <br />
           비밀번호 재설정 링크를 보내드립니다.
         </Subtitle>
         <StepIndicator>
-          <Step active={!emailSent} completed={emailSent}>1</Step>
+          <Step active={!emailSent} completed={emailSent}>
+            1
+          </Step>
           <StepLine completed={emailSent} />
-          <Step active={emailSent} completed={false}>2</Step>
+          <Step active={emailSent} completed={false}>
+            2
+          </Step>
         </StepIndicator>
         {!emailSent ? (
           <>
             <Form onSubmit={handleResetPassword}>
-              <Input 
-                fullWidth 
-                type="email"
-                placeholder="이메일 주소" 
+              <Input
+                fullWidth
+                type='email'
+                placeholder='이메일 주소'
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={e => setEmail(e.target.value)}
               />
             </Form>
             <InfoText>
-              • 회원가입 시 등록한 이메일 주소를 입력해주세요.{'\n'}
-              • 입력하신 이메일로 비밀번호 재설정 링크를 보내드립니다.{'\n'}
-              • 이메일이 도착하지 않으면 스팸함을 확인해주세요.{'\n'}
-              • 링크는 30분 후 만료됩니다.
+              • 회원가입 시 등록한 이메일 주소를 입력해주세요.{'\n'}• 입력하신 이메일로 비밀번호
+              재설정 링크를 보내드립니다.{'\n'}• 이메일이 도착하지 않으면 스팸함을 확인해주세요.
+              {'\n'}• 링크는 30분 후 만료됩니다.
             </InfoText>
             <ErrorText>{error}</ErrorText>
             <Spacer />
@@ -207,21 +216,22 @@ const ResetPasswordPage: React.FC = () => {
           <>
             <SuccessContainer>
               <SuccessIcon>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                  <path d="m6 12 4.5 4.5L18 9"/>
+                <svg viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='3'>
+                  <path d='m6 12 4.5 4.5L18 9' />
                 </svg>
               </SuccessIcon>
               <SuccessTitle>이메일이 전송되었습니다!</SuccessTitle>
               <SuccessText>
-                <strong>{email}</strong><br />
-                위 주소로 비밀번호 재설정 링크를 보내드렸습니다.<br />
+                <strong>{email}</strong>
+                <br />
+                위 주소로 비밀번호 재설정 링크를 보내드렸습니다.
+                <br />
                 이메일의 링크를 클릭하여 새 비밀번호를 설정해주세요.
               </SuccessText>
             </SuccessContainer>
             <InfoText>
-              • 이메일이 도착하지 않으면 스팸함을 확인해주세요.{'\n'}
-              • 링크는 30분 후 자동으로 만료됩니다.{'\n'}
-              • 재설정 후에는 새 비밀번호로 로그인해주세요.
+              • 이메일이 도착하지 않으면 스팸함을 확인해주세요.{'\n'}• 링크는 30분 후 자동으로
+              만료됩니다.{'\n'}• 재설정 후에는 새 비밀번호로 로그인해주세요.
             </InfoText>
             <Spacer />
             <Button fullWidth onClick={goToLogin}>

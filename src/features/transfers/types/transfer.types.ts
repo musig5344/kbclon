@@ -6,7 +6,7 @@ import {
   AccountNumber,
   TransactionId,
   ISODateString,
-  Money
+  Money,
 } from '../../../shared/types/common.types';
 // 이체 요청
 export interface TransferRequest {
@@ -24,10 +24,10 @@ export interface TransferRequest {
 }
 // 이체 타입
 export enum TransferType {
-  IMMEDIATE = 'IMMEDIATE',         // 즉시이체
-  SCHEDULED = 'SCHEDULED',         // 예약이체
-  RECURRING = 'RECURRING',         // 자동이체
-  BULK = 'BULK',                  // 대량이체
+  IMMEDIATE = 'IMMEDIATE', // 즉시이체
+  SCHEDULED = 'SCHEDULED', // 예약이체
+  RECURRING = 'RECURRING', // 자동이체
+  BULK = 'BULK', // 대량이체
 }
 // 이체 결과
 export interface TransferResult {
@@ -42,12 +42,12 @@ export interface TransferResult {
 }
 // 이체 상태
 export enum TransferStatus {
-  PENDING = 'PENDING',           // 대기중
-  PROCESSING = 'PROCESSING',     // 처리중
-  COMPLETED = 'COMPLETED',       // 완료
-  FAILED = 'FAILED',            // 실패
-  CANCELLED = 'CANCELLED',       // 취소
-  SCHEDULED = 'SCHEDULED',       // 예약됨
+  PENDING = 'PENDING', // 대기중
+  PROCESSING = 'PROCESSING', // 처리중
+  COMPLETED = 'COMPLETED', // 완료
+  FAILED = 'FAILED', // 실패
+  CANCELLED = 'CANCELLED', // 취소
+  SCHEDULED = 'SCHEDULED', // 예약됨
 }
 // 이체 내역
 export interface TransferHistory {

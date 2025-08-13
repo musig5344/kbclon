@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
+
 import { useLocation } from 'react-router-dom';
+
 import styled, { keyframes, css } from 'styled-components';
+
 import { usePageTransitionLoading } from '../loading/LoadingManager';
 
 // 애니메이션 타입 정의
@@ -144,7 +147,8 @@ const TransitionContainer = styled.div<{
       switch ($transitionType) {
         case 'slide':
           return css`
-            animation: ${$isBackNavigation ? slideOutToRight : slideOutToLeft} 300ms ease-out forwards;
+            animation: ${$isBackNavigation ? slideOutToRight : slideOutToLeft} 300ms ease-out
+              forwards;
           `;
         case 'fade':
           return css`
@@ -168,7 +172,8 @@ const TransitionContainer = styled.div<{
       switch ($transitionType) {
         case 'slide':
           return css`
-            animation: ${$isBackNavigation ? slideInFromLeft : slideInFromRight} 300ms ease-out forwards;
+            animation: ${$isBackNavigation ? slideInFromLeft : slideInFromRight} 300ms ease-out
+              forwards;
           `;
         case 'fade':
           return css`
@@ -195,14 +200,18 @@ const TransitionContainer = styled.div<{
   /* reduced-motion 지원 */
   @media (prefers-reduced-motion: reduce) {
     animation: none !important;
-    
-    ${({ $isExiting }) => $isExiting && css`
-      opacity: 0;
-    `}
-    
-    ${({ $isEntering }) => $isEntering && css`
-      opacity: 1;
-    `}
+
+    ${({ $isExiting }) =>
+      $isExiting &&
+      css`
+        opacity: 0;
+      `}
+
+    ${({ $isEntering }) =>
+      $isEntering &&
+      css`
+        opacity: 1;
+      `}
   }
 `;
 
@@ -246,7 +255,7 @@ const PAGE_HIERARCHY: Record<string, number> = {
 
 /**
  * 페이지 전환 애니메이션 컴포넌트
- * 
+ *
  * 기능:
  * - 슬라이드 인/아웃 애니메이션
  * - 페이드 인/아웃 효과
@@ -259,39 +268,38 @@ export const PageTransition: React.FC<PageTransitionProps> = ({
   children,
   transitionType,
   duration = 300,
-  className
+  className,
 }) => {
   const location = useLocation();
   const [isEntering, setIsEntering] = useState(true);
   const [isExiting, setIsExiting] = useState(false);
   const [isBackNavigation, setIsBackNavigation] = useState(false);
   const [previousPath, setPreviousPath] = useState<string>('');
-  
+
   const { startPageTransition, endPageTransition } = usePageTransitionLoading();
 
   // 현재 페이지의 전환 타입 결정
-  const currentTransitionType = transitionType || 
-    PAGE_TRANSITION_MAP[location.pathname] || 'fade';
+  const currentTransitionType = transitionType || PAGE_TRANSITION_MAP[location.pathname] || 'fade';
 
   // 뒤로가기 판단 로직
   const detectBackNavigation = (currentPath: string, prevPath: string): boolean => {
     const currentLevel = PAGE_HIERARCHY[currentPath] ?? 999;
     const prevLevel = PAGE_HIERARCHY[prevPath] ?? 999;
-    
+
     return currentLevel < prevLevel;
   };
 
   // 페이지 전환 시 애니메이션 처리
   useEffect(() => {
     const currentPath = location.pathname;
-    
+
     // 뒤로가기 감지
     const isBack = detectBackNavigation(currentPath, previousPath);
     setIsBackNavigation(isBack);
-    
+
     // 페이지 전환 로딩 시작
     startPageTransition(currentPath, '페이지를 불러오는 중...');
-    
+
     // 나가는 애니메이션 시작
     setIsExiting(true);
     setIsEntering(false);
@@ -324,8 +332,8 @@ export const PageTransition: React.FC<PageTransitionProps> = ({
       $isExiting={isExiting}
       $isBackNavigation={isBackNavigation}
       className={className}
-      role="main"
-      aria-live="polite"
+      role='main'
+      aria-live='polite'
     >
       {children}
     </TransitionContainer>
@@ -378,7 +386,7 @@ const ModalTransitionContainer = styled.div<{
 
   @media (prefers-reduced-motion: reduce) {
     animation: none !important;
-    opacity: ${({ $isVisible }) => $isVisible ? 1 : 0};
+    opacity: ${({ $isVisible }) => ($isVisible ? 1 : 0)};
     transform: none !important;
   }
 `;
@@ -397,7 +405,7 @@ export const ModalTransition: React.FC<ModalTransitionProps> = ({
   children,
   isVisible,
   transitionType = 'slideUp',
-  onTransitionEnd
+  onTransitionEnd,
 }) => {
   const [shouldRender, setShouldRender] = useState(isVisible);
 
@@ -409,7 +417,7 @@ export const ModalTransition: React.FC<ModalTransitionProps> = ({
         setShouldRender(false);
         onTransitionEnd?.();
       }, 200);
-      
+
       return () => clearTimeout(timer);
     }
   }, [isVisible, onTransitionEnd]);
@@ -419,10 +427,7 @@ export const ModalTransition: React.FC<ModalTransitionProps> = ({
   }
 
   return (
-    <ModalTransitionContainer
-      $isVisible={isVisible}
-      $transitionType={transitionType}
-    >
+    <ModalTransitionContainer $isVisible={isVisible} $transitionType={transitionType}>
       {children}
     </ModalTransitionContainer>
   );

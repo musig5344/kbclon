@@ -51,8 +51,8 @@ const AssetsPage: React.FC = () => {
       <MainContent>
         <ComingSoonText>💼 자산관리 준비중</ComingSoonText>
         <DescriptionText>
-          통합 자산관리 서비스가<br/>
-          곧 오픈 예정입니다
+          통합 자산관리 서비스가
+          <br />곧 오픈 예정입니다
         </DescriptionText>
       </MainContent>
       <TabBar />

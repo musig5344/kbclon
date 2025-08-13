@@ -1,6 +1,6 @@
 /**
  * Configuration Validator for KB StarBanking Clone
- * 
+ *
  * Provides runtime configuration validation, health checks,
  * and configuration recommendations for optimal security and performance.
  */
@@ -54,7 +54,7 @@ export class ConfigValidator {
       this.validatePerformance,
       this.validateLogging,
       this.validateFeatures,
-      this.validateEnvironmentSpecific
+      this.validateEnvironmentSpecific,
     ];
   }
   /**
@@ -72,7 +72,7 @@ export class ConfigValidator {
           severity: 'error',
           category: 'validation',
           message: `Validation rule failed: ${error}`,
-          recommendation: 'Check validation rule implementation'
+          recommendation: 'Check validation rule implementation',
         });
       }
     });
@@ -84,7 +84,7 @@ export class ConfigValidator {
       healthy,
       score,
       results: allResults,
-      summary
+      summary,
     };
   }
   /**
@@ -99,7 +99,7 @@ export class ConfigValidator {
         category: 'security',
         message: 'HTTPS is not enforced in production environment',
         recommendation: 'Enable HTTPS-only mode for production',
-        fix: 'Set REACT_APP_HTTPS_ONLY=true'
+        fix: 'Set REACT_APP_HTTPS_ONLY=true',
       });
     }
     // CSRF validation
@@ -109,7 +109,7 @@ export class ConfigValidator {
         category: 'security',
         message: 'CSRF protection is disabled',
         recommendation: 'Enable CSRF protection for security',
-        fix: 'Ensure CSRF is enabled in security configuration'
+        fix: 'Ensure CSRF is enabled in security configuration',
       });
     }
     // Allowed origins validation
@@ -119,7 +119,7 @@ export class ConfigValidator {
         category: 'security',
         message: 'No allowed origins configured for production',
         recommendation: 'Configure allowed origins for CORS protection',
-        fix: 'Set REACT_APP_ALLOWED_ORIGINS with comma-separated origins'
+        fix: 'Set REACT_APP_ALLOWED_ORIGINS with comma-separated origins',
       });
     }
     // Debug mode in production
@@ -129,7 +129,7 @@ export class ConfigValidator {
         category: 'security',
         message: 'Debug mode is enabled in production',
         recommendation: 'Disable debug mode in production for security',
-        fix: 'Set REACT_APP_DEBUG=false'
+        fix: 'Set REACT_APP_DEBUG=false',
       });
     }
     return results;
@@ -147,7 +147,7 @@ export class ConfigValidator {
         severity: 'warning',
         category: 'authentication',
         message: 'Session timeout is very short (< 5 minutes)',
-        recommendation: 'Consider increasing session timeout for better UX'
+        recommendation: 'Consider increasing session timeout for better UX',
       });
     }
     if (config.auth.sessionTimeout > maxSessionTimeout) {
@@ -155,7 +155,7 @@ export class ConfigValidator {
         severity: 'warning',
         category: 'authentication',
         message: 'Session timeout is very long (> 24 hours)',
-        recommendation: 'Consider reducing session timeout for better security'
+        recommendation: 'Consider reducing session timeout for better security',
       });
     }
     // Max login attempts validation
@@ -164,7 +164,7 @@ export class ConfigValidator {
         severity: 'warning',
         category: 'authentication',
         message: 'Max login attempts is high (> 10)',
-        recommendation: 'Consider reducing max login attempts to prevent brute force attacks'
+        recommendation: 'Consider reducing max login attempts to prevent brute force attacks',
       });
     }
     if (config.auth.maxLoginAttempts < 3) {
@@ -172,7 +172,7 @@ export class ConfigValidator {
         severity: 'warning',
         category: 'authentication',
         message: 'Max login attempts is very low (< 3)',
-        recommendation: 'Consider increasing max login attempts to prevent accidental lockouts'
+        recommendation: 'Consider increasing max login attempts to prevent accidental lockouts',
       });
     }
     // Lockout duration validation
@@ -182,7 +182,7 @@ export class ConfigValidator {
         severity: 'warning',
         category: 'authentication',
         message: 'Lockout duration is very short (< 5 minutes)',
-        recommendation: 'Consider increasing lockout duration for better security'
+        recommendation: 'Consider increasing lockout duration for better security',
       });
     }
     return results;
@@ -198,7 +198,7 @@ export class ConfigValidator {
         severity: 'warning',
         category: 'api',
         message: 'API timeout is very short (< 1 second)',
-        recommendation: 'Consider increasing API timeout to prevent premature failures'
+        recommendation: 'Consider increasing API timeout to prevent premature failures',
       });
     }
     if (config.api.timeout > 30000) {
@@ -206,7 +206,7 @@ export class ConfigValidator {
         severity: 'warning',
         category: 'api',
         message: 'API timeout is very long (> 30 seconds)',
-        recommendation: 'Consider reducing API timeout for better user experience'
+        recommendation: 'Consider reducing API timeout for better user experience',
       });
     }
     // Retry validation
@@ -215,7 +215,7 @@ export class ConfigValidator {
         severity: 'warning',
         category: 'api',
         message: 'API retry count is high (> 5)',
-        recommendation: 'High retry counts can impact performance'
+        recommendation: 'High retry counts can impact performance',
       });
     }
     // Rate limiting validation
@@ -224,7 +224,7 @@ export class ConfigValidator {
         severity: 'info',
         category: 'api',
         message: 'API rate limit is very high (> 1000/window)',
-        recommendation: 'Monitor API usage to ensure this limit is appropriate'
+        recommendation: 'Monitor API usage to ensure this limit is appropriate',
       });
     }
     return results;
@@ -241,7 +241,7 @@ export class ConfigValidator {
         category: 'services',
         message: 'Supabase URL is not configured',
         recommendation: 'Configure Supabase URL for database connectivity',
-        fix: 'Set REACT_APP_SUPABASE_URL'
+        fix: 'Set REACT_APP_SUPABASE_URL',
       });
     }
     if (!config.services.supabase.anonKey) {
@@ -250,7 +250,7 @@ export class ConfigValidator {
         category: 'services',
         message: 'Supabase anonymous key is not configured',
         recommendation: 'Configure Supabase anonymous key for authentication',
-        fix: 'Set REACT_APP_SUPABASE_ANON_KEY'
+        fix: 'Set REACT_APP_SUPABASE_ANON_KEY',
       });
     }
     // Exchange rate service validation
@@ -260,16 +260,17 @@ export class ConfigValidator {
         category: 'services',
         message: 'Exchange rate API key is not configured',
         recommendation: 'Configure API key for exchange rate service',
-        fix: 'Set REACT_APP_EXCHANGE_RATE_API_KEY'
+        fix: 'Set REACT_APP_EXCHANGE_RATE_API_KEY',
       });
     }
     // Cache duration validation
-    if (config.services.exchangeRate.cacheDuration < 60000) { // 1 minute
+    if (config.services.exchangeRate.cacheDuration < 60000) {
+      // 1 minute
       results.push({
         severity: 'warning',
         category: 'services',
         message: 'Exchange rate cache duration is very short (< 1 minute)',
-        recommendation: 'Consider increasing cache duration to reduce API calls'
+        recommendation: 'Consider increasing cache duration to reduce API calls',
       });
     }
     return results;
@@ -281,15 +282,15 @@ export class ConfigValidator {
     const results: ValidationResult[] = [];
     // Feature flag performance impact
     const heavyFeatures = ['biometrics', 'pushNotifications'];
-    const enabledHeavyFeatures = heavyFeatures.filter(feature => 
-      config.features[feature as keyof typeof config.features]
+    const enabledHeavyFeatures = heavyFeatures.filter(
+      feature => config.features[feature as keyof typeof config.features]
     );
     if (enabledHeavyFeatures.length > 2) {
       results.push({
         severity: 'info',
         category: 'performance',
         message: 'Multiple heavy features are enabled',
-        recommendation: 'Monitor app performance with multiple features enabled'
+        recommendation: 'Monitor app performance with multiple features enabled',
       });
     }
     // Logging performance impact
@@ -299,7 +300,7 @@ export class ConfigValidator {
         category: 'performance',
         message: 'Debug logging is enabled in production',
         recommendation: 'Use warn or error log level in production for better performance',
-        fix: 'Set REACT_APP_LOG_LEVEL=warn'
+        fix: 'Set REACT_APP_LOG_LEVEL=warn',
       });
     }
     return results;
@@ -310,13 +311,17 @@ export class ConfigValidator {
   private validateLogging = (config: EnvironmentConfig): ValidationResult[] => {
     const results: ValidationResult[] = [];
     // Remote logging in production
-    if (config.app.environment === 'production' && config.logging.remoteLogging && !config.logging.logEndpoint) {
+    if (
+      config.app.environment === 'production' &&
+      config.logging.remoteLogging &&
+      !config.logging.logEndpoint
+    ) {
       results.push({
         severity: 'warning',
         category: 'logging',
         message: 'Remote logging is enabled but no endpoint is configured',
         recommendation: 'Configure log endpoint for remote logging',
-        fix: 'Set REACT_APP_LOG_ENDPOINT'
+        fix: 'Set REACT_APP_LOG_ENDPOINT',
       });
     }
     // Logging disabled
@@ -325,7 +330,7 @@ export class ConfigValidator {
         severity: 'info',
         category: 'logging',
         message: 'Logging is disabled',
-        recommendation: 'Consider enabling logging for debugging and monitoring'
+        recommendation: 'Consider enabling logging for debugging and monitoring',
       });
     }
     return results;
@@ -341,7 +346,7 @@ export class ConfigValidator {
         severity: 'warning',
         category: 'features',
         message: 'Analytics is enabled but no tracking ID is configured',
-        recommendation: 'Configure analytics tracking ID or disable analytics'
+        recommendation: 'Configure analytics tracking ID or disable analytics',
       });
     }
     // Offline mode in production
@@ -350,7 +355,7 @@ export class ConfigValidator {
         severity: 'info',
         category: 'features',
         message: 'Offline mode is enabled in production',
-        recommendation: 'Ensure offline functionality is thoroughly tested'
+        recommendation: 'Ensure offline functionality is thoroughly tested',
       });
     }
     return results;
@@ -369,7 +374,7 @@ export class ConfigValidator {
             category: 'environment',
             message: 'Base URL points to localhost in production',
             recommendation: 'Update base URL to production domain',
-            fix: 'Set REACT_APP_BASE_URL to production URL'
+            fix: 'Set REACT_APP_BASE_URL to production URL',
           });
         }
         break;
@@ -380,7 +385,7 @@ export class ConfigValidator {
             severity: 'info',
             category: 'environment',
             message: 'Debug mode is disabled in development',
-            recommendation: 'Consider enabling debug mode for development'
+            recommendation: 'Consider enabling debug mode for development',
           });
         }
         break;
@@ -395,25 +400,32 @@ export class ConfigValidator {
     warnings: number;
     infos: number;
   } {
-    return results.reduce((summary, result) => {
-      switch (result.severity) {
-        case 'error':
-          summary.errors++;
-          break;
-        case 'warning':
-          summary.warnings++;
-          break;
-        case 'info':
-          summary.infos++;
-          break;
-      }
-      return summary;
-    }, { errors: 0, warnings: 0, infos: 0 });
+    return results.reduce(
+      (summary, result) => {
+        switch (result.severity) {
+          case 'error':
+            summary.errors++;
+            break;
+          case 'warning':
+            summary.warnings++;
+            break;
+          case 'info':
+            summary.infos++;
+            break;
+        }
+        return summary;
+      },
+      { errors: 0, warnings: 0, infos: 0 }
+    );
   }
   /**
    * Calculate health score (0-100)
    */
-  private calculateHealthScore(summary: { errors: number; warnings: number; infos: number }): number {
+  private calculateHealthScore(summary: {
+    errors: number;
+    warnings: number;
+    infos: number;
+  }): number {
     let score = 100;
     // Deduct points for issues
     score -= summary.errors * 25; // Major issues
@@ -471,13 +483,13 @@ export function validateAndLog(config: EnvironmentConfig): HealthCheckResult {
   if (result.healthy) {
     safeLog('info', 'Configuration validation passed', {
       score: result.score,
-      summary: result.summary
+      summary: result.summary,
     });
   } else {
     safeLog('warn', 'Configuration validation issues found', {
       score: result.score,
       summary: result.summary,
-      errors: result.results.filter(r => r.severity === 'error').length
+      errors: result.results.filter(r => r.severity === 'error').length,
     });
   }
   return result;

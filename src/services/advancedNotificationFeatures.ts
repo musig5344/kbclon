@@ -1,6 +1,6 @@
 /**
  * Advanced Notification Features
- * 
+ *
  * 고급 알림 기능들
  * - 예약 알림 (Scheduled Notifications)
  * - 위치 기반 알림 (Geofencing)
@@ -12,7 +12,7 @@ import {
   PushNotificationData,
   NotificationType,
   NotificationPriority,
-  GeofenceData
+  GeofenceData,
 } from './pushNotificationService';
 
 // 예약 알림 데이터
@@ -123,7 +123,7 @@ class AdvancedNotificationService {
       repeat: options?.repeat,
       conditions: options?.conditions,
       isActive: true,
-      createdAt: Date.now()
+      createdAt: Date.now(),
     };
 
     this.scheduledNotifications.set(scheduledNotification.id, scheduledNotification);
@@ -148,7 +148,7 @@ class AdvancedNotificationService {
       triggers,
       conditions,
       isActive: true,
-      createdAt: Date.now()
+      createdAt: Date.now(),
     };
 
     this.geofenceNotifications.set(geofenceNotification.id, geofenceNotification);
@@ -186,11 +186,11 @@ class AdvancedNotificationService {
       actions: options.actions?.map(action => ({
         id: action.id,
         title: action.title,
-        icon: action.icon
+        icon: action.icon,
       })),
       sound: options.sound,
       badge: options.badge?.toString(),
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
   }
 
@@ -240,7 +240,7 @@ class AdvancedNotificationService {
   trackNotification(analytics: Omit<NotificationAnalytics, 'sentAt'>): void {
     const notificationAnalytics: NotificationAnalytics = {
       ...analytics,
-      sentAt: Date.now()
+      sentAt: Date.now(),
     };
 
     this.analytics.set(analytics.notificationId, notificationAnalytics);
@@ -270,7 +270,7 @@ class AdvancedNotificationService {
     if (analytics) {
       analytics.actionTaken = {
         actionId,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
       this.analytics.set(notificationId, analytics);
       this.saveStoredData();
@@ -280,15 +280,12 @@ class AdvancedNotificationService {
   /**
    * 알림 닷기 추적
    */
-  trackNotificationDismissed(
-    notificationId: string, 
-    method: 'auto' | 'manual' | 'action'
-  ): void {
+  trackNotificationDismissed(notificationId: string, method: 'auto' | 'manual' | 'action'): void {
     const analytics = this.analytics.get(notificationId);
     if (analytics) {
       analytics.dismissed = {
         method,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       };
       this.analytics.set(notificationId, analytics);
       this.saveStoredData();
@@ -298,17 +295,17 @@ class AdvancedNotificationService {
   /**
    * 알림 분석 데이터 조회
    */
-  getNotificationAnalytics(userId: string, timeRange?: {
-    start: number;
-    end: number;
-  }): NotificationAnalytics[] {
-    let analytics = Array.from(this.analytics.values())
-      .filter(a => a.userId === userId);
+  getNotificationAnalytics(
+    userId: string,
+    timeRange?: {
+      start: number;
+      end: number;
+    }
+  ): NotificationAnalytics[] {
+    let analytics = Array.from(this.analytics.values()).filter(a => a.userId === userId);
 
     if (timeRange) {
-      analytics = analytics.filter(a => 
-        a.sentAt >= timeRange.start && a.sentAt <= timeRange.end
-      );
+      analytics = analytics.filter(a => a.sentAt >= timeRange.start && a.sentAt <= timeRange.end);
     }
 
     return analytics.sort((a, b) => b.sentAt - a.sentAt);
@@ -317,12 +314,15 @@ class AdvancedNotificationService {
   /**
    * 알림 통계 생성
    */
-  generateNotificationStats(userId: string, timeRange?: {
-    start: number;
-    end: number;
-  }) {
+  generateNotificationStats(
+    userId: string,
+    timeRange?: {
+      start: number;
+      end: number;
+    }
+  ) {
     const analytics = this.getNotificationAnalytics(userId, timeRange);
-    
+
     const stats = {
       total: analytics.length,
       read: analytics.filter(a => a.readAt).length,
@@ -331,7 +331,7 @@ class AdvancedNotificationService {
       byType: {} as Record<NotificationType, number>,
       byPriority: {} as Record<NotificationPriority, number>,
       avgReadTime: 0, // 알림 발송부터 읽음까지 평균 시간
-      avgActionTime: 0 // 알림 발송부터 액션까지 평균 시간
+      avgActionTime: 0, // 알림 발송부터 액션까지 평균 시간
     };
 
     // 유형별 통계
@@ -343,17 +343,16 @@ class AdvancedNotificationService {
     // 평균 읽음 시간 계산
     const readAnalytics = analytics.filter(a => a.readAt);
     if (readAnalytics.length > 0) {
-      const totalReadTime = readAnalytics.reduce((sum, a) => 
-        sum + (a.readAt! - a.sentAt), 0
-      );
+      const totalReadTime = readAnalytics.reduce((sum, a) => sum + (a.readAt! - a.sentAt), 0);
       stats.avgReadTime = totalReadTime / readAnalytics.length;
     }
 
     // 평균 액션 시간 계산
     const actionAnalytics = analytics.filter(a => a.actionTaken);
     if (actionAnalytics.length > 0) {
-      const totalActionTime = actionAnalytics.reduce((sum, a) => 
-        sum + (a.actionTaken!.timestamp - a.sentAt), 0
+      const totalActionTime = actionAnalytics.reduce(
+        (sum, a) => sum + (a.actionTaken!.timestamp - a.sentAt),
+        0
       );
       stats.avgActionTime = totalActionTime / actionAnalytics.length;
     }
@@ -367,8 +366,8 @@ class AdvancedNotificationService {
   private startScheduleChecker(): void {
     setInterval(() => {
       const now = Date.now();
-      
-      this.scheduledNotifications.forEach(async (scheduled) => {
+
+      this.scheduledNotifications.forEach(async scheduled => {
         if (!scheduled.isActive || scheduled.scheduleTime > now) return;
 
         // 조건 확인
@@ -402,17 +401,17 @@ class AdvancedNotificationService {
     }
 
     this.watchId = navigator.geolocation.watchPosition(
-      (position) => {
+      position => {
         this.currentPosition = position;
         this.checkGeofences(position);
       },
-      (error) => {
+      error => {
         console.error('Geolocation error:', error);
       },
       {
         enableHighAccuracy: true,
         maximumAge: 300000, // 5분
-        timeout: 10000
+        timeout: 10000,
       }
     );
   }
@@ -421,7 +420,7 @@ class AdvancedNotificationService {
    * 지오펜스 확인
    */
   private checkGeofences(position: GeolocationPosition): void {
-    this.geofenceNotifications.forEach(async (geofence) => {
+    this.geofenceNotifications.forEach(async geofence => {
       if (!geofence.isActive) return;
 
       const distance = this.calculateDistance(
@@ -449,17 +448,16 @@ class AdvancedNotificationService {
   /**
    * 두 지점 간 거리 계산 (Haversine formula)
    */
-  private calculateDistance(
-    lat1: number, lon1: number, 
-    lat2: number, lon2: number
-  ): number {
+  private calculateDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
     const R = 6371000; // 지구 반지름 (m)
     const dLat = this.toRadians(lat2 - lat1);
     const dLon = this.toRadians(lon2 - lon1);
-    const a = 
+    const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(this.toRadians(lat1)) * Math.cos(this.toRadians(lat2)) *
-      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      Math.cos(this.toRadians(lat1)) *
+        Math.cos(this.toRadians(lat2)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
   }
@@ -472,16 +470,16 @@ class AdvancedNotificationService {
    * 지오펜스 트리거 판단
    */
   private shouldTriggerGeofence(
-    geofence: GeofenceNotification, 
+    geofence: GeofenceNotification,
     isCurrentlyInside: boolean
   ): boolean {
     // 이전 상태를 추적해야 하지만 간단하게 구현
     // 실제 구현에서는 지오펜스 상태를 저장하고 추적해야 함
-    
+
     if (geofence.triggers.onEnter && isCurrentlyInside) {
       return true;
     }
-    
+
     if (geofence.triggers.onExit && !isCurrentlyInside) {
       return true;
     }
@@ -501,7 +499,7 @@ class AdvancedNotificationService {
     if (conditions.accountBalance) {
       const balance = await this.getAccountBalance(conditions.accountBalance.accountId);
       const { operator, amount } = conditions.accountBalance;
-      
+
       switch (operator) {
         case 'less_than':
           if (balance >= amount) return false;
@@ -522,7 +520,7 @@ class AdvancedNotificationService {
         conditions.transactionCount.timeframe
       );
       const { operator, count: targetCount } = conditions.transactionCount;
-      
+
       switch (operator) {
         case 'less_than':
           if (count >= targetCount) return false;
@@ -555,11 +553,12 @@ class AdvancedNotificationService {
       const endTime = conditions.timeRange.end.split(':').map(Number);
       const startMinutes = startTime[0] * 60 + startTime[1];
       const endMinutes = endTime[0] * 60 + endTime[1];
-      
-      const isWithinTime = startMinutes <= endMinutes
-        ? currentTime >= startMinutes && currentTime <= endMinutes
-        : currentTime >= startMinutes || currentTime <= endMinutes;
-      
+
+      const isWithinTime =
+        startMinutes <= endMinutes
+          ? currentTime >= startMinutes && currentTime <= endMinutes
+          : currentTime >= startMinutes || currentTime <= endMinutes;
+
       if (!isWithinTime) return false;
     }
 
@@ -610,9 +609,11 @@ class AdvancedNotificationService {
    */
   private sendNotification(notification: PushNotificationData): void {
     // 글로벌 알림 이벤트 발송
-    window.dispatchEvent(new CustomEvent('pushNotificationReceived', {
-      detail: notification
-    }));
+    window.dispatchEvent(
+      new CustomEvent('pushNotificationReceived', {
+        detail: notification,
+      })
+    );
   }
 
   /**
@@ -620,11 +621,14 @@ class AdvancedNotificationService {
    */
   private saveStoredData(): void {
     try {
-      localStorage.setItem('advanced_notifications', JSON.stringify({
-        scheduled: Array.from(this.scheduledNotifications.entries()),
-        geofence: Array.from(this.geofenceNotifications.entries()),
-        analytics: Array.from(this.analytics.entries())
-      }));
+      localStorage.setItem(
+        'advanced_notifications',
+        JSON.stringify({
+          scheduled: Array.from(this.scheduledNotifications.entries()),
+          geofence: Array.from(this.geofenceNotifications.entries()),
+          analytics: Array.from(this.analytics.entries()),
+        })
+      );
     } catch (error) {
       console.error('Failed to save advanced notification data:', error);
     }
@@ -638,15 +642,15 @@ class AdvancedNotificationService {
       const stored = localStorage.getItem('advanced_notifications');
       if (stored) {
         const data = JSON.parse(stored);
-        
+
         if (data.scheduled) {
           this.scheduledNotifications = new Map(data.scheduled);
         }
-        
+
         if (data.geofence) {
           this.geofenceNotifications = new Map(data.geofence);
         }
-        
+
         if (data.analytics) {
           this.analytics = new Map(data.analytics);
         }
@@ -667,7 +671,7 @@ class AdvancedNotificationService {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(analytics)
+        body: JSON.stringify(analytics),
       });
     } catch (error) {
       console.error('Failed to send analytics to server:', error);
@@ -685,10 +689,7 @@ class AdvancedNotificationService {
   /**
    * 거래 건수 조회 (목 구현)
    */
-  private async getTransactionCount(
-    accountId: string, 
-    timeframe: string
-  ): Promise<number> {
+  private async getTransactionCount(accountId: string, timeframe: string): Promise<number> {
     // 실제 구현에서는 API 호출
     return 5; // 예시 값
   }
@@ -709,8 +710,4 @@ export const advancedNotificationService = new AdvancedNotificationService();
 export default AdvancedNotificationService;
 
 // 타입 익스포트
-export type {
-  ScheduledNotification,
-  GeofenceNotification,
-  NotificationAnalytics
-};
+export type { ScheduledNotification, GeofenceNotification, NotificationAnalytics };

@@ -123,14 +123,14 @@ export const LinkText = styled.a`
 export const KBSignLoginTab: React.FC = () => {
   const createRipple = (event: React.MouseEvent<HTMLButtonElement>) => {
     const button = event.currentTarget;
-    const circle = document.createElement("span");
+    const circle = document.createElement('span');
     const diameter = Math.max(button.clientWidth, button.clientHeight);
     const radius = diameter / 2;
     circle.style.width = circle.style.height = `${diameter}px`;
     circle.style.left = `${event.clientX - button.offsetLeft - radius}px`;
     circle.style.top = `${event.clientY - button.offsetTop - radius}px`;
-    circle.classList.add("ripple");
-    const ripple = button.getElementsByClassName("ripple")[0];
+    circle.classList.add('ripple');
+    const ripple = button.getElementsByClassName('ripple')[0];
     if (ripple) {
       ripple.remove();
     }
@@ -140,12 +140,13 @@ export const KBSignLoginTab: React.FC = () => {
     <Container>
       <ContentWrapper>
         <Title>
-          지문 또는 패턴으로<br />
+          지문 또는 패턴으로
+          <br />
           빠르고 안전하게 로그인하세요.
         </Title>
         <LoginOptionsContainer>
           <LoginOptionButton>
-            <IconImage src={FingerprintIcon} alt="지문인증 아이콘" />
+            <IconImage src={FingerprintIcon} alt='지문인증 아이콘' />
             <OptionText>지문인증</OptionText>
           </LoginOptionButton>
           <Divider />
@@ -154,13 +155,11 @@ export const KBSignLoginTab: React.FC = () => {
             <OptionText>패턴</OptionText>
           </LoginOptionButton>
         </LoginOptionsContainer>
-        <ActionButton onClick={createRipple}>
-          인증수단 등록
-        </ActionButton>
+        <ActionButton onClick={createRipple}>인증수단 등록</ActionButton>
       </ContentWrapper>
       <BottomLinks>
         <LinkText>다른 로그인 방법</LinkText>
       </BottomLinks>
     </Container>
   );
-}; 
+};

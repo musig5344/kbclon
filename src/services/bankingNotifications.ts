@@ -1,6 +1,6 @@
 /**
  * KB StarBanking Notification Templates
- * 
+ *
  * 뱅킹 앱에 특화된 알림 템플릿과 타입
  * - 거래 알림
  * - 보안 알림
@@ -9,12 +9,12 @@
  * - 홀보 및 시스템 알림
  */
 
-import { 
-  PushNotificationData, 
-  NotificationType, 
-  NotificationPriority, 
+import {
+  PushNotificationData,
+  NotificationType,
+  NotificationPriority,
   NotificationAction,
-  pushNotificationService 
+  pushNotificationService,
 } from './pushNotificationService';
 
 // 거래 알림 데이터
@@ -73,19 +73,24 @@ class BankingNotificationTemplates {
     data: TransactionNotificationData,
     userId: string
   ): PushNotificationData {
-    const formatAmount = (amount: number) => 
+    const formatAmount = (amount: number) =>
       new Intl.NumberFormat('ko-KR', {
         style: 'currency',
-        currency: data.currency || 'KRW'
+        currency: data.currency || 'KRW',
       }).format(amount);
 
     const getTransactionTitle = () => {
       switch (data.type) {
-        case 'deposit': return '입금 알림';
-        case 'withdrawal': return '출금 알림';
-        case 'transfer': return '이체 알림';
-        case 'payment': return '결제 알림';
-        default: return '거래 알림';
+        case 'deposit':
+          return '입금 알림';
+        case 'withdrawal':
+          return '출금 알림';
+        case 'transfer':
+          return '이체 알림';
+        case 'payment':
+          return '결제 알림';
+        default:
+          return '거래 알림';
       }
     };
 
@@ -93,7 +98,7 @@ class BankingNotificationTemplates {
       const amountStr = formatAmount(data.amount);
       const balanceStr = formatAmount(data.balance);
       const location = data.location ? ` (거래위치: ${data.location})` : '';
-      
+
       switch (data.type) {
         case 'deposit':
           return `${amountStr} 입금되었습니다. 잔액: ${balanceStr}`;
@@ -113,17 +118,18 @@ class BankingNotificationTemplates {
       {
         id: 'view_transaction',
         title: '거래내역 보기',
-        icon: '/assets/images/icon_transaction.png'
+        icon: '/assets/images/icon_transaction.png',
       },
       {
         id: 'view_account',
         title: '계좌내역',
-        icon: '/assets/images/icon_account.png'
-      }
+        icon: '/assets/images/icon_account.png',
+      },
     ];
 
     // 고액 거래에 대한 추가 보안
-    const priority = data.amount > 1000000 ? NotificationPriority.HIGH : NotificationPriority.NORMAL;
+    const priority =
+      data.amount > 1000000 ? NotificationPriority.HIGH : NotificationPriority.NORMAL;
     const requiresAuth = data.amount > 1000000 || data.type === 'withdrawal';
 
     return {
@@ -137,14 +143,14 @@ class BankingNotificationTemplates {
         accountNumber: data.accountNumber,
         type: data.type,
         amount: data.amount,
-        url: `/transactions/${data.transactionId}`
+        url: `/transactions/${data.transactionId}`,
       },
       requiresAuth,
       encrypted: true,
       actions,
       icon: '/assets/images/kb_logo.png',
       vibrate: [200, 100, 200],
-      timestamp: data.timestamp
+      timestamp: data.timestamp,
     };
   }
 
@@ -157,11 +163,16 @@ class BankingNotificationTemplates {
   ): PushNotificationData {
     const getSecurityTitle = () => {
       switch (data.eventType) {
-        case 'login_attempt': return data.success ? '로그인 성공' : '로그인 시도 감지';
-        case 'suspicious_activity': return '의심스러운 활동 감지';
-        case 'password_change': return '비밀번호 변경';
-        case 'device_registration': return '새 기기 등록';
-        default: return '보안 알림';
+        case 'login_attempt':
+          return data.success ? '로그인 성공' : '로그인 시도 감지';
+        case 'suspicious_activity':
+          return '의심스러운 활동 감지';
+        case 'password_change':
+          return '비밀번호 변경';
+        case 'device_registration':
+          return '새 기기 등록';
+        default:
+          return '보안 알림';
       }
     };
 
@@ -189,19 +200,19 @@ class BankingNotificationTemplates {
     };
 
     const actions: NotificationAction[] = [];
-    
+
     if (data.eventType === 'login_attempt' && !data.success) {
       actions.push(
         {
           id: 'secure_account',
           title: '계정 보안',
           icon: '/assets/images/icon_security.png',
-          requiresAuth: true
+          requiresAuth: true,
         },
         {
           id: 'contact_support',
           title: '고객센터',
-          icon: '/assets/images/icon_support.png'
+          icon: '/assets/images/icon_support.png',
         }
       );
     } else if (data.eventType === 'suspicious_activity') {
@@ -210,13 +221,13 @@ class BankingNotificationTemplates {
           id: 'change_password',
           title: '비밀번호 변경',
           icon: '/assets/images/icon_password.png',
-          requiresAuth: true
+          requiresAuth: true,
         },
         {
           id: 'view_security_log',
           title: '보안로그',
           icon: '/assets/images/icon_log.png',
-          requiresAuth: true
+          requiresAuth: true,
         }
       );
     }
@@ -231,14 +242,14 @@ class BankingNotificationTemplates {
         eventType: data.eventType,
         deviceInfo: data.deviceInfo,
         success: data.success,
-        url: '/security/log'
+        url: '/security/log',
       },
       requiresAuth: true,
       encrypted: true,
       actions,
       icon: '/assets/images/icon_security.png',
       vibrate: [300, 200, 300, 200, 300],
-      timestamp: data.timestamp
+      timestamp: data.timestamp,
     };
   }
 
@@ -249,32 +260,36 @@ class BankingNotificationTemplates {
     data: BalanceAlertData,
     userId: string
   ): PushNotificationData {
-    const formatAmount = (amount: number) => 
+    const formatAmount = (amount: number) =>
       new Intl.NumberFormat('ko-KR', {
         style: 'currency',
-        currency: 'KRW'
+        currency: 'KRW',
       }).format(amount);
 
     const getAlertTitle = () => {
       switch (data.alertType) {
-        case 'low_balance': return '잔고 부족 알림';
-        case 'high_spending': return '과다 지출 알림';
-        case 'unusual_activity': return '비정상 거래 알림';
-        default: return '잔고 알림';
+        case 'low_balance':
+          return '잔고 부족 알림';
+        case 'high_spending':
+          return '과다 지출 알림';
+        case 'unusual_activity':
+          return '비정상 거래 알림';
+        default:
+          return '잔고 알림';
       }
     };
 
     const getAlertBody = () => {
       const balance = formatAmount(data.currentBalance);
       const threshold = formatAmount(data.threshold);
-      
+
       switch (data.alertType) {
         case 'low_balance':
           return `계좌 잔고가 ${balance}로 설정한 임계값(${threshold}) 이하입니다.`;
         case 'high_spending':
           const spent = formatAmount(data.spentAmount || 0);
-          const period = data.period === '24h' ? '오늘' : 
-                       data.period === '7d' ? '이번 주' : '이번 달';
+          const period =
+            data.period === '24h' ? '오늘' : data.period === '7d' ? '이번 주' : '이번 달';
           return `${period} 지출이 ${spent}로 많습니다. 예산 관리를 확인해 주세요.`;
         case 'unusual_activity':
           return `비정상적인 거래 패턴이 감지되었습니다. 계좌 상태를 확인해 주세요.`;
@@ -287,8 +302,8 @@ class BankingNotificationTemplates {
       {
         id: 'view_account',
         title: '계좌내역',
-        icon: '/assets/images/icon_account.png'
-      }
+        icon: '/assets/images/icon_account.png',
+      },
     ];
 
     if (data.alertType === 'low_balance') {
@@ -296,28 +311,31 @@ class BankingNotificationTemplates {
         id: 'quick_transfer',
         title: '빠른이체',
         icon: '/assets/images/icon_transfer.png',
-        requiresAuth: true
+        requiresAuth: true,
       });
     }
 
     return {
       id: `balance_${data.accountNumber}_${Date.now()}`,
       type: NotificationType.BALANCE_ALERT,
-      priority: data.alertType === 'unusual_activity' ? NotificationPriority.HIGH : NotificationPriority.NORMAL,
+      priority:
+        data.alertType === 'unusual_activity'
+          ? NotificationPriority.HIGH
+          : NotificationPriority.NORMAL,
       title: getAlertTitle(),
       body: getAlertBody(),
       data: {
         accountNumber: data.accountNumber,
         alertType: data.alertType,
         currentBalance: data.currentBalance,
-        url: `/accounts/${data.accountNumber}`
+        url: `/accounts/${data.accountNumber}`,
       },
       requiresAuth: data.alertType === 'unusual_activity',
       encrypted: true,
       actions,
       icon: '/assets/images/icon_balance.png',
       vibrate: [200, 100, 200],
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
   }
 
@@ -328,53 +346,59 @@ class BankingNotificationTemplates {
     data: BillReminderData,
     userId: string
   ): PushNotificationData {
-    const formatAmount = (amount: number) => 
+    const formatAmount = (amount: number) =>
       new Intl.NumberFormat('ko-KR', {
         style: 'currency',
-        currency: 'KRW'
+        currency: 'KRW',
       }).format(amount);
 
     const getBillTypeKorean = () => {
       switch (data.billType) {
-        case 'utility': return '공과금';
-        case 'credit_card': return '신용카드';
-        case 'loan': return '대출';
-        case 'insurance': return '보험';
-        case 'subscription': return '구독료';
-        default: return '청구서';
+        case 'utility':
+          return '공과금';
+        case 'credit_card':
+          return '신용카드';
+        case 'loan':
+          return '대출';
+        case 'insurance':
+          return '보험';
+        case 'subscription':
+          return '구독료';
+        default:
+          return '청구서';
       }
     };
 
     const dueDate = new Date(data.dueDate).toLocaleDateString('ko-KR');
     const amount = formatAmount(data.amount);
     const billType = getBillTypeKorean();
-    
+
     const title = `${billType} 납부 알림`;
-    const body = data.autoPayEnabled 
+    const body = data.autoPayEnabled
       ? `${data.payeeName} ${billType} ${amount}이 ${dueDate}에 자동이체됩니다.`
       : `${data.payeeName} ${billType} ${amount}을 ${dueDate}까지 납부해 주세요. (D-${data.daysBefore})`;
 
     const actions: NotificationAction[] = [];
-    
+
     if (!data.autoPayEnabled) {
       actions.push(
         {
           id: 'pay_bill',
           title: '지금 납부',
           icon: '/assets/images/icon_payment.png',
-          requiresAuth: true
+          requiresAuth: true,
         },
         {
           id: 'setup_autopay',
           title: '자동이체 설정',
-          icon: '/assets/images/icon_auto.png'
+          icon: '/assets/images/icon_auto.png',
         }
       );
     } else {
       actions.push({
         id: 'view_autopay',
         title: '자동이체 확인',
-        icon: '/assets/images/icon_auto.png'
+        icon: '/assets/images/icon_auto.png',
       });
     }
 
@@ -391,14 +415,14 @@ class BankingNotificationTemplates {
         amount: data.amount,
         dueDate: data.dueDate,
         autoPayEnabled: data.autoPayEnabled,
-        url: `/bills/${data.billId}`
+        url: `/bills/${data.billId}`,
       },
       requiresAuth: false,
       encrypted: true,
       actions,
       icon: '/assets/images/icon_bill.png',
       vibrate: [200, 100, 200],
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
   }
 
@@ -415,12 +439,12 @@ class BankingNotificationTemplates {
       {
         id: 'view_promotion',
         title: '자세히 보기',
-        icon: '/assets/images/icon_promotion.png'
+        icon: '/assets/images/icon_promotion.png',
       },
       {
         id: 'dismiss',
-        title: '닫기'
-      }
+        title: '닫기',
+      },
     ];
 
     return {
@@ -430,7 +454,7 @@ class BankingNotificationTemplates {
       title,
       body,
       data: {
-        url: actionUrl || '/promotions'
+        url: actionUrl || '/promotions',
       },
       requiresAuth: false,
       encrypted: false,
@@ -438,7 +462,7 @@ class BankingNotificationTemplates {
       icon: '/assets/images/kb_logo.png',
       image: imageUrl,
       vibrate: [100],
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
   }
 
@@ -453,13 +477,13 @@ class BankingNotificationTemplates {
   ): PushNotificationData {
     const startStr = startTime.toLocaleString('ko-KR');
     const endStr = endTime.toLocaleString('ko-KR');
-    
+
     const actions: NotificationAction[] = [
       {
         id: 'view_notice',
         title: '공지사항',
-        icon: '/assets/images/icon_notice.png'
-      }
+        icon: '/assets/images/icon_notice.png',
+      },
     ];
 
     return {
@@ -471,14 +495,14 @@ class BankingNotificationTemplates {
       data: {
         startTime: startTime.getTime(),
         endTime: endTime.getTime(),
-        url: '/notices/maintenance'
+        url: '/notices/maintenance',
       },
       requiresAuth: false,
       encrypted: false,
       actions,
       icon: '/assets/images/icon_maintenance.png',
       vibrate: [200, 100, 200, 100, 200],
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
   }
 }
@@ -490,23 +514,27 @@ export class BankingNotificationBatch {
   /**
    * 일일 거래 요약 알림
    */
-  static async sendDailySummary(userId: string, transactions: TransactionNotificationData[]): Promise<void> {
+  static async sendDailySummary(
+    userId: string,
+    transactions: TransactionNotificationData[]
+  ): Promise<void> {
     if (transactions.length === 0) return;
 
     const totalAmount = transactions.reduce((sum, tx) => {
       return tx.type === 'deposit' ? sum + tx.amount : sum - tx.amount;
     }, 0);
 
-    const formatAmount = (amount: number) => 
+    const formatAmount = (amount: number) =>
       new Intl.NumberFormat('ko-KR', {
         style: 'currency',
-        currency: 'KRW'
+        currency: 'KRW',
       }).format(Math.abs(amount));
 
     const title = '오늘의 거래 요약';
-    const body = totalAmount >= 0 
-      ? `오늘 ${transactions.length}건의 거래가 있었습니다. 순입금: ${formatAmount(totalAmount)}`
-      : `오늘 ${transactions.length}건의 거래가 있었습니다. 순출금: ${formatAmount(totalAmount)}`;
+    const body =
+      totalAmount >= 0
+        ? `오늘 ${transactions.length}건의 거래가 있었습니다. 순입금: ${formatAmount(totalAmount)}`
+        : `오늘 ${transactions.length}건의 거래가 있었습니다. 순출금: ${formatAmount(totalAmount)}`;
 
     const notification: PushNotificationData = {
       id: `daily_summary_${userId}_${new Date().toISOString().split('T')[0]}`,
@@ -518,7 +546,7 @@ export class BankingNotificationBatch {
         type: 'daily_summary',
         transactionCount: transactions.length,
         totalAmount,
-        url: '/transactions/today'
+        url: '/transactions/today',
       },
       requiresAuth: false,
       encrypted: false,
@@ -526,11 +554,11 @@ export class BankingNotificationBatch {
         {
           id: 'view_transactions',
           title: '거래내역',
-          icon: '/assets/images/icon_transaction.png'
-        }
+          icon: '/assets/images/icon_transaction.png',
+        },
       ],
       icon: '/assets/images/kb_logo.png',
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
 
     await pushNotificationService.sendNotification(notification, [userId]);
@@ -540,31 +568,30 @@ export class BankingNotificationBatch {
    * 주간 지출 분석 알림
    */
   static async sendWeeklySpendingAnalysis(
-    userId: string, 
-    weeklySpending: number, 
+    userId: string,
+    weeklySpending: number,
     previousWeek: number,
     categories: Record<string, number>
   ): Promise<void> {
-    const formatAmount = (amount: number) => 
+    const formatAmount = (amount: number) =>
       new Intl.NumberFormat('ko-KR', {
         style: 'currency',
-        currency: 'KRW'
+        currency: 'KRW',
       }).format(amount);
 
     const difference = weeklySpending - previousWeek;
     const percentChange = previousWeek > 0 ? (difference / previousWeek) * 100 : 0;
-    
+
     const title = '주간 지출 분석';
     let body = `이번 주 지출: ${formatAmount(weeklySpending)}`;
-    
+
     if (Math.abs(percentChange) > 5) {
       const changeStr = percentChange > 0 ? '증가' : '감소';
       body += ` (지난주 대비 ${Math.abs(percentChange).toFixed(1)}% ${changeStr})`;
     }
 
-    const topCategory = Object.entries(categories)
-      .sort(([,a], [,b]) => b - a)[0];
-    
+    const topCategory = Object.entries(categories).sort(([, a], [, b]) => b - a)[0];
+
     if (topCategory) {
       body += `\n최대 지출: ${topCategory[0]} ${formatAmount(topCategory[1])}`;
     }
@@ -581,7 +608,7 @@ export class BankingNotificationBatch {
         previousWeek,
         percentChange,
         categories,
-        url: '/analytics/spending'
+        url: '/analytics/spending',
       },
       requiresAuth: false,
       encrypted: false,
@@ -589,16 +616,16 @@ export class BankingNotificationBatch {
         {
           id: 'view_analytics',
           title: '상세 분석',
-          icon: '/assets/images/icon_analytics.png'
+          icon: '/assets/images/icon_analytics.png',
         },
         {
           id: 'set_budget',
           title: '예산 설정',
-          icon: '/assets/images/icon_budget.png'
-        }
+          icon: '/assets/images/icon_budget.png',
+        },
       ],
       icon: '/assets/images/icon_analytics.png',
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
 
     await pushNotificationService.sendNotification(notification, [userId]);

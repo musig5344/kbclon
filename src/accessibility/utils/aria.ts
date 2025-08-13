@@ -30,7 +30,7 @@ export function setAriaLive(
   setAriaAttributes(element, {
     'aria-live': level,
     'aria-atomic': atomic,
-    'aria-relevant': relevant
+    'aria-relevant': relevant,
   });
 }
 
@@ -40,9 +40,9 @@ export function setAriaLive(
 export function setAriaLoading(element: HTMLElement, isLoading: boolean): void {
   setAriaAttributes(element, {
     'aria-busy': isLoading,
-    'aria-live': isLoading ? 'polite' : undefined
+    'aria-live': isLoading ? 'polite' : undefined,
   });
-  
+
   if (isLoading) {
     element.setAttribute('aria-label', '로딩 중');
   }
@@ -57,18 +57,18 @@ export function setAriaExpanded(
   isExpanded: boolean
 ): void {
   const contentId = content.id || `content-${Date.now()}`;
-  
+
   if (!content.id) {
     content.id = contentId;
   }
-  
+
   setAriaAttributes(trigger, {
     'aria-expanded': isExpanded,
-    'aria-controls': contentId
+    'aria-controls': contentId,
   });
-  
+
   setAriaAttributes(content, {
-    'aria-hidden': !isExpanded
+    'aria-hidden': !isExpanded,
   });
 }
 
@@ -89,43 +89,43 @@ export class AriaTabList {
   private init() {
     // 탭 리스트 설정
     this.tablist.setAttribute('role', 'tablist');
-    
+
     // 탭 수집
     this.tabs = Array.from(this.tablist.querySelectorAll('[role="tab"]'));
-    
+
     // 패널 수집 및 설정
     this.tabs.forEach((tab, index) => {
       const panelId = tab.getAttribute('aria-controls');
       const panel = panelId ? document.getElementById(panelId) : null;
-      
+
       if (panel) {
         this.panels[index] = panel;
         panel.setAttribute('role', 'tabpanel');
         panel.setAttribute('aria-labelledby', tab.id || `tab-${index}`);
-        
+
         if (!tab.id) {
           tab.id = `tab-${index}`;
         }
       }
-      
+
       // 초기 상태 설정
       this.updateTabState(index, index === this.selectedIndex);
-      
+
       // 이벤트 리스너
       tab.addEventListener('click', () => this.selectTab(index));
-      tab.addEventListener('keydown', (e) => this.handleKeyDown(e, index));
+      tab.addEventListener('keydown', e => this.handleKeyDown(e, index));
     });
   }
 
   private updateTabState(index: number, isSelected: boolean) {
     const tab = this.tabs[index];
     const panel = this.panels[index];
-    
+
     if (tab) {
       tab.setAttribute('aria-selected', String(isSelected));
       tab.setAttribute('tabindex', isSelected ? '0' : '-1');
     }
-    
+
     if (panel) {
       panel.hidden = !isSelected;
     }
@@ -133,21 +133,21 @@ export class AriaTabList {
 
   private selectTab(index: number) {
     if (index < 0 || index >= this.tabs.length) return;
-    
+
     // 이전 탭 비활성화
     this.updateTabState(this.selectedIndex, false);
-    
+
     // 새 탭 활성화
     this.selectedIndex = index;
     this.updateTabState(index, true);
-    
+
     // 포커스 이동
     this.tabs[index].focus();
   }
 
   private handleKeyDown(event: KeyboardEvent, currentIndex: number) {
     let newIndex = currentIndex;
-    
+
     switch (event.key) {
       case 'ArrowRight':
         newIndex = (currentIndex + 1) % this.tabs.length;
@@ -164,7 +164,7 @@ export class AriaTabList {
       default:
         return;
     }
-    
+
     event.preventDefault();
     this.selectTab(newIndex);
   }
@@ -187,54 +187,53 @@ export class AriaAccordion {
 
   private init() {
     const items = this.container.querySelectorAll('.accordion-item');
-    
+
     items.forEach((item, index) => {
       const header = item.querySelector('.accordion-header') as HTMLElement;
       const panel = item.querySelector('.accordion-panel') as HTMLElement;
-      
+
       if (header && panel) {
         // ID 설정
         const headerId = header.id || `accordion-header-${index}`;
         const panelId = panel.id || `accordion-panel-${index}`;
-        
+
         header.id = headerId;
         panel.id = panelId;
-        
+
         // ARIA 속성 설정
         header.setAttribute('role', 'button');
         header.setAttribute('aria-controls', panelId);
         header.setAttribute('aria-expanded', 'false');
         header.setAttribute('tabindex', '0');
-        
+
         panel.setAttribute('role', 'region');
         panel.setAttribute('aria-labelledby', headerId);
         panel.hidden = true;
-        
+
         // 배열에 추가
         this.headers.push(header);
         this.panels.push(panel);
-        
+
         // 이벤트 리스너
         header.addEventListener('click', () => this.toggle(index));
-        header.addEventListener('keydown', (e) => this.handleKeyDown(e, index));
+        header.addEventListener('keydown', e => this.handleKeyDown(e, index));
       }
     });
   }
 
   private toggle(index: number) {
     const header = this.headers[index];
-    const panel = this.panels[index];
     const isExpanded = header.getAttribute('aria-expanded') === 'true';
-    
+
     if (!this.allowMultiple && !isExpanded) {
       // 다른 모든 패널 닫기
-      this.headers.forEach((h, i) => {
+      this.headers.forEach((_, i) => {
         if (i !== index) {
           this.close(i);
         }
       });
     }
-    
+
     if (isExpanded) {
       this.close(index);
     } else {
@@ -245,7 +244,7 @@ export class AriaAccordion {
   private open(index: number) {
     const header = this.headers[index];
     const panel = this.panels[index];
-    
+
     header.setAttribute('aria-expanded', 'true');
     panel.hidden = false;
   }
@@ -253,7 +252,7 @@ export class AriaAccordion {
   private close(index: number) {
     const header = this.headers[index];
     const panel = this.panels[index];
-    
+
     header.setAttribute('aria-expanded', 'false');
     panel.hidden = true;
   }
@@ -310,9 +309,9 @@ export function setAriaModal(
     role: 'dialog',
     'aria-modal': true,
     'aria-labelledby': options.labelledBy,
-    'aria-describedby': options.describedBy
+    'aria-describedby': options.describedBy,
   });
-  
+
   if (options.closeButton) {
     options.closeButton.setAttribute('aria-label', '닫기');
   }
@@ -326,7 +325,7 @@ export function setAriaAlert(
   type: 'alert' | 'status' | 'log' = 'alert'
 ): void {
   element.setAttribute('role', type);
-  
+
   if (type === 'alert') {
     element.setAttribute('aria-live', 'assertive');
   } else {
@@ -348,7 +347,7 @@ export function setAriaProgress(
     'aria-valuenow': value,
     'aria-valuemin': 0,
     'aria-valuemax': max,
-    'aria-label': label || `진행률 ${Math.round((value / max) * 100)}%`
+    'aria-label': label || `진행률 ${Math.round((value / max) * 100)}%`,
   });
 }
 
@@ -362,28 +361,25 @@ export function setAriaInvalid(
 ): void {
   setAriaAttributes(input, {
     'aria-invalid': isInvalid,
-    'aria-errormessage': isInvalid ? errorMessageId : undefined
+    'aria-errormessage': isInvalid ? errorMessageId : undefined,
   });
 }
 
 /**
  * ARIA 툴팁 패턴 구현
  */
-export function createAriaTooltip(
-  trigger: HTMLElement,
-  tooltipContent: string
-): HTMLElement {
+export function createAriaTooltip(trigger: HTMLElement, tooltipContent: string): HTMLElement {
   const tooltip = document.createElement('div');
   const tooltipId = `tooltip-${Date.now()}`;
-  
+
   tooltip.id = tooltipId;
   tooltip.className = 'tooltip';
   tooltip.setAttribute('role', 'tooltip');
   tooltip.textContent = tooltipContent;
   tooltip.hidden = true;
-  
+
   trigger.setAttribute('aria-describedby', tooltipId);
-  
+
   // 스타일 설정
   Object.assign(tooltip.style, {
     position: 'absolute',
@@ -393,30 +389,30 @@ export function createAriaTooltip(
     borderRadius: '4px',
     fontSize: '14px',
     zIndex: '1000',
-    pointerEvents: 'none'
+    pointerEvents: 'none',
   });
-  
+
   // 이벤트 핸들러
   trigger.addEventListener('mouseenter', () => {
     tooltip.hidden = false;
     positionTooltip(trigger, tooltip);
   });
-  
+
   trigger.addEventListener('mouseleave', () => {
     tooltip.hidden = true;
   });
-  
+
   trigger.addEventListener('focus', () => {
     tooltip.hidden = false;
     positionTooltip(trigger, tooltip);
   });
-  
+
   trigger.addEventListener('blur', () => {
     tooltip.hidden = true;
   });
-  
+
   document.body.appendChild(tooltip);
-  
+
   return tooltip;
 }
 
@@ -426,20 +422,20 @@ export function createAriaTooltip(
 function positionTooltip(trigger: HTMLElement, tooltip: HTMLElement): void {
   const triggerRect = trigger.getBoundingClientRect();
   const tooltipRect = tooltip.getBoundingClientRect();
-  
+
   let top = triggerRect.bottom + 8;
   let left = triggerRect.left + (triggerRect.width - tooltipRect.width) / 2;
-  
+
   // 화면 경계 체크
   if (left < 0) left = 8;
   if (left + tooltipRect.width > window.innerWidth) {
     left = window.innerWidth - tooltipRect.width - 8;
   }
-  
+
   if (top + tooltipRect.height > window.innerHeight) {
     top = triggerRect.top - tooltipRect.height - 8;
   }
-  
+
   tooltip.style.top = `${top}px`;
   tooltip.style.left = `${left}px`;
 }
@@ -450,7 +446,11 @@ function positionTooltip(trigger: HTMLElement, tooltip: HTMLElement): void {
 export class AriaMenu {
   private menu: HTMLElement;
   private menuItems: HTMLElement[] = [];
-  private currentIndex: number = -1;
+  private _currentIndex: number = -1;
+
+  getCurrentIndex(): number {
+    return this._currentIndex;
+  }
 
   constructor(menu: HTMLElement) {
     this.menu = menu;
@@ -459,17 +459,17 @@ export class AriaMenu {
 
   private init() {
     this.menu.setAttribute('role', 'menu');
-    
+
     this.menuItems = Array.from(this.menu.querySelectorAll('[role="menuitem"]'));
-    
+
     this.menuItems.forEach((item, index) => {
       item.setAttribute('tabindex', index === 0 ? '0' : '-1');
-      
-      item.addEventListener('keydown', (e) => this.handleKeyDown(e, index));
+
+      item.addEventListener('keydown', e => this.handleKeyDown(e, index));
       item.addEventListener('click', () => this.selectItem(index));
     });
-    
-    this.menu.addEventListener('keydown', (e) => {
+
+    this.menu.addEventListener('keydown', e => {
       if (e.key === 'Escape') {
         this.close();
       }
@@ -516,9 +516,9 @@ export class AriaMenu {
     this.menuItems.forEach((item, i) => {
       item.setAttribute('tabindex', i === index ? '0' : '-1');
     });
-    
+
     this.menuItems[index].focus();
-    this.currentIndex = index;
+    this._currentIndex = index;
   }
 
   private selectItem(index: number) {

@@ -36,7 +36,7 @@ const ViewMoreButton = styled.button`
   display: flex;
   align-items: center;
   gap: ${KBDesignSystem.spacing.xxs};
-  
+
   &:hover {
     color: ${KBDesignSystem.colors.text.primary};
   }
@@ -62,9 +62,7 @@ export const TodaySpendingSection: React.FC<TodaySpendingSectionProps> = ({ clas
         <SectionTitle>오늘한 지출</SectionTitle>
         <ViewMoreButton>??원 〉</ViewMoreButton>
       </SectionHeader>
-      <SpendingContent>
-        오늘 지출 내역이 없습니다.
-      </SpendingContent>
+      <SpendingContent>오늘 지출 내역이 없습니다.</SpendingContent>
     </SpendingSection>
   );
 };

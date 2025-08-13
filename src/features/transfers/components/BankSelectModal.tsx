@@ -11,7 +11,7 @@ import {
   BankListContainer,
   BankSectionTitle,
   BankItem,
-  BankName
+  BankName,
 } from '../TransferPage.styles';
 
 interface Bank {
@@ -71,7 +71,7 @@ const BankSelectModal: React.FC<BankSelectModalProps> = ({
 }) => {
   if (!isVisible) return null;
 
-  const filteredBanks = bankCategories.filter(bank => 
+  const filteredBanks = bankCategories.filter(bank =>
     bank.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -82,39 +82,35 @@ const BankSelectModal: React.FC<BankSelectModalProps> = ({
 
   return (
     <BankModalOverlay onClick={onClose}>
-      <BankModalContainer onClick={(e) => e.stopPropagation()}>
+      <BankModalContainer onClick={e => e.stopPropagation()}>
         <BankModalHeader>
           <BankModalTitle>은행 선택</BankModalTitle>
-          <BankModalCloseButton onClick={onClose}>
-            ×
-          </BankModalCloseButton>
+          <BankModalCloseButton onClick={onClose}>×</BankModalCloseButton>
         </BankModalHeader>
         <BankSearchContainer>
           <BankSearchInput
-            placeholder="은행명을 검색하세요"
+            placeholder='은행명을 검색하세요'
             value={searchTerm}
-            onChange={(e) => onSearchTermChange(e.target.value)}
+            onChange={e => onSearchTermChange(e.target.value)}
           />
         </BankSearchContainer>
         <BankListContainer>
           <BankSectionTitle>은행</BankSectionTitle>
-          {filteredBanks.filter(bank => bank.type === 'bank').map((bank) => (
-            <BankItem 
-              key={bank.code}
-              onClick={() => handleBankSelect(bank.name)}
-            >
-              <BankName>{bank.name}</BankName>
-            </BankItem>
-          ))}
+          {filteredBanks
+            .filter(bank => bank.type === 'bank')
+            .map(bank => (
+              <BankItem key={bank.code} onClick={() => handleBankSelect(bank.name)}>
+                <BankName>{bank.name}</BankName>
+              </BankItem>
+            ))}
           <BankSectionTitle>증권사</BankSectionTitle>
-          {filteredBanks.filter(bank => bank.type === 'securities').map((bank) => (
-            <BankItem 
-              key={bank.code}
-              onClick={() => handleBankSelect(bank.name)}
-            >
-              <BankName>{bank.name}</BankName>
-            </BankItem>
-          ))}
+          {filteredBanks
+            .filter(bank => bank.type === 'securities')
+            .map(bank => (
+              <BankItem key={bank.code} onClick={() => handleBankSelect(bank.name)}>
+                <BankName>{bank.name}</BankName>
+              </BankItem>
+            ))}
         </BankListContainer>
       </BankModalContainer>
     </BankModalOverlay>

@@ -43,22 +43,24 @@ const RefreshContainer = styled.div<{ $isDragging: boolean }>`
   width: 100%;
   height: 100%;
   overflow: hidden;
-  touch-action: ${props => props.$isDragging ? 'none' : 'pan-y'};
+  touch-action: ${props => (props.$isDragging ? 'none' : 'pan-y')};
   -webkit-overflow-scrolling: touch;
 `;
 
 // Scrollable content
-const ScrollableContent = styled.div<{ 
+const ScrollableContent = styled.div<{
   $pullDistance: number;
   $isRefreshing: boolean;
 }>`
   width: 100%;
   height: 100%;
   overflow-y: auto;
-  transform: translateY(${props => {
-    if (props.$isRefreshing) return '80px';
-    return `${props.$pullDistance}px`;
-  }});
+  transform: translateY(
+    ${props => {
+      if (props.$isRefreshing) return '80px';
+      return `${props.$pullDistance}px`;
+    }}
+  );
   transition: ${props => {
     if (props.$isRefreshing) return 'transform 300ms ease-out';
     if (props.$pullDistance === 0) return 'transform 300ms ease-out';
@@ -67,7 +69,7 @@ const ScrollableContent = styled.div<{
 `;
 
 // Pull indicator container
-const PullIndicatorContainer = styled.div<{ 
+const PullIndicatorContainer = styled.div<{
   $pullDistance: number;
   $isRefreshing: boolean;
   $threshold: number;
@@ -80,10 +82,12 @@ const PullIndicatorContainer = styled.div<{
   display: flex;
   align-items: center;
   justify-content: center;
-  transform: translateY(${props => {
-    if (props.$isRefreshing) return '0';
-    return `${props.$pullDistance - 80}px`;
-  }});
+  transform: translateY(
+    ${props => {
+      if (props.$isRefreshing) return '0';
+      return `${props.$pullDistance - 80}px`;
+    }}
+  );
   opacity: ${props => {
     if (props.$isRefreshing) return 1;
     return Math.min(1, props.$pullDistance / props.$threshold);
@@ -106,7 +110,7 @@ const LoadingSpinner = styled.div<{ $size: number }>`
 `;
 
 // Pull arrow
-const PullArrow = styled.div<{ 
+const PullArrow = styled.div<{
   $rotation: number;
   $isReady: boolean;
 }>`
@@ -114,12 +118,14 @@ const PullArrow = styled.div<{
   height: 24px;
   transform: rotate(${props => props.$rotation}deg);
   transition: transform 200ms ease-out;
-  color: ${props => props.$isReady ? tokens.colors.brand.primary : tokens.colors.text.tertiary};
-  
-  ${props => props.$isReady && css`
-    animation: ${pulse} 1s ease-in-out infinite;
-  `}
-  
+  color: ${props => (props.$isReady ? tokens.colors.brand.primary : tokens.colors.text.tertiary)};
+
+  ${props =>
+    props.$isReady &&
+    css`
+      animation: ${pulse} 1s ease-in-out infinite;
+    `}
+
   &::before {
     content: '↓';
     font-size: 24px;
@@ -139,7 +145,7 @@ const SuccessCheck = styled.div`
   color: white;
   font-size: 20px;
   animation: ${pulse} 0.5s ease-out;
-  
+
   &::before {
     content: '✓';
   }
@@ -188,44 +194,44 @@ export const PullToRefresh: React.FC<PullToRefreshProps> = ({
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [showSuccessState, setShowSuccessState] = useState(false);
   const [canPull, setCanPull] = useState(true);
-  
+
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const startY = useRef(0);
   const currentY = useRef(0);
   const isDragging = useRef(false);
   const hasTriggeredHaptic = useRef(false);
-  
+
   // Check if at top of scroll
   const isAtTop = useCallback(() => {
     if (!scrollContainerRef.current) return true;
     return scrollContainerRef.current.scrollTop <= 0;
   }, []);
-  
+
   // Calculate pull resistance
   const calculatePullDistance = useCallback((deltaY: number): number => {
     // Apply resistance formula for iOS-like feel
     const resistance = 2.5;
     return deltaY / resistance;
   }, []);
-  
+
   // Handle refresh
   const handleRefresh = useCallback(async () => {
     if (isRefreshing || disabled) return;
-    
+
     setIsRefreshing(true);
     if (enableHaptic) {
       haptic.trigger('medium');
     }
-    
+
     try {
       await onRefresh();
-      
+
       if (showSuccess) {
         setShowSuccessState(true);
         if (enableHaptic) {
           haptic.success();
         }
-        
+
         setTimeout(() => {
           setShowSuccessState(false);
           setIsRefreshing(false);
@@ -244,69 +250,72 @@ export const PullToRefresh: React.FC<PullToRefreshProps> = ({
       }
     }
   }, [isRefreshing, disabled, onRefresh, showSuccess, successDuration, enableHaptic]);
-  
+
   // Use touch optimization hook
-  const { bind } = useTouchOptimized({
-    onGestureStart: (gesture) => {
-      if (!canPull || disabled || isRefreshing || !isAtTop()) return;
-      
-      startY.current = gesture.startY;
-      currentY.current = gesture.currentY;
-      isDragging.current = true;
-      hasTriggeredHaptic.current = false;
-    },
-    onGestureMove: (gesture) => {
-      if (!isDragging.current || !canPull || disabled || isRefreshing) return;
-      
-      // Only pull down
-      const deltaY = gesture.currentY - startY.current;
-      if (deltaY < 0) {
-        setPullDistance(0);
-        return;
-      }
-      
-      // Check if still at top
-      if (!isAtTop()) {
-        isDragging.current = false;
-        setPullDistance(0);
-        return;
-      }
-      
-      currentY.current = gesture.currentY;
-      const distance = calculatePullDistance(deltaY);
-      const clampedDistance = Math.min(distance, threshold * 2);
-      
-      setPullDistance(clampedDistance);
-      
-      // Haptic feedback when threshold reached
-      if (clampedDistance >= threshold && !hasTriggeredHaptic.current && enableHaptic) {
-        haptic.trigger('light');
-        hasTriggeredHaptic.current = true;
-      } else if (clampedDistance < threshold && hasTriggeredHaptic.current) {
+  const { bind } = useTouchOptimized(
+    {
+      onGestureStart: gesture => {
+        if (!canPull || disabled || isRefreshing || !isAtTop()) return;
+
+        startY.current = gesture.startY;
+        currentY.current = gesture.currentY;
+        isDragging.current = true;
         hasTriggeredHaptic.current = false;
-      }
+      },
+      onGestureMove: gesture => {
+        if (!isDragging.current || !canPull || disabled || isRefreshing) return;
+
+        // Only pull down
+        const deltaY = gesture.currentY - startY.current;
+        if (deltaY < 0) {
+          setPullDistance(0);
+          return;
+        }
+
+        // Check if still at top
+        if (!isAtTop()) {
+          isDragging.current = false;
+          setPullDistance(0);
+          return;
+        }
+
+        currentY.current = gesture.currentY;
+        const distance = calculatePullDistance(deltaY);
+        const clampedDistance = Math.min(distance, threshold * 2);
+
+        setPullDistance(clampedDistance);
+
+        // Haptic feedback when threshold reached
+        if (clampedDistance >= threshold && !hasTriggeredHaptic.current && enableHaptic) {
+          haptic.trigger('light');
+          hasTriggeredHaptic.current = true;
+        } else if (clampedDistance < threshold && hasTriggeredHaptic.current) {
+          hasTriggeredHaptic.current = false;
+        }
+      },
+      onGestureEnd: () => {
+        if (!isDragging.current) return;
+
+        isDragging.current = false;
+
+        if (pullDistance >= threshold) {
+          handleRefresh();
+        } else {
+          setPullDistance(0);
+        }
+      },
     },
-    onGestureEnd: () => {
-      if (!isDragging.current) return;
-      
-      isDragging.current = false;
-      
-      if (pullDistance >= threshold) {
-        handleRefresh();
-      } else {
-        setPullDistance(0);
-      }
-    },
-  }, {
-    preventDefaultEvents: false, // Allow normal scrolling
-    stopPropagation: false,
-  });
-  
+    {
+      preventDefaultEvents: false, // Allow normal scrolling
+      stopPropagation: false,
+    }
+  );
+
   // Handle scroll to disable pull when not at top
   const handleScroll = useCallback(() => {
     setCanPull(isAtTop());
   }, [isAtTop]);
-  
+
   // Reset on unmount
   useEffect(() => {
     return () => {
@@ -314,11 +323,11 @@ export const PullToRefresh: React.FC<PullToRefreshProps> = ({
       setPullDistance(0);
     };
   }, []);
-  
+
   // Calculate arrow rotation
   const arrowRotation = Math.min(180, (pullDistance / threshold) * 180);
   const isReady = pullDistance >= threshold;
-  
+
   // Determine status text
   const getStatusText = () => {
     if (showSuccessState) return successText;
@@ -327,7 +336,7 @@ export const PullToRefresh: React.FC<PullToRefreshProps> = ({
     if (pullDistance > 0) return pullingText;
     return '';
   };
-  
+
   return (
     <RefreshContainer {...bind} $isDragging={isDragging.current}>
       {/* Pull indicator */}
@@ -343,16 +352,13 @@ export const PullToRefresh: React.FC<PullToRefreshProps> = ({
             ) : isRefreshing ? (
               <LoadingSpinner $size={32} />
             ) : (
-              <PullArrow 
-                $rotation={arrowRotation} 
-                $isReady={isReady}
-              />
+              <PullArrow $rotation={arrowRotation} $isReady={isReady} />
             )}
             <StatusText>{getStatusText()}</StatusText>
           </div>
         )}
       </PullIndicatorContainer>
-      
+
       {/* Scrollable content */}
       <ScrollableContent
         ref={scrollContainerRef}
@@ -385,18 +391,18 @@ const KBLogo = styled.div<{ $scale: number }>`
 const KBLoadingDots = styled.div`
   display: flex;
   gap: 4px;
-  
+
   span {
     width: 8px;
     height: 8px;
     background-color: ${tokens.colors.brand.primary};
     border-radius: 50%;
     animation: ${pulse} 1.4s ease-in-out infinite;
-    
+
     &:nth-child(2) {
       animation-delay: 0.2s;
     }
-    
+
     &:nth-child(3) {
       animation-delay: 0.4s;
     }
@@ -410,7 +416,7 @@ export const KBPullIndicator: React.FC<{
   showSuccess: boolean;
 }> = ({ pullDistance, threshold, isRefreshing, showSuccess }) => {
   const scale = Math.min(1.2, 0.8 + (pullDistance / threshold) * 0.4);
-  
+
   return (
     <KBIndicatorContainer>
       {showSuccess ? (
@@ -433,21 +439,16 @@ export const KBPullIndicator: React.FC<{
 
 // Example usage component
 export const PullToRefreshExample: React.FC = () => {
-  const [items, setItems] = useState(
-    Array.from({ length: 20 }, (_, i) => `Item ${i + 1}`)
-  );
-  
+  const [items, setItems] = useState(Array.from({ length: 20 }, (_, i) => `Item ${i + 1}`));
+
   const handleRefresh = async () => {
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 2000));
-    
+
     // Add new items
-    setItems(prev => [
-      `New Item ${Date.now()}`,
-      ...prev,
-    ]);
+    setItems(prev => [`New Item ${Date.now()}`, ...prev]);
   };
-  
+
   return (
     <PullToRefresh onRefresh={handleRefresh}>
       <div style={{ padding: 16 }}>

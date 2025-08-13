@@ -35,7 +35,7 @@ const Header: React.FC = () => {
   };
   return (
     <HeaderContainer>
-      <LogoImage src={kbLogo} alt="KB스타뱅킹 로고" />
+      <LogoImage src={kbLogo} alt='KB스타뱅킹 로고' />
       <IconGroup>
         <BellIcon style={{ cursor: 'pointer' }} />
         <SettingsIcon onClick={handleSignOut} style={{ cursor: 'pointer' }} />
@@ -43,4 +43,4 @@ const Header: React.FC = () => {
     </HeaderContainer>
   );
 };
-export default Header; 
+export default Header;

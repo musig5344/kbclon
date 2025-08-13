@@ -30,7 +30,7 @@ export interface LoadingOptions {
   minDisplayTime?: number;
 }
 
-type LoadingAction = 
+type LoadingAction =
   | { type: 'START_LOADING'; key: string; options?: LoadingOptions }
   | { type: 'STOP_LOADING'; key: string }
   | { type: 'CLEAR_ALL_LOADING' }
@@ -53,74 +53,74 @@ const DEFAULT_LOADING_OPTIONS: Required<LoadingOptions> = {
   type: 'overlay',
   variant: 'type2', // 곰 이미지가 있는 type2 사용
   size: 'large',
-  minDisplayTime: 800 // Android WebView에서 깜빡임 방지
+  minDisplayTime: 800, // Android WebView에서 깜빡임 방지
 };
 
 // 키별 기본 설정 (백엔드 API 연동 최적화) - 모든 메시지 제거
 const LOADING_PRESETS: Record<string, Partial<LoadingOptions>> = {
   // 계좌 관련
-  'accounts': {
+  accounts: {
     message: '',
     type: 'overlay',
     variant: 'type2',
-    minDisplayTime: 600
+    minDisplayTime: 600,
   },
   'account-balance': {
     message: '',
     type: 'inline',
     variant: 'type2',
-    size: 'medium'
+    size: 'medium',
   },
-  
+
   // 거래내역 관련
-  'transactions': {
+  transactions: {
     message: '',
     type: 'overlay',
     variant: 'type2',
-    minDisplayTime: 800
+    minDisplayTime: 800,
   },
   'transaction-statistics': {
     message: '',
     type: 'inline',
     variant: 'type2',
-    size: 'medium'
+    size: 'medium',
   },
-  
+
   // 이체 관련
-  'transfer': {
+  transfer: {
     message: '',
     type: 'fullscreen',
     variant: 'type2',
     size: 'large',
-    minDisplayTime: 1200 // 이체는 충분한 시간 필요
+    minDisplayTime: 1200, // 이체는 충분한 시간 필요
   },
   'transfer-validation': {
     message: '',
     type: 'overlay',
     variant: 'type2',
-    minDisplayTime: 400
+    minDisplayTime: 400,
   },
-  
+
   // 인증 관련
-  'login': {
+  login: {
     message: '',
     type: 'overlay',
     variant: 'type2',
-    minDisplayTime: 800
+    minDisplayTime: 800,
   },
   'auth-refresh': {
     message: '',
     type: 'inline',
     variant: 'type2',
-    size: 'small'
+    size: 'small',
   },
-  
+
   // 페이지 전환
   'page-transition': {
     message: '',
     type: 'fullscreen',
     variant: 'type2',
-    minDisplayTime: 600
+    minDisplayTime: 600,
   },
 
   // 네트워크 관련
@@ -128,15 +128,15 @@ const LOADING_PRESETS: Record<string, Partial<LoadingOptions>> = {
     message: '',
     type: 'overlay',
     variant: 'type2',
-    minDisplayTime: 1000
-  }
+    minDisplayTime: 1000,
+  },
 };
 
 const loadingReducer = (state: LoadingState, action: LoadingAction): LoadingState => {
   switch (action.type) {
     case 'START_LOADING': {
       const { key, options = {} } = action;
-      
+
       // 이미 로딩 중이면 무시 (중복 방지)
       if (state[key]?.isLoading) {
         return state;
@@ -155,15 +155,15 @@ const loadingReducer = (state: LoadingState, action: LoadingAction): LoadingStat
           variant: finalOptions.variant,
           size: finalOptions.size,
           startTime: Date.now(),
-          minDisplayTime: finalOptions.minDisplayTime
-        }
+          minDisplayTime: finalOptions.minDisplayTime,
+        },
       };
     }
 
     case 'STOP_LOADING': {
       const { key } = action;
       const currentLoading = state[key];
-      
+
       if (!currentLoading || !currentLoading.isLoading) {
         return state;
       }
@@ -171,7 +171,7 @@ const loadingReducer = (state: LoadingState, action: LoadingAction): LoadingStat
       // 최소 표시 시간 확인
       const elapsedTime = Date.now() - currentLoading.startTime;
       const minTime = currentLoading.minDisplayTime || 0;
-      
+
       if (elapsedTime < minTime) {
         // 최소 시간이 지나지 않았으면 딜레이 후 제거
         setTimeout(() => {
@@ -193,8 +193,8 @@ const loadingReducer = (state: LoadingState, action: LoadingAction): LoadingStat
         ...state,
         [key]: {
           ...state[key],
-          message
-        }
+          message,
+        },
       };
     }
 
@@ -220,7 +220,7 @@ export const LoadingProvider: React.FC<{ children: ReactNode }> = ({ children })
 
     // 페이지 언마운트 시 정리
     window.addEventListener('beforeunload', cleanup);
-    
+
     return () => {
       window.removeEventListener('beforeunload', cleanup);
       cleanup();
@@ -237,7 +237,7 @@ export const LoadingProvider: React.FC<{ children: ReactNode }> = ({ children })
 
     const elapsedTime = Date.now() - currentLoading.startTime;
     const minTime = currentLoading.minDisplayTime || 0;
-    
+
     if (elapsedTime < minTime) {
       // Android WebView 최적화: requestAnimationFrame 사용
       const remainingTime = minTime - elapsedTime;
@@ -278,32 +278,36 @@ export const LoadingProvider: React.FC<{ children: ReactNode }> = ({ children })
   const activeLoading = Object.entries(loadingState)
     .filter(([_, state]) => state.isLoading)
     .sort((a, b) => b[1].startTime - a[1].startTime)[0]; // 가장 최근 로딩만
-    
+
   const showLoading = activeLoading && activeLoading[1].isLoading;
   const loadingState_ = activeLoading ? activeLoading[1] : null;
 
   return (
-    <LoadingContext.Provider value={{
-      loadingState,
-      startLoading,
-      stopLoading,
-      updateLoadingMessage,
-      clearAllLoading,
-      isLoading,
-      hasAnyLoading,
-      getGlobalLoadingStates
-    }}>
+    <LoadingContext.Provider
+      value={{
+        loadingState,
+        startLoading,
+        stopLoading,
+        updateLoadingMessage,
+        clearAllLoading,
+        isLoading,
+        hasAnyLoading,
+        getGlobalLoadingStates,
+      }}
+    >
       <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-        <div style={{
-          width: '100%',
-          height: '100%',
-          transition: 'all 0.3s ease-out',
-          transformOrigin: 'top center',
-          transform: showLoading ? 'scale(0.92) translateY(20px)' : 'scale(1) translateY(0)',
-          opacity: showLoading ? 0.6 : 1,
-          filter: showLoading ? 'blur(2px)' : 'none',
-          pointerEvents: showLoading ? 'none' : 'auto'
-        }}>
+        <div
+          style={{
+            width: '100%',
+            height: '100%',
+            transition: 'all 0.3s ease-out',
+            transformOrigin: 'top center',
+            transform: showLoading ? 'scale(0.92) translateY(20px)' : 'scale(1) translateY(0)',
+            opacity: showLoading ? 0.6 : 1,
+            filter: showLoading ? 'blur(2px)' : 'none',
+            pointerEvents: showLoading ? 'none' : 'auto',
+          }}
+        >
           {children}
         </div>
         {showLoading && loadingState_ && (
@@ -338,18 +342,15 @@ export const useApiLoading = (key: string) => {
       const preset = LOADING_PRESETS[key];
       startLoading(key, { ...preset, message });
     },
-    
+
     stopApiCall: () => stopLoading(key),
-    
+
     updateMessage: (message: string) => updateLoadingMessage(key, message),
-    
+
     isApiLoading: () => isLoading(key),
-    
+
     // API 호출 래퍼
-    withLoading: async <T,>(
-      apiCall: () => Promise<T>, 
-      loadingMessage?: string
-    ): Promise<T> => {
+    withLoading: async <T,>(apiCall: () => Promise<T>, loadingMessage?: string): Promise<T> => {
       try {
         const preset = LOADING_PRESETS[key];
         startLoading(key, { ...preset, message: loadingMessage });
@@ -358,17 +359,17 @@ export const useApiLoading = (key: string) => {
       } finally {
         stopLoading(key);
       }
-    }
+    },
   };
 };
 
 // Android WebView 최적화 Hook
 export const useAndroidOptimizedLoading = (key: string) => {
   const loading = useApiLoading(key);
-  
+
   return {
     ...loading,
-    
+
     // Android WebView에서 메모리 효율적인 로딩
     withOptimizedLoading: async <T,>(
       apiCall: () => Promise<T>,
@@ -379,10 +380,10 @@ export const useAndroidOptimizedLoading = (key: string) => {
       }
     ): Promise<T> => {
       const { message, onProgress, estimatedDuration = 2000 } = options || {};
-      
+
       try {
         loading.startApiCall(message);
-        
+
         // Android WebView에서 진행률 시뮬레이션
         if (onProgress) {
           let progress = 0;
@@ -395,17 +396,17 @@ export const useAndroidOptimizedLoading = (key: string) => {
             }
           }, estimatedDuration / 10);
         }
-        
+
         const result = await apiCall();
-        
+
         if (onProgress) {
           onProgress(100);
         }
-        
+
         return result;
       } finally {
         loading.stopApiCall();
       }
-    }
+    },
   };
 };

@@ -11,7 +11,6 @@ import { ErrorNotification } from '@shared/components/ui/ErrorNotification';
 
 import { useAuth } from '@core/auth/AuthContext';
 
-
 import { useAccountData } from '@hooks/useAccountData';
 
 import { androidOptimizedScroll } from '@styles/android-webview-optimizations';
@@ -23,8 +22,10 @@ import AccountSection from './components/AccountSection';
 import ContentSections from './components/ContentSections';
 import FinancialTabs from './components/FinancialTabs';
 import MainBanner from './components/MainBanner';
+import MiddleBanner from './components/MiddleBanner';
 import MyAssetsSection from './components/MyAssetsSection';
 import QuickAccessGrid from './components/QuickAccessGrid';
+import RecommendedServices from './components/RecommendedServices';
 import TodaySpendingSection from './components/TodaySpendingSection';
 import WeeklyCardSection from './components/WeeklyCardSection';
 
@@ -54,13 +55,13 @@ interface QuickAccessItem {
 
 export const DashboardPage = (): JSX.Element => {
   const { isInitialized } = useAuth();
-  const { 
-    accounts, 
-    isLoading: isLoadingAccounts, 
-    error: accountError, 
-    refetch: refetchAccounts 
+  const {
+    accounts,
+    isLoading: isLoadingAccounts,
+    error: accountError,
+    refetch: refetchAccounts,
   } = useAccountData();
-  
+
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   // 통합 로딩 상태 - 메모이제이션으로 최적화
@@ -90,45 +91,43 @@ export const DashboardPage = (): JSX.Element => {
     }
   }, []);
   // 콘텐츠 섹션 이벤트 핸들러 - useCallback으로 최적화
-  const handleFortuneClick = useCallback(() => {
-  }, []);
-  
-  const handleGameClick = useCallback(() => {
-  }, []);
-  
-  const handlePickClick = useCallback((index: number) => {
-  }, []);
-  
-  const handleRecommendClick = useCallback((index: number) => {
-  }, []);
-  
-  const handleBannerClick = useCallback(() => {
-  }, []);
+  const handleFortuneClick = useCallback(() => {}, []);
+
+  const handleGameClick = useCallback(() => {}, []);
+
+  const handlePickClick = useCallback((index: number) => {}, []);
+
+  const handleRecommendClick = useCallback((index: number) => {}, []);
+
+  const handleBannerClick = useCallback(() => {}, []);
 
   // QuickAccessGrid 아이템들을 메모이제이션하여 불필요한 리렌더링 방지
-  const quickAccessItems = useMemo<QuickAccessItem[]>(() => [
-    { 
-      title: '오늘의 걸음', 
-      subtitle: '연동하기 ›', 
-      icon: '🚶', 
-      bgColor: '#E8F5FF',
-      onClick: () => handleQuickAccessClick(0)
-    },
-    { 
-      title: '용돈 받기', 
-      subtitle: '매일 랜덤 ›', 
-      icon: '🐷', 
-      bgColor: '#FFE8E8',
-      onClick: () => handleQuickAccessClick(1)
-    },
-    { 
-      title: '식물 키우기', 
-      subtitle: '포인트', 
-      icon: '🌱', 
-      bgColor: '#F0FFF0',
-      onClick: () => handleQuickAccessClick(2)
-    }
-  ], [handleQuickAccessClick]);
+  const quickAccessItems = useMemo<QuickAccessItem[]>(
+    () => [
+      {
+        title: '오늘의 걸음',
+        subtitle: '연동하기 ›',
+        icon: '🚶',
+        bgColor: '#E8F5FF',
+        onClick: () => handleQuickAccessClick(0),
+      },
+      {
+        title: '용돈 받기',
+        subtitle: '매일 랜덤 ›',
+        icon: '🐷',
+        bgColor: '#FFE8E8',
+        onClick: () => handleQuickAccessClick(1),
+      },
+      {
+        title: '식물 키우기',
+        subtitle: '포인트',
+        icon: '🌱',
+        bgColor: '#F0FFF0',
+        onClick: () => handleQuickAccessClick(2),
+      },
+    ],
+    [handleQuickAccessClick]
+  );
   if (isLoading) {
     return (
       <DashboardContainer>
@@ -143,8 +142,8 @@ export const DashboardPage = (): JSX.Element => {
   }
   return (
     <DashboardContainer>
-      <ErrorNotification 
-        error={error || accountError} 
+      <ErrorNotification
+        error={error || accountError}
         onRetry={accountError ? refetchAccounts : undefined}
         onDismiss={() => setError(null)}
       />
@@ -152,27 +151,12 @@ export const DashboardPage = (): JSX.Element => {
       <MainContent>
         {/* 메인 배너 */}
         <MainBanner onBannerClick={handleBannerClick} />
+        {/* 중간 배너 */}
+        <MiddleBanner onBannerClick={handleBannerClick} />
         {/* 계좌 섹션 */}
         <AccountSection accounts={accounts} />
-        {/* 이번 주 카드경제 섹션 */}
-        <WeeklyCardSection />
-        {/* 오늘한 지출 섹션 */}
-        <TodaySpendingSection />
-        {/* 나의 총자산 섹션 */}
-        <MyAssetsSection />
-        {/* 빠른 접근 그리드 */}
-        <QuickAccessGrid 
-          items={quickAccessItems}
-        />
-        {/* 환율/증시 탭 */}
-        <FinancialTabs />
-        {/* 콘텐츠 섹션들 */}
-        <ContentSections
-          onFortuneClick={handleFortuneClick}
-          onGameClick={handleGameClick}
-          onPickClick={handlePickClick}
-          onRecommendClick={handleRecommendClick}
-        />
+        {/* 추천 서비스 섹션 */}
+        <RecommendedServices />
       </MainContent>
       <TabBar />
     </DashboardContainer>

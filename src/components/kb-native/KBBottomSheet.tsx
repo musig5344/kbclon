@@ -7,7 +7,8 @@ import React from 'react';
 
 import BottomSheet, { BottomSheetProps } from '../../shared/components/ui/BottomSheet';
 
-interface KBBottomSheetProps extends Omit<BottomSheetProps, 'variant' | 'usePortal' | 'showSlideBar'> {
+interface KBBottomSheetProps
+  extends Omit<BottomSheetProps, 'variant' | 'usePortal' | 'showSlideBar'> {
   showHandle?: boolean;
   closeOnBackdrop?: boolean;
   closeOnSwipeDown?: boolean;
@@ -22,7 +23,7 @@ export const KBBottomSheet: React.FC<KBBottomSheetProps> = ({
   return (
     <BottomSheet
       {...props}
-      variant="native"
+      variant='native'
       usePortal={true}
       showHandle={showHandle}
       closeOnBackdrop={closeOnBackdrop}

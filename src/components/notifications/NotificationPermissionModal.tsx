@@ -1,6 +1,6 @@
 /**
  * Notification Permission Request Modal
- * 
+ *
  * 푸시 알림 권한 요청을 위한 모달 컴포넌트
  * - 사용자 친화적인 권한 요청
  * - 뱅킹 알림의 이점 설명
@@ -11,7 +11,11 @@ import React, { useState, useEffect } from 'react';
 
 import styled from 'styled-components';
 
-import { pushNotificationService, NotificationPreferences, NotificationType } from '../../services/pushNotificationService';
+import {
+  pushNotificationService,
+  NotificationPreferences,
+  NotificationType,
+} from '../../services/pushNotificationService';
 
 interface NotificationPermissionModalProps {
   isOpen: boolean;
@@ -47,13 +51,13 @@ const ModalContent = styled.div`
 const Header = styled.div`
   padding: 24px 24px 16px;
   text-align: center;
-  border-bottom: 1px solid #F0F0F0;
+  border-bottom: 1px solid #f0f0f0;
 `;
 
 const IconContainer = styled.div`
   width: 80px;
   height: 80px;
-  background: linear-gradient(135deg, #FFD338 0%, #FFCC00 100%);
+  background: linear-gradient(135deg, #ffd338 0%, #ffcc00 100%);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -72,7 +76,7 @@ const NotificationIcon = styled.div`
   justify-content: center;
   font-size: 20px;
   color: #333;
-  
+
   &::after {
     content: '🔔';
   }
@@ -104,7 +108,7 @@ const BenefitItem = styled.div`
   display: flex;
   align-items: flex-start;
   margin-bottom: 16px;
-  
+
   &:last-child {
     margin-bottom: 0;
   }
@@ -113,7 +117,7 @@ const BenefitItem = styled.div`
 const BenefitIcon = styled.div`
   width: 24px;
   height: 24px;
-  background: #4CAF50;
+  background: #4caf50;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -121,7 +125,7 @@ const BenefitIcon = styled.div`
   margin-right: 12px;
   flex-shrink: 0;
   margin-top: 2px;
-  
+
   &::after {
     content: '✓';
     color: white;
@@ -150,7 +154,7 @@ const BenefitDescription = styled.div`
 const PreferencesSection = styled.div`
   margin: 24px 0;
   padding: 16px;
-  background: #F8F9FA;
+  background: #f8f9fa;
   border-radius: 12px;
 `;
 
@@ -167,9 +171,9 @@ const PreferenceItem = styled.label`
   justify-content: space-between;
   padding: 8px 0;
   cursor: pointer;
-  
+
   &:not(:last-child) {
-    border-bottom: 1px solid #E9ECEF;
+    border-bottom: 1px solid #e9ecef;
   }
 `;
 
@@ -193,16 +197,16 @@ const Switch = styled.input.attrs({ type: 'checkbox' })`
   width: 44px;
   height: 24px;
   appearance: none;
-  background: #DDD;
+  background: #ddd;
   border-radius: 12px;
   position: relative;
   cursor: pointer;
   transition: all 0.2s ease;
-  
+
   &:checked {
-    background: #FFD338;
+    background: #ffd338;
   }
-  
+
   &::after {
     content: '';
     position: absolute;
@@ -213,9 +217,9 @@ const Switch = styled.input.attrs({ type: 'checkbox' })`
     background: white;
     border-radius: 50%;
     transition: all 0.2s ease;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
-  
+
   &:checked::after {
     transform: translateX(20px);
   }
@@ -236,8 +240,10 @@ const Button = styled.button<{ primary?: boolean }>`
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  
-  ${props => props.primary ? `
+
+  ${props =>
+    props.primary
+      ? `
     background: #FFD338;
     color: #333;
     
@@ -249,7 +255,8 @@ const Button = styled.button<{ primary?: boolean }>`
     &:active {
       transform: translateY(0);
     }
-  ` : `
+  `
+      : `
     background: #F8F9FA;
     color: #666;
     
@@ -257,7 +264,7 @@ const Button = styled.button<{ primary?: boolean }>`
       background: #E9ECEF;
     }
   `}
-  
+
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
@@ -272,18 +279,18 @@ const CloseButton = styled.button`
   width: 32px;
   height: 32px;
   border: none;
-  background: #F8F9FA;
+  background: #f8f9fa;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease;
-  
+
   &:hover {
-    background: #E9ECEF;
+    background: #e9ecef;
   }
-  
+
   &::after {
     content: '×';
     font-size: 18px;
@@ -292,8 +299,8 @@ const CloseButton = styled.button`
 `;
 
 const SecurityNote = styled.div`
-  background: #E3F2FD;
-  border: 1px solid #BBDEFB;
+  background: #e3f2fd;
+  border: 1px solid #bbdefb;
   border-radius: 8px;
   padding: 12px;
   margin: 16px 0;
@@ -306,7 +313,7 @@ const SecurityIcon = styled.div`
   height: 20px;
   margin-right: 8px;
   margin-top: 1px;
-  
+
   &::after {
     content: '🔒';
     font-size: 16px;
@@ -316,22 +323,26 @@ const SecurityIcon = styled.div`
 const SecurityText = styled.div`
   flex: 1;
   font-size: 14px;
-  color: #1976D2;
+  color: #1976d2;
   line-height: 1.4;
 `;
 
 const LoadingSpinner = styled.div`
   width: 20px;
   height: 20px;
-  border: 2px solid #DDD;
-  border-top: 2px solid #FFD338;
+  border: 2px solid #ddd;
+  border-top: 2px solid #ffd338;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-right: 8px;
-  
+
   @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
   }
 `;
 
@@ -339,7 +350,7 @@ const NotificationPermissionModal: React.FC<NotificationPermissionModalProps> = 
   isOpen,
   onClose,
   onPermissionGranted,
-  onPermissionDenied
+  onPermissionDenied,
 }) => {
   const [preferences, setPreferences] = useState<NotificationPreferences>({
     enabled: true,
@@ -351,20 +362,20 @@ const NotificationPermissionModal: React.FC<NotificationPermissionModalProps> = 
       [NotificationType.PROMOTIONAL]: false,
       [NotificationType.SYSTEM_MAINTENANCE]: true,
       [NotificationType.LOGIN_ATTEMPT]: true,
-      [NotificationType.SUSPICIOUS_ACTIVITY]: true
+      [NotificationType.SUSPICIOUS_ACTIVITY]: true,
     },
     quietHours: {
       enabled: true,
       start: '22:00',
-      end: '07:00'
+      end: '07:00',
     },
     sound: true,
     vibration: true,
     badge: true,
     preview: true,
-    frequency: 'important'
+    frequency: 'important',
   });
-  
+
   const [isLoading, setIsLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState<'intro' | 'preferences'>('intro');
 
@@ -377,10 +388,10 @@ const NotificationPermissionModal: React.FC<NotificationPermissionModalProps> = 
 
   const handlePermissionRequest = async () => {
     setIsLoading(true);
-    
+
     try {
       const permission = await pushNotificationService.requestPermission();
-      
+
       if (permission === 'granted') {
         setCurrentStep('preferences');
       } else {
@@ -399,8 +410,8 @@ const NotificationPermissionModal: React.FC<NotificationPermissionModalProps> = 
       ...prev,
       types: {
         ...prev.types,
-        [type]: enabled
-      }
+        [type]: enabled,
+      },
     }));
   };
 
@@ -414,40 +425,40 @@ const NotificationPermissionModal: React.FC<NotificationPermissionModalProps> = 
     {
       type: NotificationType.TRANSACTION,
       name: '거래 알림',
-      description: '입출금, 이체, 결제 내역'
+      description: '입출금, 이체, 결제 내역',
     },
     {
       type: NotificationType.SECURITY,
       name: '보안 알림',
-      description: '로그인 시도, 비정상 활동'
+      description: '로그인 시도, 비정상 활동',
     },
     {
       type: NotificationType.BALANCE_ALERT,
       name: '잔고 알림',
-      description: '잔고 부족, 과다 지출'
+      description: '잔고 부족, 과다 지출',
     },
     {
       type: NotificationType.BILL_REMINDER,
       name: '청구서 알림',
-      description: '공과금, 카드료 납부 리마인더'
+      description: '공과금, 카드료 납부 리마인더',
     },
     {
       type: NotificationType.PROMOTIONAL,
       name: '홀보 알림',
-      description: '특별 혜택, 이벤트 정보'
+      description: '특별 혜택, 이벤트 정보',
     },
     {
       type: NotificationType.SYSTEM_MAINTENANCE,
       name: '시스템 알림',
-      description: '점검, 업데이트 안내'
-    }
+      description: '점검, 업데이트 안내',
+    },
   ];
 
   return (
     <ModalOverlay onClick={onClose}>
       <ModalContent onClick={e => e.stopPropagation()}>
         <CloseButton onClick={onClose} />
-        
+
         {currentStep === 'intro' ? (
           <>
             <Header>
@@ -457,7 +468,7 @@ const NotificationPermissionModal: React.FC<NotificationPermissionModalProps> = 
               <Title>실시간 뱅킹 알림</Title>
               <Subtitle>중요한 금융 정보를 놓치지 마세요</Subtitle>
             </Header>
-            
+
             <Content>
               <BenefitsList>
                 <BenefitItem>
@@ -469,7 +480,7 @@ const NotificationPermissionModal: React.FC<NotificationPermissionModalProps> = 
                     </BenefitDescription>
                   </BenefitText>
                 </BenefitItem>
-                
+
                 <BenefitItem>
                   <BenefitIcon />
                   <BenefitText>
@@ -479,7 +490,7 @@ const NotificationPermissionModal: React.FC<NotificationPermissionModalProps> = 
                     </BenefitDescription>
                   </BenefitText>
                 </BenefitItem>
-                
+
                 <BenefitItem>
                   <BenefitIcon />
                   <BenefitText>
@@ -489,7 +500,7 @@ const NotificationPermissionModal: React.FC<NotificationPermissionModalProps> = 
                     </BenefitDescription>
                   </BenefitText>
                 </BenefitItem>
-                
+
                 <BenefitItem>
                   <BenefitIcon />
                   <BenefitText>
@@ -500,14 +511,14 @@ const NotificationPermissionModal: React.FC<NotificationPermissionModalProps> = 
                   </BenefitText>
                 </BenefitItem>
               </BenefitsList>
-              
+
               <SecurityNote>
                 <SecurityIcon />
                 <SecurityText>
                   모든 알림은 암호화되어 전송되며, 민감한 정보는 생체 인증 후에만 표시됩니다.
                 </SecurityText>
               </SecurityNote>
-              
+
               <ButtonGroup>
                 <Button onClick={onClose}>나중에</Button>
                 <Button primary onClick={handlePermissionRequest} disabled={isLoading}>
@@ -526,7 +537,7 @@ const NotificationPermissionModal: React.FC<NotificationPermissionModalProps> = 
               <Title>알림 설정</Title>
               <Subtitle>원하는 알림 유형을 선택하세요</Subtitle>
             </Header>
-            
+
             <Content>
               <PreferencesSection>
                 <PreferencesTitle>알림 유형</PreferencesTitle>
@@ -538,19 +549,17 @@ const NotificationPermissionModal: React.FC<NotificationPermissionModalProps> = 
                     </PreferenceLabel>
                     <Switch
                       checked={preferences.types[type]}
-                      onChange={(e) => handlePreferenceChange(type, e.target.checked)}
+                      onChange={e => handlePreferenceChange(type, e.target.checked)}
                     />
                   </PreferenceItem>
                 ))}
               </PreferencesSection>
-              
+
               <SecurityNote>
                 <SecurityIcon />
-                <SecurityText>
-                  보안 알림과 거래 알림은 계좌 보안을 위해 권장됩니다.
-                </SecurityText>
+                <SecurityText>보안 알림과 거래 알림은 계좌 보안을 위해 권장됩니다.</SecurityText>
               </SecurityNote>
-              
+
               <ButtonGroup>
                 <Button onClick={() => setCurrentStep('intro')}>뒤로</Button>
                 <Button primary onClick={handleContinue}>

@@ -1,6 +1,6 @@
 /**
  * Security Headers Configuration for KB StarBanking Clone
- * 
+ *
  * Provides Content Security Policy (CSP) and other security headers
  * to protect against XSS, clickjacking, and other attacks.
  */
@@ -54,34 +54,29 @@ const DEFAULT_CSP_CONFIG: CSPConfig = {
   scriptSrc: [
     "'self'",
     "'unsafe-inline'", // Required for React development
-    "https://apis.google.com",
-    "https://www.google.com"
+    'https://apis.google.com',
+    'https://www.google.com',
   ],
   styleSrc: [
     "'self'",
     "'unsafe-inline'", // Required for styled-components
-    "https://fonts.googleapis.com"
+    'https://fonts.googleapis.com',
   ],
   imgSrc: [
     "'self'",
-    "data:",
-    "blob:",
-    "https:",
-    "https://ssl.gstatic.com",
-    "https://www.gstatic.com"
+    'data:',
+    'blob:',
+    'https:',
+    'https://ssl.gstatic.com',
+    'https://www.gstatic.com',
   ],
   connectSrc: [
     "'self'",
-    "https://api.exchangerate-api.com", // External exchange rate API
-    "wss://realtime.supabase.co", // Supabase realtime
-    "https://*.supabase.co" // Supabase API
+    'https://api.exchangerate-api.com', // External exchange rate API
+    'wss://realtime.supabase.co', // Supabase realtime
+    'https://*.supabase.co', // Supabase API
   ],
-  fontSrc: [
-    "'self'",
-    "data:",
-    "https://fonts.googleapis.com",
-    "https://fonts.gstatic.com"
-  ],
+  fontSrc: ["'self'", 'data:', 'https://fonts.googleapis.com', 'https://fonts.gstatic.com'],
   objectSrc: ["'none'"],
   mediaSrc: ["'self'"],
   frameSrc: ["'none'"],
@@ -91,7 +86,7 @@ const DEFAULT_CSP_CONFIG: CSPConfig = {
   formAction: ["'self'"],
   frameAncestors: ["'none'"],
   upgradeInsecureRequests: true,
-  blockAllMixedContent: true
+  blockAllMixedContent: true,
 };
 /**
  * Default security headers configuration
@@ -101,13 +96,13 @@ const DEFAULT_SECURITY_HEADERS: SecurityHeadersConfig = {
   hsts: {
     maxAge: 31536000, // 1 year
     includeSubDomains: true,
-    preload: true
+    preload: true,
   },
   frameOptions: 'DENY',
   contentTypeOptions: true,
   xssProtection: {
     enabled: true,
-    mode: 'block'
+    mode: 'block',
   },
   referrerPolicy: 'strict-origin-when-cross-origin',
   permissionsPolicy: {
@@ -118,8 +113,8 @@ const DEFAULT_SECURITY_HEADERS: SecurityHeadersConfig = {
     magnetometer: ["'none'"],
     payment: ["'self'"],
     usb: ["'none'"],
-    'web-share': ["'self'"]
-  }
+    'web-share': ["'self'"],
+  },
 };
 /**
  * Security Headers Manager
@@ -259,7 +254,7 @@ export class SecurityHeadersManager {
     Object.entries(headers).forEach(([name, content]) => {
       metaTags.push({
         httpEquiv: name,
-        content
+        content,
       });
     });
     return metaTags;
@@ -319,20 +314,20 @@ export class SecurityHeadersManager {
       ...override,
       csp: {
         ...base.csp,
-        ...override.csp
+        ...override.csp,
       },
       hsts: {
         ...base.hsts,
-        ...override.hsts
+        ...override.hsts,
       },
       xssProtection: {
         ...base.xssProtection,
-        ...override.xssProtection
+        ...override.xssProtection,
       },
       permissionsPolicy: {
         ...base.permissionsPolicy,
-        ...override.permissionsPolicy
-      }
+        ...override.permissionsPolicy,
+      },
     };
   }
 }
@@ -350,8 +345,8 @@ export function initializeSecurityHeaders(environment: 'development' | 'producti
       csp: {
         ...DEFAULT_CSP_CONFIG,
         scriptSrc: [...DEFAULT_CSP_CONFIG.scriptSrc, "'unsafe-eval'"], // Allow eval for dev tools
-        connectSrc: [...DEFAULT_CSP_CONFIG.connectSrc, 'ws://localhost:*', 'http://localhost:*']
-      }
+        connectSrc: [...DEFAULT_CSP_CONFIG.connectSrc, 'ws://localhost:*', 'http://localhost:*'],
+      },
     });
   }
   // Validate configuration

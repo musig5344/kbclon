@@ -1,6 +1,6 @@
 /**
  * Notification List Component
- * 
+ *
  * 알림 목록을 표시하는 컴포넌트
  * - 알림 내역 표시
  * - 필터링 및 정렬
@@ -12,10 +12,10 @@ import React, { useState, useMemo } from 'react';
 
 import styled from 'styled-components';
 
-import { 
-  PushNotificationData, 
-  NotificationType, 
-  NotificationPriority 
+import {
+  PushNotificationData,
+  NotificationType,
+  NotificationPriority,
 } from '../../services/pushNotificationService';
 
 import { useNotifications } from './NotificationProvider';
@@ -30,13 +30,13 @@ interface NotificationListProps {
 const Container = styled.div`
   background: white;
   border-radius: 16px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
   overflow: hidden;
 `;
 
 const Header = styled.div`
   padding: 20px 24px;
-  border-bottom: 1px solid #F0F0F0;
+  border-bottom: 1px solid #f0f0f0;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -52,7 +52,7 @@ const Title = styled.h2`
 `;
 
 const UnreadBadge = styled.span`
-  background: #FF4444;
+  background: #ff4444;
   color: white;
   font-size: 12px;
   font-weight: 600;
@@ -70,32 +70,32 @@ const HeaderActions = styled.div`
 
 const FilterDropdown = styled.select`
   padding: 6px 12px;
-  border: 1px solid #DDD;
+  border: 1px solid #ddd;
   border-radius: 6px;
   font-size: 14px;
   background: white;
   cursor: pointer;
-  
+
   &:focus {
     outline: none;
-    border-color: #FFD338;
+    border-color: #ffd338;
   }
 `;
 
 const ActionButton = styled.button`
   padding: 6px 12px;
-  border: 1px solid #DDD;
+  border: 1px solid #ddd;
   border-radius: 6px;
   font-size: 14px;
   background: white;
   cursor: pointer;
   transition: all 0.2s ease;
-  
+
   &:hover {
-    background: #F5F5F5;
-    border-color: #CCC;
+    background: #f5f5f5;
+    border-color: #ccc;
   }
-  
+
   &:active {
     transform: translateY(1px);
   }
@@ -108,20 +108,22 @@ const NotificationContainer = styled.div`
 
 const NotificationItem = styled.div<{ isRead: boolean; priority: NotificationPriority }>`
   padding: 16px 24px;
-  border-bottom: 1px solid #F5F5F5;
+  border-bottom: 1px solid #f5f5f5;
   cursor: pointer;
   transition: all 0.2s ease;
   position: relative;
-  
+
   &:hover {
-    background: #FAFAFA;
+    background: #fafafa;
   }
-  
+
   &:last-child {
     border-bottom: none;
   }
-  
-  ${props => !props.isRead && `
+
+  ${props =>
+    !props.isRead &&
+    `
     background: #FFFDF0;
     border-left: 4px solid #FFD338;
     
@@ -129,8 +131,10 @@ const NotificationItem = styled.div<{ isRead: boolean; priority: NotificationPri
       background: #FFFACD;
     }
   `}
-  
-  ${props => props.priority === NotificationPriority.CRITICAL && `
+
+  ${props =>
+    props.priority === NotificationPriority.CRITICAL &&
+    `
     border-left: 4px solid #F44336;
     background: #FFEBEE;
     
@@ -156,7 +160,7 @@ const NotificationIcon = styled.div<{ type: NotificationType }>`
   margin-right: 12px;
   font-size: 16px;
   flex-shrink: 0;
-  
+
   background: ${props => {
     switch (props.type) {
       case NotificationType.TRANSACTION:
@@ -175,7 +179,7 @@ const NotificationIcon = styled.div<{ type: NotificationType }>`
         return 'linear-gradient(135deg, #FFD338, #FFCC00)';
     }
   }};
-  
+
   &::after {
     content: '${props => {
       switch (props.type) {
@@ -248,7 +252,7 @@ const PriorityBadge = styled.span<{ priority: NotificationPriority }>`
   border-radius: 10px;
   font-size: 10px;
   font-weight: 600;
-  
+
   ${props => {
     switch (props.priority) {
       case NotificationPriority.CRITICAL:
@@ -284,7 +288,7 @@ const TypeBadge = styled.span<{ type: NotificationType }>`
   border-radius: 10px;
   font-size: 10px;
   font-weight: 500;
-  
+
   ${props => {
     switch (props.type) {
       case NotificationType.TRANSACTION:
@@ -333,14 +337,14 @@ const LoadMoreButton = styled.button`
   width: 100%;
   padding: 12px;
   border: none;
-  background: #F8F9FA;
+  background: #f8f9fa;
   color: #666;
   font-size: 14px;
   cursor: pointer;
   transition: all 0.2s ease;
-  
+
   &:hover {
-    background: #E9ECEF;
+    background: #e9ecef;
   }
 `;
 
@@ -356,35 +360,32 @@ const NotificationList: React.FC<NotificationListProps> = ({
   className,
   maxItems = 20,
   showFilters = true,
-  onNotificationClick
+  onNotificationClick,
 }) => {
-  const { 
-    notifications, 
-    unreadCount, 
-    markAsRead, 
-    markAllAsRead, 
-    removeNotification 
-  } = useNotifications();
-  
+  const { notifications, unreadCount, markAsRead, markAllAsRead, removeNotification } =
+    useNotifications();
+
   const [filter, setFilter] = useState<FilterType>('all');
   const [sort, setSort] = useState<SortType>('newest');
   const [displayCount, setDisplayCount] = useState(maxItems);
 
   // 목 데이터 (실제로는 useNotifications에서 가져온 데이터 사용)
-  const mockExtendedNotifications: ExtendedNotification[] = notifications.map((notification, index) => ({
-    ...notification,
-    isRead: index % 3 !== 0, // 목 데이터로 일부를 안읽음으로 설정
-    receivedAt: Date.now() - (index * 3600000) // 1시간 간격
-  }));
+  const mockExtendedNotifications: ExtendedNotification[] = notifications.map(
+    (notification, index) => ({
+      ...notification,
+      isRead: index % 3 !== 0, // 목 데이터로 일부를 안읽음으로 설정
+      receivedAt: Date.now() - index * 3600000, // 1시간 간격
+    })
+  );
 
   const filteredAndSortedNotifications = useMemo(() => {
     let filtered = mockExtendedNotifications;
-    
+
     // 필터링
     if (filter !== 'all') {
       filtered = filtered.filter(n => n.type === filter);
     }
-    
+
     // 정렬
     filtered.sort((a, b) => {
       switch (sort) {
@@ -397,14 +398,14 @@ const NotificationList: React.FC<NotificationListProps> = ({
             [NotificationPriority.CRITICAL]: 4,
             [NotificationPriority.HIGH]: 3,
             [NotificationPriority.NORMAL]: 2,
-            [NotificationPriority.LOW]: 1
+            [NotificationPriority.LOW]: 1,
           };
           return (priorityOrder[b.priority] || 0) - (priorityOrder[a.priority] || 0);
         default:
           return 0;
       }
     });
-    
+
     return filtered.slice(0, displayCount);
   }, [mockExtendedNotifications, filter, sort, displayCount]);
 
@@ -412,16 +413,16 @@ const NotificationList: React.FC<NotificationListProps> = ({
     const now = Date.now();
     const diff = now - timestamp;
     const minutes = Math.floor(diff / 60000);
-    
+
     if (minutes < 1) return '지금';
     if (minutes < 60) return `${minutes}분 전`;
-    
+
     const hours = Math.floor(minutes / 60);
     if (hours < 24) return `${hours}시간 전`;
-    
+
     const days = Math.floor(hours / 24);
     if (days < 7) return `${days}일 전`;
-    
+
     return new Date(timestamp).toLocaleDateString('ko-KR');
   };
 
@@ -462,7 +463,7 @@ const NotificationList: React.FC<NotificationListProps> = ({
     if (!notification.isRead) {
       markAsRead(notification.id);
     }
-    
+
     // 커스텀 핸들러 호출
     onNotificationClick?.(notification);
   };
@@ -478,14 +479,11 @@ const NotificationList: React.FC<NotificationListProps> = ({
           알림
           {unreadCount > 0 && <UnreadBadge>{unreadCount}</UnreadBadge>}
         </Title>
-        
+
         {showFilters && (
           <HeaderActions>
-            <FilterDropdown
-              value={filter}
-              onChange={(e) => setFilter(e.target.value as FilterType)}
-            >
-              <option value="all">전체</option>
+            <FilterDropdown value={filter} onChange={e => setFilter(e.target.value as FilterType)}>
+              <option value='all'>전체</option>
               <option value={NotificationType.TRANSACTION}>거래</option>
               <option value={NotificationType.SECURITY}>보안</option>
               <option value={NotificationType.BALANCE_ALERT}>잔고</option>
@@ -493,40 +491,32 @@ const NotificationList: React.FC<NotificationListProps> = ({
               <option value={NotificationType.PROMOTIONAL}>홀보</option>
               <option value={NotificationType.SYSTEM_MAINTENANCE}>시스템</option>
             </FilterDropdown>
-            
-            <FilterDropdown
-              value={sort}
-              onChange={(e) => setSort(e.target.value as SortType)}
-            >
-              <option value="newest">최신순</option>
-              <option value="oldest">오래된순</option>
-              <option value="priority">중요도순</option>
+
+            <FilterDropdown value={sort} onChange={e => setSort(e.target.value as SortType)}>
+              <option value='newest'>최신순</option>
+              <option value='oldest'>오래된순</option>
+              <option value='priority'>중요도순</option>
             </FilterDropdown>
-            
-            {unreadCount > 0 && (
-              <ActionButton onClick={markAllAsRead}>
-                모두 읽음
-              </ActionButton>
-            )}
+
+            {unreadCount > 0 && <ActionButton onClick={markAllAsRead}>모두 읽음</ActionButton>}
           </HeaderActions>
         )}
       </Header>
-      
+
       <NotificationContainer>
         {filteredAndSortedNotifications.length === 0 ? (
           <EmptyState>
             <EmptyIcon>🔔</EmptyIcon>
             <EmptyTitle>알림이 없습니다</EmptyTitle>
             <EmptyDescription>
-              {filter === 'all' 
+              {filter === 'all'
                 ? '아직 받은 알림이 없습니다.'
-                : `${getTypeLabel(filter as NotificationType)} 알림이 없습니다.`
-              }
+                : `${getTypeLabel(filter as NotificationType)} 알림이 없습니다.`}
             </EmptyDescription>
           </EmptyState>
         ) : (
           <>
-            {filteredAndSortedNotifications.map((notification) => (
+            {filteredAndSortedNotifications.map(notification => (
               <NotificationItem
                 key={notification.id}
                 isRead={notification.isRead}
@@ -538,18 +528,16 @@ const NotificationList: React.FC<NotificationListProps> = ({
                   <NotificationContent>
                     <NotificationTitleRow>
                       <NotificationTitle>{notification.title}</NotificationTitle>
-                      <NotificationTime>
-                        {formatTime(notification.receivedAt)}
-                      </NotificationTime>
+                      <NotificationTime>{formatTime(notification.receivedAt)}</NotificationTime>
                     </NotificationTitleRow>
-                    
+
                     <NotificationBody>{notification.body}</NotificationBody>
-                    
+
                     <NotificationMeta>
                       <TypeBadge type={notification.type}>
                         {getTypeLabel(notification.type)}
                       </TypeBadge>
-                      
+
                       {notification.priority !== NotificationPriority.NORMAL && (
                         <PriorityBadge priority={notification.priority}>
                           {getPriorityLabel(notification.priority)}
@@ -560,7 +548,7 @@ const NotificationList: React.FC<NotificationListProps> = ({
                 </NotificationHeader>
               </NotificationItem>
             ))}
-            
+
             {mockExtendedNotifications.length > displayCount && (
               <LoadMoreButton onClick={handleLoadMore}>
                 더 보기 ({mockExtendedNotifications.length - displayCount}개 더)

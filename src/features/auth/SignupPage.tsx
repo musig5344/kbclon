@@ -89,12 +89,12 @@ const StyledCheckbox = styled.div<{ checked: boolean }>`
   display: inline-block;
   width: 20px;
   height: 20px;
-  background: ${props => props.checked ? tokens.colors.brand.primary : colors.lightGray};
-  border: 1px solid ${props => props.checked ? tokens.colors.brand.primary : colors.border};
+  background: ${props => (props.checked ? tokens.colors.brand.primary : colors.lightGray)};
+  border: 1px solid ${props => (props.checked ? tokens.colors.brand.primary : colors.border)};
   border-radius: 4px;
   transition: all 150ms;
   svg {
-    visibility: ${props => props.checked ? 'visible' : 'hidden'};
+    visibility: ${props => (props.checked ? 'visible' : 'hidden')};
   }
 `;
 const CheckboxLabel = styled.label`
@@ -158,50 +158,49 @@ const SignupPage: React.FC = () => {
   };
   return (
     <Container>
-      <LoginHeader showCloseButton={true} onClose={handleClose}/>
+      <LoginHeader showCloseButton={true} onClose={handleClose} />
       <Content>
         <Title>KB국민은행 회원가입</Title>
         <Subtitle>
-          KB스타뱅킹 서비스 이용을 위한<br />
+          KB스타뱅킹 서비스 이용을 위한
+          <br />
           회원가입을 진행해주세요.
         </Subtitle>
         <Form onSubmit={handleSignup}>
-          <Input 
-            fullWidth 
-            placeholder="이름" 
+          <Input
+            fullWidth
+            placeholder='이름'
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={e => setName(e.target.value)}
           />
-          <Input 
-            fullWidth 
-            type="email"
-            placeholder="이메일 주소" 
+          <Input
+            fullWidth
+            type='email'
+            placeholder='이메일 주소'
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={e => setEmail(e.target.value)}
           />
-          <Input 
-            fullWidth 
-            type="tel"
-            placeholder="휴대폰 번호 (01012345678)" 
+          <Input
+            fullWidth
+            type='tel'
+            placeholder='휴대폰 번호 (01012345678)'
             value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            onChange={e => setPhone(e.target.value)}
           />
-          <Input 
-            fullWidth 
-            type="password" 
-            placeholder="비밀번호"
+          <Input
+            fullWidth
+            type='password'
+            placeholder='비밀번호'
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={e => setPassword(e.target.value)}
           />
-          <PasswordHint>
-            * 8자 이상, 영문/숫자/특수문자 조합을 권장합니다.
-          </PasswordHint>
-          <Input 
-            fullWidth 
-            type="password" 
-            placeholder="비밀번호 확인"
+          <PasswordHint>* 8자 이상, 영문/숫자/특수문자 조합을 권장합니다.</PasswordHint>
+          <Input
+            fullWidth
+            type='password'
+            placeholder='비밀번호 확인'
             value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
+            onChange={e => setConfirmPassword(e.target.value)}
           />
         </Form>
         <TermsContainer>
@@ -209,8 +208,19 @@ const SignupPage: React.FC = () => {
             <label>
               <HiddenCheckbox checked={agreeTerms} onChange={() => setAgreeTerms(!agreeTerms)} />
               <StyledCheckbox checked={agreeTerms}>
-                <svg viewBox="0 0 24 24" fill="none" width="16" height="16" style={{ margin: '2px' }}>
-                  <polyline points="20 6 9 17 4 12" stroke={colors.white} strokeWidth="3" fill="none" />
+                <svg
+                  viewBox='0 0 24 24'
+                  fill='none'
+                  width='16'
+                  height='16'
+                  style={{ margin: '2px' }}
+                >
+                  <polyline
+                    points='20 6 9 17 4 12'
+                    stroke={colors.white}
+                    strokeWidth='3'
+                    fill='none'
+                  />
                 </svg>
               </StyledCheckbox>
             </label>
@@ -218,10 +228,24 @@ const SignupPage: React.FC = () => {
           </CheckboxContainer>
           <CheckboxContainer>
             <label>
-              <HiddenCheckbox checked={agreePrivacy} onChange={() => setAgreePrivacy(!agreePrivacy)} />
+              <HiddenCheckbox
+                checked={agreePrivacy}
+                onChange={() => setAgreePrivacy(!agreePrivacy)}
+              />
               <StyledCheckbox checked={agreePrivacy}>
-                <svg viewBox="0 0 24 24" fill="none" width="16" height="16" style={{ margin: '2px' }}>
-                  <polyline points="20 6 9 17 4 12" stroke={colors.white} strokeWidth="3" fill="none" />
+                <svg
+                  viewBox='0 0 24 24'
+                  fill='none'
+                  width='16'
+                  height='16'
+                  style={{ margin: '2px' }}
+                >
+                  <polyline
+                    points='20 6 9 17 4 12'
+                    stroke={colors.white}
+                    strokeWidth='3'
+                    fill='none'
+                  />
                 </svg>
               </StyledCheckbox>
             </label>
@@ -231,9 +255,9 @@ const SignupPage: React.FC = () => {
         {error && <ErrorText>{error}</ErrorText>}
         {success && <SuccessText>{success}</SuccessText>}
         <Spacer />
-        <Button 
-          fullWidth 
-          onClick={handleSignup} 
+        <Button
+          fullWidth
+          onClick={handleSignup}
           disabled={loading || !email || !password || !confirmPassword || !name || !phone}
         >
           {loading ? '가입 처리중...' : '회원가입'}

@@ -1,16 +1,28 @@
 import React from 'react';
+
 import styled, { css } from 'styled-components';
-import { tokens } from '../../styles/tokens';
+
 import { MEDIA_QUERIES } from '../../styles/breakpoints';
-import { createResponsiveText, KB_DESIGN_TOKENS } from '../../styles/responsive-system';
+import { createResponsiveText } from '../../styles/responsive-system';
+import { tokens } from '../../styles/tokens';
 // Typography 컴포넌트 Props 타입
 export interface TypographyProps extends React.HTMLAttributes<HTMLElement> {
-  variant?: 
-    | 'displayLarge' | 'displayMedium' | 'displaySmall'
-    | 'headlineLarge' | 'headlineMedium' | 'headlineSmall'
-    | 'titleLarge' | 'titleMedium' | 'titleSmall'
-    | 'bodyLarge' | 'bodyMedium' | 'bodySmall'
-    | 'labelLarge' | 'labelMedium' | 'labelSmall';
+  variant?:
+    | 'displayLarge'
+    | 'displayMedium'
+    | 'displaySmall'
+    | 'headlineLarge'
+    | 'headlineMedium'
+    | 'headlineSmall'
+    | 'titleLarge'
+    | 'titleMedium'
+    | 'titleSmall'
+    | 'bodyLarge'
+    | 'bodyMedium'
+    | 'bodySmall'
+    | 'labelLarge'
+    | 'labelMedium'
+    | 'labelSmall';
   weight?: 'light' | 'regular' | 'medium' | 'semibold' | 'bold';
   color?: keyof typeof tokens.colors.text;
   align?: 'left' | 'center' | 'right' | 'justify';
@@ -30,7 +42,7 @@ const typographyVariants = {
     ${createResponsiveText('h1')}
     font-weight: ${tokens.typography.fontWeight.bold};
     letter-spacing: ${tokens.typography.letterSpacing.display};
-    
+
     ${MEDIA_QUERIES.phoneSmall} {
       font-size: 20px;
     }
@@ -55,7 +67,7 @@ const typographyVariants = {
     ${createResponsiveText('h2')}
     font-weight: ${tokens.typography.fontWeight.semibold};
     letter-spacing: ${tokens.typography.letterSpacing.headline};
-    
+
     ${MEDIA_QUERIES.phoneSmall} {
       font-size: 16px;
     }
@@ -77,7 +89,7 @@ const typographyVariants = {
     ${createResponsiveText('h3')}
     font-weight: ${tokens.typography.fontWeight.semibold};
     letter-spacing: ${tokens.typography.letterSpacing.titleMedium};
-    
+
     ${MEDIA_QUERIES.phoneSmall} {
       font-size: 15px;
     }
@@ -89,7 +101,7 @@ const typographyVariants = {
     ${createResponsiveText('body')}
     font-weight: ${tokens.typography.fontWeight.medium};
     letter-spacing: ${tokens.typography.letterSpacing.titleSmall};
-    
+
     ${MEDIA_QUERIES.phoneSmall} {
       font-size: 14px;
     }
@@ -101,7 +113,7 @@ const typographyVariants = {
     ${createResponsiveText('body')}
     font-weight: ${tokens.typography.fontWeight.regular};
     letter-spacing: ${tokens.typography.letterSpacing.body};
-    
+
     ${MEDIA_QUERIES.phoneSmall} {
       font-size: 14px;
     }
@@ -151,31 +163,41 @@ const StyledTypography = styled.span<TypographyProps>`
   /* 변형 스타일 적용 */
   ${({ variant = 'bodyMedium' }) => typographyVariants[variant]}
   /* 폰트 가중치 오버라이드 */
-  ${({ weight }) => weight && css`
-    font-weight: ${fontWeights[weight]};
-  `}
+  ${({ weight }) =>
+    weight &&
+    css`
+      font-weight: ${fontWeights[weight]};
+    `}
   /* 색상 적용 */
   ${({ color = 'primary' }) => css`
     color: ${tokens.colors.text[color]};
   `}
   /* 텍스트 정렬 */
-  ${({ align }) => align && css`
-    text-align: ${align};
-  `}
+  ${({ align }) =>
+    align &&
+    css`
+      text-align: ${align};
+    `}
   /* 줄 간격 오버라이드 */
-  ${({ lineHeight }) => lineHeight && css`
-    line-height: ${tokens.typography.lineHeight[lineHeight]};
-  `}
+  ${({ lineHeight }) =>
+    lineHeight &&
+    css`
+      line-height: ${tokens.typography.lineHeight[lineHeight]};
+    `}
   /* 글자 간격 오버라이드 */
-  ${({ letterSpacing }) => letterSpacing && css`
-    letter-spacing: ${letterSpacing};
-  `}
+  ${({ letterSpacing }) =>
+    letterSpacing &&
+    css`
+      letter-spacing: ${letterSpacing};
+    `}
   /* 텍스트 말줄임 */
-  ${({ truncate }) => truncate && css`
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  `}
+  ${({ truncate }) =>
+    truncate &&
+    css`
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    `}
 `;
 /**
  * KB StarBanking Typography 컴포넌트
@@ -219,72 +241,80 @@ export const Typography: React.FC<TypographyProps> = ({
   );
 };
 // 미리 정의된 Typography 변형들
-export const DisplayLarge: React.FC<Omit<TypographyProps, 'variant'>> = (props) => (
-  <Typography variant="displayLarge" {...props} />
+export const DisplayLarge: React.FC<Omit<TypographyProps, 'variant'>> = props => (
+  <Typography variant='displayLarge' {...props} />
 );
-export const DisplayMedium: React.FC<Omit<TypographyProps, 'variant'>> = (props) => (
-  <Typography variant="displayMedium" {...props} />
+export const DisplayMedium: React.FC<Omit<TypographyProps, 'variant'>> = props => (
+  <Typography variant='displayMedium' {...props} />
 );
-export const DisplaySmall: React.FC<Omit<TypographyProps, 'variant'>> = (props) => (
-  <Typography variant="displaySmall" {...props} />
+export const DisplaySmall: React.FC<Omit<TypographyProps, 'variant'>> = props => (
+  <Typography variant='displaySmall' {...props} />
 );
-export const HeadlineLarge: React.FC<Omit<TypographyProps, 'variant'>> = (props) => (
-  <Typography variant="headlineLarge" {...props} />
+export const HeadlineLarge: React.FC<Omit<TypographyProps, 'variant'>> = props => (
+  <Typography variant='headlineLarge' {...props} />
 );
-export const HeadlineMedium: React.FC<Omit<TypographyProps, 'variant'>> = (props) => (
-  <Typography variant="headlineMedium" {...props} />
+export const HeadlineMedium: React.FC<Omit<TypographyProps, 'variant'>> = props => (
+  <Typography variant='headlineMedium' {...props} />
 );
-export const HeadlineSmall: React.FC<Omit<TypographyProps, 'variant'>> = (props) => (
-  <Typography variant="headlineSmall" {...props} />
+export const HeadlineSmall: React.FC<Omit<TypographyProps, 'variant'>> = props => (
+  <Typography variant='headlineSmall' {...props} />
 );
-export const TitleLarge: React.FC<Omit<TypographyProps, 'variant'>> = (props) => (
-  <Typography variant="titleLarge" {...props} />
+export const TitleLarge: React.FC<Omit<TypographyProps, 'variant'>> = props => (
+  <Typography variant='titleLarge' {...props} />
 );
-export const TitleMedium: React.FC<Omit<TypographyProps, 'variant'>> = (props) => (
-  <Typography variant="titleMedium" {...props} />
+export const TitleMedium: React.FC<Omit<TypographyProps, 'variant'>> = props => (
+  <Typography variant='titleMedium' {...props} />
 );
-export const TitleSmall: React.FC<Omit<TypographyProps, 'variant'>> = (props) => (
-  <Typography variant="titleSmall" {...props} />
+export const TitleSmall: React.FC<Omit<TypographyProps, 'variant'>> = props => (
+  <Typography variant='titleSmall' {...props} />
 );
-export const BodyLarge: React.FC<Omit<TypographyProps, 'variant'>> = (props) => (
-  <Typography variant="bodyLarge" {...props} />
+export const BodyLarge: React.FC<Omit<TypographyProps, 'variant'>> = props => (
+  <Typography variant='bodyLarge' {...props} />
 );
-export const BodyMedium: React.FC<Omit<TypographyProps, 'variant'>> = (props) => (
-  <Typography variant="bodyMedium" {...props} />
+export const BodyMedium: React.FC<Omit<TypographyProps, 'variant'>> = props => (
+  <Typography variant='bodyMedium' {...props} />
 );
-export const BodySmall: React.FC<Omit<TypographyProps, 'variant'>> = (props) => (
-  <Typography variant="bodySmall" {...props} />
+export const BodySmall: React.FC<Omit<TypographyProps, 'variant'>> = props => (
+  <Typography variant='bodySmall' {...props} />
 );
-export const LabelLarge: React.FC<Omit<TypographyProps, 'variant'>> = (props) => (
-  <Typography variant="labelLarge" {...props} />
+export const LabelLarge: React.FC<Omit<TypographyProps, 'variant'>> = props => (
+  <Typography variant='labelLarge' {...props} />
 );
-export const LabelMedium: React.FC<Omit<TypographyProps, 'variant'>> = (props) => (
-  <Typography variant="labelMedium" {...props} />
+export const LabelMedium: React.FC<Omit<TypographyProps, 'variant'>> = props => (
+  <Typography variant='labelMedium' {...props} />
 );
-export const LabelSmall: React.FC<Omit<TypographyProps, 'variant'>> = (props) => (
-  <Typography variant="labelSmall" {...props} />
+export const LabelSmall: React.FC<Omit<TypographyProps, 'variant'>> = props => (
+  <Typography variant='labelSmall' {...props} />
 );
 // 특화된 텍스트 컴포넌트들
-export const PageTitle: React.FC<Omit<TypographyProps, 'variant'>> = (props) => (
-  <Typography variant="titleLarge" color="primary" {...props} />
+export const PageTitle: React.FC<Omit<TypographyProps, 'variant'>> = props => (
+  <Typography variant='titleLarge' color='primary' {...props} />
 );
-export const SectionTitle: React.FC<Omit<TypographyProps, 'variant'>> = (props) => (
-  <Typography variant="titleMedium" color="primary" {...props} />
+export const SectionTitle: React.FC<Omit<TypographyProps, 'variant'>> = props => (
+  <Typography variant='titleMedium' color='primary' {...props} />
 );
-export const HelperText: React.FC<Omit<TypographyProps, 'variant'>> = (props) => (
-  <Typography variant="labelMedium" color="tertiary" {...props} />
+export const HelperText: React.FC<Omit<TypographyProps, 'variant'>> = props => (
+  <Typography variant='labelMedium' color='tertiary' {...props} />
 );
-export const ErrorText: React.FC<Omit<TypographyProps, 'variant'>> = (props) => (
-  <Typography variant="labelMedium" color="error" {...props} />
+export const ErrorText: React.FC<Omit<TypographyProps, 'variant'>> = props => (
+  <Typography variant='labelMedium' color='error' {...props} />
 );
 // 금액 표시 특화 컴포넌트
 const AmountText = styled(Typography)<{ type?: 'income' | 'expense' | 'neutral' }>`
   font-family: ${tokens.typography.fontFamily.monospace};
   font-weight: ${tokens.typography.fontWeight.semibold};
   ${({ type }) => {
-    if (type === 'income') return css`color: ${tokens.colors.functional.income};`;
-    if (type === 'expense') return css`color: ${tokens.colors.functional.expense};`;
-    return css`color: ${tokens.colors.functional.neutral};`;
+    if (type === 'income')
+      return css`
+        color: ${tokens.colors.functional.income};
+      `;
+    if (type === 'expense')
+      return css`
+        color: ${tokens.colors.functional.expense};
+      `;
+    return css`
+      color: ${tokens.colors.functional.neutral};
+    `;
   }}
 `;
 export interface AmountProps extends Omit<TypographyProps, 'color'> {

@@ -54,26 +54,26 @@ const errorColors = {
     background: '#FFF5F5',
     border: '#FFE0E0',
     text: '#D32F2F',
-    icon: '#F44336'
+    icon: '#F44336',
   },
   warning: {
     background: '#FFFAF0',
     border: '#FFE5B4',
     text: '#F57C00',
-    icon: '#FF9800'
+    icon: '#FF9800',
   },
   info: {
     background: '#F0F7FF',
     border: '#D0E5FF',
     text: '#1976D2',
-    icon: '#2196F3'
+    icon: '#2196F3',
   },
   success: {
     background: '#F0FFF4',
     border: '#D0F5E0',
     text: '#388E3C',
-    icon: '#4CAF50'
-  }
+    icon: '#4CAF50',
+  },
 };
 
 // 토스트 메시지 컨테이너
@@ -93,8 +93,8 @@ const ToastContainer = styled.div<{ $type: ErrorType; $isVisible: boolean }>`
   align-items: flex-start;
   gap: 12px;
   z-index: 1000;
-  animation: ${props => props.$isVisible ? slideIn : ''} ${kbTimings.normal} ${kbTimings.easeOut};
-  opacity: ${props => props.$isVisible ? 1 : 0};
+  animation: ${props => (props.$isVisible ? slideIn : '')} ${kbTimings.normal} ${kbTimings.easeOut};
+  opacity: ${props => (props.$isVisible ? 1 : 0)};
   transition: opacity ${kbTimings.fast} ${kbTimings.easeIn};
 `;
 
@@ -138,7 +138,7 @@ const ToastClose = styled.button`
   justify-content: center;
   border-radius: 50%;
   transition: all ${kbTimings.fast} ${kbTimings.easeOut};
-  
+
   &:hover {
     background: rgba(0, 0, 0, 0.05);
     color: #666;
@@ -180,45 +180,51 @@ const FieldErrorMessage = styled.div`
   gap: 4px;
   margin-top: 4px;
   font-size: 12px;
-  color: #D32F2F;
+  color: #d32f2f;
   animation: ${fadeIn} ${kbTimings.fast} ${kbTimings.easeOut};
 `;
 
 // 에러 아이콘 SVG 컴포넌트
 const ErrorIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
-    <path d="M12 7V12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-    <circle cx="12" cy="16" r="1" fill="currentColor"/>
+  <svg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'>
+    <circle cx='12' cy='12' r='10' stroke='currentColor' strokeWidth='2' />
+    <path d='M12 7V12' stroke='currentColor' strokeWidth='2' strokeLinecap='round' />
+    <circle cx='12' cy='16' r='1' fill='currentColor' />
   </svg>
 );
 
 const WarningIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M12 3L2 21H22L12 3Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"/>
-    <path d="M12 9V14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-    <circle cx="12" cy="17" r="1" fill="currentColor"/>
+  <svg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'>
+    <path d='M12 3L2 21H22L12 3Z' stroke='currentColor' strokeWidth='2' strokeLinejoin='round' />
+    <path d='M12 9V14' stroke='currentColor' strokeWidth='2' strokeLinecap='round' />
+    <circle cx='12' cy='17' r='1' fill='currentColor' />
   </svg>
 );
 
 const InfoIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
-    <path d="M12 11V16" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-    <circle cx="12" cy="8" r="1" fill="currentColor"/>
+  <svg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'>
+    <circle cx='12' cy='12' r='10' stroke='currentColor' strokeWidth='2' />
+    <path d='M12 11V16' stroke='currentColor' strokeWidth='2' strokeLinecap='round' />
+    <circle cx='12' cy='8' r='1' fill='currentColor' />
   </svg>
 );
 
 const SuccessIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
-    <path d="M8 12L11 15L16 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  <svg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'>
+    <circle cx='12' cy='12' r='10' stroke='currentColor' strokeWidth='2' />
+    <path
+      d='M8 12L11 15L16 9'
+      stroke='currentColor'
+      strokeWidth='2'
+      strokeLinecap='round'
+      strokeLinejoin='round'
+    />
   </svg>
 );
 
 const CloseIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M12 4L4 12M4 4L12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+  <svg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'>
+    <path d='M12 4L4 12M4 4L12 12' stroke='currentColor' strokeWidth='2' strokeLinecap='round' />
   </svg>
 );
 
@@ -226,7 +232,7 @@ const icons = {
   error: <ErrorIcon />,
   warning: <WarningIcon />,
   info: <InfoIcon />,
-  success: <SuccessIcon />
+  success: <SuccessIcon />,
 };
 
 // 토스트 메시지 컴포넌트
@@ -243,26 +249,26 @@ export const ToastMessage: React.FC<ToastMessageProps> = ({
   title,
   message,
   duration = 3000,
-  onClose
+  onClose,
 }) => {
   const [isVisible, setIsVisible] = useState(true);
-  
+
   useEffect(() => {
     if (duration > 0) {
       const timer = setTimeout(() => {
         setIsVisible(false);
         setTimeout(() => onClose?.(), 300);
       }, duration);
-      
+
       return () => clearTimeout(timer);
     }
   }, [duration, onClose]);
-  
+
   const handleClose = () => {
     setIsVisible(false);
     setTimeout(() => onClose?.(), 300);
   };
-  
+
   return (
     <MicroVibration trigger={true} intensity={type === 'error' ? 'error' : 'soft'}>
       <ToastContainer $type={type} $isVisible={isVisible}>
@@ -286,11 +292,7 @@ interface InlineErrorProps {
   className?: string;
 }
 
-export const InlineError: React.FC<InlineErrorProps> = ({
-  type = 'error',
-  message,
-  className
-}) => (
+export const InlineError: React.FC<InlineErrorProps> = ({ type = 'error', message, className }) => (
   <InlineErrorContainer $type={type} className={className}>
     <InlineErrorIcon $type={type}>
       {type === 'error' ? '⚠️' : type === 'warning' ? '⚡' : type === 'info' ? 'ℹ️' : '✓'}
@@ -307,10 +309,10 @@ interface FieldErrorProps {
 
 export const FieldError: React.FC<FieldErrorProps> = ({ message, className }) => (
   <FieldErrorMessage className={className}>
-    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="6" cy="6" r="5" stroke="currentColor" strokeWidth="1.5"/>
-      <path d="M6 3.5V6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-      <circle cx="6" cy="8" r="0.5" fill="currentColor"/>
+    <svg width='12' height='12' viewBox='0 0 12 12' fill='none' xmlns='http://www.w3.org/2000/svg'>
+      <circle cx='6' cy='6' r='5' stroke='currentColor' strokeWidth='1.5' />
+      <path d='M6 3.5V6' stroke='currentColor' strokeWidth='1.5' strokeLinecap='round' />
+      <circle cx='6' cy='8' r='0.5' fill='currentColor' />
     </svg>
     {message}
   </FieldErrorMessage>
@@ -331,7 +333,7 @@ const ErrorPageIcon = styled.div`
   width: 80px;
   height: 80px;
   margin-bottom: 24px;
-  color: #FF5252;
+  color: #ff5252;
 `;
 
 const ErrorPageTitle = styled.h2`
@@ -359,7 +361,7 @@ const ErrorPageAction = styled.button`
   font-weight: 600;
   cursor: pointer;
   transition: all ${kbTimings.fast} ${kbTimings.easeOut};
-  
+
   &:hover {
     background: ${tokens.colors.brand.dark};
     transform: translateY(-1px);
@@ -377,20 +379,24 @@ export const ErrorPage: React.FC<ErrorPageProps> = ({
   title = '오류가 발생했습니다',
   message = '잠시 후 다시 시도해주세요.',
   actionLabel = '다시 시도',
-  onAction
+  onAction,
 }) => (
   <ErrorPageContainer>
     <ErrorPageIcon>
-      <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="40" cy="40" r="35" stroke="currentColor" strokeWidth="3"/>
-        <path d="M40 25V45" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
-        <circle cx="40" cy="55" r="3" fill="currentColor"/>
+      <svg
+        width='80'
+        height='80'
+        viewBox='0 0 80 80'
+        fill='none'
+        xmlns='http://www.w3.org/2000/svg'
+      >
+        <circle cx='40' cy='40' r='35' stroke='currentColor' strokeWidth='3' />
+        <path d='M40 25V45' stroke='currentColor' strokeWidth='3' strokeLinecap='round' />
+        <circle cx='40' cy='55' r='3' fill='currentColor' />
       </svg>
     </ErrorPageIcon>
     <ErrorPageTitle>{title}</ErrorPageTitle>
     <ErrorPageMessage>{message}</ErrorPageMessage>
-    {actionLabel && onAction && (
-      <ErrorPageAction onClick={onAction}>{actionLabel}</ErrorPageAction>
-    )}
+    {actionLabel && onAction && <ErrorPageAction onClick={onAction}>{actionLabel}</ErrorPageAction>}
   </ErrorPageContainer>
 );

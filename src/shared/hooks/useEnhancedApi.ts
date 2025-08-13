@@ -9,10 +9,21 @@
 
 import React, { useEffect, useCallback, useRef } from 'react';
 
-import { Account, Transaction, TransactionFilter, TransactionResponse, TransferRequest } from '../../services/api';
+import {
+  Account,
+  Transaction,
+  TransactionFilter,
+  TransactionResponse,
+  TransferRequest,
+} from '../../services/api';
 import { useLoading } from '../contexts/LoadingContext';
 import { useNotification } from '../contexts/NotificationContext';
-import { enhancedApiService, configureEnhancedApiService, ApiCallOptions, ApiResponse } from '../services/EnhancedApiService';
+import {
+  enhancedApiService,
+  configureEnhancedApiService,
+  ApiCallOptions,
+  ApiResponse,
+} from '../services/EnhancedApiService';
 import { addNetworkListener, NetworkStatus } from '../services/NetworkService';
 
 // React.useState 타입 임포트
@@ -29,7 +40,7 @@ export const useNetworkStatus = () => {
   const [networkStatus, setNetworkStatus] = React.useState<NetworkStatus | null>(null);
 
   useEffect(() => {
-    const removeListener = addNetworkListener((status) => {
+    const removeListener = addNetworkListener(status => {
       setNetworkStatus(status);
     });
 
@@ -44,7 +55,7 @@ export const useEnhancedApi = (options: UseEnhancedApiOptions = {}) => {
   const {
     autoConfigureCallbacks = true,
     enableNetworkStatusTracking = true,
-    enablePerformanceLogging = false
+    enablePerformanceLogging = false,
   } = options;
 
   const { startLoading, stopLoading, updateLoadingMessage } = useLoading();
@@ -61,7 +72,16 @@ export const useEnhancedApi = (options: UseEnhancedApiOptions = {}) => {
       );
       isConfiguredRef.current = true;
     }
-  }, [autoConfigureCallbacks, startLoading, stopLoading, updateLoadingMessage, showSuccess, showError, showApiError, showNetworkError]);
+  }, [
+    autoConfigureCallbacks,
+    startLoading,
+    stopLoading,
+    updateLoadingMessage,
+    showSuccess,
+    showError,
+    showApiError,
+    showNetworkError,
+  ]);
 
   // 성능 로깅
   useEffect(() => {
@@ -92,33 +112,40 @@ export const useEnhancedApi = (options: UseEnhancedApiOptions = {}) => {
     return enhancedApiService.getTransactions(filter, options);
   }, []);
 
-  const getTransactionStatistics = useCallback((
-    accountId?: string,
-    period?: 'today' | 'week' | 'month' | '3months' | '6months',
-    options?: ApiCallOptions
-  ) => {
-    return enhancedApiService.getTransactionStatistics(accountId, period, options);
-  }, []);
+  const getTransactionStatistics = useCallback(
+    (
+      accountId?: string,
+      period?: 'today' | 'week' | 'month' | '3months' | '6months',
+      options?: ApiCallOptions
+    ) => {
+      return enhancedApiService.getTransactionStatistics(accountId, period, options);
+    },
+    []
+  );
 
-  const executeTransfer = useCallback((transferRequest: TransferRequest, options?: ApiCallOptions) => {
-    return enhancedApiService.executeTransfer(transferRequest, options);
-  }, []);
+  const executeTransfer = useCallback(
+    (transferRequest: TransferRequest, options?: ApiCallOptions) => {
+      return enhancedApiService.executeTransfer(transferRequest, options);
+    },
+    []
+  );
 
-  const getTransferHistory = useCallback((
-    accountId?: string,
-    page = 1,
-    limit = 20,
-    options?: ApiCallOptions
-  ) => {
-    return enhancedApiService.getTransferHistory(accountId, page, limit, options);
-  }, []);
+  const getTransferHistory = useCallback(
+    (accountId?: string, page = 1, limit = 20, options?: ApiCallOptions) => {
+      return enhancedApiService.getTransferHistory(accountId, page, limit, options);
+    },
+    []
+  );
 
-  const batchApiCalls = useCallback(<T extends Record<string, any>>(
-    calls: { [K in keyof T]: () => Promise<T[K]> },
-    options?: ApiCallOptions
-  ) => {
-    return enhancedApiService.batchApiCalls(calls, options);
-  }, []);
+  const batchApiCalls = useCallback(
+    <T extends Record<string, any>>(
+      calls: { [K in keyof T]: () => Promise<T[K]> },
+      options?: ApiCallOptions
+    ) => {
+      return enhancedApiService.batchApiCalls(calls, options);
+    },
+    []
+  );
 
   // 성능 및 상태 조회 메서드들
   const getPerformanceStats = useCallback(() => {
@@ -151,7 +178,7 @@ export const useEnhancedApi = (options: UseEnhancedApiOptions = {}) => {
     clearCache,
 
     // 직접 API 서비스 접근 (고급 사용자용)
-    apiService: enhancedApiService
+    apiService: enhancedApiService,
   };
 };
 
@@ -160,15 +187,20 @@ export const useAccountsApi = (options?: ApiCallOptions) => {
   const { getAccounts, getAccountById, getAccountBalance } = useEnhancedApi();
 
   return {
-    getAccounts: useCallback((overrideOptions?: ApiCallOptions) => 
-      getAccounts({ ...options, ...overrideOptions }), [getAccounts, options]
+    getAccounts: useCallback(
+      (overrideOptions?: ApiCallOptions) => getAccounts({ ...options, ...overrideOptions }),
+      [getAccounts, options]
     ),
-    getAccountById: useCallback((accountId: string, overrideOptions?: ApiCallOptions) => 
-      getAccountById(accountId, { ...options, ...overrideOptions }), [getAccountById, options]
+    getAccountById: useCallback(
+      (accountId: string, overrideOptions?: ApiCallOptions) =>
+        getAccountById(accountId, { ...options, ...overrideOptions }),
+      [getAccountById, options]
     ),
-    getAccountBalance: useCallback((accountId: string, overrideOptions?: ApiCallOptions) => 
-      getAccountBalance(accountId, { ...options, ...overrideOptions }), [getAccountBalance, options]
-    )
+    getAccountBalance: useCallback(
+      (accountId: string, overrideOptions?: ApiCallOptions) =>
+        getAccountBalance(accountId, { ...options, ...overrideOptions }),
+      [getAccountBalance, options]
+    ),
   };
 };
 
@@ -176,17 +208,19 @@ export const useTransactionsApi = (options?: ApiCallOptions) => {
   const { getTransactions, getTransactionStatistics } = useEnhancedApi();
 
   return {
-    getTransactions: useCallback((filter?: TransactionFilter, overrideOptions?: ApiCallOptions) => 
-      getTransactions(filter, { ...options, ...overrideOptions }), [getTransactions, options]
+    getTransactions: useCallback(
+      (filter?: TransactionFilter, overrideOptions?: ApiCallOptions) =>
+        getTransactions(filter, { ...options, ...overrideOptions }),
+      [getTransactions, options]
     ),
-    getTransactionStatistics: useCallback((
-      accountId?: string,
-      period?: 'today' | 'week' | 'month' | '3months' | '6months',
-      overrideOptions?: ApiCallOptions
-    ) => 
-      getTransactionStatistics(accountId, period, { ...options, ...overrideOptions }), 
+    getTransactionStatistics: useCallback(
+      (
+        accountId?: string,
+        period?: 'today' | 'week' | 'month' | '3months' | '6months',
+        overrideOptions?: ApiCallOptions
+      ) => getTransactionStatistics(accountId, period, { ...options, ...overrideOptions }),
       [getTransactionStatistics, options]
-    )
+    ),
   };
 };
 
@@ -194,18 +228,16 @@ export const useTransferApi = (options?: ApiCallOptions) => {
   const { executeTransfer, getTransferHistory } = useEnhancedApi();
 
   return {
-    executeTransfer: useCallback((transferRequest: TransferRequest, overrideOptions?: ApiCallOptions) => 
-      executeTransfer(transferRequest, { ...options, ...overrideOptions }), [executeTransfer, options]
+    executeTransfer: useCallback(
+      (transferRequest: TransferRequest, overrideOptions?: ApiCallOptions) =>
+        executeTransfer(transferRequest, { ...options, ...overrideOptions }),
+      [executeTransfer, options]
     ),
-    getTransferHistory: useCallback((
-      accountId?: string,
-      page = 1,
-      limit = 20,
-      overrideOptions?: ApiCallOptions
-    ) => 
-      getTransferHistory(accountId, page, limit, { ...options, ...overrideOptions }), 
+    getTransferHistory: useCallback(
+      (accountId?: string, page = 1, limit = 20, overrideOptions?: ApiCallOptions) =>
+        getTransferHistory(accountId, page, limit, { ...options, ...overrideOptions }),
       [getTransferHistory, options]
-    )
+    ),
   };
 };
 
@@ -213,7 +245,7 @@ export const useTransferApi = (options?: ApiCallOptions) => {
 export const useAndroidOptimizedApi = () => {
   const api = useEnhancedApi({
     enableNetworkStatusTracking: true,
-    enablePerformanceLogging: true
+    enablePerformanceLogging: true,
   });
 
   // Android WebView 전용 최적화된 API 옵션
@@ -222,43 +254,47 @@ export const useAndroidOptimizedApi = () => {
       maxRetries: 2,
       baseDelay: 1500,
       maxDelay: 8000,
-      backoffMultiplier: 2
+      backoffMultiplier: 2,
     },
     showErrorNotification: true,
-    cacheStrategy: 'network-first'
+    cacheStrategy: 'network-first',
   };
 
   return {
     ...api,
-    
+
     // Android 최적화된 메서드들
-    getAccountsAndroid: useCallback(() => 
-      api.getAccounts(androidOptions), [api.getAccounts]
+    getAccountsAndroid: useCallback(() => api.getAccounts(androidOptions), [api.getAccounts]),
+
+    getTransactionsAndroid: useCallback(
+      (filter?: TransactionFilter) => api.getTransactions(filter, androidOptions),
+      [api.getTransactions]
     ),
-    
-    getTransactionsAndroid: useCallback((filter?: TransactionFilter) => 
-      api.getTransactions(filter, androidOptions), [api.getTransactions]
-    ),
-    
-    executeTransferAndroid: useCallback((transferRequest: TransferRequest) => 
-      api.executeTransfer(transferRequest, {
-        ...androidOptions,
-        showSuccessMessage: true,
-        successMessage: '이체가 성공적으로 완료되었습니다.'
-      }), [api.executeTransfer]
+
+    executeTransferAndroid: useCallback(
+      (transferRequest: TransferRequest) =>
+        api.executeTransfer(transferRequest, {
+          ...androidOptions,
+          showSuccessMessage: true,
+          successMessage: '이체가 성공적으로 완료되었습니다.',
+        }),
+      [api.executeTransfer]
     ),
 
     // 배치 로딩 (Android에서 효율적)
     loadDashboardData: useCallback(async () => {
-      return api.batchApiCalls({
-        accounts: () => api.apiService.getAccounts(),
-        recentTransactions: () => api.apiService.getTransactions({ limit: 10 })
-      }, {
-        loadingKey: 'dashboard-data',
-        loadingMessage: '대시보드 정보를 불러오고 있습니다...',
-        ...androidOptions
-      });
-    }, [api.batchApiCalls, api.apiService])
+      return api.batchApiCalls(
+        {
+          accounts: () => api.apiService.getAccounts(),
+          recentTransactions: () => api.apiService.getTransactions({ limit: 10 }),
+        },
+        {
+          loadingKey: 'dashboard-data',
+          loadingMessage: '대시보드 정보를 불러오고 있습니다...',
+          ...androidOptions,
+        }
+      );
+    }, [api.batchApiCalls, api.apiService]),
   };
 };
 
@@ -289,6 +325,6 @@ export const useApiStatusMonitor = () => {
     isOnline,
     networkStatus,
     performanceStats,
-    optimizationStatus: getOptimizationStatus()
+    optimizationStatus: getOptimizationStatus(),
   };
 };

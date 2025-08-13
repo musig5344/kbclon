@@ -2,36 +2,36 @@
 export const typography = {
   // KB 전용 폰트 패밀리
   fontFamily: {
-    kbfgTextBold: 'KBFG-Text-Bold, "Noto Sans KR", sans-serif',    // kbfg_text_b.otf (fontWeight: 700)
+    kbfgTextBold: 'KBFG-Text-Bold, "Noto Sans KR", sans-serif', // kbfg_text_b.otf (fontWeight: 700)
     kbfgTextMedium: 'KBFG-Text-Medium, "Noto Sans KR", sans-serif', // kbfg_text_m.otf (fontWeight: 500)
-    kbfgTextLight: 'KBFG-Text-Light, "Noto Sans KR", sans-serif',   // kbfg_text_l.otf (fontWeight: 400)
-    robotoMedium: 'Roboto-Medium, Roboto, sans-serif',              // roboto_medium.ttf (fontWeight: 700)
-    robotoRegular: 'Roboto-Regular, Roboto, sans-serif',            // roboto_regular.ttf (fontWeight: 400)
+    kbfgTextLight: 'KBFG-Text-Light, "Noto Sans KR", sans-serif', // kbfg_text_l.otf (fontWeight: 400)
+    robotoMedium: 'Roboto-Medium, Roboto, sans-serif', // roboto_medium.ttf (fontWeight: 700)
+    robotoRegular: 'Roboto-Regular, Roboto, sans-serif', // roboto_regular.ttf (fontWeight: 400)
   },
   // 텍스트 크기 표준 (실제 앱에서 추출한 정확한 값)
   fontSize: {
     // 주요 텍스트 크기
-    title: '26dp',           // 타이틀
-    subtitle: '20dp',        // 서브타이틀  
-    body: '16dp',            // 본문
-    bodySmall: '15dp',       // 작은 본문
-    caption: '14dp',         // 캡션
-    small: '12dp',           // 작은 텍스트
-    tiny: '10dp',            // 최소 텍스트
+    title: '26dp', // 타이틀
+    subtitle: '20dp', // 서브타이틀
+    body: '16dp', // 본문
+    bodySmall: '15dp', // 작은 본문
+    caption: '14dp', // 캡션
+    small: '12dp', // 작은 텍스트
+    tiny: '10dp', // 최소 텍스트
     // 특수 UI 텍스트
-    dialogTitle: '20dp',     // 다이얼로그 타이틀
-    dialogButton: '18dp',    // 다이얼로그 버튼
-    toast: '14dp',           // 토스트
-    kbEditTextChar: '19dp',  // KB EditText 문자 입력
+    dialogTitle: '20dp', // 다이얼로그 타이틀
+    dialogButton: '18dp', // 다이얼로그 버튼
+    toast: '14dp', // 토스트
+    kbEditTextChar: '19dp', // KB EditText 문자 입력
     kbEditTextNumber: '21dp', // KB EditText 숫자 입력
     bottomSheetAmount: '30dp', // 바텀시트 금액 입력
-    keypadButton: '24dp',    // 키패드 버튼
+    keypadButton: '24dp', // 키패드 버튼
     // 메뉴 관련
-    tabText: '15dp',         // 탭 텍스트
-    menuText: '15dp',        // 메뉴 텍스트
-    subMenuText: '15dp',     // 서브메뉴 텍스트
-    recentMenuText: '14dp',  // 최근 메뉴 텍스트
-    searchMenuText: '16dp',  // 검색 메뉴 텍스트
+    tabText: '15dp', // 탭 텍스트
+    menuText: '15dp', // 메뉴 텍스트
+    subMenuText: '15dp', // 서브메뉴 텍스트
+    recentMenuText: '14dp', // 최근 메뉴 텍스트
+    searchMenuText: '16dp', // 검색 메뉴 텍스트
   },
   // 텍스트 스타일 프리셋
   styles: {
@@ -105,22 +105,22 @@ export const typography = {
   },
   // 폰트 웨이트
   fontWeight: {
-    light: 400,    // KBFG Text Light
-    medium: 500,   // KBFG Text Medium  
-    bold: 700,     // KBFG Text Bold
+    light: 400, // KBFG Text Light
+    medium: 500, // KBFG Text Medium
+    bold: 700, // KBFG Text Bold
   },
   // 줄 간격
   lineHeight: {
     tight: '1.2',
-    normal: '1.4', 
+    normal: '1.4',
     loose: '1.6',
     dialogTitle: '4dp', // 다이얼로그 타이틀 추가 줄간격
-    toast: '3dp',       // 토스트 줄간격
+    toast: '3dp', // 토스트 줄간격
   },
   // 자간 (Letter Spacing)
   letterSpacing: {
-    tight: '-0.02em',   // 탭, 다이얼로그 타이틀
-    normal: '-0.01em',  // EditText
+    tight: '-0.02em', // 탭, 다이얼로그 타이틀
+    normal: '-0.01em', // EditText
     none: '0em',
   },
 };

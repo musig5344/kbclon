@@ -73,40 +73,46 @@ const LoginPage: React.FC = () => {
   return (
     <LoginPageContainer>
       <Header>
-        <LogoImage src={kbLogo} alt="KB스타뱅킹 로고" />
+        <LogoImage src={kbLogo} alt='KB스타뱅킹 로고' />
       </Header>
       <LoginForm onSubmit={handleSubmit}>
         <Input
-          type="email"
+          type='email'
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="이메일 주소"
+          onChange={e => setEmail(e.target.value)}
+          placeholder='이메일 주소'
           fullWidth
           disabled={loading}
         />
         <Input
-          type="password"
+          type='password'
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="비밀번호"
+          onChange={e => setPassword(e.target.value)}
+          placeholder='비밀번호'
           fullWidth
           disabled={loading}
         />
         {error && <ErrorMessage>{error}</ErrorMessage>}
-        <Button type="submit" fullWidth style={{ marginTop: '16px' }} disabled={loading}>
+        <Button type='submit' fullWidth style={{ marginTop: '16px' }} disabled={loading}>
           {loading ? '로그인 중...' : '로그인'}
         </Button>
         <ButtonGroup>
-          <Button variant="text" size="small">아이디 찾기</Button>
-          <Button variant="text" size="small">비밀번호 재설정</Button>
-          <Button variant="text" size="small">회원가입</Button>
+          <Button variant='text' size='small'>
+            아이디 찾기
+          </Button>
+          <Button variant='text' size='small'>
+            비밀번호 재설정
+          </Button>
+          <Button variant='text' size='small'>
+            회원가입
+          </Button>
         </ButtonGroup>
       </LoginForm>
       <Footer>
-        <Button variant="secondary" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <img 
-            src="/assets/images/icons/login_finance_cert_icon.png" 
-            alt="금융인증서" 
+        <Button variant='secondary' style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <img
+            src='/assets/images/icons/login_finance_cert_icon.png'
+            alt='금융인증서'
             style={{ height: '20px', width: 'auto' }}
           />
           <span>금융인증서 로그인</span>
@@ -115,4 +121,4 @@ const LoginPage: React.FC = () => {
     </LoginPageContainer>
   );
 };
-export default LoginPage; 
+export default LoginPage;

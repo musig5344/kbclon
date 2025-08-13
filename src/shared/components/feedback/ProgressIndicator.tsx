@@ -78,9 +78,12 @@ const LinearProgressContainer = styled.div<{ $size: ProgressSize }>`
   width: 100%;
   height: ${props => {
     switch (props.$size) {
-      case 'small': return '2px';
-      case 'large': return '8px';
-      default: return '4px';
+      case 'small':
+        return '2px';
+      case 'large':
+        return '8px';
+      default:
+        return '4px';
     }
   }};
   background-color: ${tokens.colors.backgroundGray2};
@@ -97,17 +100,17 @@ const LinearProgressBar = styled.div<{
   height: 100%;
   background-color: ${props => props.$color || tokens.colors.brand.primary};
   transition: width 0.3s ease;
-  
-  ${props => props.$indeterminate
-    ? css`
-        width: 40%;
-        position: absolute;
-        animation: ${linearIndeterminate} 1.5s ease-in-out infinite;
-      `
-    : css`
-        width: ${props.$value || 0}%;
-      `
-  }
+
+  ${props =>
+    props.$indeterminate
+      ? css`
+          width: 40%;
+          position: absolute;
+          animation: ${linearIndeterminate} 1.5s ease-in-out infinite;
+        `
+      : css`
+          width: ${props.$value || 0}%;
+        `}
 `;
 
 // Circular Progress
@@ -116,24 +119,32 @@ const CircularProgressContainer = styled.div<{ $size: ProgressSize }>`
   position: relative;
   width: ${props => {
     switch (props.$size) {
-      case 'small': return '24px';
-      case 'large': return '48px';
-      default: return '36px';
+      case 'small':
+        return '24px';
+      case 'large':
+        return '48px';
+      default:
+        return '36px';
     }
   }};
   height: ${props => {
     switch (props.$size) {
-      case 'small': return '24px';
-      case 'large': return '48px';
-      default: return '36px';
+      case 'small':
+        return '24px';
+      case 'large':
+        return '48px';
+      default:
+        return '36px';
     }
   }};
 `;
 
 const CircularProgressSvg = styled.svg<{ $indeterminate?: boolean }>`
-  ${props => props.$indeterminate && css`
-    animation: ${circularRotate} 2s linear infinite;
-  `}
+  ${props =>
+    props.$indeterminate &&
+    css`
+      animation: ${circularRotate} 2s linear infinite;
+    `}
 `;
 
 const CircularProgressCircle = styled.circle<{
@@ -143,16 +154,18 @@ const CircularProgressCircle = styled.circle<{
   stroke: ${props => props.$color || tokens.colors.brand.primary};
   stroke-linecap: round;
   transition: stroke-dashoffset 0.3s ease;
-  
-  ${props => props.$indeterminate && css`
-    animation: ${circularDash} 1.4s ease-in-out infinite;
-  `}
+
+  ${props =>
+    props.$indeterminate &&
+    css`
+      animation: ${circularDash} 1.4s ease-in-out infinite;
+    `}
 `;
 
 // Dots Progress
 const DotsProgressContainer = styled.div<{ $size: ProgressSize }>`
   display: inline-flex;
-  gap: ${props => props.$size === 'small' ? '4px' : '8px'};
+  gap: ${props => (props.$size === 'small' ? '4px' : '8px')};
 `;
 
 const Dot = styled.div<{
@@ -162,16 +175,22 @@ const Dot = styled.div<{
 }>`
   width: ${props => {
     switch (props.$size) {
-      case 'small': return '6px';
-      case 'large': return '12px';
-      default: return '8px';
+      case 'small':
+        return '6px';
+      case 'large':
+        return '12px';
+      default:
+        return '8px';
     }
   }};
   height: ${props => {
     switch (props.$size) {
-      case 'small': return '6px';
-      case 'large': return '12px';
-      default: return '8px';
+      case 'small':
+        return '6px';
+      case 'large':
+        return '12px';
+      default:
+        return '8px';
     }
   }};
   background-color: ${props => props.$color || tokens.colors.brand.primary};
@@ -186,12 +205,7 @@ const SkeletonContainer = styled.div<{
 }>`
   width: ${props => props.$width || '100%'};
   height: ${props => props.$height || '20px'};
-  background: linear-gradient(
-    90deg,
-    #f0f0f0 25%,
-    #e0e0e0 50%,
-    #f0f0f0 75%
-  );
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
   background-size: 200px 100%;
   animation: ${shimmer} 1.5s infinite;
   border-radius: 4px;
@@ -227,18 +241,14 @@ export const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
   color,
   label,
   showLabel = false,
-  className
+  className,
 }) => {
   const renderProgress = () => {
     switch (type) {
       case 'linear':
         return (
           <LinearProgressContainer $size={size}>
-            <LinearProgressBar
-              $value={value}
-              $indeterminate={indeterminate}
-              $color={color}
-            />
+            <LinearProgressBar $value={value} $indeterminate={indeterminate} $color={color} />
           </LinearProgressContainer>
         );
 
@@ -246,14 +256,14 @@ export const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
         const sizeMap = {
           small: { size: 24, strokeWidth: 3 },
           medium: { size: 36, strokeWidth: 4 },
-          large: { size: 48, strokeWidth: 5 }
+          large: { size: 48, strokeWidth: 5 },
         };
         const { size: svgSize, strokeWidth } = sizeMap[size];
         const radius = (svgSize - strokeWidth) / 2;
         const circumference = radius * 2 * Math.PI;
         const strokeDashoffset = indeterminate
           ? 0
-          : circumference - (value || 0) / 100 * circumference;
+          : circumference - ((value || 0) / 100) * circumference;
 
         return (
           <CircularProgressContainer $size={size}>
@@ -267,7 +277,7 @@ export const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
                 cx={svgSize / 2}
                 cy={svgSize / 2}
                 r={radius}
-                fill="none"
+                fill='none'
                 stroke={tokens.colors.backgroundGray2}
                 strokeWidth={strokeWidth}
               />
@@ -275,7 +285,7 @@ export const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
                 cx={svgSize / 2}
                 cy={svgSize / 2}
                 r={radius}
-                fill="none"
+                fill='none'
                 strokeWidth={strokeWidth}
                 strokeDasharray={`${circumference} ${circumference}`}
                 strokeDashoffset={strokeDashoffset}
@@ -309,9 +319,7 @@ export const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
       <ProgressWrapper className={className}>
         <ProgressLabel>
           {label && <span>{label}</span>}
-          {value !== undefined && !indeterminate && (
-            <ProgressValue>{value}%</ProgressValue>
-          )}
+          {value !== undefined && !indeterminate && <ProgressValue>{value}%</ProgressValue>}
         </ProgressLabel>
         {renderProgress()}
       </ProgressWrapper>
@@ -322,20 +330,20 @@ export const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
 };
 
 // Specialized progress components
-export const LinearProgress: React.FC<Omit<ProgressIndicatorProps, 'type'>> = (props) => (
-  <ProgressIndicator type="linear" {...props} />
+export const LinearProgress: React.FC<Omit<ProgressIndicatorProps, 'type'>> = props => (
+  <ProgressIndicator type='linear' {...props} />
 );
 
-export const CircularProgress: React.FC<Omit<ProgressIndicatorProps, 'type'>> = (props) => (
-  <ProgressIndicator type="circular" {...props} />
+export const CircularProgress: React.FC<Omit<ProgressIndicatorProps, 'type'>> = props => (
+  <ProgressIndicator type='circular' {...props} />
 );
 
-export const DotsProgress: React.FC<Omit<ProgressIndicatorProps, 'type'>> = (props) => (
-  <ProgressIndicator type="dots" {...props} />
+export const DotsProgress: React.FC<Omit<ProgressIndicatorProps, 'type'>> = props => (
+  <ProgressIndicator type='dots' {...props} />
 );
 
-export const SkeletonProgress: React.FC<Omit<ProgressIndicatorProps, 'type'>> = (props) => (
-  <ProgressIndicator type="skeleton" {...props} />
+export const SkeletonProgress: React.FC<Omit<ProgressIndicatorProps, 'type'>> = props => (
+  <ProgressIndicator type='skeleton' {...props} />
 );
 
 // Transaction progress indicator
@@ -350,13 +358,11 @@ export const TransactionProgress: React.FC<{
     <ProgressWrapper>
       <ProgressLabel>
         {currentStepLabel && <span>{currentStepLabel}</span>}
-        <span>{step} / {totalSteps}</span>
+        <span>
+          {step} / {totalSteps}
+        </span>
       </ProgressLabel>
-      <LinearProgress
-        value={progress}
-        indeterminate={false}
-        size="medium"
-      />
+      <LinearProgress value={progress} indeterminate={false} size='medium' />
     </ProgressWrapper>
   );
 };

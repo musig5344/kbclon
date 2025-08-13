@@ -42,7 +42,7 @@ const QuickAccessGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: ${tokens.spacing[3]};
-  
+
   @media (max-width: ${tokens.breakpoints.medium}) {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -85,7 +85,7 @@ const ContentGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: ${tokens.spacing[3]};
-  
+
   @media (max-width: ${tokens.breakpoints.small}) {
     grid-template-columns: 1fr;
   }
@@ -98,96 +98,75 @@ export const DashboardSkeleton: React.FC = React.memo(() => {
       <MainContentSkeleton>
         {/* 메인 배너 스켈레톤 */}
         <MainBannerSkeleton>
-          <Skeleton 
-            width="100%" 
-            height={120} 
-            variant="rectangular"
-          />
+          <Skeleton width='100%' height={120} variant='rectangular' />
         </MainBannerSkeleton>
-        
+
         {/* 계좌 섹션 스켈레톤 */}
         <AccountSkeleton count={2} />
-        
+
         {/* 빠른 접근 그리드 스켈레톤 */}
         <QuickAccessGridSkeleton>
           <QuickAccessGrid>
             {Array.from({ length: 4 }).map((_, index) => (
               <QuickAccessCard key={index}>
-                <Skeleton 
-                  width={64} 
-                  height={64} 
-                  variant="circular"
-                />
+                <Skeleton width={64} height={64} variant='circular' />
                 <SkeletonGroup $gap={4}>
-                  <Skeleton 
-                    width={60} 
-                    height={16} 
-                    variant="text"
-                  />
-                  <Skeleton 
-                    width={40} 
-                    height={12} 
-                    variant="text"
-                  />
+                  <Skeleton width={60} height={16} variant='text' />
+                  <Skeleton width={40} height={12} variant='text' />
                 </SkeletonGroup>
               </QuickAccessCard>
             ))}
           </QuickAccessGrid>
         </QuickAccessGridSkeleton>
-        
+
         {/* 환율/증시 탭 스켈레톤 */}
         <FinancialTabsSkeleton>
           <TabHeaderSkeleton>
-            <Skeleton width={60} height={32} variant="rectangular" />
-            <Skeleton width={60} height={32} variant="rectangular" />
+            <Skeleton width={60} height={32} variant='rectangular' />
+            <Skeleton width={60} height={32} variant='rectangular' />
           </TabHeaderSkeleton>
           <TabContentSkeleton>
             {Array.from({ length: 3 }).map((_, index) => (
               <SkeletonGroup key={index} $gap={8}>
-                <Skeleton width={80} height={16} variant="text" />
-                <Skeleton width={100} height={20} variant="text" />
-                <Skeleton width={60} height={14} variant="text" />
+                <Skeleton width={80} height={16} variant='text' />
+                <Skeleton width={100} height={20} variant='text' />
+                <Skeleton width={60} height={14} variant='text' />
               </SkeletonGroup>
             ))}
           </TabContentSkeleton>
         </FinancialTabsSkeleton>
-        
+
         {/* 콘텐츠 섹션들 스켈레톤 */}
         <ContentSectionSkeleton>
-          <Skeleton 
-            width={120} 
-            height={24} 
-            variant="text" 
+          <Skeleton
+            width={120}
+            height={24}
+            variant='text'
             style={{ marginBottom: tokens.spacing[4] }}
           />
           <ContentGrid>
             {Array.from({ length: 2 }).map((_, index) => (
-              <Skeleton 
-                key={index}
-                width="100%" 
-                height={120} 
-                variant="rectangular"
-              />
+              <Skeleton key={index} width='100%' height={120} variant='rectangular' />
             ))}
           </ContentGrid>
         </ContentSectionSkeleton>
-        
+
         {/* 추천 섹션 스켈레톤 */}
         <ContentSectionSkeleton>
-          <Skeleton 
-            width={150} 
-            height={24} 
-            variant="text" 
+          <Skeleton
+            width={150}
+            height={24}
+            variant='text'
             style={{ marginBottom: tokens.spacing[4] }}
           />
           <SkeletonGroup $gap={16}>
             {Array.from({ length: 3 }).map((_, index) => (
               <div key={index} style={{ display: 'flex', gap: tokens.spacing[3] }}>
-                <Skeleton width={80} height={80} variant="rectangular" />
+                <Skeleton width={80} height={80} variant='rectangular' />
                 <SkeletonGroup style={{ flex: 1 }}>
-                  <Skeleton width="80%" height={18} variant="text" />
-                  <Skeleton width="60%" height={14} variant="text" />
-                  <Skeleton width="40%" height={14} variant="text" />
+                  <Skeleton width='80%' height={18} variant='text' />
+                  <Skeleton width='60%' height={14} variant='text' />
+                  <Skeleton width='40%' height={14} variant='text' />
                 </SkeletonGroup>
               </div>
             ))}

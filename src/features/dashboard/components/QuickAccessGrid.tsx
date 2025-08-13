@@ -3,12 +3,21 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { KBCard } from '../../../components/kb-native';
-import { useTouchFeedback, hapticFeedback, TouchFeedbackOptions } from '../../../shared/utils/touchFeedback';
-import { 
+import {
+  useTouchFeedback,
+  hapticFeedback,
+  TouchFeedbackOptions,
+} from '../../../shared/utils/touchFeedback';
+import {
   androidAppContainer,
-  androidOptimizedButton 
+  androidOptimizedButton,
 } from '../../../styles/android-webview-optimizations';
-import { fadeInUp, staggerDelay, respectMotionPreference, smoothTransition } from '../../../styles/animations';
+import {
+  fadeInUp,
+  staggerDelay,
+  respectMotionPreference,
+  smoothTransition,
+} from '../../../styles/animations';
 import { KBDesignSystem } from '../../../styles/tokens/kb-design-system';
 /**
  * KB 스타뱅킹 빠른 접근 그리드 컴포넌트
@@ -25,7 +34,7 @@ const QuickAccessContainer = styled.section`
   gap: ${KBDesignSystem.spacing.md};
   padding: ${KBDesignSystem.spacing.lg};
   background: ${KBDesignSystem.colors.background.white};
-  
+
   /* Android WebView 성능 최적화 */
   transform: translateZ(0);
   will-change: scroll-position;
@@ -33,20 +42,27 @@ const QuickAccessContainer = styled.section`
 const QuickAccessIcon = styled.div<{ $isPoint?: boolean }>`
   width: 48px;
   height: 48px;
-  background: ${props => props.$isPoint 
-    ? `linear-gradient(135deg, ${KBDesignSystem.colors.primary.yellow} 0%, ${KBDesignSystem.colors.primary.yellowDark} 100%)` 
-    : KBDesignSystem.colors.background.white
-  };
+  background: ${props =>
+    props.$isPoint
+      ? `linear-gradient(135deg, ${KBDesignSystem.colors.primary.yellow} 0%, ${KBDesignSystem.colors.primary.yellowDark} 100%)`
+      : KBDesignSystem.colors.background.white};
   border-radius: ${KBDesignSystem.borderRadius.full};
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: ${props => props.$isPoint ? KBDesignSystem.typography.fontSize.xl : KBDesignSystem.typography.fontSize.xxxl};
-  font-weight: ${props => props.$isPoint ? KBDesignSystem.typography.fontWeight.bold : KBDesignSystem.typography.fontWeight.regular};
-  color: ${props => props.$isPoint ? KBDesignSystem.colors.text.primary : 'inherit'};
+  font-size: ${props =>
+    props.$isPoint
+      ? KBDesignSystem.typography.fontSize.xl
+      : KBDesignSystem.typography.fontSize.xxxl};
+  font-weight: ${props =>
+    props.$isPoint
+      ? KBDesignSystem.typography.fontWeight.bold
+      : KBDesignSystem.typography.fontWeight.regular};
+  color: ${props => (props.$isPoint ? KBDesignSystem.colors.text.primary : 'inherit')};
   box-shadow: ${KBDesignSystem.shadows.sm};
   position: relative;
-  transition: all ${KBDesignSystem.animation.duration.normal} ${KBDesignSystem.animation.easing.easeOut};
+  transition: all ${KBDesignSystem.animation.duration.normal}
+    ${KBDesignSystem.animation.easing.easeOut};
   /* 내부 하이라이트 효과 */
   &::before {
     content: '';
@@ -55,11 +71,17 @@ const QuickAccessIcon = styled.div<{ $isPoint?: boolean }>`
     left: 2px;
     right: 2px;
     height: 16px;
-    background: linear-gradient(180deg, rgba(255, 255, 255, ${props => props.$isPoint ? '0.3' : '0.5'}) 0%, transparent 100%);
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, ${props => (props.$isPoint ? '0.3' : '0.5')}) 0%,
+      transparent 100%
+    );
     border-radius: 50%;
   }
   /* P 포인트 배지 */
-  ${props => props.$isPoint && `
+  ${props =>
+    props.$isPoint &&
+    `
     &::after {
       content: 'P';
       position: absolute;
@@ -80,7 +102,7 @@ const QuickAccessIcon = styled.div<{ $isPoint?: boolean }>`
     }
   `}
 `;
-const QuickAccessCard = styled.button<{ 
+const QuickAccessCard = styled.button<{
   $animationIndex?: number;
   $bgColor?: string;
 }>`
@@ -93,14 +115,15 @@ const QuickAccessCard = styled.button<{
   align-items: center;
   justify-content: space-between;
   cursor: pointer;
-  transition: all ${KBDesignSystem.animation.duration.normal} ${KBDesignSystem.animation.easing.easeOut};
+  transition: all ${KBDesignSystem.animation.duration.normal}
+    ${KBDesignSystem.animation.easing.easeOut};
   min-height: 88px;
   position: relative;
   overflow: hidden;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
-  
+
   /* Android WebView 성능 최적화 강화 */
   will-change: transform;
   backface-visibility: hidden;
@@ -135,7 +158,8 @@ const QuickAccessCard = styled.button<{
   }
   &:active {
     transform: translateY(0) scale(0.98);
-    transition: all ${KBDesignSystem.animation.duration.fast} ${KBDesignSystem.animation.easing.easeOut};
+    transition: all ${KBDesignSystem.animation.duration.fast}
+      ${KBDesignSystem.animation.easing.easeOut};
   }
   /* 포커스 상태 */
   &:focus-visible {
@@ -204,106 +228,105 @@ interface QuickAccessGridProps {
   disableTouchFeedback?: boolean;
 }
 const defaultItems: QuickAccessItem[] = [
-  { 
-    title: '오늘의 걸음', 
-    subtitle: '연동하기 ›', 
-    icon: '🚶', 
-    bgColor: KBDesignSystem.colors.secondary.blueLight 
+  {
+    title: '오늘의 걸음',
+    subtitle: '연동하기 ›',
+    icon: '🚶',
+    bgColor: KBDesignSystem.colors.secondary.blueLight,
   },
-  { 
-    title: '용돈 받기', 
-    subtitle: '매일 랜덤 ›', 
-    icon: '🐷', 
-    bgColor: '#FFE8E8' 
+  {
+    title: '용돈 받기',
+    subtitle: '매일 랜덤 ›',
+    icon: '🐷',
+    bgColor: '#FFE8E8',
   },
-  { 
-    title: '식물 키우기', 
-    subtitle: '포인트', 
-    icon: '🌱', 
-    bgColor: '#F0FFF0' 
+  {
+    title: '식물 키우기',
+    subtitle: '포인트',
+    icon: '🌱',
+    bgColor: '#F0FFF0',
   },
-  { 
-    title: '포인트', 
-    subtitle: '', 
-    icon: 'P', 
-    bgColor: KBDesignSystem.colors.primary.yellowLight 
-  }
+  {
+    title: '포인트',
+    subtitle: '',
+    icon: 'P',
+    bgColor: KBDesignSystem.colors.primary.yellowLight,
+  },
 ];
-export const QuickAccessGrid: React.FC<QuickAccessGridProps> = React.memo(({
-  items = defaultItems,
-  className,
-  touchFeedback,
-  disableTouchFeedback = false
-}) => {
-  // Enhanced touch feedback configuration for quick access cards
-  const defaultTouchFeedback: TouchFeedbackOptions = {
-    type: 'ripple',
-    intensity: 'medium',
-    haptic: true,
-    androidOptimized: true,
-    color: KBDesignSystem.colors.primary.yellowAlpha30,
-    duration: 300
-  };
+export const QuickAccessGrid: React.FC<QuickAccessGridProps> = React.memo(
+  ({ items = defaultItems, className, touchFeedback, disableTouchFeedback = false }) => {
+    // Enhanced touch feedback configuration for quick access cards
+    const defaultTouchFeedback: TouchFeedbackOptions = {
+      type: 'ripple',
+      intensity: 'medium',
+      haptic: true,
+      androidOptimized: true,
+      color: KBDesignSystem.colors.primary.yellowAlpha30,
+      duration: 300,
+    };
 
-  const finalTouchFeedback = { ...defaultTouchFeedback, ...touchFeedback };
+    const finalTouchFeedback = { ...defaultTouchFeedback, ...touchFeedback };
 
-  // Create individual touch feedback hooks for each card
-  const cardTouchFeedback = useTouchFeedback(disableTouchFeedback ? undefined : finalTouchFeedback);
-  const renderIcon = (item: QuickAccessItem, _index: number) => {
-    // 용돈 받기 카드의 특별 아이콘 처리
-    if (item.icon === '🐷') {
-      return (
-        <SpecialIcon>
-          🐷
-          <PiggyBankBadge>P</PiggyBankBadge>
-        </SpecialIcon>
-      );
-    }
-    return item.icon;
-  };
-
-  const handleCardClick = (item: QuickAccessItem, index: number) => {
-    // Enhanced haptic feedback based on card type
-    if (!disableTouchFeedback) {
-      // Different feedback for different card types
-      if (item.icon === 'P') {
-        hapticFeedback.touchFeedback('success'); // Points card gets success feedback
-      } else if (item.icon === '🐷') {
-        hapticFeedback.touchFeedback('medium'); // Money pig gets medium feedback
-      } else {
-        hapticFeedback.touchFeedback('light'); // Other cards get light feedback
+    // Create individual touch feedback hooks for each card
+    const cardTouchFeedback = useTouchFeedback(
+      disableTouchFeedback ? undefined : finalTouchFeedback
+    );
+    const renderIcon = (item: QuickAccessItem, _index: number) => {
+      // 용돈 받기 카드의 특별 아이콘 처리
+      if (item.icon === '🐷') {
+        return (
+          <SpecialIcon>
+            🐷
+            <PiggyBankBadge>P</PiggyBankBadge>
+          </SpecialIcon>
+        );
       }
-    }
+      return item.icon;
+    };
 
-    // Call the original onClick handler
-    if (item.onClick) {
-      item.onClick();
-    }
-  };
-  return (
-    <QuickAccessContainer className={className}>
-      {items.map((item, index) => (
-        <QuickAccessCard
-          key={index}
-          $animationIndex={index}
-          $bgColor={item.bgColor}
-          onClick={() => handleCardClick(item, index)}
-          // Enhanced touch feedback integration
-          {...(disableTouchFeedback ? {} : cardTouchFeedback)}
-          style={!disableTouchFeedback ? cardTouchFeedback.style : {}}
-        >
-          <QuickAccessContent>
-            <QuickAccessTitle>{item.title}</QuickAccessTitle>
-            <QuickAccessSubtitle>{item.subtitle}</QuickAccessSubtitle>
-          </QuickAccessContent>
-          <QuickAccessIcon $isPoint={item.icon === 'P'}>
-            {renderIcon(item, index)}
-          </QuickAccessIcon>
-        </QuickAccessCard>
-      ))}
-    </QuickAccessContainer>
-  );
-});
+    const handleCardClick = (item: QuickAccessItem, index: number) => {
+      // Enhanced haptic feedback based on card type
+      if (!disableTouchFeedback) {
+        // Different feedback for different card types
+        if (item.icon === 'P') {
+          hapticFeedback.touchFeedback('success'); // Points card gets success feedback
+        } else if (item.icon === '🐷') {
+          hapticFeedback.touchFeedback('medium'); // Money pig gets medium feedback
+        } else {
+          hapticFeedback.touchFeedback('light'); // Other cards get light feedback
+        }
+      }
+
+      // Call the original onClick handler
+      if (item.onClick) {
+        item.onClick();
+      }
+    };
+    return (
+      <QuickAccessContainer className={className}>
+        {items.map((item, index) => (
+          <QuickAccessCard
+            key={index}
+            $animationIndex={index}
+            $bgColor={item.bgColor}
+            onClick={() => handleCardClick(item, index)}
+            // Enhanced touch feedback integration
+            {...(disableTouchFeedback ? {} : cardTouchFeedback)}
+            style={!disableTouchFeedback ? cardTouchFeedback.style : {}}
+          >
+            <QuickAccessContent>
+              <QuickAccessTitle>{item.title}</QuickAccessTitle>
+              <QuickAccessSubtitle>{item.subtitle}</QuickAccessSubtitle>
+            </QuickAccessContent>
+            <QuickAccessIcon $isPoint={item.icon === 'P'}>
+              {renderIcon(item, index)}
+            </QuickAccessIcon>
+          </QuickAccessCard>
+        ))}
+      </QuickAccessContainer>
+    );
+  }
+);
 
 QuickAccessGrid.displayName = 'QuickAccessGrid';
 export default QuickAccessGrid;

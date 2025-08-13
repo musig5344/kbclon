@@ -52,7 +52,7 @@ export class AccessibilityValidator {
       passed: this.errors.length === 0,
       errors: this.errors,
       warnings: this.warnings,
-      score
+      score,
     };
   }
 
@@ -67,7 +67,7 @@ export class AccessibilityValidator {
           severity: 'error',
           message: `이미지에 대체 텍스트가 없습니다: ${img.src}`,
           element: img as HTMLElement,
-          rule: 'WCAG 1.1.1'
+          rule: 'WCAG 1.1.1',
         });
       }
     });
@@ -82,13 +82,13 @@ export class AccessibilityValidator {
       const id = input.getAttribute('id');
       const ariaLabel = input.getAttribute('aria-label');
       const ariaLabelledby = input.getAttribute('aria-labelledby');
-      
+
       if (!id || (!document.querySelector(`label[for="${id}"]`) && !ariaLabel && !ariaLabelledby)) {
         this.warnings.push({
           severity: 'warning',
           message: `폼 요소에 레이블이 없습니다: ${input.tagName}`,
           element: input as HTMLElement,
-          rule: 'WCAG 3.3.2'
+          rule: 'WCAG 3.3.2',
         });
       }
     });
@@ -103,7 +103,7 @@ export class AccessibilityValidator {
     texts.forEach(element => {
       const computedStyle = window.getComputedStyle(element);
       const fontSize = parseFloat(computedStyle.fontSize);
-      
+
       // 작은 텍스트는 더 높은 대비 필요
       if (fontSize < 14) {
         // 실제 대비 계산 로직 필요
@@ -115,7 +115,9 @@ export class AccessibilityValidator {
    * 키보드 접근성 검증
    */
   private validateKeyboardAccess(): void {
-    const interactiveElements = document.querySelectorAll('button, a, input, select, textarea, [tabindex]');
+    const interactiveElements = document.querySelectorAll(
+      'button, a, input, select, textarea, [tabindex]'
+    );
     interactiveElements.forEach(element => {
       const tabindex = element.getAttribute('tabindex');
       if (tabindex && parseInt(tabindex) > 0) {
@@ -123,7 +125,7 @@ export class AccessibilityValidator {
           severity: 'warning',
           message: `양수 tabindex 사용 지양: ${element.tagName}`,
           element: element as HTMLElement,
-          rule: 'WCAG 2.4.3'
+          rule: 'WCAG 2.4.3',
         });
       }
     });
@@ -136,7 +138,7 @@ export class AccessibilityValidator {
     const ariaElements = document.querySelectorAll('[role]');
     ariaElements.forEach(element => {
       const role = element.getAttribute('role');
-      
+
       // 필수 ARIA 속성 검증
       switch (role) {
         case 'button':
@@ -145,7 +147,7 @@ export class AccessibilityValidator {
               severity: 'error',
               message: `버튼에 접근 가능한 이름이 없습니다`,
               element: element as HTMLElement,
-              rule: 'WCAG 4.1.2'
+              rule: 'WCAG 4.1.2',
             });
           }
           break;
@@ -155,7 +157,7 @@ export class AccessibilityValidator {
               severity: 'warning',
               message: `네비게이션에 aria-label이 없습니다`,
               element: element as HTMLElement,
-              rule: 'WCAG 1.3.1'
+              rule: 'WCAG 1.3.1',
             });
           }
           break;
@@ -169,19 +171,19 @@ export class AccessibilityValidator {
   private validateHeadings(): void {
     const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
     let lastLevel = 0;
-    
+
     headings.forEach(heading => {
       const level = parseInt(heading.tagName[1]);
-      
+
       if (level - lastLevel > 1 && lastLevel !== 0) {
         this.warnings.push({
           severity: 'warning',
           message: `헤딩 레벨 건너뜀: ${lastLevel} → ${level}`,
           element: heading as HTMLElement,
-          rule: 'WCAG 1.3.1'
+          rule: 'WCAG 1.3.1',
         });
       }
-      
+
       lastLevel = level;
     });
 
@@ -191,7 +193,7 @@ export class AccessibilityValidator {
       this.warnings.push({
         severity: 'warning',
         message: `페이지에 h1 태그가 ${h1Count}개 있습니다`,
-        rule: 'WCAG 1.3.1'
+        rule: 'WCAG 1.3.1',
       });
     }
   }
@@ -203,7 +205,7 @@ export class AccessibilityValidator {
     const baseScore = 100;
     const errorPenalty = this.errors.length * 10;
     const warningPenalty = this.warnings.length * 5;
-    
+
     return Math.max(0, baseScore - errorPenalty - warningPenalty);
   }
 }
@@ -221,10 +223,10 @@ export async function validateAccessibility(): Promise<ValidationResult> {
  */
 export async function validateWCAGCriteria(criteria: string): Promise<boolean> {
   const result = await validateAccessibility();
-  
+
   // 특정 기준에 대한 검증
   const relevantErrors = result.errors.filter(error => error.rule === criteria);
   const relevantWarnings = result.warnings.filter(warning => warning.rule === criteria);
-  
+
   return relevantErrors.length === 0 && relevantWarnings.length === 0;
 }

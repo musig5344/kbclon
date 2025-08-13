@@ -3,11 +3,11 @@
  * Manages high contrast theme application and user preferences
  */
 
-import { 
-  HighContrastColors, 
-  highContrastThemes, 
+import {
+  HighContrastColors,
+  highContrastThemes,
   generateHighContrastCSS,
-  validateWCAGCompliance 
+  validateWCAGCompliance,
 } from './HighContrastTheme';
 
 export type HighContrastMode = 'off' | 'light' | 'dark' | 'system';
@@ -103,7 +103,10 @@ export class HighContrastManager {
     // Listen for high contrast changes
     if (window.matchMedia) {
       this.systemPreferenceQuery = window.matchMedia('(prefers-contrast: high)');
-      this.systemPreferenceQuery.addEventListener('change', this.handleSystemPreferenceChange.bind(this));
+      this.systemPreferenceQuery.addEventListener(
+        'change',
+        this.handleSystemPreferenceChange.bind(this)
+      );
 
       // Listen for forced colors (Windows High Contrast)
       const forcedColorsQuery = window.matchMedia('(forced-colors: active)');
@@ -156,7 +159,7 @@ export class HighContrastManager {
 
     // Update document attribute for CSS targeting
     document.documentElement.setAttribute('data-high-contrast', mode);
-    
+
     // Add class for additional styling
     document.body.classList.toggle('high-contrast', mode !== 'off');
     document.body.classList.toggle('high-contrast-light', mode === 'light');
@@ -201,7 +204,7 @@ export class HighContrastManager {
 
   private deepMerge(target: any, source: any): any {
     const output = { ...target };
-    
+
     Object.keys(source).forEach(key => {
       if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
         output[key] = this.deepMerge(output[key] || {}, source[key]);
@@ -209,7 +212,7 @@ export class HighContrastManager {
         output[key] = source[key];
       }
     });
-    
+
     return output;
   }
 
@@ -320,9 +323,9 @@ export class HighContrastManager {
     announcement.setAttribute('aria-atomic', 'true');
     announcement.className = 'sr-only';
     announcement.textContent = messages[mode];
-    
+
     document.body.appendChild(announcement);
-    
+
     // Remove after announcement
     setTimeout(() => {
       document.body.removeChild(announcement);
@@ -340,7 +343,7 @@ export class HighContrastManager {
   public updatePreferences(preferences: Partial<HighContrastPreferences>): void {
     this.preferences = { ...this.preferences, ...preferences };
     this.savePreferences();
-    
+
     // Reapply theme if active
     if (this.isActive()) {
       this.applyTheme();
@@ -353,7 +356,7 @@ export class HighContrastManager {
 
   public subscribe(observer: (mode: HighContrastMode) => void): () => void {
     this.observers.push(observer);
-    
+
     // Return unsubscribe function
     return () => {
       const index = this.observers.indexOf(observer);
@@ -378,7 +381,7 @@ export class HighContrastManager {
     if (!this.isActive()) return true;
 
     const theme = this.getThemeForMode(this.currentMode);
-    
+
     // Validate key color combinations
     const validations = [
       validateWCAGCompliance(theme.text.primary.normal, theme.background.primary),
@@ -392,15 +395,20 @@ export class HighContrastManager {
 
   public cleanup(): void {
     this.removeThemeStyles();
-    
+
     if (this.systemPreferenceQuery) {
       this.systemPreferenceQuery.removeEventListener('change', this.handleSystemPreferenceChange);
     }
-    
+
     this.observers = [];
-    
+
     // Remove document attributes and classes
     document.documentElement.removeAttribute('data-high-contrast');
-    document.body.classList.remove('high-contrast', 'high-contrast-light', 'high-contrast-dark', 'high-contrast-system');
+    document.body.classList.remove(
+      'high-contrast',
+      'high-contrast-light',
+      'high-contrast-dark',
+      'high-contrast-system'
+    );
   }
 }

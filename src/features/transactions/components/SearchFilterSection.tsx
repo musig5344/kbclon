@@ -34,18 +34,13 @@ const SearchFilterSection: React.FC<SearchFilterSectionProps> = ({
     <SearchSection>
       <SearchFilterRow>
         <SearchIcon>🔍</SearchIcon>
-        <FilterToggle onClick={onFilterClick}>
-          {getSearchPlaceholder()}
-        </FilterToggle>
+        <FilterToggle onClick={onFilterClick}>{getSearchPlaceholder()}</FilterToggle>
       </SearchFilterRow>
       <DateRangeRow>
         <DateRange>{dateRange}</DateRange>
         <BalanceToggle>
           <span>잔액표기</span>
-          <ToggleSwitch 
-            $enabled={showBalance}
-            onClick={onToggleBalance}
-          />
+          <ToggleSwitch $enabled={showBalance} onClick={onToggleBalance} />
         </BalanceToggle>
       </DateRangeRow>
     </SearchSection>

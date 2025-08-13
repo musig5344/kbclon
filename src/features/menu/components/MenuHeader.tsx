@@ -12,7 +12,7 @@ import {
   LogoutButton,
   HeaderRight,
   LanguageButton,
-  CloseButton
+  CloseButton,
 } from '../styles/KBMenuStyles';
 
 interface User {
@@ -31,7 +31,7 @@ export const MenuHeaderComponent: React.FC<MenuHeaderProps> = ({
   isLoggedIn,
   user,
   onLogout,
-  onClose
+  onClose,
 }) => {
   return (
     <MenuHeader>
@@ -47,7 +47,7 @@ export const MenuHeaderComponent: React.FC<MenuHeaderProps> = ({
           </UserDetails>
         </UserInfo>
       ) : (
-        <LoginButton onClick={() => window.location.href = '/'}>로그인</LoginButton>
+        <LoginButton onClick={() => (window.location.href = '/')}>로그인</LoginButton>
       )}
       <HeaderRight>
         <LanguageButton>Language</LanguageButton>

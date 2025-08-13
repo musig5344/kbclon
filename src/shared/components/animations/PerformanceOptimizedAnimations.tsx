@@ -1,7 +1,7 @@
 /**
  * Performance Optimized Animations
  * 모든 애니메이션 컴포넌트에서 사용할 수 있는 최적화된 애니메이션 기본 설정
- * 
+ *
  * 최적화 요소:
  * - GPU 레이어 활용 (transform: translateZ(0), will-change)
  * - 60fps 보장을 위한 transform/opacity 기반 애니메이션
@@ -18,12 +18,12 @@ export const AnimationContainer = styled.div`
   ${gpuAcceleration.full}
   will-change: auto;
   ${containment.strict}
-  
+
   /* 브라우저 최적화 힌트 */
   transform-style: preserve-3d;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  
+
   /* 리듀스드 모션 지원 */
   @media (prefers-reduced-motion: reduce) {
     animation-duration: 0.01ms !important;
@@ -106,38 +106,36 @@ export const optimizedBounce = keyframes`
 
 // Optimized animation mixins
 export const fadeInAnimation = css<{ duration?: string; delay?: string }>`
-  animation: ${optimizedFadeIn} ${props => props.duration || '0.3s'} 
-             cubic-bezier(0.4, 0, 0.2, 1) ${props => props.delay || '0s'} both;
+  animation: ${optimizedFadeIn} ${props => props.duration || '0.3s'} cubic-bezier(0.4, 0, 0.2, 1)
+    ${props => props.delay || '0s'} both;
   ${willChange.common}
 `;
 
 export const slideInAnimation = css<{ duration?: string; delay?: string }>`
-  animation: ${optimizedSlideIn} ${props => props.duration || '0.3s'} 
-             cubic-bezier(0.4, 0, 0.2, 1) ${props => props.delay || '0s'} both;
+  animation: ${optimizedSlideIn} ${props => props.duration || '0.3s'} cubic-bezier(0.4, 0, 0.2, 1)
+    ${props => props.delay || '0s'} both;
   ${willChange.common}
 `;
 
 export const scaleInAnimation = css<{ duration?: string; delay?: string }>`
-  animation: ${optimizedScaleIn} ${props => props.duration || '0.2s'} 
-             cubic-bezier(0.175, 0.885, 0.32, 1.275) ${props => props.delay || '0s'} both;
+  animation: ${optimizedScaleIn} ${props => props.duration || '0.2s'}
+    cubic-bezier(0.175, 0.885, 0.32, 1.275) ${props => props.delay || '0s'} both;
   ${willChange.common}
 `;
 
 export const rotateAnimation = css<{ duration?: string }>`
-  animation: ${optimizedRotate} ${props => props.duration || '1s'} 
-             linear infinite;
+  animation: ${optimizedRotate} ${props => props.duration || '1s'} linear infinite;
   ${willChange.transform}
 `;
 
 export const pulseAnimation = css<{ duration?: string }>`
-  animation: ${optimizedPulse} ${props => props.duration || '2s'} 
-             ease-in-out infinite;
+  animation: ${optimizedPulse} ${props => props.duration || '2s'} ease-in-out infinite;
   ${willChange.common}
 `;
 
 export const bounceAnimation = css<{ duration?: string; delay?: string }>`
-  animation: ${optimizedBounce} ${props => props.duration || '1s'} 
-             ${props => props.delay || '0s'} both;
+  animation: ${optimizedBounce} ${props => props.duration || '1s'} ${props => props.delay || '0s'}
+    both;
   ${willChange.transform}
 `;
 
@@ -171,36 +169,57 @@ export const StaggerContainer = styled.div`
   & > * {
     ${fadeInAnimation}
   }
-  
-  & > *:nth-child(1) { animation-delay: 0ms; }
-  & > *:nth-child(2) { animation-delay: 50ms; }
-  & > *:nth-child(3) { animation-delay: 100ms; }
-  & > *:nth-child(4) { animation-delay: 150ms; }
-  & > *:nth-child(5) { animation-delay: 200ms; }
-  & > *:nth-child(6) { animation-delay: 250ms; }
-  & > *:nth-child(7) { animation-delay: 300ms; }
-  & > *:nth-child(8) { animation-delay: 350ms; }
-  & > *:nth-child(9) { animation-delay: 400ms; }
-  & > *:nth-child(10) { animation-delay: 450ms; }
+
+  & > *:nth-child(1) {
+    animation-delay: 0ms;
+  }
+  & > *:nth-child(2) {
+    animation-delay: 50ms;
+  }
+  & > *:nth-child(3) {
+    animation-delay: 100ms;
+  }
+  & > *:nth-child(4) {
+    animation-delay: 150ms;
+  }
+  & > *:nth-child(5) {
+    animation-delay: 200ms;
+  }
+  & > *:nth-child(6) {
+    animation-delay: 250ms;
+  }
+  & > *:nth-child(7) {
+    animation-delay: 300ms;
+  }
+  & > *:nth-child(8) {
+    animation-delay: 350ms;
+  }
+  & > *:nth-child(9) {
+    animation-delay: 400ms;
+  }
+  & > *:nth-child(10) {
+    animation-delay: 450ms;
+  }
 `;
 
 // Micro-interaction optimizations
 export const microInteractionMixin = css`
-  transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1),
-              opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    transform 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1);
   ${gpuAcceleration.force3D}
   will-change: auto;
-  
+
   &:hover {
     transform: translateZ(0) translateY(-2px);
     will-change: transform;
   }
-  
+
   &:active {
     transform: translateZ(0) translateY(0) scale(0.98);
     transition-duration: 0.1s;
   }
-  
+
   &:focus {
     outline: none;
     box-shadow: 0 0 0 2px rgba(255, 184, 0, 0.5);
@@ -216,17 +235,17 @@ export const useAnimationPerformance = (name: string) => {
     onAnimationEnd: () => {
       performance.mark(`${name}-end`);
       performance.measure(`${name}-duration`, `${name}-start`, `${name}-end`);
-      
+
       const measure = performance.getEntriesByName(`${name}-duration`)[0];
       if (measure && measure.duration > 16.67) {
         console.warn(`Animation '${name}' exceeded 16.67ms frame budget: ${measure.duration}ms`);
       }
-      
+
       // Cleanup
       performance.clearMarks(`${name}-start`);
       performance.clearMarks(`${name}-end`);
       performance.clearMeasures(`${name}-duration`);
-    }
+    },
   };
 };
 
@@ -236,13 +255,13 @@ export const OptimizedButton = styled.button`
   padding: 12px 24px;
   border: none;
   border-radius: 8px;
-  background: linear-gradient(135deg, #FFB800, #FF8A00);
+  background: linear-gradient(135deg, #ffb800, #ff8a00);
   color: white;
   font-weight: 600;
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  
+
   /* 성능 최적화 */
   ${gpuAcceleration.full}
   ${microInteractionMixin}
@@ -257,21 +276,25 @@ export const OptimizedButton = styled.button`
     height: 0;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.3);
-    transition: width 0.6s, height 0.6s, top 0.6s, left 0.6s;
+    transition:
+      width 0.6s,
+      height 0.6s,
+      top 0.6s,
+      left 0.6s;
     transform: translate(-50%, -50%);
     ${gpuAcceleration.force3D}
   }
-  
+
   &:active::before {
     width: 300px;
     height: 300px;
   }
-  
+
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
     transform: none;
-    
+
     &:hover {
       transform: none;
     }
@@ -284,13 +307,13 @@ export const OptimizedCard = styled.div`
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  
+
   /* 성능 최적화 */
   ${gpuAcceleration.full}
   ${microInteractionMixin}
   transition: box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
               transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  
+
   &:hover {
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
     transform: translateZ(0) translateY(-4px);
@@ -315,5 +338,5 @@ export default {
   scaleInAnimation,
   rotateAnimation,
   pulseAnimation,
-  bounceAnimation
+  bounceAnimation,
 };

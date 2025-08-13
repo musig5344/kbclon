@@ -4,7 +4,7 @@
  * Implements comprehensive touch target standards for financial applications
  */
 
-import { 
+import {
   WCAG_TOUCH_CONSTANTS,
   TouchDensity,
   touchTargetUtils,
@@ -27,7 +27,7 @@ export enum TouchFeedbackType {
 // Security levels for financial interactions
 export enum SecurityLevel {
   LOW = 'low',
-  MEDIUM = 'medium', 
+  MEDIUM = 'medium',
   HIGH = 'high',
   CRITICAL = 'critical',
 }
@@ -53,7 +53,7 @@ export const TOUCH_TARGET_CATEGORIES: Record<string, TouchTargetCategory> = {
     securityLevel: SecurityLevel.HIGH,
     accessibilityFeatures: ['haptic', 'audio', 'visual', 'voice-control'],
   },
-  
+
   // Secondary actions (cancel, back, options)
   secondary: {
     minSize: WCAG_TOUCH_CONSTANTS.MIN_TARGET_SIZE,
@@ -63,17 +63,21 @@ export const TOUCH_TARGET_CATEGORIES: Record<string, TouchTargetCategory> = {
     securityLevel: SecurityLevel.LOW,
     accessibilityFeatures: ['haptic', 'visual', 'voice-control'],
   },
-  
+
   // Financial transaction buttons (transfer, payment)
   financial: {
     minSize: WCAG_TOUCH_CONSTANTS.LARGE_TARGET_SIZE,
     recommendedSize: 64,
     minSpacing: 16,
-    feedback: [TouchFeedbackType.TAP, TouchFeedbackType.FINANCIAL_ACTION, TouchFeedbackType.SUCCESS],
+    feedback: [
+      TouchFeedbackType.TAP,
+      TouchFeedbackType.FINANCIAL_ACTION,
+      TouchFeedbackType.SUCCESS,
+    ],
     securityLevel: SecurityLevel.CRITICAL,
     accessibilityFeatures: ['haptic', 'audio', 'visual', 'voice-control', 'double-confirmation'],
   },
-  
+
   // Navigation elements (tabs, menu items)
   navigation: {
     minSize: WCAG_TOUCH_CONSTANTS.MIN_TARGET_SIZE,
@@ -83,7 +87,7 @@ export const TOUCH_TARGET_CATEGORIES: Record<string, TouchTargetCategory> = {
     securityLevel: SecurityLevel.LOW,
     accessibilityFeatures: ['haptic', 'visual'],
   },
-  
+
   // Form inputs (text fields, dropdowns)
   input: {
     minSize: WCAG_TOUCH_CONSTANTS.RECOMMENDED_TARGET_SIZE,
@@ -93,7 +97,7 @@ export const TOUCH_TARGET_CATEGORIES: Record<string, TouchTargetCategory> = {
     securityLevel: SecurityLevel.MEDIUM,
     accessibilityFeatures: ['haptic', 'visual', 'voice-control', 'screen-reader'],
   },
-  
+
   // Toggle controls (switches, checkboxes)
   toggle: {
     minSize: WCAG_TOUCH_CONSTANTS.MIN_TARGET_SIZE,
@@ -103,7 +107,7 @@ export const TOUCH_TARGET_CATEGORIES: Record<string, TouchTargetCategory> = {
     securityLevel: SecurityLevel.MEDIUM,
     accessibilityFeatures: ['haptic', 'visual', 'audio'],
   },
-  
+
   // Critical destructive actions (delete, reset)
   destructive: {
     minSize: WCAG_TOUCH_CONSTANTS.LARGE_TARGET_SIZE,
@@ -113,7 +117,7 @@ export const TOUCH_TARGET_CATEGORIES: Record<string, TouchTargetCategory> = {
     securityLevel: SecurityLevel.HIGH,
     accessibilityFeatures: ['haptic', 'audio', 'visual', 'double-confirmation'],
   },
-  
+
   // Quick access buttons (favorites, shortcuts)
   quickAccess: {
     minSize: WCAG_TOUCH_CONSTANTS.MIN_TARGET_SIZE,
@@ -209,16 +213,16 @@ export class TouchTargetGuidelinesEnforcer {
 
     // Set minimum size
     this.enforceMinimumSize(element, categoryConfig.minSize);
-    
+
     // Apply spacing requirements
     this.enforceSpacing(element, categoryConfig.minSpacing);
-    
+
     // Configure feedback
     this.configureFeedback(element, categoryConfig.feedback, categoryConfig.securityLevel);
-    
+
     // Add accessibility attributes
     this.addAccessibilityFeatures(element, categoryConfig.accessibilityFeatures);
-    
+
     // Add category class for styling
     element.classList.add(`touch-target-${category}`);
     element.setAttribute('data-touch-category', category);
@@ -231,7 +235,7 @@ export class TouchTargetGuidelinesEnforcer {
   private enforceMinimumSize(element: HTMLElement, minSize: number): void {
     const currentStyle = getComputedStyle(element);
     const rect = element.getBoundingClientRect();
-    
+
     // Check if element meets minimum size
     if (rect.width < minSize || rect.height < minSize) {
       if (this.enforcementMode === 'strict') {
@@ -252,10 +256,10 @@ export class TouchTargetGuidelinesEnforcer {
   // Enforce spacing requirements
   private enforceSpacing(element: HTMLElement, minSpacing: number): void {
     const nearbyElements = this.findNearbyInteractiveElements(element);
-    
+
     for (const nearby of nearbyElements) {
       const distance = this.calculateElementDistance(element, nearby);
-      
+
       if (distance < minSpacing) {
         if (this.enforcementMode === 'development') {
           console.warn(`Insufficient spacing between elements: ${distance}px < ${minSpacing}px`);
@@ -271,22 +275,22 @@ export class TouchTargetGuidelinesEnforcer {
 
   // Configure touch feedback
   private configureFeedback(
-    element: HTMLElement, 
-    feedbackTypes: TouchFeedbackType[], 
+    element: HTMLElement,
+    feedbackTypes: TouchFeedbackType[],
     securityLevel: SecurityLevel
   ): void {
     element.setAttribute('data-feedback-types', feedbackTypes.join(','));
     element.setAttribute('data-security-level', securityLevel);
-    
+
     // Add event listeners for feedback
-    element.addEventListener('touchstart', (e) => {
+    element.addEventListener('touchstart', e => {
       this.triggerFeedback(feedbackTypes, securityLevel);
     });
-    
+
     // Add visual feedback classes
     if (this.feedbackConfig.visual.enabled) {
       element.classList.add('touch-feedback-enabled');
-      
+
       if (this.feedbackConfig.visual.ripple) {
         element.classList.add('ripple-effect');
       }
@@ -302,19 +306,19 @@ export class TouchTargetGuidelinesEnforcer {
             element.setAttribute('aria-label', 'Interactive element');
           }
           break;
-          
+
         case 'screen-reader':
           element.setAttribute('role', element.getAttribute('role') || 'button');
           break;
-          
+
         case 'double-confirmation':
           element.setAttribute('data-requires-confirmation', 'true');
           break;
-          
+
         case 'haptic':
           element.setAttribute('data-haptic-enabled', 'true');
           break;
-          
+
         case 'audio':
           element.setAttribute('data-audio-feedback', 'true');
           break;
@@ -328,7 +332,7 @@ export class TouchTargetGuidelinesEnforcer {
       if (this.feedbackConfig.haptic.enabled) {
         this.triggerHapticFeedback(type, securityLevel);
       }
-      
+
       if (this.feedbackConfig.audio.enabled) {
         this.triggerAudioFeedback(type);
       }
@@ -341,13 +345,13 @@ export class TouchTargetGuidelinesEnforcer {
     if (pattern && 'vibrate' in navigator) {
       // Adjust intensity based on security level
       let adjustedPattern = pattern;
-      
+
       if (securityLevel === SecurityLevel.CRITICAL) {
         adjustedPattern = pattern.map(duration => duration * 1.5);
       } else if (securityLevel === SecurityLevel.HIGH) {
         adjustedPattern = pattern.map(duration => duration * 1.2);
       }
-      
+
       navigator.vibrate(adjustedPattern);
     }
   }
@@ -368,29 +372,31 @@ export class TouchTargetGuidelinesEnforcer {
   private findNearbyInteractiveElements(element: HTMLElement): HTMLElement[] {
     const rect = element.getBoundingClientRect();
     const searchRadius = 100; // px
-    
-    const interactiveElements = document.querySelectorAll([
-      'button',
-      'input',
-      'select',
-      'textarea',
-      'a[href]',
-      '[tabindex]',
-      '[onclick]',
-      '[role="button"]',
-    ].join(',')) as NodeListOf<HTMLElement>;
-    
+
+    const interactiveElements = document.querySelectorAll(
+      [
+        'button',
+        'input',
+        'select',
+        'textarea',
+        'a[href]',
+        '[tabindex]',
+        '[onclick]',
+        '[role="button"]',
+      ].join(',')
+    ) as NodeListOf<HTMLElement>;
+
     const nearby: HTMLElement[] = [];
-    
+
     for (const interactive of interactiveElements) {
       if (interactive === element) continue;
-      
+
       const distance = this.calculateElementDistance(element, interactive);
       if (distance <= searchRadius) {
         nearby.push(interactive);
       }
     }
-    
+
     return nearby;
   }
 
@@ -398,15 +404,13 @@ export class TouchTargetGuidelinesEnforcer {
   private calculateElementDistance(element1: HTMLElement, element2: HTMLElement): number {
     const rect1 = element1.getBoundingClientRect();
     const rect2 = element2.getBoundingClientRect();
-    
+
     const centerX1 = rect1.left + rect1.width / 2;
     const centerY1 = rect1.top + rect1.height / 2;
     const centerX2 = rect2.left + rect2.width / 2;
     const centerY2 = rect2.top + rect2.height / 2;
-    
-    return Math.sqrt(
-      Math.pow(centerX2 - centerX1, 2) + Math.pow(centerY2 - centerY1, 2)
-    );
+
+    return Math.sqrt(Math.pow(centerX2 - centerX1, 2) + Math.pow(centerY2 - centerY1, 2));
   }
 
   // Highlight spacing issues (development mode)
@@ -414,7 +418,7 @@ export class TouchTargetGuidelinesEnforcer {
     const highlightStyle = '2px dashed red';
     element1.style.outline = highlightStyle;
     element2.style.outline = highlightStyle;
-    
+
     setTimeout(() => {
       element1.style.outline = '';
       element2.style.outline = '';
@@ -427,20 +431,22 @@ export class TouchTargetGuidelinesEnforcer {
     violations: number;
     autoFixed: number;
   } {
-    const interactiveElements = document.querySelectorAll([
-      'button',
-      'input[type="button"]',
-      'input[type="submit"]',
-      'input[type="reset"]',
-      'input[type="checkbox"]',
-      'input[type="radio"]',
-      'select',
-      'textarea',
-      'a[href]',
-      '[tabindex]:not([tabindex="-1"])',
-      '[onclick]',
-      '[role="button"]',
-    ].join(',')) as NodeListOf<HTMLElement>;
+    const interactiveElements = document.querySelectorAll(
+      [
+        'button',
+        'input[type="button"]',
+        'input[type="submit"]',
+        'input[type="reset"]',
+        'input[type="checkbox"]',
+        'input[type="radio"]',
+        'select',
+        'textarea',
+        'a[href]',
+        '[tabindex]:not([tabindex="-1"])',
+        '[onclick]',
+        '[role="button"]',
+      ].join(',')
+    ) as NodeListOf<HTMLElement>;
 
     let processed = 0;
     let violations = 0;
@@ -448,14 +454,14 @@ export class TouchTargetGuidelinesEnforcer {
 
     for (const element of interactiveElements) {
       processed++;
-      
+
       // Determine category based on element characteristics
       const category = this.determineElementCategory(element);
-      
+
       // Apply category requirements
       const hadViolations = !this.validator.validateElement(element).isValid;
       if (hadViolations) violations++;
-      
+
       if (this.applyCategory(element, category)) {
         if (hadViolations) autoFixed++;
       }
@@ -571,36 +577,42 @@ export const touchGuidelines = {
     }
 
     // Apply guidelines to dynamically added elements
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        mutation.addedNodes.forEach((node) => {
+    const observer = new MutationObserver(mutations => {
+      mutations.forEach(mutation => {
+        mutation.addedNodes.forEach(node => {
           if (node.nodeType === Node.ELEMENT_NODE) {
             const element = node as Element;
             // Check if it's an interactive element
-            if (element.matches([
-              'button',
-              'input',
-              'select',
-              'textarea',
-              'a[href]',
-              '[tabindex]',
-              '[onclick]',
-              '[role="button"]',
-            ].join(','))) {
+            if (
+              element.matches(
+                [
+                  'button',
+                  'input',
+                  'select',
+                  'textarea',
+                  'a[href]',
+                  '[tabindex]',
+                  '[onclick]',
+                  '[role="button"]',
+                ].join(',')
+              )
+            ) {
               touchGuidelines.autoApply(element as HTMLElement);
             }
 
             // Check children
-            const interactiveChildren = element.querySelectorAll([
-              'button',
-              'input',
-              'select',
-              'textarea',
-              'a[href]',
-              '[tabindex]',
-              '[onclick]',
-              '[role="button"]',
-            ].join(',')) as NodeListOf<HTMLElement>;
+            const interactiveChildren = element.querySelectorAll(
+              [
+                'button',
+                'input',
+                'select',
+                'textarea',
+                'a[href]',
+                '[tabindex]',
+                '[onclick]',
+                '[role="button"]',
+              ].join(',')
+            ) as NodeListOf<HTMLElement>;
 
             for (const child of interactiveChildren) {
               touchGuidelines.autoApply(child);
@@ -620,13 +632,6 @@ export const touchGuidelines = {
 };
 
 // Export types and constants
-export type {
-  TouchFeedbackConfig,
-  TouchTargetCategory,
-};
+export type { TouchFeedbackConfig, TouchTargetCategory };
 
-export {
-  TOUCH_TARGET_CATEGORIES,
-  DEFAULT_FEEDBACK_CONFIG,
-  TouchTargetGuidelinesEnforcer,
-};
+export { TOUCH_TARGET_CATEGORIES, DEFAULT_FEEDBACK_CONFIG, TouchTargetGuidelinesEnforcer };

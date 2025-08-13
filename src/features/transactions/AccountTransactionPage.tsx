@@ -5,7 +5,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import arrowLeftIcon from '../../assets/images/icons/icon_arrow_left_white.png';
 import { useAuth } from '../../core/auth/AuthContext';
 import { accountService, DatabaseAccount } from '../../lib/supabase';
-import { TransactionFilter , Transaction } from '../../services/api';
+import { TransactionFilter, Transaction } from '../../services/api';
 import { TransactionPageSkeleton } from '../../shared/components/ui/TransactionSkeleton';
 import { safeLog } from '../../utils/errorHandler';
 import { formatCurrency } from '../../utils/textFormatter';
@@ -19,12 +19,14 @@ import {
   HeaderRight,
   HomeButton,
   MenuButton,
-  TransactionList
+  TransactionList,
 } from './AccountTransactionPage.styles';
 import AccountInfoSection from './components/AccountInfoSection';
 import SearchFilterSection from './components/SearchFilterSection';
 import TransactionDetailModal from './components/TransactionDetailModal';
-import TransactionFilterModal, { FilterState as FilterModalState } from './components/TransactionFilterModal';
+import TransactionFilterModal, {
+  FilterState as FilterModalState,
+} from './components/TransactionFilterModal';
 import TransactionGroup from './components/TransactionGroup';
 import { useTransactions } from './hooks/useTransactions';
 import {
@@ -33,7 +35,7 @@ import {
   groupTransactionsByMonth,
   isFilterModified,
   getDefaultFilters,
-  parseAmountString
+  parseAmountString,
 } from './utils/transactionUtils';
 /**
  * KB 스타뱅킹 계좌별 거래내역조회 페이지
@@ -68,14 +70,14 @@ const AccountTransactionPage: React.FC = () => {
     pagination,
     filters: currentFilters,
     setFilters,
-    loadMore
+    loadMore,
   } = useTransactions({
     accountId: accountId || '',
     initialFilters: {
       limit: 50,
-      sort_by: 'date_desc'
+      sort_by: 'date_desc',
     },
-    autoLoad: !!accountId
+    autoLoad: !!accountId,
   });
   // 날짜별 그룹핑 - 메모이제이션으로 성능 최적화
   const groupedTransactions = useMemo(() => {
@@ -93,7 +95,7 @@ const AccountTransactionPage: React.FC = () => {
       return;
     }
     const observer = new IntersectionObserver(
-      (entries) => {
+      entries => {
         if (entries[0].isIntersecting) {
           if (!transactionsLoading) {
             loadMore();
@@ -103,7 +105,7 @@ const AccountTransactionPage: React.FC = () => {
       {
         root: null,
         rootMargin: '200px',
-        threshold: 0
+        threshold: 0,
       }
     );
     observerRef.current = observer;
@@ -121,22 +123,25 @@ const AccountTransactionPage: React.FC = () => {
   //   setTempFilters(defaultFilters);
   //   setAppliedFilters(defaultFilters);
   //   setIsFiltered(false);
-  //   
+  //
   //   // 기본 날짜 범위 설정
   //   const dateRange = calculateDateRange('3개월');
   //   setDateRange(`${dateRange.start} - ${dateRange.end}`);
-  //   
+  //
   //   // 기본 거래내역 다시 로드
   //   if (accountId) {
   //     refresh();
   //   }
   // }, [accountId, calculateDateRange, defaultFilters, refresh]);
   // 필터와 함께 거래내역 로드
-  const loadTransactionsWithFilters = useCallback((filterParams: Partial<TransactionFilter>) => {
-    if (!accountId) return;
-    safeLog('info', '필터 적용으로 거래내역 조회', filterParams);
-    setFilters(filterParams);
-  }, [accountId, setFilters]);
+  const loadTransactionsWithFilters = useCallback(
+    (filterParams: Partial<TransactionFilter>) => {
+      if (!accountId) return;
+      safeLog('info', '필터 적용으로 거래내역 조회', filterParams);
+      setFilters(filterParams);
+    },
+    [accountId, setFilters]
+  );
   useEffect(() => {
     // 페이지 진입시 항상 최신 계좌 정보 로드
     loadAccount(true);
@@ -159,9 +164,9 @@ const AccountTransactionPage: React.FC = () => {
     try {
       setAccountLoading(true);
       // 캐시 무시하고 항상 최신 데이터 가져오기
-      const accounts = await accountService.getUserAccounts(userId, { 
+      const accounts = await accountService.getUserAccounts(userId, {
         bypassCache: true,
-        _timestamp: forceRefresh ? Date.now() : undefined 
+        _timestamp: forceRefresh ? Date.now() : undefined,
       });
       const foundAccount = accounts.find(acc => acc.id === accountId);
       setAccount(foundAccount || null);
@@ -181,52 +186,55 @@ const AccountTransactionPage: React.FC = () => {
   //   }
   // };
   // 필터 적용 함수
-  const handleFilterApply = useCallback((filters: FilterModalState) => {
-    safeLog('info', '필터 적용', filters);
-    // 적용된 필터 상태 업데이트
-    setAppliedFilters(filters);
-    setIsFiltered(isFilterModified(filters));
-    // 날짜 범위 계산 및 업데이트
-    let dateInfo;
-    if (filters.period === '직접입력' && filters.startDate && filters.endDate) {
-      const start = new Date(filters.startDate);
-      const end = new Date(filters.endDate);
-      dateInfo = {
-        start: start.toISOString().split('T')[0].replace(/-/g, '.'),
-        end: end.toISOString().split('T')[0].replace(/-/g, '.'),
-        startISO: filters.startDate,
-        endISO: filters.endDate
+  const handleFilterApply = useCallback(
+    (filters: FilterModalState) => {
+      safeLog('info', '필터 적용', filters);
+      // 적용된 필터 상태 업데이트
+      setAppliedFilters(filters);
+      setIsFiltered(isFilterModified(filters));
+      // 날짜 범위 계산 및 업데이트
+      let dateInfo;
+      if (filters.period === '직접입력' && filters.startDate && filters.endDate) {
+        const start = new Date(filters.startDate);
+        const end = new Date(filters.endDate);
+        dateInfo = {
+          start: start.toISOString().split('T')[0].replace(/-/g, '.'),
+          end: end.toISOString().split('T')[0].replace(/-/g, '.'),
+          startISO: filters.startDate,
+          endISO: filters.endDate,
+        };
+      } else {
+        dateInfo = calculateDateRange(filters.period);
+      }
+      setDateRange(`${dateInfo.start} - ${dateInfo.end}`);
+      // API 파라미터 구성
+      const apiFilters: TransactionFilter = {
+        account_id: accountId,
+        page: 1,
+        limit: 50,
       };
-    } else {
-      dateInfo = calculateDateRange(filters.period);
-    }
-    setDateRange(`${dateInfo.start} - ${dateInfo.end}`);
-    // API 파라미터 구성
-    const apiFilters: TransactionFilter = {
-      account_id: accountId,
-      page: 1,
-      limit: 50
-    };
-    // 거래 유형 필터
-    if (filters.type !== '전체') {
-      apiFilters.transaction_type = filters.type as "all" | "이체" | "입금" | "출금";
-    }
-    // 정렬 순서
-    apiFilters.sort_by = filters.sort === '최신순' ? 'date_desc' : 'date_asc';
-    // 금액 범위
-    if (filters.amount.min) {
-      apiFilters.min_amount = parseAmountString(filters.amount.min);
-    }
-    if (filters.amount.max) {
-      apiFilters.max_amount = parseAmountString(filters.amount.max);
-    }
-    // 기간 필터
-    apiFilters.start_date = dateInfo.startISO;
-    apiFilters.end_date = dateInfo.endISO;
-    // 필터 적용하여 거래내역 다시 로드
-    loadTransactionsWithFilters(apiFilters);
-    setTempFilters(filters);
-  }, [accountId, calculateDateRange, loadTransactionsWithFilters]);
+      // 거래 유형 필터
+      if (filters.type !== '전체') {
+        apiFilters.transaction_type = filters.type as 'all' | '이체' | '입금' | '출금';
+      }
+      // 정렬 순서
+      apiFilters.sort_by = filters.sort === '최신순' ? 'date_desc' : 'date_asc';
+      // 금액 범위
+      if (filters.amount.min) {
+        apiFilters.min_amount = parseAmountString(filters.amount.min);
+      }
+      if (filters.amount.max) {
+        apiFilters.max_amount = parseAmountString(filters.amount.max);
+      }
+      // 기간 필터
+      apiFilters.start_date = dateInfo.startISO;
+      apiFilters.end_date = dateInfo.endISO;
+      // 필터 적용하여 거래내역 다시 로드
+      loadTransactionsWithFilters(apiFilters);
+      setTempFilters(filters);
+    },
+    [accountId, calculateDateRange, loadTransactionsWithFilters]
+  );
   // 검색바 placeholder 동적 생성
   const getSearchPlaceholder = useCallback(() => {
     return createSearchPlaceholder(appliedFilters);
@@ -239,15 +247,15 @@ const AccountTransactionPage: React.FC = () => {
       <Container>
         <Header>
           <BackButton onClick={() => navigate(-1)}>
-            <img src={arrowLeftIcon} alt="뒤로가기" />
+            <img src={arrowLeftIcon} alt='뒤로가기' />
           </BackButton>
           <HeaderTitle>거래내역조회</HeaderTitle>
           <HeaderRight>
-            <HomeButton to="/dashboard">
-              <img src="/assets/images/icons/icon_home.png" alt="" />
+            <HomeButton to='/dashboard'>
+              <img src='/assets/images/icons/icon_home.png' alt='' />
             </HomeButton>
             <MenuButton onClick={() => setShowMenu(true)}>
-              <img src="/assets/images/icons/icon_appbar_menu.png" alt="메뉴" />
+              <img src='/assets/images/icons/icon_appbar_menu.png' alt='메뉴' />
             </MenuButton>
           </HeaderRight>
         </Header>
@@ -271,19 +279,19 @@ const AccountTransactionPage: React.FC = () => {
     <Container>
       <Header>
         <BackButton onClick={() => navigate(-1)}>
-          <img src={arrowLeftIcon} alt="뒤로가기" />
+          <img src={arrowLeftIcon} alt='뒤로가기' />
         </BackButton>
         <HeaderTitle>거래내역조회</HeaderTitle>
         <HeaderRight>
-          <HomeButton to="/dashboard">
-            <img src="/assets/images/icons/icon_home.png" alt="" />
+          <HomeButton to='/dashboard'>
+            <img src='/assets/images/icons/icon_home.png' alt='' />
           </HomeButton>
           <MenuButton onClick={() => setShowMenu(true)}>
-            <img src="/assets/images/icons/icon_appbar_menu.png" alt="메뉴" />
+            <img src='/assets/images/icons/icon_appbar_menu.png' alt='메뉴' />
           </MenuButton>
         </HeaderRight>
       </Header>
-      <AccountInfoSection 
+      <AccountInfoSection
         account={account}
         showBalance={showBalance}
         onToggleBalance={() => setShowBalance(!showBalance)}
@@ -307,7 +315,7 @@ const AccountTransactionPage: React.FC = () => {
           </div>
         ) : Object.keys(groupedTransactions).length === 0 && !loading ? (
           <div style={{ padding: '40px 20px', textAlign: 'center', color: '#666666' }}>
-거래내역이 없습니다.
+            거래내역이 없습니다.
           </div>
         ) : (
           Object.entries(groupedTransactions).map(([month, monthTransactions]) => (
@@ -317,18 +325,18 @@ const AccountTransactionPage: React.FC = () => {
               transactions={monthTransactions}
               showBalance={showBalance}
               onTransactionClick={setSelectedTransaction}
-              headerVariant="month"
+              headerVariant='month'
             />
           ))
         )}
         {/* 무한 스크롤 트리거 (숨김 처리) */}
         {pagination?.has_next && (
-          <div 
-            ref={loadMoreRef} 
-            style={{ 
-              height: '1px', 
+          <div
+            ref={loadMoreRef}
+            style={{
+              height: '1px',
               opacity: 0,
-              pointerEvents: 'none'
+              pointerEvents: 'none',
             }}
           />
         )}
@@ -342,7 +350,7 @@ const AccountTransactionPage: React.FC = () => {
         showDateInputs={true}
       />
       {/* 거래내역 상세 모달 */}
-      <TransactionDetailModal 
+      <TransactionDetailModal
         transaction={selectedTransaction}
         onClose={() => setSelectedTransaction(null)}
       />

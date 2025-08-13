@@ -19,7 +19,7 @@ const FOCUSABLE_ELEMENTS = [
   'video[controls]',
   '[contenteditable]:not([contenteditable="false"])',
   'details>summary:first-of-type',
-  'details'
+  'details',
 ].join(',');
 
 /**
@@ -41,7 +41,7 @@ export class FocusTrap {
       trapFocus: true,
       escapeDeactivates: true,
       allowOutsideClick: false,
-      ...options
+      ...options,
     };
   }
 
@@ -50,9 +50,9 @@ export class FocusTrap {
 
     this.active = true;
     this.previouslyFocusedElement = document.activeElement as HTMLElement;
-    
+
     this.updateFocusableElements();
-    
+
     if (this.options.autoFocus) {
       this.focusInitial();
     }
@@ -88,7 +88,7 @@ export class FocusTrap {
 
   private updateFocusableElements() {
     const focusableElements = this.element.querySelectorAll(FOCUSABLE_ELEMENTS);
-    const visibleElements = Array.from(focusableElements).filter(el => 
+    const visibleElements = Array.from(focusableElements).filter(el =>
       this.isVisible(el as HTMLElement)
     ) as HTMLElement[];
 
@@ -98,12 +98,13 @@ export class FocusTrap {
 
   private focusInitial() {
     const { initialFocus } = this.options;
-    
+
     if (initialFocus) {
-      const element = typeof initialFocus === 'string'
-        ? this.element.querySelector(initialFocus) as HTMLElement
-        : initialFocus;
-      
+      const element =
+        typeof initialFocus === 'string'
+          ? (this.element.querySelector(initialFocus) as HTMLElement)
+          : initialFocus;
+
       if (element && this.isVisible(element)) {
         element.focus();
         return;
@@ -141,7 +142,7 @@ export class FocusTrap {
 
   private handleFocusIn = (event: FocusEvent) => {
     const target = event.target as HTMLElement;
-    
+
     if (!this.element.contains(target)) {
       event.preventDefault();
       this.focusInitial();
@@ -150,18 +151,14 @@ export class FocusTrap {
 
   private handleOutsideClick = (event: MouseEvent) => {
     const target = event.target as HTMLElement;
-    
+
     if (!this.element.contains(target)) {
       this.deactivate();
     }
   };
 
   private isVisible(element: HTMLElement): boolean {
-    return !!(
-      element.offsetWidth ||
-      element.offsetHeight ||
-      element.getClientRects().length
-    );
+    return !!(element.offsetWidth || element.offsetHeight || element.getClientRects().length);
   }
 }
 
@@ -183,12 +180,11 @@ export function setFocus(
   element: HTMLElement | string,
   options?: { preventScroll?: boolean }
 ): boolean {
-  const el = typeof element === 'string' 
-    ? document.querySelector(element) as HTMLElement
-    : element;
-  
+  const el =
+    typeof element === 'string' ? (document.querySelector(element) as HTMLElement) : element;
+
   if (!el) return false;
-  
+
   el.focus(options);
   return document.activeElement === el;
 }
@@ -196,12 +192,10 @@ export function setFocus(
 /**
  * 포커스 가능한 모든 요소 가져오기
  */
-export function getFocusableElements(
-  container: HTMLElement = document.body
-): HTMLElement[] {
+export function getFocusableElements(container: HTMLElement = document.body): HTMLElement[] {
   const elements = container.querySelectorAll(FOCUSABLE_ELEMENTS);
-  return Array.from(elements).filter(el => 
-    isVisible(el as HTMLElement) && !isDisabled(el as HTMLElement)
+  return Array.from(elements).filter(
+    el => isVisible(el as HTMLElement) && !isDisabled(el as HTMLElement)
   ) as HTMLElement[];
 }
 
@@ -222,10 +216,7 @@ function isVisible(element: HTMLElement): boolean {
  * 요소의 비활성화 상태 확인
  */
 function isDisabled(element: HTMLElement): boolean {
-  return (
-    element.hasAttribute('disabled') ||
-    element.getAttribute('aria-disabled') === 'true'
-  );
+  return element.hasAttribute('disabled') || element.getAttribute('aria-disabled') === 'true';
 }
 
 /**
@@ -243,9 +234,9 @@ export class KeyboardNavigator {
       orientation: 'vertical',
       loop: true,
       preventScroll: false,
-      ...options
+      ...options,
     };
-    
+
     this.init();
   }
 
@@ -267,7 +258,7 @@ export class KeyboardNavigator {
   private handleKeyDown = (event: KeyboardEvent) => {
     const { key } = event;
     const { orientation } = this.options;
-    
+
     let handled = false;
 
     switch (key) {
@@ -345,9 +336,9 @@ export class KeyboardNavigator {
 
     const element = this.items[index];
     element.focus({ preventScroll: this.options.preventScroll });
-    
+
     this.currentIndex = index;
-    
+
     if (this.options.onNavigate) {
       this.options.onNavigate(index, element);
     }
@@ -359,35 +350,35 @@ export class KeyboardNavigator {
  */
 export function manageFocusRing() {
   let hadKeyboardEvent = false;
-  
+
   const keydownHandler = () => {
     hadKeyboardEvent = true;
   };
-  
+
   const mousedownHandler = () => {
     hadKeyboardEvent = false;
   };
-  
+
   const focusHandler = (event: FocusEvent) => {
     const target = event.target as HTMLElement;
-    
+
     if (hadKeyboardEvent || target.matches(':focus-visible')) {
       target.classList.add('focus-visible');
     } else {
       target.classList.remove('focus-visible');
     }
   };
-  
+
   const blurHandler = (event: FocusEvent) => {
     const target = event.target as HTMLElement;
     target.classList.remove('focus-visible');
   };
-  
+
   document.addEventListener('keydown', keydownHandler, true);
   document.addEventListener('mousedown', mousedownHandler, true);
   document.addEventListener('focus', focusHandler, true);
   document.addEventListener('blur', blurHandler, true);
-  
+
   // CSS 주입
   const style = document.createElement('style');
   style.textContent = `
@@ -407,7 +398,7 @@ export function manageFocusRing() {
     }
   `;
   document.head.appendChild(style);
-  
+
   return () => {
     document.removeEventListener('keydown', keydownHandler, true);
     document.removeEventListener('mousedown', mousedownHandler, true);
@@ -425,8 +416,8 @@ export function createSkipLink(targetId: string, text: string): HTMLAnchorElemen
   link.href = `#${targetId}`;
   link.className = 'skip-link';
   link.textContent = text;
-  
-  link.addEventListener('click', (event) => {
+
+  link.addEventListener('click', event => {
     event.preventDefault();
     const target = document.getElementById(targetId);
     if (target) {
@@ -435,7 +426,7 @@ export function createSkipLink(targetId: string, text: string): HTMLAnchorElemen
       target.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   });
-  
+
   return link;
 }
 
@@ -444,7 +435,7 @@ export function createSkipLink(targetId: string, text: string): HTMLAnchorElemen
  */
 export function announceFocusChange(element: HTMLElement, message?: string) {
   const announcement = message || element.getAttribute('aria-label') || element.textContent || '';
-  
+
   if (announcement) {
     const liveRegion = document.createElement('div');
     liveRegion.setAttribute('aria-live', 'polite');
@@ -454,10 +445,10 @@ export function announceFocusChange(element: HTMLElement, message?: string) {
     liveRegion.style.width = '1px';
     liveRegion.style.height = '1px';
     liveRegion.style.overflow = 'hidden';
-    
+
     document.body.appendChild(liveRegion);
     liveRegion.textContent = announcement;
-    
+
     setTimeout(() => {
       document.body.removeChild(liveRegion);
     }, 1000);

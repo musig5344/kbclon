@@ -7,7 +7,6 @@ import React, { useState, useRef, useEffect } from 'react';
 
 import styled from 'styled-components';
 
-
 // 기존 컴포넌트들 (예시)
 import { Button } from '../../shared/components/ui/Button';
 import { Modal } from '../../shared/components/ui/Modal';
@@ -20,7 +19,7 @@ import {
   KeyboardDropdown,
   KeyboardNumberPad,
   CommandPalette,
-  CommandPaletteItem
+  CommandPaletteItem,
 } from '../index';
 
 const Container = styled.div`
@@ -67,19 +66,12 @@ const KeyboardNavigationExample: React.FC = () => {
   const modalRef = useRef<HTMLDivElement>(null);
 
   // 메인 영역 키보드 네비게이션
-  const {
-    currentIndex,
-    focusedElement,
-    navigateNext,
-    navigatePrevious,
-    enable,
-    disable
-  } = useKeyboardNavigation(mainRef, {
-    wrap: true,
-    announceChanges: true,
-    onNavigate: (element, direction) => {
-    }
-  });
+  const { currentIndex, focusedElement, navigateNext, navigatePrevious, enable, disable } =
+    useKeyboardNavigation(mainRef, {
+      wrap: true,
+      announceChanges: true,
+      onNavigate: (element, direction) => {},
+    });
 
   // 키보드 컨텍스트 사용
   const { settings, registerShortcut, unregisterShortcut } = useKeyboard();
@@ -91,43 +83,46 @@ const KeyboardNavigationExample: React.FC = () => {
       keys: ['f1'],
       description: '도움말 표시',
       action: () => alert('F1: 도움말\nCtrl+K: 명령 팔레트\nCtrl+M: 모달 열기'),
-      context: ['global']
+      context: ['global'],
     },
     {
       id: 'example-modal',
       keys: ['ctrl+m'],
       description: '모달 열기',
       action: () => setShowModal(true),
-      context: ['global']
+      context: ['global'],
     },
     {
       id: 'example-command-palette',
       keys: ['ctrl+k'],
       description: '명령 팔레트 열기',
       action: () => setShowCommandPalette(true),
-      context: ['global']
-    }
+      context: ['global'],
+    },
   ]);
 
   // 컨텍스트별 단축키 (모달이 열렸을 때만)
-  useKeyboardShortcuts([
+  useKeyboardShortcuts(
+    [
+      {
+        id: 'modal-close',
+        keys: ['escape'],
+        description: '모달 닫기',
+        action: () => setShowModal(false),
+        context: ['modal'],
+      },
+    ],
     {
-      id: 'modal-close',
-      keys: ['escape'],
-      description: '모달 닫기',
-      action: () => setShowModal(false),
-      context: ['modal']
+      context: showModal ? ['modal'] : [],
+      enabled: showModal,
     }
-  ], {
-    context: showModal ? ['modal'] : [],
-    enabled: showModal
-  });
+  );
 
   // 계좌 옵션
   const accountOptions = [
     { value: 'account1', label: '국민은행 123-456-789012 (김철수)', icon: '🏦' },
     { value: 'account2', label: '국민은행 987-654-321098 (김영희)', icon: '🏦' },
-    { value: 'account3', label: '국민은행 555-666-777888 (회사계좌)', icon: '🏢' }
+    { value: 'account3', label: '국민은행 555-666-777888 (회사계좌)', icon: '🏢' },
   ];
 
   // 명령 팔레트 아이템들
@@ -139,7 +134,7 @@ const KeyboardNavigationExample: React.FC = () => {
       keywords: ['이체', '송금', 'transfer'],
       category: '거래',
       shortcut: ['Ctrl', 'T'],
-      icon: '💸'
+      icon: '💸',
     },
     {
       id: 'balance',
@@ -148,7 +143,7 @@ const KeyboardNavigationExample: React.FC = () => {
       keywords: ['잔액', '조회', 'balance'],
       category: '조회',
       shortcut: ['Ctrl', 'B'],
-      icon: '💰'
+      icon: '💰',
     },
     {
       id: 'history',
@@ -156,7 +151,7 @@ const KeyboardNavigationExample: React.FC = () => {
       description: '거래 내역을 조회합니다',
       keywords: ['내역', '거래', 'history'],
       category: '조회',
-      icon: '📋'
+      icon: '📋',
     },
     {
       id: 'settings',
@@ -164,8 +159,8 @@ const KeyboardNavigationExample: React.FC = () => {
       description: '앱 설정을 변경합니다',
       keywords: ['설정', 'settings'],
       category: '기타',
-      icon: '⚙️'
-    }
+      icon: '⚙️',
+    },
   ];
 
   // 이체 실행 함수
@@ -174,7 +169,7 @@ const KeyboardNavigationExample: React.FC = () => {
       alert('계좌와 금액을 모두 입력해주세요.');
       return;
     }
-    
+
     alert(`${selectedAccount}로 ${transferAmount}원을 이체합니다.`);
   };
 
@@ -192,15 +187,25 @@ const KeyboardNavigationExample: React.FC = () => {
   return (
     <Container>
       <h1>키보드 네비게이션 통합 예제</h1>
-      
+
       <InfoBox>
         <strong>키보드 단축키:</strong>
         <ul>
-          <li><kbd>F1</kbd>: 도움말</li>
-          <li><kbd>Ctrl+K</kbd>: 명령 팔레트</li>
-          <li><kbd>Ctrl+M</kbd>: 모달 열기</li>
-          <li><kbd>Tab</kbd>/<kbd>Shift+Tab</kbd>: 네비게이션</li>
-          <li><kbd>Enter</kbd>/<kbd>Space</kbd>: 활성화</li>
+          <li>
+            <kbd>F1</kbd>: 도움말
+          </li>
+          <li>
+            <kbd>Ctrl+K</kbd>: 명령 팔레트
+          </li>
+          <li>
+            <kbd>Ctrl+M</kbd>: 모달 열기
+          </li>
+          <li>
+            <kbd>Tab</kbd>/<kbd>Shift+Tab</kbd>: 네비게이션
+          </li>
+          <li>
+            <kbd>Enter</kbd>/<kbd>Space</kbd>: 활성화
+          </li>
         </ul>
       </InfoBox>
 
@@ -209,33 +214,18 @@ const KeyboardNavigationExample: React.FC = () => {
           <SectionTitle>1. 기본 버튼들</SectionTitle>
           <Grid>
             {/* 키보드 최적화 버튼 */}
-            <KeyboardButton
-              variant="primary"
-              shortcut={['Ctrl', 'Enter']}
-              announceAction={true}
-            >
+            <KeyboardButton variant='primary' shortcut={['Ctrl', 'Enter']} announceAction={true}>
               키보드 버튼
             </KeyboardButton>
 
             {/* 기존 버튼 (키보드 지원 제한적) */}
-            <Button
-              variant="secondary"
-            >
-              기존 버튼
-            </Button>
+            <Button variant='secondary'>기존 버튼</Button>
 
-            <KeyboardButton
-              variant="danger"
-              leftIcon="🗑️"
-            >
+            <KeyboardButton variant='danger' leftIcon='🗑️'>
               삭제
             </KeyboardButton>
 
-            <KeyboardButton
-              variant="text"
-              rightIcon="→"
-              href="/next-page"
-            >
+            <KeyboardButton variant='text' rightIcon='→' href='/next-page'>
               다음 페이지
             </KeyboardButton>
           </Grid>
@@ -243,38 +233,34 @@ const KeyboardNavigationExample: React.FC = () => {
 
         <Section>
           <SectionTitle>2. 이체 폼</SectionTitle>
-          
+
           <KeyboardDropdown
-            label="받는 계좌"
+            label='받는 계좌'
             options={accountOptions}
             value={selectedAccount}
             onChange={setSelectedAccount}
-            placeholder="계좌를 선택하세요"
+            placeholder='계좌를 선택하세요'
             searchable={true}
           />
 
           <div style={{ marginTop: '16px' }}>
             <KeyboardNumberPad
-              label="이체 금액"
+              label='이체 금액'
               value={transferAmount}
               onChange={setTransferAmount}
               maxLength={10}
               currency={true}
-              placeholder="금액을 입력하세요"
+              placeholder='금액을 입력하세요'
             />
           </div>
 
           <div style={{ marginTop: '24px', display: 'flex', gap: '12px' }}>
-            <KeyboardButton
-              variant="primary"
-              onClick={handleTransfer}
-              shortcut={['Ctrl', 'Enter']}
-            >
+            <KeyboardButton variant='primary' onClick={handleTransfer} shortcut={['Ctrl', 'Enter']}>
               이체하기
             </KeyboardButton>
-            
+
             <KeyboardButton
-              variant="secondary"
+              variant='secondary'
               onClick={() => {
                 setSelectedAccount('');
                 setTransferAmount('');
@@ -288,17 +274,25 @@ const KeyboardNavigationExample: React.FC = () => {
         <Section>
           <SectionTitle>3. 네비게이션 상태</SectionTitle>
           <InfoBox>
-            <p><strong>현재 포커스 인덱스:</strong> {currentIndex}</p>
-            <p><strong>포커스된 요소:</strong> {focusedElement?.tagName || 'None'}</p>
-            <p><strong>키보드 모드:</strong> {settings.mode}</p>
-            <p><strong>변경사항 공지:</strong> {settings.announceChanges ? '활성' : '비활성'}</p>
+            <p>
+              <strong>현재 포커스 인덱스:</strong> {currentIndex}
+            </p>
+            <p>
+              <strong>포커스된 요소:</strong> {focusedElement?.tagName || 'None'}
+            </p>
+            <p>
+              <strong>키보드 모드:</strong> {settings.mode}
+            </p>
+            <p>
+              <strong>변경사항 공지:</strong> {settings.announceChanges ? '활성' : '비활성'}
+            </p>
           </InfoBox>
 
           <div style={{ marginTop: '16px', display: 'flex', gap: '12px' }}>
-            <KeyboardButton onClick={navigateNext} size="small">
+            <KeyboardButton onClick={navigateNext} size='small'>
               다음 요소
             </KeyboardButton>
-            <KeyboardButton onClick={navigatePrevious} size="small">
+            <KeyboardButton onClick={navigatePrevious} size='small'>
               이전 요소
             </KeyboardButton>
           </div>
@@ -307,7 +301,7 @@ const KeyboardNavigationExample: React.FC = () => {
         <Section>
           <SectionTitle>4. 모달 및 트랩</SectionTitle>
           <KeyboardButton
-            variant="outline"
+            variant='outline'
             onClick={() => setShowModal(true)}
             shortcut={['Ctrl', 'M']}
           >
@@ -321,21 +315,16 @@ const KeyboardNavigationExample: React.FC = () => {
         <Modal
           isOpen={showModal}
           onClose={() => setShowModal(false)}
-          title="키보드 트랩 모달"
+          title='키보드 트랩 모달'
           ref={modalRef}
         >
           <div>
             <p>이 모달은 키보드 트랩이 적용되어 있습니다.</p>
             <p>Tab 키로 내부 요소들만 탐색할 수 있습니다.</p>
-            
+
             <div style={{ marginTop: '20px', display: 'flex', gap: '12px' }}>
-              <KeyboardButton variant="primary">
-                확인
-              </KeyboardButton>
-              <KeyboardButton 
-                variant="secondary"
-                onClick={() => setShowModal(false)}
-              >
+              <KeyboardButton variant='primary'>확인</KeyboardButton>
+              <KeyboardButton variant='secondary' onClick={() => setShowModal(false)}>
                 취소
               </KeyboardButton>
             </div>
@@ -348,10 +337,10 @@ const KeyboardNavigationExample: React.FC = () => {
         isOpen={showCommandPalette}
         items={commandPaletteItems}
         onClose={() => setShowCommandPalette(false)}
-        onExecute={(item) => {
+        onExecute={item => {
           setShowCommandPalette(false);
         }}
-        placeholder="명령어를 입력하세요..."
+        placeholder='명령어를 입력하세요...'
         enableFuzzySearch={true}
         showCategories={true}
         showShortcuts={true}
@@ -369,10 +358,9 @@ const App: React.FC = () => {
         mode: 'normal',
         announceChanges: true,
         showFocusRing: true,
-        enableCommandPalette: true
+        enableCommandPalette: true,
       }}
-      onSettingsChange={(settings) => {
-      }}
+      onSettingsChange={settings => {}}
     >
       <KeyboardNavigationExample />
     </KeyboardProvider>

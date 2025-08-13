@@ -26,17 +26,17 @@ const ProtectedRoute: React.FC = () => {
       console.log('Authentication check failed:', {
         isLoggedIn: authContext.isLoggedIn,
         hasSession: !!authContext.session,
-        hasUser: !!authContext.user
+        hasUser: !!authContext.user,
       });
     }
-    return <Navigate to="/" replace />;
+    return <Navigate to='/' replace />;
   }
   if (process.env.NODE_ENV === 'development') {
     console.log('User authenticated:', {
       userId: authContext.user?.id,
-      userEmail: authContext.user?.email
+      userEmail: authContext.user?.email,
     });
   }
   return <Outlet />;
 };
-export default ProtectedRoute; 
+export default ProtectedRoute;

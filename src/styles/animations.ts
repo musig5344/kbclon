@@ -1,6 +1,6 @@
 /**
  * KB StarBanking Clone - 애니메이션 시스템
- * 
+ *
  * 60fps 부드러운 애니메이션과 마이크로 인터랙션 제공
  * GPU 가속 및 성능 최적화 적용
  */
@@ -10,7 +10,7 @@ export const duration = {
   fast: '0.15s',
   normal: '0.3s',
   slow: '0.5s',
-  page: '0.4s'
+  page: '0.4s',
 } as const;
 // 이징 함수들
 export const easing = {
@@ -18,7 +18,7 @@ export const easing = {
   easeOut: 'cubic-bezier(0, 0, 0.2, 1)',
   easeIn: 'cubic-bezier(0.4, 0, 1, 1)',
   bounce: 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
-  spring: 'cubic-bezier(0.175, 0.885, 0.32, 1.275)'
+  spring: 'cubic-bezier(0.175, 0.885, 0.32, 1.275)',
 } as const;
 /**
  * 페이지 전환 애니메이션
@@ -233,7 +233,7 @@ export const gpuAcceleration = css`
 export const dynamicWillChange = css`
   /* 애니메이션 시작 시에만 will-change 활성화 */
   will-change: auto;
-  
+
   &:hover,
   &:focus,
   &:active,
@@ -267,8 +267,9 @@ export const scaleTransition = css`
 `;
 
 export const smoothTransition = css`
-  transition: transform ${duration.normal} ${easing.easeInOut},
-              opacity ${duration.normal} ${easing.easeInOut};
+  transition:
+    transform ${duration.normal} ${easing.easeInOut},
+    opacity ${duration.normal} ${easing.easeInOut};
   ${gpuAcceleration}
   ${dynamicWillChange}
 `;
@@ -281,7 +282,7 @@ export const microInteraction = css`
   &:hover {
     transform: translateZ(0) translateY(-2px);
   }
-  
+
   &:active {
     transform: translateZ(0) translateY(0) scale(0.98);
     transition-duration: 0.1s;
@@ -327,6 +328,6 @@ const animations = {
   smoothTransition,
   microInteraction,
   respectMotionPreference,
-  staggerDelay
+  staggerDelay,
 };
 export default animations;

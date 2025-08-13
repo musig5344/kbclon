@@ -42,12 +42,7 @@ export {
 } from './SpringAnimation';
 
 // Gesture animations
-export {
-  useGestureRecognizer,
-  Swipeable,
-  Draggable,
-  Pinchable,
-} from './GestureAnimation';
+export { useGestureRecognizer, Swipeable, Draggable, Pinchable } from './GestureAnimation';
 export type { GestureType, GestureState, GestureConfig } from './GestureAnimation';
 
 // FLIP animations
@@ -86,15 +81,16 @@ export { AnimationPresets } from './AnimationPresets';
 // Animation utilities
 export const AnimationUtils = {
   // Check if animations should be enabled
-  shouldAnimate: () => !performanceHelpers.prefersReducedMotion() && !performanceHelpers.isLowEndDevice(),
-  
+  shouldAnimate: () =>
+    !performanceHelpers.prefersReducedMotion() && !performanceHelpers.isLowEndDevice(),
+
   // Get optimal animation duration based on device
   getOptimalDuration: (baseDuration: number = 300) => {
     if (performanceHelpers.prefersReducedMotion()) return 0;
     if (performanceHelpers.isLowEndDevice()) return baseDuration * 0.5;
     return baseDuration;
   },
-  
+
   // Schedule animation with performance considerations
   scheduleAnimation: (callback: () => void, priority: 'high' | 'normal' | 'low' = 'normal') => {
     if (priority === 'high') {
@@ -105,12 +101,12 @@ export const AnimationUtils = {
       performanceHelpers.scheduleAnimation(callback, { timeout: 1000 });
     }
   },
-  
+
   // Batch multiple animations
   batchAnimations: (animations: Array<() => void>) => {
     raf.sequence(animations);
   },
-  
+
   // Create staggered animation delays
   createStagger: (count: number, baseDelay: number = 50, maxDelay: number = 300) => {
     return Array.from({ length: count }, (_, i) => Math.min(i * baseDelay, maxDelay));
@@ -123,29 +119,29 @@ export const PerformanceUtils = {
   startMonitoring: () => {
     animationMonitor.start();
   },
-  
+
   // Stop monitoring and get report
   stopMonitoring: () => {
     const metrics = animationMonitor.getMetrics();
     animationMonitor.stop();
     return metrics;
   },
-  
+
   // Monitor specific animation
   monitorAnimation: async (name: string, animation: () => void | Promise<void>) => {
     animationMonitor.startAnimation(name);
     await animation();
     const metrics = animationMonitor.endAnimation(name);
-    
+
     if (metrics) {
     }
-    
+
     return metrics;
   },
-  
+
   // Get current FPS
   getCurrentFPS: () => animationMonitor.getMetrics().fps,
-  
+
   // Subscribe to performance updates
   subscribeToMetrics: (callback: (metrics: any) => void) => {
     return animationMonitor.subscribe(callback);
@@ -158,18 +154,18 @@ export const AnimationStyles = {
   gpuAccelerated: `
     ${gpuAcceleration.full}
   `,
-  
+
   // Smooth transitions
   smoothTransition: (property: string = 'all', duration: number = 300) => `
     transition: ${property} ${duration}ms cubic-bezier(0.4, 0, 0.2, 1);
     ${gpuAcceleration.force3D}
   `,
-  
+
   // Containment
   contained: `
     ${containment.strict}
   `,
-  
+
   // Will-change management
   willChangeAuto: (property: string) => `
     will-change: ${property};
@@ -178,7 +174,7 @@ export const AnimationStyles = {
       will-change: auto;
     }
   `,
-  
+
   // Reduced motion support
   respectMotion: (animation: string) => `
     animation: ${animation};
@@ -208,7 +204,7 @@ export default {
   ScrollOptimizedList,
   AnimatedListItem,
   SortableList,
-  
+
   // Hooks
   useAnimation,
   useScrollAnimation,
@@ -225,7 +221,7 @@ export default {
   useAutoAnimate,
   useSharedElementTransition,
   useInfiniteScroll,
-  
+
   // Utilities
   animationMonitor,
   performanceHelpers,
@@ -233,7 +229,7 @@ export default {
   AnimationUtils,
   PerformanceUtils,
   AnimationStyles,
-  
+
   // Constants
   easings,
   springPresets,
